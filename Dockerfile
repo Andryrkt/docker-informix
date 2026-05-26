@@ -32,14 +32,27 @@ RUN tar -xvf csdk.tar \
     && rm -rf /tmp/*
 
 # === Installation PDO_INFORMIX ===
-RUN wget -q https://pecl.php.net/get/PDO_INFORMIX-1.3.7.tgz -O pdo_informix.tgz \
-    && tar -xzf pdo_informix.tgz \
-    && cd PDO_INFORMIX-1.3.7 \
+RUN git clone https://github.com/nahuelon/pdo_informix.git \
+    && cd pdo_informix \
     && phpize \
     && ./configure --with-pdo-informix=$INFORMIXDIR \
     && make -j2 && make install \
     && echo "extension=pdo_informix.so" > /usr/local/etc/php/conf.d/30-pdo_informix.ini \
-    && cd /tmp && rm -rf PDO_INFORMIX* *.tgz
+    && cd /tmp && rm -rf pdo_informix
+
+# === Installation SQL Server Drivers & Extensions ===
+RUN apt-get update && apt-get install -y gnupg2 \
+    && curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg \
+    && echo "deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/debian/12/prod bookworm main" > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 \
+    && pecl install sqlsrv pdo_sqlsrv \
+    && docker-php-ext-enable sqlsrv pdo_sqlsrv
+
+# === Installation LDAP Extension ===
+RUN apt-get update && apt-get install -y libldap2-dev \
+    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
+    && docker-php-ext-install ldap
 
 # Configuration Apache + variables permanentes
 RUN echo "export INFORMIXDIR=/opt/IBM/Informix_Client-SDK" >> /etc/apache2/envvars \

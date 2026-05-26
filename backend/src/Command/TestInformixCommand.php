@@ -13,9 +13,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'app:test-informix')]
 class TestInformixCommand extends Command
 {
-    public function __construct(private Connection $connection)
+    private Connection $connection;
+
+    public function __construct(Connection $connection)
     {
         parent::__construct();
+        $this->connection = $connection;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

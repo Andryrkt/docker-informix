@@ -20,6 +20,15 @@ doctrine:
                 password: '%env(INFORMIX_PASSWORD)%'
                 server: '%env(INFORMIXSERVER)%'
                 protocol: onsoctcp
+            sqlserver:
+                driver: pdo_sqlsrv
+                host: '%env(SQLSERVER_HOST)%'
+                port: '%env(SQLSERVER_PORT)%'
+                dbname: '%env(SQLSERVER_DB)%'
+                user: '%env(SQLSERVER_USER)%'
+                password: '%env(SQLSERVER_PASSWORD)%'
+                options:
+                    TrustServerCertificate: true
     orm:
         default_entity_manager: ips
         entity_managers:

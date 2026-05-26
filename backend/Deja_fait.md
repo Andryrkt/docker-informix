@@ -1,0 +1,3 @@
+- telechargement du pilote de informix pour linux
+- creation Dockerfile pour qu'on puisse utiliser informix dans docker
+- creation de backend symfony 7 avec php 8.3

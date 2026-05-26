@@ -1,0 +1,6 @@
+#!/bin/bash
+export INFORMIXDIR=/opt/IBM/Informix_Client-SDK
+export INFORMIXSERVER=ol_iriumprod_net
+export LD_LIBRARY_PATH=/opt/IBM/Informix_Client-SDK/lib:/opt/IBM/Informix_Client-SDK/lib/cli:/opt/IBM/Informix_Client-SDK/lib/esql
+
+exec php bin/console "$@"

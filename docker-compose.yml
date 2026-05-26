@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  php-informix:
+    build: .
+    container_name: php_informix
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    extra_hosts:
+      - "ol_iriumprod_net:192.168.0.11"
+    environment:
+      - INFORMIXDIR=/opt/IBM/Informix_Client-SDK
+      - INFORMIXSERVER=ol_iriumprod_net
+      - LD_LIBRARY_PATH=/opt/IBM/Informix_Client-SDK/lib:/opt/IBM/Informix_Client-SDK/lib/cli:/opt/IBM/Informix_Client-SDK/lib/esql
+    restart: unless-stopped

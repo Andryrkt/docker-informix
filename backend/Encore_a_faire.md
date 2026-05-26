@@ -1,0 +1,8 @@
+- continuer la creation de l'entity pour IPS et Irium
+- connecter avec sqlserver
+- connecter avec ldap
+- voir comment le partager avec les collegues
+- mettre en place une documentation
+- crée react
+- mettre en place les tests
+- mettre en place le deployement avec github action

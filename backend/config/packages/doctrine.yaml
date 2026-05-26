@@ -1,0 +1,61 @@
+doctrine:
+    dbal:
+        default_connection: ips
+        connections:
+            ips:
+                driver_class: App\Doctrine\Informix\InformixDriver
+                host: '%env(INFORMIX_HOST)%'
+                port: '%env(INFORMIX_PORT)%'
+                dbname: '%env(INFORMIX_DB)%'
+                user: '%env(INFORMIX_USER)%'
+                password: '%env(INFORMIX_PASSWORD)%'
+                server: '%env(INFORMIXSERVER)%'
+                protocol: onsoctcp
+            irium:
+                driver_class: App\Doctrine\Informix\InformixDriver
+                host: '%env(INFORMIX_HOST)%'
+                port: '%env(INFORMIX_PORT)%'
+                dbname: '%env(INFORMIX_DB_IRIUM)%'
+                user: '%env(INFORMIX_USER)%'
+                password: '%env(INFORMIX_PASSWORD)%'
+                server: '%env(INFORMIXSERVER)%'
+                protocol: onsoctcp
+    orm:
+        default_entity_manager: ips
+        entity_managers:
+            ips:
+                connection: ips
+                mappings:
+                    App:
+                        type: attribute
+                        dir: '%kernel.project_dir%/src/Entity/Ips'
+                        prefix: 'App\Entity\Ips'
+            irium:
+                connection: irium
+                mappings:
+                    Irium:
+                        type: attribute
+                        dir: '%kernel.project_dir%/src/Entity/Irium'
+                        prefix: 'App\Entity\Irium'
+when@test:
+    doctrine:
+        dbal:
+            dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+when@prod:
+    doctrine:
+        orm:
+            auto_generate_proxy_classes: false
+            proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
+            query_cache_driver:
+                type: pool
+                pool: doctrine.system_cache_pool
+            result_cache_driver:
+                type: pool
+                pool: doctrine.result_cache_pool
+    framework:
+        cache:
+            pools:
+                doctrine.result_cache_pool:
+                    adapter: cache.app
+                doctrine.system_cache_pool:
+                    adapter: cache.system

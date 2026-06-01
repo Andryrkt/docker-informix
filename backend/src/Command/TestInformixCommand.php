@@ -42,18 +42,18 @@ class TestInformixCommand extends Command
             return Command::FAILURE;
         }
 
-        // Test 3 : lister les tables utilisateur
+        // Test 3 : interroger la table neg_ent (premières lignes)
         try {
             $result = $this->connection->executeQuery(
-                "SELECT tabname FROM systables WHERE tabtype = 'T' AND tabid > 99"
+                "SELECT FIRST 5 * FROM informix.neg_ent"
             );
-            $tables = $result->fetchAllAssociative();
-            $output->writeln('<info>✓ Tables trouvées : ' . count($tables) . '</info>');
-            foreach ($tables as $table) {
-                $output->writeln('   - ' . trim($table['tabname']));
+            $rows = $result->fetchAllAssociative();
+            $output->writeln('<info>✓ Lignes trouvées dans neg_ent (max 5) : ' . count($rows) . '</info>');
+            foreach ($rows as $row) {
+                $output->writeln('   - ' . json_encode($row));
             }
         } catch (\Exception $e) {
-            $output->writeln('<error>✗ Liste tables échouée : ' . $e->getMessage() . '</error>');
+            $output->writeln('<error>✗ Requête table neg_ent échouée : ' . $e->getMessage() . '</error>');
             return Command::FAILURE;
         }
 

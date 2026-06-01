@@ -26,11 +26,11 @@ class TestSqlServerCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         try {
-            $result = $this->sqlserverConnection->executeQuery('SELECT @@VERSION as version');
+            $result = $this->sqlserverConnection->executeQuery('SELECT numero_demande_dit as numero FROM demande_intervention');
             $row = $result->fetchAssociative();
 
             $io->success('✅ Connexion SQL Server réussie !');
-            $io->text('Version : ' . $row['version']);
+            $io->text('Numéro : ' . $row['numero']);
         } catch (\Exception $e) {
             $io->error('❌ Erreur : ' . $e->getMessage());
         }

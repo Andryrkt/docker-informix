@@ -26,9 +26,7 @@ class NegEntRepository extends ServiceEntityRepository
      */
     public function findDevisList(
         string $codeSociete,
-        string $sucNeg,
-        int $skip = 0,
-        int $limit = 50
+        string $sucNeg
     ): array {
         $statutDwATraiter = 'A traiter';
         $sql = "
@@ -133,7 +131,19 @@ class NegEntRepository extends ServiceEntityRepository
         $stmt->bindValue(2, $codeSociete);
 
         $result = $stmt->executeQuery();
+        $data = $result->fetchAllAssociative();
 
-        return $result->fetchAllAssociative();
+        // Décoder les chaînes binaires / non-UTF-8 (souvent encodées en ISO-8859-1)
+        foreach ($data as $i => $row) {
+            foreach ($row as $column => $value) {
+                if (is_string($value) && !mb_check_encoding($value, 'UTF-8')) {
+                    $data[$i][$column] = mb_convert_encoding($value, 'UTF-8', 'ISO-8859-1');
+                }
+            }
+        }
+
+        dump($data);
+
+        return $data;
     }
 }

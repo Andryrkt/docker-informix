@@ -17,14 +17,14 @@ class InformixDriver implements Driver
 
         $dsn = "informix:host=$host;service=$port;server=$server;database=$dbname;protocol=onsoctcp;DELIMIDENT=Y";
 
-        echo "🔍 DSN : $dsn\n";
+        // echo "🔍 DSN : $dsn\n";
 
         try {
             $pdo = new \PDO($dsn, $user, $password, [
                 \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
                 \PDO::ATTR_TIMEOUT => 10,
             ]);
-            echo "✅ Connexion PDO réussie\n";
+            // echo "✅ Connexion PDO réussie\n";
             return new \Doctrine\DBAL\Driver\PDO\Connection($pdo);
         } catch (\PDOException $e) {
             echo "❌ Erreur : " . $e->getMessage() . "\n";

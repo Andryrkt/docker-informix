@@ -1,0 +1,29 @@
+# Simple .htaccess pour Symfony
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Déterminer le sous-répertoire de base (si ce n'est pas la racine)
+    RewriteCond %{REQUEST_URI}::$1 ^(/.+)/(.*)::\2$
+    RewriteRule ^(.*) - [E=BASE:%1]
+
+    # Transmettre l'en-tête d'autorisation HTTP (souvent supprimé par Apache)
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Rediriger index.php vers la racine de l'URL si accédé directement
+    RewriteCond %{ENV:REDIRECT_STATUS} ^$
+    RewriteRule ^index\.php(?:/(.*)|$) %{ENV:BASE}/$1 [R=301,L]
+
+    # Si le fichier ou dossier demandé existe physiquement, on le sert directement
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # Sinon, on redirige tout vers index.php
+    RewriteRule ^ %{ENV:BASE}/index.php [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    <IfModule mod_alias.c>
+        RedirectMatch 302 ^/$ /index.php/
+    </IfModule>
+</IfModule>

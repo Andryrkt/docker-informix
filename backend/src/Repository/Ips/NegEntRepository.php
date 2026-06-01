@@ -26,7 +26,9 @@ class NegEntRepository extends ServiceEntityRepository
      */
     public function findDevisList(
         string $codeSociete,
-        string $sucNeg
+        string $sucNeg,
+        int $skip = 0,
+        int $limit = 50
     ): array {
         $statutDwATraiter = 'A traiter';
         $sql = "
@@ -142,7 +144,7 @@ class NegEntRepository extends ServiceEntityRepository
             }
         }
 
-        dump($data);
+        // dump($data);
 
         return $data;
     }

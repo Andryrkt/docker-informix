@@ -3,22 +3,17 @@
 namespace App\Repository\Ips;
 
 use App\Entity\Ips\NegEnt;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Repository\AbstractInformixRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class NegEntRepository extends ServiceEntityRepository
+class NegEntRepository extends AbstractInformixRepository
 {
-    private string $dbIps;
-    private string $dbIrium;
-
     public function __construct(
         ManagerRegistry $registry,
         string $dbIps = 'ips_test',
         string $dbIrium = 'irium_test'
     ) {
-        parent::__construct($registry, NegEnt::class);
-        $this->dbIps = $dbIps;
-        $this->dbIrium = $dbIrium;
+        parent::__construct($registry, NegEnt::class, $dbIps, $dbIrium);
     }
 
     /**
@@ -134,19 +129,29 @@ class NegEntRepository extends ServiceEntityRepository
         $stmt->bindValue(2, $codeSociete);
 
         $result = $stmt->executeQuery();
-        $data = $result->fetchAllAssociative();
-
-        // Décoder les chaînes binaires / non-UTF-8 (souvent encodées en ISO-8859-1)
-        foreach ($data as $i => $row) {
-            foreach ($row as $column => $value) {
-                if (is_string($value) && !mb_check_encoding($value, 'UTF-8')) {
-                    $data[$i][$column] = mb_convert_encoding($value, 'UTF-8', 'ISO-8859-1');
-                }
-            }
-        }
+        $data = $this->fetchAndDecode($result);
 
         // dump($data);
 
         return $data;
+    }
+
+    /**
+     * Récupère le code et le libellé du client
+     * 
+     * cette méthode utilise la table neg_ent pour récupérer le code et le libellé du client
+     * 
+     * @return array Les informations du client
+     */
+    public function getCodeLibelleClient(): array
+    {
+        $sql = "SELECT DISTINCT nent_numcli as code_client, nent_nomcli as nom_client
+                FROM {$this->dbIps}:informix.neg_ent";
+
+        $em = $this->getEntityManager();
+        $stmt = $em->getConnection()->prepare($sql);
+        $result = $stmt->executeQuery();
+
+        return $this->fetchAndDecode($result);
     }
 }

@@ -29,4 +29,19 @@ class DevisController extends AbstractController
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    #[Route('/api/clients', name: 'api_clients', methods: ['GET'])]
+    public function getClients(NegEntRepository $negEntRepository): JsonResponse
+    {
+        try {
+            $clients = $negEntRepository->getCodeLibelleClient();
+
+            return new JsonResponse($clients);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'error' => 'Erreur lors de la récupération des clients : ' . $e->getMessage()
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }
+

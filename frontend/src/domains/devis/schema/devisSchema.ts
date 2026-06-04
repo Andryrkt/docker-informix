@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 export interface Devis {
   DATE_CDE_BRUTE: string;
   STATUT_DW: string | null;
@@ -29,16 +27,3 @@ export interface DevisParams {
   skip?: number;
   limit?: number;
 }
-
-const apiClient = axios.create({
-  baseURL: '/api',
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  },
-});
-
-export const fetchDevis = async (params: DevisParams = {}): Promise<Devis[]> => {
-  const response = await apiClient.get<Devis[]>('/devis', { params });
-  return response.data;
-};

@@ -32,9 +32,9 @@ class NegEntRepository extends ServiceEntityRepository
     ): array {
         $statutDwATraiter = 'A traiter';
         $sql = "
-            SELECT 
+            SELECT
                 nent.nent_datecde                                           AS date_cde_brute
-                , CASE 
+                , CASE
                     WHEN dneg.statut_dw = '' OR dneg.statut_dw IS NULL THEN '$statutDwATraiter'
                     ELSE dneg.statut_dw
                 END                                                         AS statut_dw
@@ -119,10 +119,11 @@ class NegEntRepository extends ServiceEntityRepository
               AND nent.nent_succ = ?
               AND nent.nent_soc = ?
               AND EXISTS (
-                  SELECT 1 FROM {$this->dbIps}:informix.neg_lig nl 
-                  WHERE nl.nlig_numcde = nent.nent_numcde 
+                  SELECT 1 FROM {$this->dbIps}:informix.neg_lig nl
+                  WHERE nl.nlig_numcde = nent.nent_numcde
                     AND nl.nlig_codg = 'ST'
               )
+            LIMIT 40
         ";
 
         $em = $this->getEntityManager();

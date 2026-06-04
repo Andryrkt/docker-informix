@@ -15,34 +15,7 @@ import { MoreVerticalIcon } from "lucide-react";
 import { formatMontant, getStatusClass } from "@/helper/helper";
 import { cn } from "@/lib/utils";
 
-function DevisTable({
-  refreshKey,
-  onRefresh,
-}: {
-  refreshKey: number;
-  onRefresh: () => void;
-}) {
-  const [loading, setLoading] = useState(true);
-  const [devis, setDevis] = useState<Devis[]>([]);
-  //   const HUGE_LIST = Array.from({ length: 10 }, (_, i) => `Item ${i + 1}`);
-
-  useEffect(
-    () => {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setLoading(true);
-
-      fetchDevis1()
-        .then((response) => {
-          setDevis(response);
-          // setLastPage(response.last_page);
-          // setTotal(response.total);
-        })
-        .finally(() => setLoading(false));
-    },
-    [
-      // currentPage, keyword, selectedFilters, refreshKey
-    ],
-  );
+function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
   if (loading) return <div className="py-4">Chargement...</div>;
   return (
     <div className="  w-full overflow-x-auto py-4 ">

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Appro\Controller\Api;
+namespace App\Magasin\Devis\Controller\Api;
 
-use App\Appro\Repository\Ips\NegEntRepository;
+use App\Magasin\Devis\Repository\NegEntRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

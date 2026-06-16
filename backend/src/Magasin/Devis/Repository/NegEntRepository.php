@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Appro\Repository\Ips;
+namespace App\Magasin\Devis\Repository;
 
-use App\Appro\Entity\Ips\NegEnt;
+use App\Magasin\Devis\Entity\Ips\NegEnt;
 use App\Shared\Repository\AbstractInformixRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

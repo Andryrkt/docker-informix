@@ -1,5 +1,5 @@
 <?php
-namespace App\Compta\Entity\Irium;
+namespace App\Magasin\Devis\Entity\Irium;
 
 use Doctrine\ORM\Mapping as ORM;
 

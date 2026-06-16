@@ -16,6 +16,10 @@ services:
         bind:
             $dbIps: '%env(resolve:INFORMIX_DB)%'
             $dbIrium: '%env(resolve:INFORMIX_DB_IRIUM)%'
+            $ldapUrl: '%env(resolve:LDAP_URL)%'
+            $ldapSearchDn: '%env(resolve:LDAP_SEARCH_DN)%'
+            $ldapSearchPassword: '%env(resolve:LDAP_SEARCH_PASSWORD)%'
+            $ldapBaseDn: '%env(resolve:LDAP_BASE_DN)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -24,3 +28,9 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    Symfony\Component\Ldap\Ldap:
+        factory: ['Symfony\Component\Ldap\Ldap', 'create']
+        arguments:
+            - 'ext_ldap'
+            - connection_string: '%env(resolve:LDAP_URL)%'

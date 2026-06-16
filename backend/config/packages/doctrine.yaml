@@ -35,25 +35,19 @@ doctrine:
             ips:
                 connection: ips
                 mappings:
-                    ApproIps:
+                    MagasinDevisIps:
+                        is_bundle: false
                         type: attribute
-                        dir: '%kernel.project_dir%/src/Appro/Entity/Ips'
-                        prefix: 'App\Appro\Entity\Ips'
-                    ITIps:
-                        type: attribute
-                        dir: '%kernel.project_dir%/src/IT/Entity/Ips'
-                        prefix: 'App\IT\Entity\Ips'
+                        dir: '%kernel.project_dir%/src/Magasin/Devis/Entity/Ips'
+                        prefix: 'App\Magasin\Devis\Entity\Ips'
             irium:
                 connection: irium
                 mappings:
-                    ApproIrium:
+                    MagasinDevisIrium:
+                        is_bundle: false
                         type: attribute
-                        dir: '%kernel.project_dir%/src/Appro/Entity/Irium'
-                        prefix: 'App\Appro\Entity\Irium'
-                    ComptaIrium:
-                        type: attribute
-                        dir: '%kernel.project_dir%/src/Compta/Entity/Irium'
-                        prefix: 'App\Compta\Entity\Irium'
+                        dir: '%kernel.project_dir%/src/Magasin/Devis/Entity/Irium'
+                        prefix: 'App\Magasin\Devis\Entity\Irium'
 when@test:
     doctrine:
         dbal:

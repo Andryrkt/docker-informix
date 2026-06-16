@@ -1,5 +1,5 @@
 <?php
-namespace App\Appro\Entity\Ips;
+namespace App\Magasin\Devis\Entity\Ips;
 
 use Doctrine\ORM\Mapping as ORM;
 

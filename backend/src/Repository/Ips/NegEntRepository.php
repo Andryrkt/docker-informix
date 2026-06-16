@@ -146,7 +146,10 @@ class NegEntRepository extends AbstractInformixRepository
     public function getCodeLibelleClient(): array
     {
         $sql = "SELECT DISTINCT nent_numcli as code_client, nent_nomcli as nom_client
-                FROM {$this->dbIps}:informix.neg_ent";
+                FROM {$this->dbIps}:informix.neg_ent
+                where nent_numcli IS NOT NULL AND nent_numcli != 0
+                ORDER BY nent_numcli
+                ";
 
         $em = $this->getEntityManager();
         $stmt = $em->getConnection()->prepare($sql);

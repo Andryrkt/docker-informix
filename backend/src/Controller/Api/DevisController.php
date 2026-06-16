@@ -30,7 +30,8 @@ class DevisController extends AbstractController
         }
     }
 
-    #[Route('/api/clients', name: 'api_clients', methods: ['GET'])]
+
+    #[Route('/api/devis/clients', name: 'api_devis_devis_clients', methods: ['GET'])]
     public function getClients(NegEntRepository $negEntRepository): JsonResponse
     {
         try {
@@ -44,4 +45,3 @@ class DevisController extends AbstractController
         }
     }
 }
-

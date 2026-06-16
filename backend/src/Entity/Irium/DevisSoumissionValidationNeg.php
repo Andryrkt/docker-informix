@@ -5,7 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'devis_soumis_a_validation_neg')]
-class DevisSoumisValidationNeg
+class DevisSoumissionValidationNeg
 {
     #[ORM\Id]
     #[ORM\Column(name: 'numero_devis', type: 'integer')]

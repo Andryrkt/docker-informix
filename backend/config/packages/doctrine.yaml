@@ -48,6 +48,14 @@ doctrine:
                         type: attribute
                         dir: '%kernel.project_dir%/src/Magasin/Devis/Entity/Irium'
                         prefix: 'App\Magasin\Devis\Entity\Irium'
+            sqlserver:
+                connection: sqlserver
+                mappings:
+                    Security:
+                        is_bundle: false
+                        type: attribute
+                        dir: '%kernel.project_dir%/src/Security/Entity'
+                        prefix: 'App\Security\Entity'
 when@test:
     doctrine:
         dbal:

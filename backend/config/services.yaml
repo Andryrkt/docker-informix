@@ -20,6 +20,7 @@ services:
             $ldapSearchDn: '%env(resolve:LDAP_SEARCH_DN)%'
             $ldapSearchPassword: '%env(resolve:LDAP_SEARCH_PASSWORD)%'
             $ldapBaseDn: '%env(resolve:LDAP_BASE_DN)%'
+            $ldapDomain: '%env(resolve:LDAP_DOMAIN)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

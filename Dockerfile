@@ -79,6 +79,9 @@ RUN mkdir -p /opt/IBM/Informix_Client-SDK/etc && \
     echo "ol_iriumprod_net    onsoctcp    192.168.0.11    9088" \
     > /opt/IBM/Informix_Client-SDK/etc/sqlhosts
 
+# Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 WORKDIR /var/www/html
 
 EXPOSE 80

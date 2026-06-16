@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repository\Ips;
+namespace App\Appro\Repository\Ips;
 
-use App\Entity\Ips\NegEnt;
-use App\Repository\AbstractInformixRepository;
+use App\Appro\Entity\Ips\NegEnt;
+use App\Shared\Repository\AbstractInformixRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 class NegEntRepository extends AbstractInformixRepository

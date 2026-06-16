@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository;
+namespace App\Shared\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Result;

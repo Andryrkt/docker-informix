@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use OpenApi\Attributes as OA;
 
 class SecurityController extends AbstractController
 {
@@ -19,10 +20,34 @@ class SecurityController extends AbstractController
 
     /**
      * Point d'entrée d'authentification LDAP.
-     * La route est gérée par LdapAuthenticator + Lexik JWT.
-     * Cette méthode n'est appelée qu'en cas de succès (token déjà généré par Lexik).
      */
     #[Route('/api/login', name: 'api_login', methods: ['POST'])]
+    #[OA\Post(
+        path: '/api/login',
+        summary: 'Authentification LDAP',
+        description: 'Authentifie un utilisateur via LDAP et retourne un token JWT.',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'username', type: 'string', example: 'lanto'),
+                    new OA\Property(property: 'password', type: 'string', example: '********')
+                ]
+            )
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Token JWT généré avec succès',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'token', type: 'string'),
+                new OA\Property(property: 'user', type: 'object')
+            ]
+        )
+    )]
+    #[OA\Response(response: 401, description: 'Identifiants invalides')]
+    #[OA\Tag(name: 'Sécurité')]
     public function login(#[CurrentUser] ?User $user): JsonResponse
     {
         if (!$user) {
@@ -42,6 +67,13 @@ class SecurityController extends AbstractController
      * Retourne les informations de l'utilisateur connecté (via JWT).
      */
     #[Route('/api/me', name: 'api_me', methods: ['GET'])]
+    #[OA\Get(
+        path: '/api/me',
+        summary: 'Profil utilisateur et périmètre',
+        description: 'Retourne les infos de l\'utilisateur connecté, ses sociétés et son scope (agences/services).'
+    )]
+    #[OA\Response(response: 200, description: 'Profil récupéré')]
+    #[OA\Tag(name: 'Sécurité')]
     public function me(#[CurrentUser] ?User $user, SecurityContextService $securityContext): JsonResponse
     {
         if (!$user) {

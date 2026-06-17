@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use OpenApi\Attributes as OA;
 
 class NavigationController extends AbstractController
 {
@@ -21,6 +22,23 @@ class NavigationController extends AbstractController
     ) {}
 
     #[Route('/api/navigation', name: 'api_navigation', methods: ['GET'])]
+    #[OA\Get(
+        path: '/api/navigation',
+        summary: 'Arbre de navigation filtré',
+        description: 'Retourne les vignettes et menus autorisés pour la société active passée dans le header X-Active-Company-ID.',
+        parameters: [
+            new OA\Parameter(
+                name: 'X-Active-Company-ID',
+                in: 'header',
+                required: true,
+                description: 'ID de la société sélectionnée',
+                schema: new OA\Schema(type: 'integer')
+            )
+        ]
+    )]
+    #[OA\Response(response: 200, description: 'Arbre de navigation JSON')]
+    #[OA\Response(response: 400, description: 'Société non sélectionnée')]
+    #[OA\Tag(name: 'Sécurité')]
     public function getNavigation(): JsonResponse
     {
         $user = $this->getUser();

@@ -1,10 +1,3 @@
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 import { useFilterOptions } from "./hook/filterHook";
 import { Input } from "@/components/ui/input";
 import { SearchableSelect } from "../atom/SearchableSelect";

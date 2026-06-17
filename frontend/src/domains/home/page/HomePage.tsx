@@ -1,20 +1,29 @@
-import React from "react";
 import { VignetteCard } from "../components/VignetteCard";
-import { VIGNETTES } from "../schema/vignette";
+import { vignetteMock } from "../schema/vignetteMock";
+import { useVignetteDialog } from "../components/VignetteModal";
 
 function HomePage() {
+  const { openDialog, VignetteDialogComponent } = useVignetteDialog();
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {VIGNETTES.map((v) => (
-        <VignetteCard
-          key={v.key}
-          title={v.title}
-          //   icon={v.icon}
-          onClick={function (): void {
-            throw new Error("Function not implemented.");
-          }} //   onClick={() => setActive(v)}
-        />
-      ))}
+    <div className="w-full h-full flex-1 ">
+      <div className="grid lg:grid-cols-4 md:grid-cols-3 gap-10 px-40 py-20   ">
+        {vignetteMock.map((item) => {
+          const Icon = item.icon;
+
+          return (
+            <VignetteCard
+              key={item.title}
+              title={item.title}
+              icon={
+                <Icon className="size-20 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" />
+              }
+              onClick={() => openDialog(item.modal)}
+            />
+          );
+        })}
+
+        <VignetteDialogComponent />
+      </div>
     </div>
   );
 }

@@ -42,7 +42,7 @@ function Login() {
         />
       </div>
       <form
-        id="bug-report-form"
+        id="login-form"
         onSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();

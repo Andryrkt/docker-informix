@@ -1,43 +1,31 @@
-import { cn } from "@/lib/utils";
-import { BookAIcon, BookIcon } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
+
+type VignetteCardProps = {
+  title: string;
+  icon?: React.ReactNode;
+  onClick?: () => void;
+};
 
 export function VignetteCard({
   title,
-  icon,
+  icon = (
+    <ShoppingCart className="size-20 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" />
+  ),
   onClick,
-}: {
-  title: string;
-  icon: React.ReactNode;
-  onClick: () => void;
-}) {
+}: VignetteCardProps) {
   return (
     <div
       onClick={onClick}
-      className={cn(
-        "group relative cursor-pointer overflow-hidden rounded-xs border bg-white p-5",
-        "transition-all duration-300",
-        "hover:-translate-y-1 hover:shadow-xl",
-      )}
+      className="group relative mx-auto w-full max-w-sm cursor-pointer overflow-hidden border-gray-100 bg-zinc-50 bg-[linear-gradient(45deg,transparent_10%,rgba(255,255,255,.65)_45%,rgba(255,255,255,.85)_50%,rgba(255,255,255,.65)_55%,transparent_90%)]
+bg-position-[-150%_0]
+bg-no-repeat py-10 text-center shadow-black drop-shadow-xs/30 drop-shadow-black transition-all duration-250 ease-in-out hover:scale-105 hover:bg-position-[200%_0,0_0] hover:shadow-md/20 hover:drop-shadow-md/20 hover:duration-400 rounded-xs"
     >
-      {/* SHINY EFFECT */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-1/2 top-0 h-full w-1/2 rotate-12 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-100 group-hover:translate-x-[200%] transition-all duration-700" />
-      </div>
-
-      {/* CONTENT */}
-      <div className="flex items-center gap-3">
-        {/* ICON WITH ROTATION */}
-        <div
-          className={cn(
-            "text-primary transition-transform duration-300",
-            "group-hover:rotate-12 group-hover:scale-110",
-          )}
-        >
-          <BookIcon className="size-40"></BookIcon>
-        </div>
-
-        <div className="font-medium text-gray-800">{title}</div>
-      </div>
+      <span className="text-gray-300 mx-auto inline-flex w-full items-center justify-center  transition-colors group-hover:text-brand-primary">
+        {icon}
+      </span>
+      <h3 className="text-gray-300 mt-2 text-xl font-medium tracking-tight uppercase transition-all duration-300 group-hover:scale-110 group-hover:text-brand-primary">
+        {title}
+      </h3>
     </div>
   );
 }

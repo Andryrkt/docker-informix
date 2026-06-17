@@ -2,23 +2,52 @@
 // import { DesktopNavigation } from "../atom/DesktopNavigation";
 // import { publicMenuItems } from "./items/MenuItems";
 
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import SvgVisualTimer from "@/layout/SvgVisualTimer";
+import {
+  ChevronDown,
+  Info,
+  LayoutDashboard,
+  LogOut,
+  Settings,
+  Shield,
+  ShieldUser,
+  User,
+  User2Icon,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+
 type HeaderProps = {
   logoSrc: string;
+  userName: string;
 };
 
-function Header({ logoSrc }: HeaderProps) {
+function Header({ logoSrc, userName }: HeaderProps) {
   const loading = false; // Replace with actual loading state from context or props
   //   const { loading } = useAuth();
 
   // 👉 Render skeleton while loading
   if (loading) {
     return (
-      <div className="w-full flex items-center justify-between px-8 py-2 bg-gray-800  shadow-md sticky top-0 z-[9998]">
-        <div className="flex items-center ">
+      <div className="w-full flex items-center justify-between px-8 py-2 bg-brand-dark  shadow-md sticky top-0 z-9998">
+        <div className="flex items-center border">
           <img
             src={logoSrc}
             alt="HFF-logo"
-            className=" h-20 w-auto object-contain border"
+            className="w-10 object-contain border border-white"
           />
         </div>
       </div>
@@ -28,18 +57,118 @@ function Header({ logoSrc }: HeaderProps) {
   const baseUrl = import.meta.env.VITE_APP_BASE || "/";
   // 👉 Fallback for public users
   return (
-    <div className="w-full flex items-center justify-between px-4 lg:px-8 py-2 bg-gray-800 text-white shadow-md sticky top-0 z-[9998]">
-      <div className="flex items-center justify-center py-2  w-max">
-        <a href={baseUrl}>
-          <img
-            src={logoSrc}
-            alt="HFF-logo"
-            className="h-10 lg:h-14 object-contain drop-shadow-xs/40 drop-shadow-amber-50"
-          />
-        </a>
+    <nav className="w-full flex items-center justify-between px-4 lg:px-8 py-2 bg-brand-dark text-white sticky top-0 z-50">
+      <div className="flex justify-between py-2 gap-2 w-full">
+        <div className="flex items-center gap-4 ">
+          <a
+            href={baseUrl}
+            className="flex items-center justify-center py-2 gap-2 w-max"
+          >
+            <img src={logoSrc} alt="HFF-logo" className="h-10 object-contain" />
+          </a>
+          <SvgVisualTimer />
+        </div>
+
+        <div className="flex items-center gap-4">
+          <div className="relative lg:block hidden">
+            <Button
+              // onClick={() => setIsProfileOpen(!false)}
+              className="flex items-center focus:outline gap-2 bg-transparent hover:bg-transparent text-neutral-200"
+              aria-label="User menu"
+            >
+              <span className="text-[0.65rem]">version :V20261606.258</span>
+            </Button>
+          </div>
+          <div className="relative">
+            {/* // Tooltip */}
+            {/* <Tooltip>
+              <TooltipTrigger>
+                {" "}
+                <Button
+                  // onClick={() => setIsProfileOpen(!false)}
+                  className="flex items-center focus:outline gap-2 bg-transparent hover:bg-transparent text-neutral-200 hover:text-blue-500 focus:text-blue-500"
+                  aria-label="User menu"
+                >
+                  <Info />
+                  <span className="text-[0.65rem]">
+                    Guide utilisateur intranet
+                  </span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="rounded-sm">
+                <p>Guide utilisateur intranet</p>
+              </TooltipContent>
+            </Tooltip> */}
+
+            <Button
+              // onClick={() => setIsProfileOpen(!false)}
+              className="flex items-center focus:outline gap-2 bg-transparent hover:bg-transparent text-neutral-200 hover:text-blue-500 focus:text-blue-500"
+              aria-label="User menu"
+            >
+              <Info />
+              <span className="text-[0.65rem] lg:block hidden">
+                Guide utilisateur intranet
+              </span>
+            </Button>
+          </div>
+          <div className="relative ">
+            <DropdownMenu>
+              {/* The Trigger replaces your manual button click logic */}
+              <DropdownMenuTrigger asChild>
+                <Button
+                  className="flex items-center focus:outline gap-2 bg-transparent hover:bg-transparent text-brand-primary cursor-pointer shadow-none p-0 group"
+                  aria-label="User menu"
+                >
+                  <User2Icon className="h-5 w-5" />
+                  <span className="text-[0.65rem]  truncate text-left font-medium lg:block hidden">
+                    {userName}
+                  </span>
+                  <ChevronDown className="h-3 w-3 shrink-0 opacity-70 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent
+                align="end"
+                className="w-auto min-w-[12rem] mt-2 bg-brand-dark text-brand-primary"
+              >
+                <DropdownMenuItem
+                  asChild
+                  className="lg:hidden block on bg-inherit"
+                >
+                  <Button
+                    // onClick={() => setIsProfileOpen(!false)}
+                    className="flex items-center focus:outline gap-2 bg-transparent hover:bg-transparent text-neutral-200"
+                    aria-label="User menu"
+                  >
+                    <span className="text-[0.65rem]">
+                      version : V20261606.258
+                    </span>
+                  </Button>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="lg:hidden block"></DropdownMenuSeparator>
+                <DropdownMenuItem asChild>
+                  <Link
+                    to={""}
+                    className="flex items-center w-full cursor-pointer"
+                  >
+                    <ShieldUser className="mr-2 h-4 w-4" />
+                    <span>Administration</span>
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  onClick={() => alert("Logging out...")}
+                  className="text-red-500 cursor-pointer"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Déconnexion</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
       </div>
-      {/* <DesktopNavigation menuItems={publicMenuItems} /> */}
-    </div>
+    </nav>
   );
 }
 

@@ -10,7 +10,6 @@ export type FilterField =
       label: string;
       type: "select";
       placeholder?: string;
-      // 👇 async source instead of static options
       queryKey: string;
 
       queryFn: () => Promise<{ label: string; value: string }[]>;

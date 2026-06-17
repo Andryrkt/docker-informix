@@ -9,6 +9,7 @@ import { ExcelDownloadButton } from "@/components/common/excel/ExcelDownloadButt
 import { fetchDevis1 } from "../api/devisApi";
 import { useQuery } from "@tanstack/react-query";
 import { buildExcelFilename } from "@/lib/utils";
+import PageHeader from "@/layout/components/PageHeader";
 
 function DevisList() {
   // const [refreshKey, setRefreshKey] = useState(0);
@@ -36,12 +37,10 @@ function DevisList() {
   return (
     <div className="p-4 w-full min-h-screen ">
       <div className=" w-full h-full space-y-6 overflow-x-auto">
-        {/* <PageHeaderWithAction
-          icon={<Newspaper size={28} className="text-primary" />}
-          title="Liste des articles back-office"
-          description="Liste des articles pour le back-office."
-          action={<ArticleFormDialog onCreated={refresh} />}
-        /> */}
+        <PageHeader
+          title="Liste des devis"
+          description="Voici la liste des devis."
+        />
         <CollapsibleFilter
           fields={fields} // this is an exemple
           onSearch={(values) => {

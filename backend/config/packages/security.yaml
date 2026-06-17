@@ -8,6 +8,7 @@ security:
             entity:
                 class: App\Security\Entity\User
                 property: username
+                manager_name: sqlserver
 
     firewalls:
         dev:

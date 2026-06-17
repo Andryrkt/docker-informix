@@ -40,6 +40,10 @@ doctrine:
                         type: attribute
                         dir: '%kernel.project_dir%/src/Magasin/Devis/Entity/Ips'
                         prefix: 'App\Magasin\Devis\Entity\Ips'
+                filters:
+                    user_scope:
+                        class: App\Security\Doctrine\UserScopeFilter
+                        enabled: false
             irium:
                 connection: irium
                 mappings:

@@ -8,6 +8,7 @@ import Login from "../domains/authentification/pages/Login";
 import DevisList from "@/domains/devis/pages/DevisList";
 import HomePage from "@/domains/home/page/HomePage";
 import DemandeSupportIT from "@/domains/it/page/DemandeSupportIT";
+import { RequireAuth } from "./guards/RequireAuth";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -22,10 +23,6 @@ function AppRoutes() {
       errorElement: <ErrorPage />,
       children: [
         {
-          path: "/",
-          element: <HomePage />,
-        },
-        {
           path: "/login",
           element: <Login />,
         },
@@ -36,17 +33,19 @@ function AppRoutes() {
   const privateRoutes = [
     {
       element: (
-        // <RequireAuth>
-        <AnonymousOnly>
+        <RequireAuth>
           {/* //Mettre RequireAuth après pour protéger les routes privées */}
           {/* <LazyWrapper> */}
           <AppLayouts />
           {/* </LazyWrapper> */}
-        </AnonymousOnly>
-        // </RequireAuth>
+        </RequireAuth>
       ),
       errorElement: <ErrorPage />,
       children: [
+        {
+          path: "/",
+          element: <HomePage />,
+        },
         {
           path: "/magasin/dematerialisation/liste-devis-neg",
           element: <DevisList />,

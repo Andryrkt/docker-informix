@@ -15,7 +15,7 @@ export const getStatusClass = (status?: string) => {
       return "bg-green-500 text-black";
 
     case "Envoyé au client":
-      return "bg-blue-100 text-blue-700";
+      return "bg-blue-400 text-white";
 
     case "Prix à confirmer":
       return "bg-yellow-400 text-black";

@@ -1,14 +1,37 @@
 // import PageHeaderWithAction from "@/layouts/PageHeaderWithAction";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DevisTable from "../components/DevisTable";
+import CollapsibleFilter from "@/components/common/filter/CollapSibleFilter";
+import { toast } from "sonner";
+import { fields } from "@/components/common/filter/schema/filterSchema";
+import { ExcelDownloadButton } from "@/components/common/excel/ExcelDownloadButton";
+import { fetchDevis1 } from "../api/devisApi";
+import { useQuery } from "@tanstack/react-query";
+import { buildExcelFilename } from "@/lib/utils";
 
 function DevisList() {
-  const [refreshKey, setRefreshKey] = useState(0);
+  // const [refreshKey, setRefreshKey] = useState(0);
 
-  const refresh = () => {
-    setRefreshKey((prev) => prev + 1);
-  };
+  // const refresh = () => {
+  //   setRefreshKey((prev) => prev + 1);
+  // };
+
+  const [filters, setFilters] = useState({});
+
+  const {
+    data: devis = [],
+    isLoading,
+    isFetching,
+    refetch,
+  } = useQuery({
+    queryKey: ["devis", filters],
+    queryFn: () => fetchDevis1(filters),
+    staleTime: 1000 * 60 * 5, // 5 min (DATA considérée "fraîche")
+    gcTime: 1000 * 60 * 30, // 30 min (cache gardé en mémoire)
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
   return (
     <div className="p-4 w-full min-h-screen ">
@@ -19,8 +42,24 @@ function DevisList() {
           description="Liste des articles pour le back-office."
           action={<ArticleFormDialog onCreated={refresh} />}
         /> */}
-
-        <DevisTable refreshKey={refreshKey} onRefresh={refresh} />
+        <CollapsibleFilter
+          fields={fields} // this is an exemple
+          onSearch={(values) => {
+            setFilters(values);
+            toast.success("Search submitted: " + JSON.stringify(values));
+          }}
+          onReset={() => setFilters({})}
+        />
+        <ExcelDownloadButton
+          data={devis}
+          filename={buildExcelFilename(filters, fields)}
+        ></ExcelDownloadButton>
+        <DevisTable
+          // refreshKey={refreshKey}
+          // onRefresh={refresh}
+          devis={devis}
+          loading={isLoading || isFetching}
+        />
       </div>
     </div>
   );

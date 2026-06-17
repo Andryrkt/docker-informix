@@ -7,6 +7,7 @@ import { AnonymousOnly } from "../auth/guard/AnonymousOnly";
 import AppLayouts from "../layout/AppLayout";
 import Login from "../domains/authentification/pages/Login";
 import DevisList from "@/domains/devis/pages/DevisList";
+import HomePage from "@/domains/home/page/HomePage";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -22,6 +23,10 @@ function AppRoutes() {
       children: [
         {
           path: "/",
+          element: <HomePage />,
+        },
+        {
+          path: "/login",
           element: <Login />,
         },
       ],

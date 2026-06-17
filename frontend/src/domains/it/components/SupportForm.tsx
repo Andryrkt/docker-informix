@@ -66,7 +66,6 @@ export default function SupportForm() {
         id="demande-support-rform"
         onSubmit={(e) => {
           e.preventDefault();
-          e.stopPropagation();
           form.handleSubmit();
         }}
         className="space-y-6 border p-4"
@@ -96,6 +95,7 @@ export default function SupportForm() {
                             ...config,
                             value: field.state.value,
                             onChange: field.handleChange,
+                            onBlur: field.handleBlur,
                           }}
                         />
 

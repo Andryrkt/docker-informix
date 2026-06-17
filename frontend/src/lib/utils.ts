@@ -5,6 +5,22 @@ import { twMerge } from "tailwind-merge";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+export async function formatErrorMessage(
+  error: any,
+  fallback = "Une erreur est survenue.",
+) {
+  try {
+    if (error?.response?.data instanceof Blob) {
+      const text = await error.response.data.text();
+      const json = JSON.parse(text);
+      return json.message || fallback;
+    }
+    return error?.response?.data?.message || error?.message || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export function buildExcelFilename(
   filters: Record<string, any>,
   fields: FilterField[],

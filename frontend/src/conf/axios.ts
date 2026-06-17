@@ -5,7 +5,7 @@ import axios, {
 } from "axios";
 
 const BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api";
 const CSRF_URL =
   import.meta.env.VITE_API_CSRF_URL ||
   `http://localhost:8000/sanctum/csrf-cookie`;
@@ -23,13 +23,13 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     // 🔐 Appelle CSRF-cookie si nécessaire
-    if (config.method !== "get") {
-      await axios.get(CSRF_URL, {
-        withCredentials: true,
-        withXSRFToken: true,
-        timeout: 80000,
-      });
-    }
+    // if (config.method !== "get") {
+    //   await axios.get(CSRF_URL, {
+    //     withCredentials: true,
+    //     withXSRFToken: true,
+    //     timeout: 80000,
+    //   });
+    // }
 
     // 📦 Détection automatique du FormData pour multipart
     if (

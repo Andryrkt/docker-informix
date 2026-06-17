@@ -36,11 +36,11 @@ export default function CollapsibleFilter({
     <Collapsible
       open={open}
       onOpenChange={setOpen}
-      className="m-auto max-w-7xl border"
+      className="m-auto max-w-7xl border rounded-sm"
     >
       {/* HEADER */}
       <CollapsibleTrigger asChild>
-        <div className="flex cursor-pointer items-center justify-between  bg-amber-400 px-6 py-4 select-none">
+        <div className="flex cursor-pointer items-center justify-between  bg-amber-400 px-6 py-4 select-none rounded-t-sm ">
           <h3 className="font-medium">{title}</h3>
 
           <ChevronDownIcon
@@ -51,7 +51,7 @@ export default function CollapsibleFilter({
         </div>
       </CollapsibleTrigger>
 
-      <CollapsibleContent className="px-6 py-2">
+      <CollapsibleContent className="px-6 py-2  CollapsibleContent">
         <form
           onSubmit={(e) => {
             e.preventDefault();

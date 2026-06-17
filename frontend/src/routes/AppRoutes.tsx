@@ -1,13 +1,13 @@
 // import { lazy } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
 
-import DevisPage from "../domains/devis/pages/DevisPage";
 import ErrorPage from "../error/ErrorPage";
 import { AnonymousOnly } from "../auth/guard/AnonymousOnly";
 import AppLayouts from "../layout/AppLayout";
 import Login from "../domains/authentification/pages/Login";
 import DevisList from "@/domains/devis/pages/DevisList";
 import HomePage from "@/domains/home/page/HomePage";
+import DemandeSupportIT from "@/domains/it/page/DemandeSupportIT";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -50,6 +50,10 @@ function AppRoutes() {
         {
           path: "/magasin/dematerialisation/liste-devis-neg",
           element: <DevisList />,
+        },
+        {
+          path: "/it/demande-support-informatique",
+          element: <DemandeSupportIT />,
         },
       ],
     },

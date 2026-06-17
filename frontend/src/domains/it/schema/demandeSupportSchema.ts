@@ -15,11 +15,11 @@ export const supportFormSchema = z.object({
   // Section Autre Info
   categorie: z.string().min(1, "Veuillez choisir une catégorie"),
   dateFinSouhaite: z.string().min(1, "La date souhaitée est requise"),
-  parcInformatique: z.string(),
+  parcInformatique: z.string().min(1),
   codeSociete: z.string().min(1, "Le code société est requis"),
 
   // Section Pièces Jointes
-  pieceJoints: z.custom<FileList>(),
+  pieceJointes: z.any(),
 });
 
 export type SupportFormValues = z.infer<typeof supportFormSchema>;

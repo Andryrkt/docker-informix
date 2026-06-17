@@ -1,19 +1,7 @@
 import { useForm } from "@tanstack/react-form";
-
 // Shadcn UI Components
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { supportFormSchema } from "../schema/demandeSupport";
+import { supportFormSchema } from "../schema/demandeSupportSchema";
 import {
   Field,
   FieldError,
@@ -21,7 +9,14 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Separator } from "@/components/ui/separator";
-import { FilterFieldRenderer } from "@/components/common/filter/FilterFieldRenderer";
+import {
+  agenceServiceFields,
+  dateCategorieFields,
+  demandeFields,
+  parcSocieteFields,
+  pieceJointeFields,
+} from "../schema/field";
+import { FieldRenderer } from "@/components/common/renderer/FieldRenderer";
 
 export default function SupportForm() {
   const form = useForm({
@@ -36,26 +31,34 @@ export default function SupportForm() {
       dateFinSouhaite: "",
       parcInformatique: "",
       codeSociete: "",
-      pieceJoints: "",
+      pieceJointes: [],
     },
     validators: {
       onBlur: supportFormSchema,
       onSubmit: supportFormSchema,
     },
     onSubmit: async ({ value }) => {
-      // Handle form submission logic here
       console.log("Submitted Form Data:", value);
     },
   });
 
+  const debiteurFields = agenceServiceFields.filter((field) =>
+    ["agenceDebiteur", "serviceDebiteur"].includes(field.name),
+  );
+
+  const emetteurFields = agenceServiceFields.filter((field) =>
+    ["agenceEmetteur", "serviceEmmetteur"].includes(field.name),
+  );
+
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
+    <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
       <div className="flex flex-col space-y-2">
         <h1 className="text-2xl font-bold text-brand-dark tracking-tight">
           Demande de Support
         </h1>
         <p className="text-sm text-muted-foreground">
-          Remplissez les informations ci-dessous pour soumettre votre ticket.
+          Remplissez les informations ci-dessous pour soumettre votre demande de
+          support.
         </p>
       </div>
 
@@ -76,196 +79,102 @@ export default function SupportForm() {
               <h3 className="text-base font-semibold">Demande</h3>
             </div>
             <div className="space-y-4 ">
-              {/* Objet */}
-              <FieldGroup>
-                <form.Field
-                  name="object"
-                  children={(field) => {
+              {demandeFields.map((config) => (
+                <form.Field key={config.name} name={config.name as never}>
+                  {(field) => {
                     const isInvalid =
                       field.state.meta.isTouched && !field.state.meta.isValid;
-                    return (
-                      <Field data-invalid={isInvalid}>
-                        <FieldLabel htmlFor={field.name}>Object *</FieldLabel>
-                        <Input
-                          id={field.name}
-                          name={field.name}
-                          value={field.state.value}
-                          onBlur={field.handleBlur}
-                          onChange={(e) => field.handleChange(e.target.value)}
-                          aria-invalid={isInvalid}
-                          placeholder=""
-                          autoComplete="off"
-                        />
-                        {isInvalid && (
-                          <FieldError errors={field.state.meta.errors} />
-                        )}
-                      </Field>
-                    );
-                  }}
-                ></form.Field>
-              </FieldGroup>
 
-              {/* Detail */}
-              <FieldGroup>
-                <form.Field
-                  name="details"
-                  children={(field) => {
-                    const isInvalid =
-                      field.state.meta.isTouched && !field.state.meta.isValid;
                     return (
                       <Field data-invalid={isInvalid}>
-                        <FieldLabel htmlFor={field.name}>Detail *</FieldLabel>
-                        <Input
-                          id={field.name}
-                          name={field.name}
-                          value={field.state.value}
-                          onBlur={field.handleBlur}
-                          onChange={(e) => field.handleChange(e.target.value)}
-                          aria-invalid={isInvalid}
-                          placeholder=""
-                          autoComplete="off"
+                        <FieldLabel htmlFor={field.name}>
+                          {config.label}
+                        </FieldLabel>
+
+                        <FieldRenderer
+                          field={{
+                            ...config,
+                            value: field.state.value,
+                            onChange: field.handleChange,
+                          }}
                         />
+
                         {isInvalid && (
                           <FieldError errors={field.state.meta.errors} />
                         )}
                       </Field>
                     );
                   }}
-                ></form.Field>
-              </FieldGroup>
+                </form.Field>
+              ))}
             </div>
           </div>
 
+          {/* Section Agence et Service*/}
           <div className="border-none">
             <div className="pb-3 ">
               <h3 className="text-base font-semibold">Agence et service</h3>
             </div>
             <div className="space-y-4 flex gap-4  ">
               <div className="flex flex-col gap-4 w-full">
-                {/* Agence debiteur */}
-                <FieldGroup>
-                  <form.Field
-                    name="agenceDebiteur"
-                    children={(field) => {
+                {debiteurFields.map((config) => (
+                  <form.Field key={config.name} name={config.name as never}>
+                    {(field) => {
                       const isInvalid =
                         field.state.meta.isTouched && !field.state.meta.isValid;
-                      return (
-                        <Field data-invalid={isInvalid}>
-                          <FieldLabel htmlFor={field.name}>
-                            Agence debitteur *
-                          </FieldLabel>
-                          <Input
-                            id={field.name}
-                            name={field.name}
-                            value={field.state.value}
-                            onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            aria-invalid={isInvalid}
-                            placeholder=""
-                            autoComplete="off"
-                          />
-                          {isInvalid && (
-                            <FieldError errors={field.state.meta.errors} />
-                          )}
-                        </Field>
-                      );
-                    }}
-                  ></form.Field>
-                </FieldGroup>
 
-                {/* Service debiteur */}
-                <FieldGroup>
-                  <form.Field
-                    name="agenceDebiteurText"
-                    children={(field) => {
-                      const isInvalid =
-                        field.state.meta.isTouched && !field.state.meta.isValid;
                       return (
                         <Field data-invalid={isInvalid}>
                           <FieldLabel htmlFor={field.name}>
-                            Service Debitteur *
+                            {config.label}
                           </FieldLabel>
-                          <Input
-                            id={field.name}
-                            name={field.name}
-                            value={field.state.value}
-                            onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            aria-invalid={isInvalid}
-                            placeholder=""
-                            autoComplete="off"
+
+                          <FieldRenderer
+                            field={{
+                              ...config,
+                              value: field.state.value,
+                              onChange: field.handleChange,
+                            }}
                           />
+
                           {isInvalid && (
                             <FieldError errors={field.state.meta.errors} />
                           )}
                         </Field>
                       );
                     }}
-                  ></form.Field>
-                </FieldGroup>
+                  </form.Field>
+                ))}
               </div>
               <div className="flex flex-col gap-4 w-full">
-                {/* Agence emmetteur */}
-                <FieldGroup>
-                  <form.Field
-                    name="agenceEmmetteur"
-                    children={(field) => {
+                {emetteurFields.map((config) => (
+                  <form.Field key={config.name} name={config.name as never}>
+                    {(field) => {
                       const isInvalid =
                         field.state.meta.isTouched && !field.state.meta.isValid;
-                      return (
-                        <Field data-invalid={isInvalid}>
-                          <FieldLabel htmlFor={field.name}>
-                            Agence Emmetteur *
-                          </FieldLabel>
-                          <Input
-                            id={field.name}
-                            name={field.name}
-                            value={field.state.value}
-                            onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            aria-invalid={isInvalid}
-                            placeholder=""
-                            autoComplete="off"
-                          />
-                          {isInvalid && (
-                            <FieldError errors={field.state.meta.errors} />
-                          )}
-                        </Field>
-                      );
-                    }}
-                  ></form.Field>
-                </FieldGroup>
 
-                {/* Service emmetteur */}
-                <FieldGroup>
-                  <form.Field
-                    name="serviceEmmetteur"
-                    children={(field) => {
-                      const isInvalid =
-                        field.state.meta.isTouched && !field.state.meta.isValid;
                       return (
                         <Field data-invalid={isInvalid}>
                           <FieldLabel htmlFor={field.name}>
-                            Service Emmetteur *
+                            {config.label}
                           </FieldLabel>
-                          <Input
-                            id={field.name}
-                            name={field.name}
-                            value={field.state.value}
-                            onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            aria-invalid={isInvalid}
-                            placeholder=""
-                            autoComplete="off"
+
+                          <FieldRenderer
+                            field={{
+                              ...config,
+                              value: field.state.value,
+                              onChange: field.handleChange,
+                            }}
                           />
+
                           {isInvalid && (
                             <FieldError errors={field.state.meta.errors} />
                           )}
                         </Field>
                       );
                     }}
-                  ></form.Field>
-                </FieldGroup>
+                  </form.Field>
+                ))}
               </div>
             </div>
           </div>
@@ -274,153 +183,119 @@ export default function SupportForm() {
         {/* ROW 2: Section Autre informations et Piece Joints (Side by Side) */}
         <div className="grid gid-cols-1 md:grid-cols-2 gap-6">
           {/* Section Autre informations */}
-
           <div className="border-none">
             <div className="pb-3 ">
               <h3 className="text-base font-semibold">Autres informations</h3>
             </div>
             <div className="space-y-4 flex gap-4  ">
               <div className="flex flex-col gap-4 w-full">
-                {/* Categorie */}
-                <FieldGroup>
-                  <form.Field name="agenceDebiteur">
-                    {(field) => (
-                      <div className="space-y-1">
-                        <label className="text-xs">{field.name}</label>
-                        <FilterFieldRenderer
-                          field={{
-                            ...field,
-                            value: field.state.value,
-                            onChange: field.handleChange,
-                          }}
-                        />
-                      </div>
-                    )}
-                  </form.Field>
-                </FieldGroup>
-
-                {/* Date fin souhaitéé */}
-                <FieldGroup>
-                  <form.Field
-                    name="agenceDebiteurText"
-                    children={(field) => {
+                {dateCategorieFields.map((config) => (
+                  <form.Field key={config.name} name={config.name as never}>
+                    {(field) => {
                       const isInvalid =
                         field.state.meta.isTouched && !field.state.meta.isValid;
+
                       return (
                         <Field data-invalid={isInvalid}>
                           <FieldLabel htmlFor={field.name}>
-                            Date fin souhaitéé *
+                            {config.label}
                           </FieldLabel>
-                          <Input
-                            id={field.name}
-                            name={field.name}
-                            value={field.state.value}
-                            onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            aria-invalid={isInvalid}
-                            placeholder=""
-                            autoComplete="off"
+
+                          <FieldRenderer
+                            field={{
+                              ...config,
+                              value: field.state.value,
+                              onChange: field.handleChange,
+                            }}
                           />
+
                           {isInvalid && (
                             <FieldError errors={field.state.meta.errors} />
                           )}
                         </Field>
                       );
                     }}
-                  ></form.Field>
-                </FieldGroup>
+                  </form.Field>
+                ))}
               </div>
               <div className="flex flex-col gap-4 w-full">
-                {/* Parc informatique */}
-                <FieldGroup>
-                  <form.Field
-                    name="agenceEmmetteur"
-                    children={(field) => {
+                {parcSocieteFields.map((config) => (
+                  <form.Field key={config.name} name={config.name as never}>
+                    {(field) => {
                       const isInvalid =
                         field.state.meta.isTouched && !field.state.meta.isValid;
-                      return (
-                        <Field data-invalid={isInvalid}>
-                          <FieldLabel htmlFor={field.name}>
-                            Parc informatique *
-                          </FieldLabel>
-                          <Input
-                            id={field.name}
-                            name={field.name}
-                            value={field.state.value}
-                            onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            aria-invalid={isInvalid}
-                            placeholder=""
-                            autoComplete="off"
-                          />
-                          {isInvalid && (
-                            <FieldError errors={field.state.meta.errors} />
-                          )}
-                        </Field>
-                      );
-                    }}
-                  ></form.Field>
-                </FieldGroup>
 
-                {/* Code societé */}
-                <FieldGroup>
-                  <form.Field
-                    name="serviceEmmetteur"
-                    children={(field) => {
-                      const isInvalid =
-                        field.state.meta.isTouched && !field.state.meta.isValid;
                       return (
                         <Field data-invalid={isInvalid}>
                           <FieldLabel htmlFor={field.name}>
-                            Code societé *
+                            {config.label}
                           </FieldLabel>
-                          <Input
-                            id={field.name}
-                            name={field.name}
-                            value={field.state.value}
-                            onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            aria-invalid={isInvalid}
-                            placeholder=""
-                            autoComplete="off"
+
+                          <FieldRenderer
+                            field={{
+                              ...config,
+                              value: field.state.value,
+                              onChange: field.handleChange,
+                            }}
                           />
+
                           {isInvalid && (
                             <FieldError errors={field.state.meta.errors} />
                           )}
                         </Field>
                       );
                     }}
-                  ></form.Field>
-                </FieldGroup>
+                  </form.Field>
+                ))}
               </div>
             </div>
           </div>
 
+          {/* Section Piece Joints */}
           <div className="border-none">
             <div className="pb-3 ">
               <h3 className="text-base font-semibold">Piece jointes</h3>
+            </div>
+            <div className="space-y-4 flex gap-4  ">
+              <div className="flex flex-col gap-4 w-full">
+                {pieceJointeFields.map((config) => (
+                  <form.Field key={config.name} name={config.name as never}>
+                    {(field) => {
+                      const isInvalid =
+                        field.state.meta.isTouched && !field.state.meta.isValid;
+
+                      return (
+                        <Field data-invalid={isInvalid}>
+                          <FieldLabel htmlFor={field.name}>
+                            {config.label}
+                          </FieldLabel>
+
+                          {/* Le FieldRenderer reçoit la valeur et le onChange adaptés */}
+                          <FieldRenderer
+                            field={{
+                              ...config,
+                              value: field.state.value,
+                              onChange: field.handleChange,
+                            }}
+                          />
+
+                          {isInvalid && (
+                            <FieldError errors={field.state.meta.errors} />
+                          )}
+                        </Field>
+                      );
+                    }}
+                  </form.Field>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
         {/* Submit Buttons */}
-        <div className="flex items-center justify-end gap-3 pt-2">
-          <Button type="button" variant="outline" onClick={() => form.reset()}>
-            Réinitialiser
-          </Button>
-          <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting]}
-            children={([canSubmit, isSubmitting]) => (
-              <Button
-                type="submit"
-                disabled={!canSubmit}
-                className="bg-brand-dark hover:bg-brand-dark/90 text-white"
-              >
-                {isSubmitting ? "Envoi en cours..." : "Soumettre la demande"}
-              </Button>
-            )}
-          />
-        </div>
+        <FieldGroup className="mt-6">
+          <Button type="submit">Envoyer</Button>
+        </FieldGroup>
       </form>
     </div>
   );

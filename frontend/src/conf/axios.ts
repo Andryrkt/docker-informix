@@ -12,9 +12,6 @@ const CSRF_URL =
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
-  withCredentials: true,
-  withXSRFToken: true,
-  timeout: 60000,
   headers: {
     Accept: "application/json",
   },

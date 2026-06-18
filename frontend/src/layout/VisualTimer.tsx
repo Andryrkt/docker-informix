@@ -1,16 +1,15 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
+import { useState, useEffect, useCallback } from "react";
 
-const SvgVisualTimer = () => {
-  const totalTime = 900; // 15 minutes in seconds
+const VisualTimer = () => {
+  const { logout } = useAuth();
+  const totalTime = 100; // 15 minutes in seconds
   const [timeLeft, setTimeLeft] = useState(totalTime);
 
-  // Wrap reset in useCallback to prevent infinite event listener attaches
   const resetTimer = useCallback(() => {
     setTimeLeft(totalTime);
   }, [totalTime]);
 
-  // Handle User Activity Listeners
   useEffect(() => {
     const events = [
       "mousemove",
@@ -33,9 +32,7 @@ const SvgVisualTimer = () => {
   // Handle Countdown Interval and Toast Trigger
   useEffect(() => {
     if (timeLeft <= 0) {
-      toast.error("Delais expires", {
-        position: "top-center",
-      });
+      logout();
       return;
     }
 
@@ -44,9 +41,10 @@ const SvgVisualTimer = () => {
     }, 1000);
 
     return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft]);
 
-  const formatTime = (time) => {
+  const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = time % 60;
     return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
@@ -110,4 +108,4 @@ const SvgVisualTimer = () => {
   );
 };
 
-export default SvgVisualTimer;
+export default VisualTimer;

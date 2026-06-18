@@ -2,21 +2,30 @@ import axiosInstance from "@/conf/axios";
 import { toast } from "sonner";
 import type { LoginCredentials } from "../schema/loginSchema";
 
-// export const getProfile = async () => {
-//   const res = await axiosInstance.get("/user");
-//   return res.data;
-// };
+export interface LoginResponse {
+  token: string; // Le jeton d'accès (Access Token)
+  refresh_token?: string; // Le jeton de rafraîchissement
+}
 
-export const login = async (credentials: LoginCredentials) => {
-  await axiosInstance.post("/login", credentials);
+export const getProfile = async () => {
+  const res = await axiosInstance.get("/me");
+  return res.data;
+};
+
+export const login = async (
+  credentials: LoginCredentials,
+): Promise<LoginResponse> => {
+  const response = await axiosInstance.post<LoginResponse>("/login", {
+    username: credentials.username,
+    password: credentials.password,
+  });
+
+  return response.data;
 };
 
 export const logout = async () => {
-  try {
-    await axiosInstance.post("/auth/logout", {}, { withCredentials: true });
-  } catch (error) {
-    // toast.error(formatErrorMessage(error));
-  }
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
 };
 
 export const forgotPassword = async (email: string) => {

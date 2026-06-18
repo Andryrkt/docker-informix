@@ -16,7 +16,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import SvgVisualTimer from "@/layout/SvgVisualTimer";
+import { useAuth } from "@/context/AuthContext";
+import VisualTimer from "@/layout/VisualTimer";
 import {
   ChevronDown,
   Info,
@@ -29,6 +30,7 @@ import {
   User2Icon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useConfirm } from "../ConfirmDialog";
 
 type HeaderProps = {
   logoSrc: string;
@@ -36,10 +38,23 @@ type HeaderProps = {
 };
 
 function Header({ logoSrc, userName }: HeaderProps) {
-  const loading = false; // Replace with actual loading state from context or props
-  //   const { loading } = useAuth();
+  const { loading, user, logout } = useAuth();
+  const baseUrl = import.meta.env.VITE_APP_BASE || "/";
+  const confirm = useConfirm();
 
-  // 👉 Render skeleton while loading
+  const handleLogout = async () => {
+    const confirmed = await confirm({
+      title: "Confirmer la déconnexion ?",
+      description: "Êtes-vous sûr de vouloir vous déconnecter ?",
+      confirmText: "Se déconnecter",
+      cancelText: "Annuler",
+      variant: "info",
+    });
+    if (!confirmed) return;
+    logout();
+  };
+
+  // Render skeleton while loading
   if (loading) {
     return (
       <div className="w-full flex items-center justify-between px-8 py-2 bg-brand-dark  shadow-md sticky top-0 z-9998">
@@ -54,7 +69,6 @@ function Header({ logoSrc, userName }: HeaderProps) {
     );
   }
 
-  const baseUrl = import.meta.env.VITE_APP_BASE || "/";
   // 👉 Fallback for public users
   return (
     <nav className="w-full flex items-center justify-between px-4 lg:px-8 py-2 bg-brand-dark text-white sticky top-0 z-50">
@@ -66,7 +80,7 @@ function Header({ logoSrc, userName }: HeaderProps) {
           >
             <img src={logoSrc} alt="HFF-logo" className="h-10 object-contain" />
           </a>
-          <SvgVisualTimer />
+          <VisualTimer />
         </div>
 
         <div className="flex items-center gap-4">
@@ -121,7 +135,7 @@ function Header({ logoSrc, userName }: HeaderProps) {
                 >
                   <User2Icon className="h-5 w-5" />
                   <span className="text-[0.65rem]  truncate text-left font-medium lg:block hidden">
-                    {userName}
+                    {user?.displayName}
                   </span>
                   <ChevronDown className="h-3 w-3 shrink-0 opacity-70 transition-transform duration-200 group-data-[state=open]:rotate-180" />
                 </Button>
@@ -157,7 +171,7 @@ function Header({ logoSrc, userName }: HeaderProps) {
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
-                  onClick={() => alert("Logging out...")}
+                  onClick={handleLogout}
                   className="text-red-500 cursor-pointer"
                 >
                   <LogOut className="mr-2 h-4 w-4" />

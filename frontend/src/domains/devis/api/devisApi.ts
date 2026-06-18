@@ -32,18 +32,10 @@ export interface DevisParams {
   limit?: number;
 }
 
-const apiClient = axios.create({
-  baseURL: "/api",
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  },
-});
-
 export const fetchDevis1 = async (
   params: DevisParams = {},
 ): Promise<Devis[]> => {
-  const response = await apiClient.get<Devis[]>("/devis", { params });
+  const response = await axiosInstance.get<Devis[]>("/devis", { params });
   return response.data;
 };
 

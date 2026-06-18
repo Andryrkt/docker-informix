@@ -28,8 +28,8 @@ function DevisList() {
   } = useQuery({
     queryKey: ["devis", filters],
     queryFn: () => fetchDevis1(filters),
-    staleTime: 1000 * 60 * 5, // 5 min (DATA considérée "fraîche")
-    gcTime: 1000 * 60 * 30, // 30 min (cache gardé en mémoire)
+    staleTime: 50 * 60 * 1000,
+    gcTime: 50 * 60 * 1000,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
@@ -53,6 +53,7 @@ function DevisList() {
           data={devis}
           filename={buildExcelFilename(filters, fields)}
         ></ExcelDownloadButton>
+
         <DevisTable
           // refreshKey={refreshKey}
           // onRefresh={refresh}

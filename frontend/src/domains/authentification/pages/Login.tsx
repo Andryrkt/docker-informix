@@ -2,7 +2,6 @@ import { useForm } from "@tanstack/react-form";
 
 import { useState } from "react";
 import { Eye, EyeOff, InfoIcon } from "lucide-react";
-import { toast } from "sonner";
 import {
   FieldError,
   FieldGroup,
@@ -12,11 +11,15 @@ import {
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { loginSchema } from "../schema/loginSchema";
-import { login } from "../api/authApi";
 import LogoHff from "@/assets/logoHFF.jpg";
 import { formatErrorMessage } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
   const [errors, setErrors] = useState<string[]>([]);
   const form = useForm({
     defaultValues: {
@@ -31,6 +34,7 @@ function Login() {
       setErrors([]);
       try {
         await login(value);
+        navigate("/");
       } catch (error: any) {
         const message = await formatErrorMessage(
           error,

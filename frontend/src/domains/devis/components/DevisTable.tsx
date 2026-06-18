@@ -14,9 +14,10 @@ import DotsMenu from "./Dots.Menu";
 import { MoreVerticalIcon } from "lucide-react";
 import { formatMontant, getStatusClass } from "@/helper/helper";
 import { cn } from "@/lib/utils";
+import { DevisTableSkeleton } from "./DevisTableSkeleton";
 
 function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
-  if (loading) return <div className="py-4">Chargement...</div>;
+  if (loading) return <DevisTableSkeleton></DevisTableSkeleton>;
   return (
     <div className="  w-full overflow-x-auto py-4 ">
       <Table className=" text-white min-w-max  text-xs  ">

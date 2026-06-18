@@ -15,8 +15,10 @@ const axiosInstance = axios.create({
 });
 
 let isRefreshing = false;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let failedQueue: any[] = [];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const processQueue = (error: any) => {
   failedQueue.forEach((prom) => {
     if (error) {

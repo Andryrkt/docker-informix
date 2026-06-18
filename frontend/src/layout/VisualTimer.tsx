@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 
 const VisualTimer = () => {
   const { logout } = useAuth();
-  const totalTime = 100; // 15 minutes in seconds
+  const totalTime = import.meta.env.VITE_TIMER_SESSION || 900; // 15 minutes in seconds default
   const [timeLeft, setTimeLeft] = useState(totalTime);
 
   const resetTimer = useCallback(() => {
@@ -37,7 +37,7 @@ const VisualTimer = () => {
     }
 
     const timer = setInterval(() => {
-      setTimeLeft((prevTime) => prevTime - 1);
+      setTimeLeft((prevTime: number) => prevTime - 1);
     }, 1000);
 
     return () => clearInterval(timer);

@@ -1,13 +1,8 @@
 import type { LoginCredentials } from "@/domains/authentification/schema/loginSchema";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, type ReactNode } from "react";
 
 import * as authApi from "@/domains/authentification/api/authApi";
+import { useProfile } from "@/domains/authentification/hook/useProfile";
 
 interface User {
   displayName: string;
@@ -38,43 +33,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const token = localStorage.getItem("access_token");
-
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const mockUser: User = {
-          id: 1,
-          displayName: "Lanto Rakoto",
-          username: "lanto",
-          email: "lanto.rakoto@example.com",
-          roles: ["ROLE_USER"],
-        };
-
-        setUser(mockUser);
-        // const profile = await authApi.getProfile();
-        // setUser(profile);
-      } catch (error) {
-        console.error("Impossible de récupérer le profil :", error);
-        // En cas d'échec critique, on nettoie par sécurité
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
+  const { data: user, isLoading, refetch } = useProfile();
 
   // Login
   const login = async (credentials: LoginCredentials) => {
@@ -84,34 +43,24 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (response.refresh_token) {
       localStorage.setItem("refresh_token", response.refresh_token);
     }
-    // const profile = await authApi.getProfile();
-    const mockUser: User = {
-      id: 1,
-      displayName: "Lanto Rakoto",
-      username: "lanto",
-      email: "lanto.rakoto@example.com",
-      roles: ["ROLE_USER"],
-    };
-
-    setUser(mockUser);
+    await refetch();
   };
 
   // Logout
   const logout = async () => {
     try {
       await authApi.logout();
-    } catch (error) {
-      console.error("Erreur lors de la déconnexion côté API :", error);
     } finally {
-      // Quoi qu'il arrive, on nettoie le côté client
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
-      setUser(null);
+
+      // 🧹 clear query cache
+      await refetch();
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, loading: isLoading }}>
       {children}
     </AuthContext.Provider>
   );

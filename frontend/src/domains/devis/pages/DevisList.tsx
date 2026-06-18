@@ -37,10 +37,10 @@ function DevisList() {
   return (
     <div className="p-4 w-full min-h-screen ">
       <div className=" w-full h-full space-y-6 overflow-x-auto">
-        <PageHeader
+        {/* <PageHeader
           title="Liste des devis"
           description="Voici la liste des devis."
-        />
+        /> */}
         <CollapsibleFilter
           fields={fields} // this is an exemple
           onSearch={(values) => {

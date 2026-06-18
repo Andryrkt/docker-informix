@@ -53,3 +53,4 @@ sequenceDiagram
     Backend->>Backend: Générer JWT
     Backend-->>Frontend: JWT + user info
     Frontend->>User: Connexion réussie
+```

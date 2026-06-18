@@ -78,7 +78,8 @@ class LdapAuthenticator extends AbstractAuthenticator
 
         // ── 3. Bind utilisateur → valide le mot de passe ───────────────────────
         try {
-            $this->ldap->bind($username . '@' . $this->ldapDomain, $password);
+            // Utilisation du DN complet trouvé pour un bind plus précis et rapide
+            $this->ldap->bind($dn, $password);
         } catch (ConnectionException) {
             throw new BadCredentialsException('Nom d\'utilisateur ou mot de passe incorrect.');
         }

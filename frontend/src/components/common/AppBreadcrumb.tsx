@@ -7,15 +7,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { VIGNETTES } from "@/domains/home/schema/vignette";
-
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   HoverCard,
   HoverCardContent,
@@ -24,64 +16,69 @@ import {
 import { useVignetteDialog } from "@/domains/home/components/VignetteModal";
 import { Button } from "../ui/button";
 import { vignetteMock } from "@/domains/home/schema/vignetteMock";
-import { VignetteCard } from "@/domains/home/components/VignetteCard";
+import { formatLabel } from "@/lib/utils";
 
-type Item = {
-  title: string;
-  link?: string;
-  icon?: string;
-  is_active?: boolean;
-};
-
-export function AppBreadcrumb({ items }: { items: Item[] }) {
+export function AppBreadcrumb() {
+  const { pathname } = useLocation();
   const { openDialog, VignetteDialogComponent } = useVignetteDialog();
 
+  const segments = pathname.split("/").filter(Boolean);
+
+  if (pathname === "/") {
+    return;
+  }
+  const breadcrumbs = [
+    {
+      label: "Accueil",
+      href: "/",
+      current: segments.length === 0,
+    },
+    ...segments.map((segment, index) => ({
+      label: formatLabel(segment),
+      href: "/" + segments.slice(0, index + 1).join("/"),
+      current: index === segments.length - 1,
+    })),
+  ];
   return (
     <>
       <Breadcrumb>
         <BreadcrumbList>
-          {items.map((item, index) => {
-            const isLast = item.is_active || index === items.length - 1;
+          {breadcrumbs.map((item, index) => (
+            <div key={item.href} className="flex items-center">
+              {index > 0 && <BreadcrumbSeparator />}
 
-            return (
-              <div key={index} className="flex items-center">
-                {index !== 0 && <BreadcrumbSeparator />}
+              <BreadcrumbItem>
+                {index === 0 ? (
+                  <HoverCard openDelay={100} closeDelay={100}>
+                    <HoverCardTrigger asChild>
+                      <Link to={item.href}>{item.label}</Link>
+                    </HoverCardTrigger>
 
-                <BreadcrumbItem>
-                  {/* 🏠 FIRST BREADCRUMB (Accueil) WITH DROPDOWN */}
-                  {index === 0 ? (
-                    <HoverCard openDelay={100} closeDelay={100}>
-                      <HoverCardTrigger asChild>
-                        <BreadcrumbLink className="font-semibold cursor-pointer">
-                          <Link to={"/"}> {item.title}</Link>
-                        </BreadcrumbLink>
-                      </HoverCardTrigger>
-
-                      <HoverCardContent className="w-56 p-2 ml-6 mt-2">
-                        <div className="flex flex-col gap-1">
-                          {vignetteMock.map((item) => {
-                            const Icon = item.icon;
-
-                            return (
-                              <Button onClick={() => openDialog(item.modal)}>
-                                {item.title}
-                              </Button>
-                            );
-                          })}
-                        </div>
-                      </HoverCardContent>
-                    </HoverCard>
-                  ) : isLast || !item.link ? (
-                    <BreadcrumbPage className="font-semibold">
-                      {item.title}
-                    </BreadcrumbPage>
-                  ) : (
-                    <BreadcrumbPage>{item.title}</BreadcrumbPage>
-                  )}
-                </BreadcrumbItem>
-              </div>
-            );
-          })}
+                    <HoverCardContent className="w-56 p-2 ml-6 mt-2">
+                      <div className="flex flex-col gap-1">
+                        {vignetteMock.map((vignette) => (
+                          <Button
+                            key={vignette.title}
+                            onClick={() => openDialog(vignette.modal)}
+                          >
+                            {vignette.title}
+                          </Button>
+                        ))}
+                      </div>
+                    </HoverCardContent>
+                  </HoverCard>
+                ) : item.current ? (
+                  <BreadcrumbPage className="font-semibold">
+                    {item.label}
+                  </BreadcrumbPage>
+                ) : (
+                  <BreadcrumbLink asChild>
+                    <Link to={item.href}>{item.label}</Link>
+                  </BreadcrumbLink>
+                )}
+              </BreadcrumbItem>
+            </div>
+          ))}
         </BreadcrumbList>
       </Breadcrumb>
       <VignetteDialogComponent />

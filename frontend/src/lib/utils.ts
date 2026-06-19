@@ -48,3 +48,18 @@ export function buildExcelFilename(
 
   return parts.join("_") + ".xlsx";
 }
+
+export const customLabels: Record<string, string> = {
+  "liste-devis-neg": "Devis",
+};
+
+export const formatLabel = (segment: string) => {
+  if (customLabels[segment]) {
+    return customLabels[segment];
+  }
+
+  return segment
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+};

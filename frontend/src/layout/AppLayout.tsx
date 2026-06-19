@@ -6,7 +6,6 @@ import LogoHff from "@/assets/logoHFF.jpg";
 import Footer from "./components/Footer";
 import { useAuth } from "@/context/AuthContext";
 import { AppBreadcrumb } from "@/components/common/AppBreadcrumb";
-import { useBreadcrumbs } from "@/hooks/breadcrumb";
 
 function AppLayouts() {
   const { user } = useAuth();
@@ -20,9 +19,7 @@ function AppLayouts() {
 
   const location = useLocation();
   const routeKey = location.pathname;
-  const { data, isLoading } = useBreadcrumbs(routeKey);
 
-  const items = data ?? [];
   return (
     <div className="flex max-w-screen">
       {/* {user && <AuthSideBar />} */}
@@ -34,9 +31,7 @@ function AppLayouts() {
               userName={"Andrialazantsoa Narindra Hajaina"}
             />
             <div className="px-8 py-6">
-              {!isLoading && items.length > 1 && (
-                <AppBreadcrumb items={items} />
-              )}
+              <AppBreadcrumb />
             </div>
           </>
         )}

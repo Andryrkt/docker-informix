@@ -4,7 +4,6 @@ import {
   AccordionTrigger,
   Accordion,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -28,7 +27,7 @@ type Section = {
   items: Item[];
 };
 
-type ModalData = {
+export type ModalData = {
   title: string;
   description: string;
   icon: React.ElementType;

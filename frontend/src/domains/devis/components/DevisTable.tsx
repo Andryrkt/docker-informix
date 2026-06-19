@@ -1,5 +1,3 @@
-import React, { useEffect, useState } from "react";
-import { fetchDevis1 } from "../api/devisApi";
 import type { Devis } from "../schema/devisSchema";
 import {
   Table,
@@ -9,7 +7,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Checkbox } from "radix-ui";
 import DotsMenu from "./Dots.Menu";
 import { MoreVerticalIcon } from "lucide-react";
 import { formatMontant, getStatusClass } from "@/helper/helper";

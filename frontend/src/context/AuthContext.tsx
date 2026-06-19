@@ -24,8 +24,6 @@ export const AuthContext = createContext<AuthContextType>({
   loading: true,
   login: async () => {},
   logout: async () => {},
-  // forgotPassword: async () => {},
-  // resetPassword: async () => {},
 });
 
 interface AuthProviderProps {
@@ -51,9 +49,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       await authApi.logout();
     } finally {
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
-
       // 🧹 clear query cache
       await refetch();
     }

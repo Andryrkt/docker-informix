@@ -1,38 +1,37 @@
 // import PageHeaderWithAction from "@/layouts/PageHeaderWithAction";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DevisTable from "../components/DevisTable";
 import CollapsibleFilter from "@/components/common/filter/CollapSibleFilter";
 import { toast } from "sonner";
 import { fields } from "@/components/common/filter/schema/filterSchema";
 import { ExcelDownloadButton } from "@/components/common/excel/ExcelDownloadButton";
-import { fetchDevis1 } from "../api/devisApi";
+import { fetchDevis } from "../api/devisApi";
 import { useQuery } from "@tanstack/react-query";
 import { buildExcelFilename } from "@/lib/utils";
-import PageHeader from "@/layout/components/PageHeader";
+import GlobalPagination from "@/components/common/pagination/GlobalPagination";
+import SimpleNextPreviousPagination from "@/components/common/pagination/SimpleNextPreviousPagination";
+import { usePageSearchParams } from "@/hooks/usePageSearchParams";
 
 function DevisList() {
-  // const [refreshKey, setRefreshKey] = useState(0);
-
-  // const refresh = () => {
-  //   setRefreshKey((prev) => prev + 1);
-  // };
-
-  const [filters, setFilters] = useState({});
+  const { currentPage, setPage, selectedFilters, setFilter, reset } =
+    usePageSearchParams(1);
 
   const {
-    data: devis = [],
+    data: devis,
     isLoading,
     isFetching,
-    refetch,
   } = useQuery({
-    queryKey: ["devis", filters],
-    queryFn: () => fetchDevis1(filters),
+    queryKey: ["devis", selectedFilters, currentPage],
+    queryFn: () => fetchDevis(selectedFilters, currentPage),
     staleTime: 50 * 60 * 1000,
     gcTime: 50 * 60 * 1000,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
+
+  const items = devis?.data ?? [];
+  const lastPage = devis?.totalPages ?? 1;
 
   return (
     <div className="p-4 w-full min-h-screen ">
@@ -42,17 +41,34 @@ function DevisList() {
           description="Voici la liste des devis."
         /> */}
         <CollapsibleFilter
-          fields={fields} // this is an exemple
+          fields={fields}
           onSearch={(values) => {
-            setFilters(values);
-            toast.success("Search submitted: " + JSON.stringify(values));
+            Object.entries(values).forEach(([key, value]) => {
+              setFilter(key, String(value ?? ""));
+            });
+
+            toast.success("Recherche effectuée");
           }}
-          onReset={() => setFilters({})}
+          onReset={() => {
+            reset();
+            toast.success("Filtres réinitialisés");
+          }}
         />
         <ExcelDownloadButton
           data={devis}
-          filename={buildExcelFilename(filters, fields)}
+          filename={buildExcelFilename(selectedFilters, fields)}
         ></ExcelDownloadButton>
+
+        {/* Simple pagination */}
+        <div className="p-4 flex">
+          <div className="ml-auto">
+            <SimpleNextPreviousPagination
+              currentPage={currentPage}
+              lastPage={lastPage}
+              onPageChange={setPage}
+            />
+          </div>
+        </div>
 
         <DevisTable
           // refreshKey={refreshKey}
@@ -60,6 +76,15 @@ function DevisList() {
           devis={devis}
           loading={isLoading || isFetching}
         />
+        <div className="p-4 flex">
+          <div className="m-auto">
+            <GlobalPagination
+              currentPage={currentPage}
+              lastPage={lastPage}
+              onPageChange={setPage}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -44,7 +44,7 @@ export default function DevisPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-screen-2xl mx-auto px-6 py-4 flex items-center justify-between">

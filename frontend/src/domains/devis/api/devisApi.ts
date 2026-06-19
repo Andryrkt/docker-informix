@@ -40,21 +40,16 @@ export const fetchDevis1 = async (
 };
 
 export async function fetchDevis(
+  params: DevisParams = {},
   page = 1,
-  perPage = 10,
-  keyword = "",
-  filters: Record<string, string> = {},
 ): Promise<PaginatedResponse<Devis>> {
-  const cleanedFilters = Object.fromEntries(
-    Object.entries(filters).filter(([_, val]) => val && val !== "all"),
+  const cleanedParams = Object.fromEntries(
+    Object.entries(params).filter(([_, val]) => val && val !== "all"),
   );
-
   const response = await axiosInstance.get<PaginatedResponse<Devis>>("/devis", {
     params: {
       page,
-      per_page: perPage,
-      keyword: keyword || undefined,
-      ...cleanedFilters,
+      ...cleanedParams,
     },
   });
 

@@ -41,3 +41,4 @@ services:
         arguments:
             - 'ext_ldap'
             - connection_string: '%env(resolve:LDAP_URL)%'
+              referrals: false

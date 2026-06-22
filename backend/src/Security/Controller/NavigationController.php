@@ -5,7 +5,6 @@ namespace App\Security\Controller;
 use App\Security\AppAction;
 use App\Security\Entity\AppMenu;
 use App\Security\Entity\AppModule;
-use App\Security\Entity\Company;
 use App\Security\Entity\UserPermission;
 use App\Security\Service\SecurityContextService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,7 +24,7 @@ class NavigationController extends AbstractController
     #[OA\Get(
         path: '/api/navigation',
         summary: 'Arbre de navigation filtré',
-        description: 'Retourne les vignettes et menus autorisés pour la société active passée dans le header X-Active-Company-ID.',
+        description: 'Retourne les modules et menus autorisés pour la société active passée dans le header X-Active-Company-ID.',
         parameters: [
             new OA\Parameter(
                 name: 'X-Active-Company-ID',
@@ -71,8 +70,8 @@ class NavigationController extends AbstractController
             ];
         }
 
-        // 3. Construire les vignettes (Modules)
-        $vignettes = [];
+        // 3. Construire les modules (anciennement vignettes)
+        $modulesResult = [];
         $modules = $this->entityManager->getRepository(AppModule::class)->findAll();
         
         foreach ($modules as $module) {
@@ -84,7 +83,7 @@ class NavigationController extends AbstractController
             $moduleData = [
                 'id' => $module->getId(),
                 'nom' => $module->getLabel(),
-                'Module' => [] // Dans ton JSON, "Module" contient les menus
+                'menu' => [] // Renommé de "Module" vers "menu"
             ];
 
             // Menus de premier niveau pour ce module
@@ -99,10 +98,10 @@ class NavigationController extends AbstractController
                     continue;
                 }
 
-                $moduleData['Module'][] = $this->serializeMenu($menu, $permissionsMap);
+                $moduleData['menu'][] = $this->serializeMenu($menu, $permissionsMap);
             }
 
-            $vignettes[] = $moduleData;
+            $modulesResult[] = $moduleData;
         }
 
         // 4. Data Scope (Infos utilisateur)
@@ -113,7 +112,7 @@ class NavigationController extends AbstractController
 
         return $this->json([
             'societes' => array_values($companies),
-            'vignettes' => $vignettes,
+            'modules' => $modulesResult,
             'data_scope' => [
                 'userAgenceId' => $defaultAgency,
                 'userServiceId' => $defaultService
@@ -136,13 +135,13 @@ class NavigationController extends AbstractController
                 'agenceIds' => $perm ? $perm->getAgenceIds() : [],
                 'serviceIds' => $perm ? $perm->getServiceIds() : []
             ],
-            'menu' => [] // Submenus
+            'sous-menu' => [] // Submenus renommé
         ];
 
         foreach ($menu->getSubMenus() as $subMenu) {
             $subPerm = $permissionsMap['menu'][$subMenu->getId()] ?? null;
             if ($subPerm && $subPerm->hasAction(AppAction::VIEW)) {
-                $data['menu'][] = $this->serializeMenu($subMenu, $permissionsMap);
+                $data['sous-menu'][] = $this->serializeMenu($subMenu, $permissionsMap);
             }
         }
 

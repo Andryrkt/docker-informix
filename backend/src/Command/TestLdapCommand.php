@@ -19,13 +19,17 @@ class TestLdapCommand extends Command
     private string $ldapSearchPassword;
     private string $ldapBaseDn;
 
+    private Ldap $ldap;
+
     public function __construct(
+        Ldap $ldap,
         string $ldapUrl,
         string $ldapSearchDn,
         string $ldapSearchPassword,
         string $ldapBaseDn
     ) {
         parent::__construct(self::$defaultName);
+        $this->ldap = $ldap;
         $this->ldapUrl = $ldapUrl;
         $this->ldapSearchDn = $ldapSearchDn;
         $this->ldapSearchPassword = $ldapSearchPassword;
@@ -45,23 +49,25 @@ class TestLdapCommand extends Command
         $username = $input->getArgument('username');
 
         try {
+            $start = microtime(true);
             $io->info(sprintf('Tentative de connexion au serveur LDAP : %s', $this->ldapUrl));
             
-            $ldap = Ldap::create('ext_ldap', [
-                'connection_string' => $this->ldapUrl,
-            ]);
-
             $io->info(sprintf('Bind avec le compte de service : %s', $this->ldapSearchDn));
-            $ldap->bind($this->ldapSearchDn, $this->ldapSearchPassword);
+            $this->ldap->bind($this->ldapSearchDn, $this->ldapSearchPassword);
+            $io->note(sprintf('Temps Bind Service : %.2f s', microtime(true) - $start));
 
+            $startQuery = microtime(true);
             $io->success('Connexion (Bind) réussie !');
 
             $io->info(sprintf('Recherche de l\'utilisateur "%s" dans l\'OU : %s', $username, $this->ldapBaseDn));
             
-            $query = $ldap->query($this->ldapBaseDn, '(sAMAccountName='.$username.')');
+            $query = $this->ldap->query($this->ldapBaseDn, '(sAMAccountName='.ldap_escape($username, '', LDAP_ESCAPE_FILTER).')');
             $results = $query->execute();
+            $io->note(sprintf('Temps Exécution Query : %.2f s', microtime(true) - $startQuery));
             
+            $startToArray = microtime(true);
             $users = $results->toArray();
+            $io->note(sprintf('Temps ToArray (récupération résultats) : %.2f s', microtime(true) - $startToArray));
             
             if (count($users) > 0) {
                 $user = $users[0];

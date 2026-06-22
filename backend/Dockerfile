@@ -4,7 +4,7 @@ ENV INFORMIXDIR=/opt/IBM/Informix_Client-SDK
 ENV PATH=$INFORMIXDIR/bin:$PATH
 ENV LD_LIBRARY_PATH=$INFORMIXDIR/lib:$INFORMIXDIR/lib/cli:$INFORMIXDIR/lib/esql:$LD_LIBRARY_PATH
 ENV INFORMIXSERVER=ol_iriumprod_net
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/backend/public
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
 RUN apt-get update && apt-get install -y \
     wget curl git unzip \
@@ -19,9 +19,10 @@ RUN ln -s /usr/lib/x86_64-linux-gnu/libncurses.so.6 /usr/lib/x86_64-linux-gnu/li
 
 # Installation CSDK
 WORKDIR /tmp
-COPY ibm.csdk.15.0.1.0.Linux.64.x86_64.tar csdk.tar
-COPY response.properties response.properties
+COPY ibm.csdk.15.0.1.0.Linux.64.x86_64.tar ./csdk.tar
+COPY response.properties ./response.properties
 
+# Extraction et Installation avec Debug
 RUN tar -xvf csdk.tar \
     && tar -xvf ibm.csdk.15.0.1.0.Linux.64.x86_64.tar \
     && chmod +x installclientsdk \
@@ -54,15 +55,7 @@ RUN apt-get update && apt-get install -y libldap2-dev \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && docker-php-ext-install ldap
 
-# Configuration Apache + variables permanentes
-RUN echo "export INFORMIXDIR=/opt/IBM/Informix_Client-SDK" >> /etc/apache2/envvars \
-    && echo "export INFORMIXSERVER=ol_iriumprod_net" >> /etc/apache2/envvars \
-    && echo "export LD_LIBRARY_PATH=/opt/IBM/Informix_Client-SDK/lib:/opt/IBM/Informix_Client-SDK/lib/cli:/opt/IBM/Informix_Client-SDK/lib/esql" >> /etc/apache2/envvars
-
-RUN echo "INFORMIXDIR=/opt/IBM/Informix_Client-SDK" > /usr/local/etc/php/conf.d/98-informix.ini \
-    && echo "LD_LIBRARY_PATH=/opt/IBM/Informix_Client-SDK/lib:/opt/IBM/Informix_Client-SDK/lib/cli:/opt/IBM/Informix_Client-SDK/lib/esql" >> /usr/local/etc/php/conf.d/98-informix.ini
-
-# Configuration Symfony
+# Configuration Apache
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
     && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf \
     && a2enmod rewrite
@@ -72,7 +65,7 @@ RUN echo '#!/bin/bash\n\
     export INFORMIXDIR=/opt/IBM/Informix_Client-SDK\n\
     export INFORMIXSERVER=ol_iriumprod_net\n\
     export LD_LIBRARY_PATH=/opt/IBM/Informix_Client-SDK/lib:/opt/IBM/Informix_Client-SDK/lib/cli:/opt/IBM/Informix_Client-SDK/lib/esql\n\
-    exec php /var/www/html/backend/bin/console "$@"' > /usr/local/bin/symfony-console \
+    exec php /var/www/html/bin/console "$@"' > /usr/local/bin/symfony-console \
     && chmod +x /usr/local/bin/symfony-console
 
 RUN mkdir -p /opt/IBM/Informix_Client-SDK/etc && \

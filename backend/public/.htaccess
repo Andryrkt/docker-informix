@@ -2,6 +2,9 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # Forcer la lecture du header Authorization pour Apache/FastCGI
+    SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
     # Déterminer le sous-répertoire de base (si ce n'est pas la racine)
     RewriteCond %{REQUEST_URI}::$1 ^(/.+)/(.*)::\2$
     RewriteRule ^(.*) - [E=BASE:%1]

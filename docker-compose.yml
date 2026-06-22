@@ -1,17 +1,49 @@
-version: "3.8"
-
 services:
-  php-informix:
-    build: .
-    container_name: php_informix
+  # --- BACKEND (PHP / Informix / SQL Server) ---
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: hff_backend
     ports:
       - "8080:80"
     volumes:
-      - .:/var/www/html
+      - ./backend:/var/www/html
+      # Optimisation cache pour Windows
+      - ./backend/var/cache:/var/www/html/var/cache:delegated
     extra_hosts:
       - "ol_iriumprod_net:192.168.0.11"
     environment:
       - INFORMIXDIR=/opt/IBM/Informix_Client-SDK
       - INFORMIXSERVER=ol_iriumprod_net
       - LD_LIBRARY_PATH=/opt/IBM/Informix_Client-SDK/lib:/opt/IBM/Informix_Client-SDK/lib/cli:/opt/IBM/Informix_Client-SDK/lib/esql
+    restart: unless-stopped
+
+  # --- FRONTEND (React / Vite) ---
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile-dev
+    container_name: hff_frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      # On ne synchronise pas node_modules pour de meilleures perfs
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8080/api
+    restart: unless-stopped
+
+  # --- DOCUMENTATION (Docusaurus) ---
+  docs:
+    build:
+      context: ./docs-hff
+      dockerfile: Dockerfile-dev
+    container_name: hff_docs
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./docs-hff:/app
+      - /app/node_modules
     restart: unless-stopped

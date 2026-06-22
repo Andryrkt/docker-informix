@@ -5,10 +5,11 @@ import ErrorPage from "../error/ErrorPage";
 import { AnonymousOnly } from "../auth/guard/AnonymousOnly";
 import AppLayouts from "../layout/AppLayout";
 import Login from "../domains/authentification/pages/Login";
-import DevisList from "@/domains/devis/pages/DevisList";
 import HomePage from "@/domains/home/page/HomePage";
 import DemandeSupportIT from "@/domains/it/page/DemandeSupportIT";
 import { RequireAuth } from "./guards/RequireAuth";
+import DevisList from "@/domains/magasin/dematerialisation/devis/pages/DevisList";
+import PlanningList from "@/domains/magasin/dematerialisation/planning/pages/PlanningList";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -49,6 +50,10 @@ function AppRoutes() {
         {
           path: "/magasin/dematerialisation/liste-devis-neg",
           element: <DevisList />,
+        },
+        {
+          path: "/magasin/dematerialisation/planning-commande",
+          element: <PlanningList />,
         },
         {
           path: "/it/demande-support-informatique",

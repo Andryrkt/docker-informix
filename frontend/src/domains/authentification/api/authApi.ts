@@ -27,36 +27,6 @@ export const logout = async () => {
   localStorage.removeItem("refresh_token");
 };
 
-export const forgotPassword = async (email: string) => {
-  const { data } = await axiosInstance.post(
-    "/auth/forgot-password",
-    { email },
-    {
-      timeout: 100000,
-    },
-  );
-  return data;
-};
-
-export const resetPassword = async (payload: {
-  email: string;
-  token: string;
-  password: string;
-  password_confirmation: string;
-}) => {
-  const { data } = await axiosInstance.post("/auth/reset-password", payload, {
-    timeout: 100000,
-  });
-  return data;
-};
-export const checkPassword = async (password: string) => {
-  const { data } = await axiosInstance.post(
-    "/auth/check-password",
-    { password },
-    { withCredentials: true },
-  );
-  return data.valid;
-};
 export const validateToken = async (payload: {
   email: string;
   token: string;

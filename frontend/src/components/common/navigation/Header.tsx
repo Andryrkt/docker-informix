@@ -16,7 +16,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/authContext";
 import VisualTimer from "@/layout/VisualTimer";
 import {
   ChevronDown,

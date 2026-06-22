@@ -28,6 +28,24 @@ export const getStatusClass = (status?: string) => {
   }
 };
 
+export const getEtatPlanningColorMark = (etat?: string | null) => {
+  if (!etat) return "text-gray-600";
+
+  switch (etat) {
+    case "Valide":
+      return "text-green-600 bg-green-100";
+
+    case "En attente":
+      return "text-yellow-600 bg-yellow-100";
+
+    case "Rejeté":
+      return "text-red-600 bg-red-100";
+
+    default:
+      return "text-gray-500 bg-gray-100";
+  }
+};
+
 const isDateLike = (value?: string) => {
   if (!value) return false;
   // matches DD/MM/YYYY
@@ -43,4 +61,8 @@ export const formatMontant = (montant: string, devise: string): string => {
     " " +
     devise
   );
+};
+
+export const getOptions = (field: any, optionsQuery: any) => {
+  return field.options ?? optionsQuery?.data ?? [];
 };

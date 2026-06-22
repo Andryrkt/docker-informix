@@ -13,7 +13,7 @@ import { Input } from "../../../components/ui/input";
 import { loginSchema } from "../schema/loginSchema";
 import LogoHff from "@/assets/logoHFF.jpg";
 import { formatErrorMessage } from "@/lib/utils";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/authContext";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
@@ -145,6 +145,7 @@ function Login() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
+                  form="login-form"
                   className="w-full flex items-center justify-center"
                 >
                   {isSubmitting ? (

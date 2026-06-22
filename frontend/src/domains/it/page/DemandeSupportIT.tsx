@@ -1,6 +1,6 @@
 import PageHeader from "@/layout/components/PageHeader";
 import React from "react";
-import SupportForm from "../components/SupportForm";
+import SupportITForm from "../components/SupportITForm";
 
 function DemandeSupportIT() {
   return (
@@ -11,7 +11,7 @@ function DemandeSupportIT() {
           description="Vous pouvez faire une demande de support concernant l'intranet."
         /> */}
         <div>
-          <SupportForm></SupportForm>
+          <SupportITForm></SupportITForm>
         </div>
       </div>
     </div>

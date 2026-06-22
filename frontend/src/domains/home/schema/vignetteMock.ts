@@ -92,7 +92,10 @@ export const vignetteMock = [
               link: "magasin/dematerialisation/liste-devis-neg",
               icon: List,
             },
-            { label: "Planning de commande Magasin", icon: Calendar },
+            {
+              label: "Planning de commande Magasin",
+              icon: Calendar,
+            },
           ],
         },
         {
@@ -140,7 +143,11 @@ export const vignetteMock = [
               link: "magasin/dematerialisation/liste-devis-neg",
               icon: List,
             },
-            { label: "Planning de commande Magasin", icon: Calendar },
+            {
+              label: "Planning de commande Magasin",
+              icon: Calendar,
+              link: "/magasin/dematerialisation/planning-commande",
+            },
           ],
         },
         {

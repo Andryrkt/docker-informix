@@ -4,7 +4,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
 import LogoHff from "@/assets/logoHFF.jpg";
 import Footer from "./components/Footer";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/authContext";
 import { AppBreadcrumb } from "@/components/common/AppBreadcrumb";
 
 function AppLayouts() {

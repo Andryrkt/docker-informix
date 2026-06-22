@@ -46,16 +46,13 @@ function DevisList() {
             Object.entries(values).forEach(([key, value]) => {
               setFilter(key, String(value ?? ""));
             });
-
-            toast.success("Recherche effectuée");
           }}
           onReset={() => {
             reset();
-            toast.success("Filtres réinitialisés");
           }}
         />
         <ExcelDownloadButton
-          data={devis}
+          data={items}
           filename={buildExcelFilename(selectedFilters, fields)}
         ></ExcelDownloadButton>
 
@@ -70,12 +67,7 @@ function DevisList() {
           </div>
         </div>
 
-        <DevisTable
-          // refreshKey={refreshKey}
-          // onRefresh={refresh}
-          devis={devis}
-          loading={isLoading || isFetching}
-        />
+        <DevisTable devis={devis} loading={isLoading || isFetching} />
         <div className="p-4 flex">
           <div className="m-auto">
             <GlobalPagination

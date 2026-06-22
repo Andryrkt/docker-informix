@@ -16,8 +16,8 @@ import { DevisTableSkeleton } from "./DevisTableSkeleton";
 function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
   if (loading) return <DevisTableSkeleton></DevisTableSkeleton>;
   return (
-    <div className="  w-full overflow-x-auto py-4 ">
-      <Table className=" text-white min-w-max  text-xs  ">
+    <div className="  w-full overflow-x-auto py-4">
+      <Table className=" text-white min-w-max text-xs">
         <TableHeader>
           <TableRow>
             <TableHead>

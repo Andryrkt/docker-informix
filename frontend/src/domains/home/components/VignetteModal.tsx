@@ -1,10 +1,4 @@
 import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-  Accordion,
-} from "@/components/ui/accordion";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -54,8 +48,8 @@ export function useVignetteDialog() {
           <DialogDescription>{data?.description}</DialogDescription>
         </DialogHeader>
 
-        <Accordion
-          type="multiple"
+        {/* GRID REPLACEMENT (no accordion) */}
+        <div
           className={cn("grid w-full gap-8", {
             "grid-cols-1": data?.sections.length === 1,
             "grid-cols-1 md:grid-cols-2": data?.sections.length === 2,
@@ -63,45 +57,40 @@ export function useVignetteDialog() {
             "grid-cols-1 md:grid-cols-3 lg:grid-cols-4":
               data?.sections.length >= 4,
           })}
-          defaultValue={data?.sections?.map((_, i) => `section-${i}`)}
         >
           {data?.sections?.map((section, i) => {
             const SectionIcon = section.icon;
 
             return (
-              <div className="">
-                <AccordionItem key={i} value={`section-${i}`}>
-                  {/* Trigger */}
-                  <AccordionTrigger className="flex items-center gap-4 text-sm font-medium text-muted-foreground hover:no-underline uppercase">
-                    <SectionIcon className="size-4" />
-                    {section.title}
-                  </AccordionTrigger>
+              <div key={i} className="flex flex-col gap-3">
+                {/* Section Header (replaces AccordionTrigger) */}
+                <div className="flex items-center gap-4 text-sm font-medium text-muted-foreground uppercase">
+                  <SectionIcon className="size-4" />
+                  {section.title}
+                </div>
 
-                  {/* Content */}
-                  <AccordionContent className="">
-                    <div className="">
-                      {section.items.map((item, j) => {
-                        const ItemIcon = item.icon;
+                {/* Section Content (always visible) */}
+                <div className="flex flex-col">
+                  {section.items.map((item, j) => {
+                    const ItemIcon = item.icon;
 
-                        return (
-                          <Link
-                            key={j}
-                            to={item.link}
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-2 py-4 text-brand-primary/75 hover:text-brand-primary focus-within:text-brand-primary "
-                          >
-                            {ItemIcon && <ItemIcon className="size-3" />}
-                            {item.label}
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
+                    return (
+                      <Link
+                        key={j}
+                        to={item.link}
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-2 py-4 text-brand-primary/75 hover:text-brand-primary focus-within:text-brand-primary"
+                      >
+                        {ItemIcon && <ItemIcon className="size-3" />}
+                        {item.label}
+                      </Link>
+                    );
+                  })}
+                </div>
               </div>
             );
           })}
-        </Accordion>
+        </div>
       </DialogContent>
     </Dialog>
   );

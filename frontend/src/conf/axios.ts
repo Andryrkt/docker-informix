@@ -39,7 +39,6 @@ const handleLogout = () => {
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const accessToken = localStorage.getItem("access_token");
-
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }

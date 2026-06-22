@@ -19,7 +19,6 @@ export const login = async (
     username: credentials.username,
     password: credentials.password,
   });
-
   return response.data;
 };
 

@@ -15,6 +15,7 @@ import {
   Computer,
   HelpCircle,
   HandHelping,
+  Book,
 } from "lucide-react";
 export const vignetteMock = [
   // {
@@ -65,6 +66,54 @@ export const vignetteMock = [
   //     ],
   //   },
   // },
+  {
+    title: "Documentation",
+    icon: Book,
+    modal: {
+      title: "Magasin",
+      description:
+        "This is desctiption of Magasin that should give from backend",
+      icon: StoreIcon,
+      sections: [
+        {
+          title: "OR",
+          icon: Warehouse,
+          items: [
+            { label: "Liste à traiter", icon: ListChecks },
+            { label: "Liste à livrer", icon: ListChecks },
+          ],
+        },
+        {
+          title: "Dematerialisation",
+          icon: CloudUpload,
+          items: [
+            {
+              label: "Devis",
+              link: "magasin/dematerialisation/liste-devis-neg",
+              icon: List,
+            },
+            { label: "Planning de commande Magasin", icon: Calendar },
+          ],
+        },
+        {
+          title: "CIS",
+          icon: FileText,
+          items: [
+            { label: "Liste à traiter", icon: List },
+            { label: "Liste à traiter", icon: FileSpreadsheet },
+          ],
+        },
+        {
+          title: "Inventaire",
+          icon: List,
+          items: [
+            { label: "Liste des inventaires", icon: List },
+            { label: "Inventaire détaillé", icon: ListChecks },
+          ],
+        },
+      ],
+    },
+  },
   {
     title: "Magasin",
     icon: StoreIcon,

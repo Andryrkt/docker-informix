@@ -1,4 +1,4 @@
-export const getStatusClass = (status?: string) => {
+export const getStatusDevisClass = (status?: string) => {
   if (!status) return "text-gray-600";
 
   // DATE CASE
@@ -27,6 +27,34 @@ export const getStatusClass = (status?: string) => {
       return "text-gray-600";
   }
 };
+export const getStatusDitClass = (status?: string) => {
+  if (!status) return "text-gray-600";
+
+  // DATE CASE
+  if (isDateLike(status)) {
+    return "bg-yellow-400 text-black";
+  }
+
+  switch (status) {
+    case "A AFFECTER":
+      return "bg-red-500 text-white";
+    case "AFFECTEE SECTION":
+      return "bg-orange-500 text-white";
+    case "CLOTUREE ANNULEE":
+      return "bg-gray-500 text-white";
+
+    case "CLOTUREE HORS DELAI":
+      return "bg-yellow-700 text-white";
+
+    case "CLOTUREE VALIDEE":
+      return "bg-green-600 text-white";
+    case "TERMINEE":
+      return "bg-blue-600 text-white";
+
+    default:
+      return "text-gray-600";
+  }
+};
 
 export const getEtatPlanningColorMark = (etat?: string | null) => {
   if (!etat) return "text-gray-600";
@@ -51,7 +79,10 @@ const isDateLike = (value?: string) => {
   // matches DD/MM/YYYY
   return /^\d{2}\/\d{2}\/\d{4}$/.test(value);
 };
-export const formatMontant = (montant: string, devise: string): string => {
+export const formatMontant = (
+  montant: string | number,
+  devise: string,
+): string => {
   const num = parseFloat(montant);
   return (
     new Intl.NumberFormat("fr-FR", {

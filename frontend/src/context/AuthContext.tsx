@@ -58,6 +58,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setIsLoading(false);
       }
     };
+    
     fetchUser();
   }, []);
 

@@ -1,16 +1,12 @@
 import CollapsibleFilter from "@/components/common/filter/CollapSibleFilter";
-import SimpleNextPreviousPagination from "@/components/common/pagination/SimpleNextPreviousPagination";
 import { usePageSearchParams } from "@/hooks/usePageSearchParams";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
 import PlanningTable from "../components/PlanningTable";
-import GlobalPagination from "@/components/common/pagination/GlobalPagination";
 import { fetchPlanning } from "../api/planningApi";
 import { planningFieldsFilter } from "../filter/planningFiedfilter";
-import { planningMock } from "../schema/planningMook";
 
 function PlanningList() {
-  const { currentPage, setPage, selectedFilters, setFilter, reset } =
+  const { currentPage, selectedFilters, setFilter, reset } =
     usePageSearchParams(1);
 
   const {
@@ -27,7 +23,6 @@ function PlanningList() {
   });
 
   const items = planning?.data ?? [];
-  const lastPage = planning?.totalPages ?? 1;
 
   return (
     <div className="p-4 w-full min-h-screen ">

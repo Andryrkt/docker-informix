@@ -142,7 +142,7 @@
 }
 
 .CollapsibleContent[data-state="closed"] {
-  animation: slideUp 300ms cubic-bezier(0.4, 0, 1, 1);
+  animation: slideUp 200ms cubic-bezier(0.4, 0, 1, 1);
 }
 
 @keyframes slideDown {

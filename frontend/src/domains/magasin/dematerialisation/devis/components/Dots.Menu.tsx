@@ -7,12 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenu,
 } from "@/components/ui/dropdown-menu";
-import {
-  Share2,
-  Edit,
-  Trash,
-  MoreVerticalIcon,
-} from "lucide-react";
+import { Share2, Edit, Trash, MoreVerticalIcon } from "lucide-react";
 import React from "react";
 
 function DotsMenu() {
@@ -25,18 +20,14 @@ function DotsMenu() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="ml-4">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem
           onClick={() => navigator.clipboard.writeText("Copied Text")}
         >
-          <Share2 className="mr-2 h-4 w-4" /> Copy Link
+          Dupliquer
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <Edit className="mr-2 h-4 w-4" /> Edit
-        </DropdownMenuItem>
+        <DropdownMenuItem>Soummission</DropdownMenuItem>
         <DropdownMenuItem className="text-destructive">
-          <Trash className="mr-2 h-4 w-4" /> Delete
+          Cloturer
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -18,14 +18,23 @@ export function FilterFieldRenderer({ field }: any) {
   if (field.type === "text" || field.type === "number") {
     return (
       <Input
-        type={field.type}
+        type={field.type === "number" ? "text" : field.type}
+        inputMode={field.type === "number" ? "numeric" : undefined}
+        pattern={field.pattern}
         placeholder={field.placeholder}
-        onChange={(e) => field.onChange(e.target.value)}
         value={field.value ?? ""}
+        onChange={(e) => {
+          const value = e.target.value;
+
+          if (field.validate && !field.validate(value)) {
+            return;
+          }
+
+          field.onChange(value);
+        }}
       />
     );
   }
-
   if (field.type === "select") {
     if (optionsQuery?.isLoading) {
       return <div className="text-xs text-gray-400">Loading...</div>;
@@ -162,10 +171,12 @@ export function FilterFieldRenderer({ field }: any) {
     // CHECKBOX
     if (field.variant === "checkbox") {
       return (
-        <Checkbox
-          checked={value}
-          onCheckedChange={(v) => field.onChange(Boolean(v))}
-        />
+        <div className="my-2">
+          <Checkbox
+            checked={value}
+            onCheckedChange={(v) => field.onChange(Boolean(v))}
+          />
+        </div>
       );
     }
 

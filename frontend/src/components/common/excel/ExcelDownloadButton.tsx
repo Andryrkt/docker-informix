@@ -38,7 +38,7 @@ export function ExcelDownloadButton({
     <Button
       onClick={handleDownload}
       disabled={loading}
-      className="mx-auto flex items-center gap-2 bg-green-600 text-white hover:bg-green-700 mt-4"
+      className=" flex items-center gap-2 bg-green-600 text-white hover:bg-green-700 "
     >
       <FileSpreadsheet className="h-4 w-4" />
       {loading ? "Exporting..." : label}

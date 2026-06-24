@@ -29,6 +29,7 @@ doctrine:
                 password: '%env(SQLSERVER_PASSWORD)%'
                 options:
                     TrustServerCertificate: true
+                    Encrypt: 'no'
     orm:
         default_entity_manager: ips
         entity_managers:

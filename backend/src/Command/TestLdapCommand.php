@@ -40,6 +40,7 @@ class TestLdapCommand extends Command
     {
         $this
             ->addArgument('username', InputArgument::REQUIRED, 'Le nom d\'utilisateur (sAMAccountName) à rechercher')
+            ->addArgument('password', InputArgument::OPTIONAL, 'Le mot de passe de l\'utilisateur pour tester le bind utilisateur')
         ;
     }
 
@@ -81,6 +82,15 @@ class TestLdapCommand extends Command
                 }
                 if ($user->hasAttribute('department')) {
                     $io->writeln(' Département : ' . $user->getAttribute('department')[0]);
+                }
+
+                $password = $input->getArgument('password');
+                if ($password) {
+                    $startUserBind = microtime(true);
+                    $io->info(sprintf('Tentative de bind utilisateur avec le DN : %s', $user->getDn()));
+                    $this->ldap->bind($user->getDn(), $password);
+                    $io->success('Bind utilisateur réussi !');
+                    $io->note(sprintf('Temps Bind Utilisateur : %.2f s', microtime(true) - $startUserBind));
                 }
             } else {
                 $io->warning('La connexion fonctionne, mais cet utilisateur n\'a pas été trouvé dans cet OU.');

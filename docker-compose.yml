@@ -33,6 +33,11 @@ services:
       - /app/node_modules
     environment:
       - VITE_API_URL=http://localhost:8080/api
+      # 🔥 AJOUTER CES VARIABLES POUR LE HOT-RELOAD
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true # Pour Windows
+      - WATCHPACK_POLLING=true # Pour Vite
+      - VITE_USE_POLLING=true # Alternative pour Vite
     restart: unless-stopped
 
   # --- DOCUMENTATION (Docusaurus) ---
@@ -46,4 +51,10 @@ services:
     volumes:
       - ./docs-hff:/app
       - /app/node_modules
+    environment:
+      # 🔥 AJOUTER CES VARIABLES POUR LE HOT-RELOAD
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true # Pour Windows
+      - WATCHPACK_POLLING=true # Pour Vite
+      - VITE_USE_POLLING=true # Alternative pour Vite
     restart: unless-stopped

@@ -2,11 +2,20 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-RUN apk add --no-cache bash curl
+# Installer les outils
+RUN apk add --no-cache bash curl git
 
+# Copier les fichiers de dépendances
 COPY package*.json ./
 
+# Installer les dépendances
+RUN npm install && npm cache clean --force
+
+# Copier le code source
+COPY . .
+
+# Exposer le port
 EXPOSE 3000
 
-# Docusaurus utilise par défaut 'npm start' pour le dev sur le port 3000
-CMD ["sh", "-c", "npm install && npm start -- --host 0.0.0.0"]
+# Démarrer en mode développement
+CMD ["npm", "start", "--", "--host", "0.0.0.0"]

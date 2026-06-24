@@ -28,8 +28,8 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  login: async () => {},
-  logout: async () => {},
+  login: async () => { },
+  logout: async () => { },
 });
 
 interface AuthProviderProps {
@@ -37,41 +37,19 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  // const { data: user, isLoading, refetch } = useProfile();
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: user, isLoading, refetch } = useProfile();
 
-  const profile: User = {
-    displayName: "Andrialazantsoa ",
-    email: "hajaina@test.com",
-    id: 0,
-    roles: [],
-  };
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        setUser(profile);
-      } catch (error) {
-        console.error(error);
-        setUser(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchUser();
-  }, []);
+
 
   // Login
   const login = async (credentials: LoginCredentials) => {
-    // const response = await authApi.login(credentials);
+    const response = await authApi.login(credentials);
 
-    // localStorage.setItem("access_token", response.token);
-    localStorage.setItem("access_token", "token exemple");
-    // if (response.refresh_token) {
-    //   localStorage.setItem("refresh_token", response.refresh_token);
-    // }
-    // await refetch();
-    setUser(profile);
+    localStorage.setItem("access_token", response.token);
+    if (response.refresh_token) {
+      localStorage.setItem("refresh_token", response.refresh_token);
+    }
+    await refetch();
   };
 
   // Logout
@@ -80,8 +58,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       await authApi.logout();
     } finally {
       // 🧹 clear query cache
-      // await refetch();
-      setUser(null);
+      await refetch();
+
     }
   };
 

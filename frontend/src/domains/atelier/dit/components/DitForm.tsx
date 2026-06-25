@@ -11,12 +11,16 @@ import {
   reparationFields,
   traitFields,
 } from "../schema/ditSchemaField";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { formatErrorMessage } from "@/lib/utils";
 import { ditFormSchema, type DitFormValues } from "../schema/ditSchema";
 import { Save } from "lucide-react";
 import { toast } from "sonner";
+import { getMateriels } from "@/domains/materiel/api/materielApi";
+import { useQuery } from "@tanstack/react-query";
+import { MaterielInfoCard } from "@/domains/materiel/components/MaterielInfoCard";
+import { getClients } from "@/domains/client/api/clientApi";
 
 type Props = {
   initialValues?: DitFormValues;
@@ -97,15 +101,77 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
     },
   });
 
+  const { data: materiels = [] } = useQuery({
+    queryKey: ["materiels"],
+    queryFn: getMateriels,
+  });
+  const { data: clients = [] } = useQuery({
+    queryKey: ["clients"],
+    queryFn: getClients,
+  });
+
+  // Clients options values
+  const numeroClientOptions = clients.map((c) => ({
+    label: c.numClient,
+    value: c.numClient,
+  }));
+  const nomClientOptions = clients.map((c) => ({
+    label: c.nomClient,
+    value: c.nomClient,
+  }));
+
+  // Materiels options values
+  const idMaterielOptions = materiels.map((m) => ({
+    label: m.idMateriel,
+    value: m.idMateriel,
+  }));
+
+  const numParcOptions = materiels.map((m) => ({
+    label: m.numParc,
+    value: m.numParc,
+  }));
+
+  const numSerieOptions = materiels.map((m) => ({
+    label: m.numSerie,
+    value: m.numSerie,
+  }));
+
+  const syncMateriel = (
+    fieldName: "idMateriel" | "numParc" | "numSerie",
+    value: string,
+  ) => {
+    let materiel;
+
+    switch (fieldName) {
+      case "idMateriel":
+        materiel = materiels.find((m) => m.idMateriel === value);
+        break;
+
+      case "numParc":
+        materiel = materiels.find((m) => m.numParc === value);
+        break;
+
+      case "numSerie":
+        materiel = materiels.find((m) => m.numSerie === value);
+        break;
+    }
+
+    if (!materiel) return;
+
+    form.setFieldValue("idMateriel", materiel.idMateriel);
+    form.setFieldValue("numParc", materiel.numParc);
+    form.setFieldValue("numSerie", materiel.numSerie);
+  };
+
   return (
     <div className=" mx-auto p-4 md:p-6 space-y-6">
-      <div className="flex flex-col space-y-2">
+      {/* <div className="flex flex-col space-y-2">
         <h1 className="text-2xl font-bold text-white tracking-tight border text-center py-2 bg-brand-dark">
           {mode === "create"
             ? "Formulaire Demande d'intervention"
             : "Duplication de la demande d'intervention"}
         </h1>
-      </div>
+      </div> */}
 
       <form.Subscribe selector={(state) => state.values.interneExterne}>
         {(interneExterneValue) => {
@@ -334,6 +400,12 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                                     <FieldRenderer
                                       field={{
                                         ...config,
+                                        options:
+                                          config.name === "numClient"
+                                            ? numeroClientOptions
+                                            : config.name === "nomClient"
+                                              ? nomClientOptions
+                                              : (config.options ?? []),
                                         value: field.state.value,
                                         onChange: field.handleChange,
                                         disabled: shouldDisable,
@@ -354,15 +426,15 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                       </div>
                     </div>
                     {/* Section Info materiel*/}
-                    <div className=" w-full">
+                    <div className=" w-full ">
                       <div className="py-3  space-y-1 ">
                         <h3 className="text-base font-bold">
                           Information Matériel
                         </h3>
                         <div className="h-1 bg-brand-primary "></div>
                       </div>
-                      <div className="space-y-4 flex gap-4  ">
-                        <div className="flex flex-col gap-4 w-full">
+                      <div className="space-y-4 flex flex-col ">
+                        <div className="flex gap-4 w-full">
                           {infoMaterielFields.map((config) => (
                             <form.Field
                               key={config.name}
@@ -371,7 +443,6 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                                 const isInvalid =
                                   field.state.meta.isTouched &&
                                   !field.state.meta.isValid;
-
                                 return (
                                   <Field data-invalid={isInvalid}>
                                     <FieldLabel
@@ -384,8 +455,28 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                                     <FieldRenderer
                                       field={{
                                         ...config,
+                                        options:
+                                          config.name === "idMateriel"
+                                            ? idMaterielOptions
+                                            : config.name === "numParc"
+                                              ? numParcOptions
+                                              : config.name === "numSerie"
+                                                ? numSerieOptions
+                                                : [],
                                         value: field.state.value,
-                                        onChange: field.handleChange,
+
+                                        onChange: (value) => {
+                                          if (
+                                            config.name === "idMateriel" ||
+                                            config.name === "numParc" ||
+                                            config.name === "numSerie"
+                                          ) {
+                                            syncMateriel(config.name, value);
+                                            return;
+                                          }
+
+                                          field.handleChange(value);
+                                        },
                                       }}
                                     />
 
@@ -399,6 +490,21 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                               }}
                             ></form.Field>
                           ))}
+                        </div>
+                        <div className=" ">
+                          <form.Subscribe
+                            selector={(state) => state.values.idMateriel}
+                          >
+                            {(idMateriel) => {
+                              const selectedMateriel =
+                                materiels.find(
+                                  (m) => m.idMateriel === idMateriel,
+                                ) ?? null;
+                              return (
+                                <MaterielInfoCard materiel={selectedMateriel} />
+                              );
+                            }}
+                          </form.Subscribe>
                         </div>
                       </div>
                     </div>
@@ -549,11 +655,11 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
               </div>
 
               {/* Submit Buttons */}
-              <Field orientation="horizontal" className="">
+              <Field orientation="horizontal" className=" flex justify-end">
                 <Button
                   type="submit"
                   form="dit-form"
-                  className="bg-brand-primary/90 text-brand-dark"
+                  className="bg-brand-primary/70 hover:bg-brand-primary text-brand-dark cursor-pointer lg:p-4"
                 >
                   <Save></Save>
                   Enregistrer

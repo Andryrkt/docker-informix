@@ -222,18 +222,19 @@ export const infoClientFields: DitField[] = [
   {
     name: "numClient",
     label: "Numéro du client (*EXTERNE)",
-    type: "text",
+    type: "select",
+  },
+  {
+    name: "nomClient",
+    label: "Nom du client (*EXTERNE)",
+    type: "select",
   },
   {
     name: "telephoneClient",
     label: "N° téléphone (*EXTERNE)",
     type: "text",
   },
-  {
-    name: "nomClient",
-    label: "Nom du client (*EXTERNE)",
-    type: "text",
-  },
+
   {
     name: "emailClient",
     label: "E-mail du client (*EXTERNE)",
@@ -271,21 +272,15 @@ export const infoMaterielFields: DitField[] = [
     name: "idMateriel",
     label: "Id materiel",
     type: "select",
-    queryKey: "idMateriel",
-    queryFn: () => getAgences(),
   },
   {
     name: "numParc",
     label: "Numéro de parc",
     type: "select",
-    queryKey: "numParc",
-    queryFn: () => getAgences(),
   },
   {
     name: "numSerie",
     label: "Numéro de série",
     type: "select",
-    queryKey: "numSerie",
-    queryFn: () => getAgences(),
   },
 ];

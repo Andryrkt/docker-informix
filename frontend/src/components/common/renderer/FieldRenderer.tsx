@@ -57,6 +57,7 @@ export function FieldRenderer({ field }: any) {
       );
 
     case "select": {
+      const options = getOptions(field, optionsQuery);
       if (optionsQuery?.isLoading) {
         return (
           <div className="text-xs text-muted-foreground">Chargement...</div>
@@ -67,7 +68,7 @@ export function FieldRenderer({ field }: any) {
         <SearchableSelect
           value={field.value}
           onChange={field.onChange}
-          options={optionsQuery?.data ?? []}
+          options={options ?? []}
           placeholder={field.placeholder}
           disabled={field.disabled}
         />

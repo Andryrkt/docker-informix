@@ -8,11 +8,11 @@ import {
 } from "@/components/ui/table";
 import type { Dit } from "../schema/ditSchema";
 import { DitTableSkeleton } from "./DitTableSkeleton";
-import DotsMenu from "@/domains/magasin/dematerialisation/devis/components/Dots.Menu";
 import { getStatusDevisClass, formatMontant } from "@/helper/helper";
 import { MoreVerticalIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import DotsMenu from "./Dots.Menu";
 
 function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
   // if (loading) return <DitTableSkeleton></DitTableSkeleton>;
@@ -71,11 +71,16 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {dit?.map((d) => {
+          {dit?.map((d, index) => {
             return (
-              <TableRow className="font-mono text-gray-600  wrap-break-word whitespace-normal text-center text-[0.65rem]">
+              <TableRow
+                className="font-mono text-gray-600  wrap-break-word whitespace-normal text-center text-[0.65rem]"
+                key={index}
+              >
                 <TableCell className=" font-mono text-gray-600  max-w-auto">
-                  {<DotsMenu></DotsMenu>}
+                  <DotsMenu
+                    numeroDemandeIntervention={d.numeroDemandeIntervention}
+                  ></DotsMenu>
                 </TableCell>
 
                 <TableCell
@@ -121,7 +126,7 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
                   {d.dateDemande}
                 </TableCell>
 
-                <TableCell>{d.internetExterne}</TableCell>
+                <TableCell>{d.interneExterne}</TableCell>
 
                 <TableCell>{d.agenceServiceEmetteur}</TableCell>
 

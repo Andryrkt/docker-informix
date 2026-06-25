@@ -90,7 +90,7 @@ export const vignetteMock = [
           items: [
             {
               label: "Devis",
-              link: "magasin/dematerialisation/liste-devis-neg",
+              link: "/magasin/dematerialisation/liste-devis-neg",
               icon: List,
             },
             {
@@ -132,7 +132,11 @@ export const vignetteMock = [
           title: "Demande d'intervention",
           icon: BriefcaseBusiness,
           items: [
-            { label: "Nouvelle demande", icon: CirclePlus },
+            {
+              label: "Nouvelle demande",
+              icon: CirclePlus,
+              link: "/atelier/demande-intervention/new",
+            },
             {
               label: "Consultation",
               icon: Search,

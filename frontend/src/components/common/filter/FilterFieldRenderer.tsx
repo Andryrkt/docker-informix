@@ -37,7 +37,7 @@ export function FilterFieldRenderer({ field }: any) {
   }
   if (field.type === "select") {
     if (optionsQuery?.isLoading) {
-      return <div className="text-xs text-gray-400">Loading...</div>;
+      return <div className="text-xs text-gray-400">Chargement...</div>;
     }
 
     const options = optionsQuery?.data ?? [];

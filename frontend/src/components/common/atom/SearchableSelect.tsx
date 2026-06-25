@@ -22,7 +22,8 @@ export function SearchableSelect({
   value,
   onChange,
   options = [],
-  placeholder = "Votre choix...",
+  placeholder = "-- Choisir --",
+  disabled,
 }: any) {
   const [open, setOpen] = useState(false);
 
@@ -34,9 +35,10 @@ export function SearchableSelect({
         <Button
           variant="outline"
           role="combobox"
-          className="w-full justify-between"
+          className="w-full justify-between font-normal"
+          disabled={disabled}
         >
-          <span className="truncate text-left flex-1">
+          <span className="truncate text-left flex-1 ">
             {selected?.label ?? placeholder}
           </span>
           <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />

@@ -1,3 +1,5 @@
+import type { CommandeStatut } from "@/domains/commande/commandeMocks";
+
 export const getStatusDevisClass = (status?: string) => {
   if (!status) return "text-gray-600";
 
@@ -73,6 +75,20 @@ export const getEtatPlanningColorMark = (etat?: string | null) => {
       return "text-gray-500 bg-gray-100";
   }
 };
+export function getCommandeStatusStyle(statut: CommandeStatut) {
+  switch (statut) {
+    case "VALIDEE":
+      return "text-green-600 bg-green-50";
+    case "LIVREE":
+      return "text-blue-600 bg-blue-50";
+    case "EN_ATTENTE":
+      return "text-yellow-600 bg-yellow-50";
+    case "ANNULEE":
+      return "text-red-600 bg-red-50";
+    default:
+      return "text-gray-600 bg-gray-50";
+  }
+}
 
 const isDateLike = (value?: string) => {
   if (!value) return false;

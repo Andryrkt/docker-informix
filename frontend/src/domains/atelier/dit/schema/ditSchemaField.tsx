@@ -147,6 +147,7 @@ export const demandeFields: DitField[] = [
     placeholder: "Détail de la demande",
   },
 ];
+
 export const traitFields: DitField[] = [
   {
     name: "typeDocument",
@@ -187,7 +188,7 @@ export const traitFields: DitField[] = [
   },
 ];
 
-export const agenceServiceFields: DitField[] = [
+export const agenceAndServiceFields: DitField[] = [
   {
     name: "agenceDebiteur",
     label: "Agence débiteur",

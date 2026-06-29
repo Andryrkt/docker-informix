@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 export function FieldRenderer({ field }: any) {
   const isSelect = field.type === "select";
@@ -289,4 +290,23 @@ export function FieldRenderer({ field }: any) {
     default:
       return null;
   }
+}
+
+type ReadOnlyFieldProps = {
+  label: string;
+  value?: any;
+  className?: string;
+};
+
+export function FieldReadOnly({ label, value, className }: ReadOnlyFieldProps) {
+  return (
+    <div className={cn("space-y-1 w-full", className)}>
+      <label className="text-xs font-medium text-gray-800">{label}</label>
+      <Input
+        readOnly
+        value={value ?? ""}
+        className="font-semibold bg-gray-100"
+      />
+    </div>
+  );
 }

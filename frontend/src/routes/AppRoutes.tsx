@@ -13,6 +13,7 @@ import PlanningList from "@/domains/magasin/dematerialisation/planning/pages/Pla
 import DitList from "@/domains/atelier/dit/pages/DitList";
 import DitCreation from "@/domains/atelier/dit/pages/DitCreation";
 import DitDuplication from "@/domains/atelier/dit/pages/DitDuplication";
+import DitDetails from "@/domains/atelier/dit/pages/DitDetails";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -75,7 +76,7 @@ function AppRoutes() {
         },
         {
           path: "/atelier/demande-intervention/details/:numeroDemandeIntervention",
-          // element: <DitDuplication />,
+          element: <DitDetails />,
         },
         // {
         //   path: "/atelier/demande-intervention/new",

@@ -32,6 +32,18 @@ export function MaterielInfoCard({ materiel }: MaterielInfoCardProps) {
 
   const items = [
     {
+      label: "ID Matériel",
+      value: materiel.idMateriel,
+    },
+    {
+      label: "N° Série",
+      value: materiel.numSerie,
+    },
+    {
+      label: "N° Parc",
+      value: materiel.numParc,
+    },
+    {
       label: "Constructeur",
       value: materiel.constructeur,
     },
@@ -42,18 +54,6 @@ export function MaterielInfoCard({ materiel }: MaterielInfoCardProps) {
     {
       label: "Modèle",
       value: materiel.modele,
-    },
-    {
-      label: "N° Parc",
-      value: materiel.numParc,
-    },
-    {
-      label: "N° Série",
-      value: materiel.numSerie,
-    },
-    {
-      label: "ID Matériel",
-      value: materiel.idMateriel,
     },
     {
       label: "KM",

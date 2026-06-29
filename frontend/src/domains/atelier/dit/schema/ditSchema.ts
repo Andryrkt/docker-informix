@@ -4,15 +4,22 @@ export type EtatLivraison = "Non livré" | "Partiellement livré" | "Livré";
 
 export type StatutDemande = "Validé" | "Annulé" | string;
 
+export type PieceJointe = {
+  nom: string;
+  url: string;
+};
 export interface Dit {
   id: number;
   numeroDemandeIntervention: string;
 
   idStatutDemande: number;
 
-  objetDemande: string;
-  detailDemande: string;
+  objet: string;
+  details: string;
   statutDemande: StatutDemande;
+  demandeDevis?: string;
+  livraisonPartielle?: string;
+  avisRecouvrement?: string;
 
   typeDocument: string;
   categorieDemande: string;
@@ -20,13 +27,17 @@ export interface Dit {
   reparationRealise: string | null;
   worNiveauUrgence: string;
 
+  idMateriel?: string | null;
   numSerie: string | null;
   numParc: string | null;
 
   dateDemande: string;
 
   agenceEmetteur: string;
-  serviceEmmeteur: string;
+  serviceEmmetteur: string;
+  datePrevue?: string | null;
+  typeReparation?: string | null;
+  reparationPar?: string | null;
 
   agenceDebiteur: string;
   serviceDebiteur: string;
@@ -60,10 +71,20 @@ export interface Dit {
   qteLivOr: number;
 
   etatLivraison: EtatLivraison;
+
+  numClient?: string;
+  telephoneClient?: string;
+  nomClient?: string;
+  emailClient?: string;
+  clientSousContrat?: string;
+
+  pieceJoint?: any[] | PieceJointe;
+  pieceJoint1?: any[] | PieceJointe;
+  pieceJoint2?: any[] | PieceJointe;
 }
 
 const baseSchema = {
-  object: z.string().min(1, "Objet requis"),
+  objet: z.string().min(1, "Objet requis"),
   details: z.string().min(1, "Détails requis"),
 
   typeDocument: z.string().min(1, "Type de document requis"),

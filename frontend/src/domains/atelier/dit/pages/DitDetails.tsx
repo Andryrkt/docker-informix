@@ -1,16 +1,17 @@
 import { useParams } from "react-router-dom";
 import { duplicateDit, fetchDitDetails } from "../api/ditApi";
-import DitForm from "../components/DitForm";
-import type { DitFormValues } from "../schema/ditSchema";
+import type { Dit, DitFormValues } from "../schema/ditSchema";
 import { useQuery } from "@tanstack/react-query";
 import { useConfirm } from "@/components/common/ConfirmDialog";
 import { toast } from "sonner";
+import DitView from "../components/DitView";
+import type { BilanFinancier } from "../components/atom/BilanFinanciereCard";
+import type { Materiel } from "@/domains/materiel/schema/materielSchema";
 
-function DitDuplication() {
+function DitDetails() {
   const { numeroDemandeIntervention } = useParams();
-  const confirm = useConfirm();
 
-  const initialValues: DitFormValues = {
+  const mockDit: Dit = {
     objet: "Copie demande intervention",
     details: "Duplication de la demande existante, ceci est un test",
 
@@ -24,7 +25,6 @@ function DitDuplication() {
 
     // agenceDebiteur: "AG001",
     // serviceDebiteur: "SD001",
-
     agenceEmetteur: "AG001",
     serviceEmmetteur: "SV001",
 
@@ -40,13 +40,81 @@ function DitDuplication() {
     emailClient: "contact@hme.mg",
     clientSousContrat: "NON",
 
-    pieceJoint: [],
-    pieceJoint1: [],
-    pieceJoint2: [],
+    pieceJoint: [
+      {
+        nom: "devis_initial.pdf",
+        url: "/files/devis_initial.pdf",
+        type: "pdf",
+      },
+    ],
+    pieceJoint1: [
+      {
+        nom: "photo_equipement.jpg",
+        url: "/files/photo_equipement.jpg",
+        type: "image",
+      },
+    ],
+    pieceJoint2: [
+      {
+        nom: "schema_installation.png",
+        url: "/files/schema_installation.png",
+        type: "image",
+      },
+    ],
 
     idMateriel: "18837",
     numParc: "1234-HME149",
     numSerie: "S6X02021",
+    id: 0,
+    numeroDemandeIntervention: "DIT26068682",
+    idStatutDemande: 0,
+    statutDemande: "",
+    reparationRealise: null,
+    dateDemande: "2025-12-20",
+    agenceDebiteur: "",
+    serviceDebiteur: "",
+    sectionAffectee: null,
+    numeroDevisRattache: null,
+    statutDevis: null,
+    numeroOr: null,
+    statutOr: null,
+    montantOr: null,
+    dateSoumissionOr: null,
+    etatFacturation: null,
+    ri: "",
+    utilisateurDemandeur: "",
+    nbrPj: 0,
+    estAnnulable: false,
+    estOrASoumi: false,
+    quantiteDemanderOr: 0,
+    quantiteReserverOr: 0,
+    quantiteLivreeOr: 0,
+    quantiteReliquatOr: 0,
+    qteLivOr: 0,
+    etatLivraison: "Non livré",
+  };
+
+  // Mock
+  const mockBilanFinancier: BilanFinancier = {
+    chiffreAffaire: 259391638.1,
+    chargeEntretien: 80920998.58,
+    chargeLocative: 0,
+    resultatExploitation: 178470639.52,
+    coutAcquisition: 0,
+    amortissement: 0,
+    vnc: 0,
+  };
+
+  const mockMateriel: Materiel = {
+    idMateriel: "MAT-00921",
+    constructeur: "Toyota",
+    designation: "Véhicule utilitaire de service",
+    km: 84500,
+    numParc: "PARC-VEH-102",
+    modele: "Hilux 2.4 D-4D",
+    casier: "Parking-Depot-A",
+    heures: 0,
+    numSerie: "JT1234X9AB5678901",
   };
 
   const { data, isPending, error } = useQuery({
@@ -91,24 +159,6 @@ function DitDuplication() {
     }),
   });
 
-  const handleSubmit = async (values: DitFormValues) => {
-    const confirmed = await confirm({
-      title: "Dupliquer la demande?",
-      description: "Cette action est définitive.",
-      confirmText: "dupliquer",
-      cancelText: "Annuler",
-      variant: "info",
-      // icon: < className="w-5 h-5 text-red-500" />,
-    });
-    if (!confirmed) {
-      console.log("Action annulée.");
-      return;
-    }
-    toast(JSON.stringify(values));
-    console.log(values);
-    // await duplicateDit(values);
-  };
-
   // if (isPending) {
   //   return <div>Loading...</div>;
   // }
@@ -121,15 +171,15 @@ function DitDuplication() {
     <div className="p-4 w-full min-h-screen ">
       <div className=" w-full h-full space-y-6 overflow-x-auto">
         <div>
-          <DitForm
-            mode="duplication"
-            initialValues={initialValues}
-            onSubmitDit={handleSubmit}
-          ></DitForm>
+          <DitView
+            dit={mockDit}
+            bilanFinancier={mockBilanFinancier}
+            materiel={mockMateriel}
+          ></DitView>
         </div>
       </div>
     </div>
   );
 }
 
-export default DitDuplication;
+export default DitDetails;

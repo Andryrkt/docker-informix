@@ -98,6 +98,7 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
                       "/atelier/demande-intervention/details/" +
                       d.numeroDemandeIntervention
                     }
+                    target="_blank"
                     className="text-black hover:underline"
                   >
                     {d.numeroDemandeIntervention}
@@ -139,7 +140,7 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
                 <TableCell>{d.agenceDebiteur}</TableCell>
 
                 <TableCell className=" text-[0.6rem] text-start font-mono text-gray-600  wrap-break-word whitespace-normal max-w-30">
-                  {d.objetDemande}
+                  {d.objet}
                 </TableCell>
 
                 <TableCell className=" font-mono text-gray-600  wrap-break-word whitespace-normal max-w-20">

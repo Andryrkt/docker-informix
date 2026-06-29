@@ -2,7 +2,7 @@ import { FieldRenderer } from "@/components/common/renderer/FieldRenderer";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import {
-  agenceServiceFields,
+  agenceAndServiceFields,
   demandeFields,
   infoClientFields,
   infoMaterielFields,
@@ -28,22 +28,23 @@ type Props = {
   onSubmitDit: (values: any) => Promise<void> | void;
   mode?: "create" | "duplication";
 };
+
 function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
   const [errors, setErrors] = useState<string[]>([]);
   const { user } = useAuth();
 
-  const debiteurFields = agenceServiceFields.filter((field) =>
+  const debiteurFields = agenceAndServiceFields.filter((field) =>
     ["agenceDebiteur", "serviceDebiteur"].includes(field.name),
   );
 
-  const emetteurFields = agenceServiceFields.filter((field) =>
+  const emetteurFields = agenceAndServiceFields.filter((field) =>
     ["agenceEmetteur", "serviceEmmetteur"].includes(field.name),
   );
 
   const form = useForm({
     defaultValues: initialValues ?? {
       // Demande
-      object: "",
+      objet: "",
       details: "",
 
       // Traitement

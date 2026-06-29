@@ -1,5 +1,4 @@
 import type { Dit } from "../schema/ditSchema";
-import { traitFields } from "../schema/ditSchemaField";
 import {
   Table,
   TableBody,
@@ -17,8 +16,6 @@ import {
   type BilanFinancier,
 } from "./atom/BilanFinanciereCard";
 import { mockCommandes } from "@/domains/commande/commandeMocks";
-import type { DitFull } from "../pages/DitDetails";
-import { PaperclipHorizontalIcon } from "@phosphor-icons/react";
 import { Paperclip } from "lucide-react";
 
 type Props = {
@@ -39,6 +36,32 @@ function DitView({ dit, bilanFinancier, materiel }: Props) {
     {
       label: "Statut",
       value: dit?.statutDemande,
+    },
+  ];
+  const traitsFields = [
+    {
+      label: "Type document",
+      value: dit?.typeDocument,
+    },
+    {
+      label: "Demande devis",
+      value: dit?.interneExterne,
+    },
+    {
+      label: "Livraison Partielle",
+      value: dit?.livraisonPartielle,
+    },
+    {
+      label: "Avis de recouvrement",
+      value: dit?.avisRecouvrement,
+    },
+    {
+      label: "Categorie demande",
+      value: dit?.categorieDemande,
+    },
+    {
+      label: "interneExterne",
+      value: dit?.interneExterne,
     },
   ];
   const clientFields = [
@@ -82,12 +105,12 @@ function DitView({ dit, bilanFinancier, materiel }: Props) {
 
   return (
     <div className=" mx-auto p-4 md:p-6">
-      <div className="flex flex-col space-y-2   mx-auto">
+      <div className="flex flex-col space-y-2 max-w-7xl  mx-auto">
         <h1 className="text-2xl font-bold text-white tracking-tight border text-center py-2 bg-brand-dark">
-          "Details Demande d'intervention"
+          Details Demande d'intervention
         </h1>
       </div>
-      <div className="space-y-6  border-t-0 mx-auto gap-x-5  grid md:grid-cols-2 ">
+      <div className="space-y-6  border-t-0 mx-auto gap-x-5 max-w-7xl grid md:grid-cols-2 ">
         {/* DIT */}
         <div className="gap-6  p-2">
           <ViewSection title={"DIT"}>
@@ -120,7 +143,7 @@ function DitView({ dit, bilanFinancier, materiel }: Props) {
 
               {/* Traits */}
               <div className="grid md:grid-cols-3 gap-2">
-                {traitFields.map((field) => (
+                {traitsFields.map((field) => (
                   <FieldReadOnly key={field.label} {...field}></FieldReadOnly>
                 ))}
               </div>
@@ -196,7 +219,7 @@ function DitView({ dit, bilanFinancier, materiel }: Props) {
               ></FieldReadOnly>
               <FieldReadOnly
                 label="Emetteur"
-                value={dit?.agenceDebiteur}
+                value={dit?.agenceEmetteur}
               ></FieldReadOnly>
             </div>
           </ViewSection>

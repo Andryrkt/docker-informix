@@ -8,7 +8,7 @@ export interface ditParams {
   skip?: number;
   limit?: number;
 }
-export async function fetchDit(
+export async function fetchDits(
   params: ditParams = {},
   page = 1,
 ): Promise<PaginatedResponse<Dit>> {
@@ -27,6 +27,15 @@ export async function fetchDit(
 
   return response.data;
 }
+export async function fetchDitDetails(
+  id: number | string,
+): Promise<DitFormValues> {
+  const response = await axiosInstance.get<DitFormValues>(
+    `/demande-intervention/details/${id}`,
+  );
+  return response.data;
+}
+
 export const createDit = async (
   payload: DitFormValues,
 ): Promise<ApiResponse<Dit>> => {
@@ -61,7 +70,7 @@ export const createDit = async (
 
   return data;
 };
-export const duplucateDit = async (
+export const duplicateDit = async (
   payload: DitFormValues,
 ): Promise<ApiResponse<Dit>> => {
   const formData = new FormData();

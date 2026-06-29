@@ -21,6 +21,7 @@ import { getMateriels } from "@/domains/materiel/api/materielApi";
 import { useQuery } from "@tanstack/react-query";
 import { MaterielInfoCard } from "@/domains/materiel/components/MaterielInfoCard";
 import { getClients } from "@/domains/client/api/clientApi";
+import { useAuth } from "@/context/authContext";
 
 type Props = {
   initialValues?: DitFormValues;
@@ -29,6 +30,8 @@ type Props = {
 };
 function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
   const [errors, setErrors] = useState<string[]>([]);
+  const { user } = useAuth();
+
   const debiteurFields = agenceServiceFields.filter((field) =>
     ["agenceDebiteur", "serviceDebiteur"].includes(field.name),
   );
@@ -54,8 +57,9 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
       // Agence / Service
       agenceDebiteur: "",
       serviceDebiteur: "",
-      agenceEmetteur: "",
-      serviceEmmetteur: "",
+
+      agenceEmetteur: user?.agence,
+      serviceEmmetteur: user?.service,
 
       // Intervention
       worNiveauUrgence: "",
@@ -87,10 +91,9 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
     },
 
     onSubmit: async ({ value }) => {
-      toast(JSON.stringify(value));
       setErrors([]);
       try {
-        // await onSubmitDit(value);
+        await onSubmitDit(value);
       } catch (error: any) {
         const message = await formatErrorMessage(
           error,
@@ -105,6 +108,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
     queryKey: ["materiels"],
     queryFn: getMateriels,
   });
+
   const { data: clients = [] } = useQuery({
     queryKey: ["clients"],
     queryFn: getClients,
@@ -136,6 +140,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
     value: m.numSerie,
   }));
 
+  // Syncronisation Materiel
   const syncMateriel = (
     fieldName: "idMateriel" | "numParc" | "numSerie",
     value: string,
@@ -163,20 +168,41 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
     form.setFieldValue("numSerie", materiel.numSerie);
   };
 
+  // Syncronisation Client
+  const syncClient = (fieldName: "nomClient" | "numClient", value: string) => {
+    let client;
+
+    switch (fieldName) {
+      case "numClient":
+        client = clients.find((c) => c.numClient === value);
+        break;
+      case "nomClient":
+        client = clients.find((c) => c.nomClient === value);
+        break;
+    }
+
+    if (!client) return;
+
+    form.setFieldValue("numClient", client.numClient);
+    form.setFieldValue("nomClient", client.nomClient);
+    form.setFieldValue("telephoneClient", client.telephoneClient);
+    form.setFieldValue("emailClient", client.emailClient);
+  };
+
   return (
-    <div className=" mx-auto p-4 md:p-6 space-y-6">
-      {/* <div className="flex flex-col space-y-2">
+    <div className=" mx-auto p-4 md:p-6">
+      <div className="flex flex-col space-y-2 max-w-6xl  mx-auto">
         <h1 className="text-2xl font-bold text-white tracking-tight border text-center py-2 bg-brand-dark">
           {mode === "create"
             ? "Formulaire Demande d'intervention"
             : "Duplication de la demande d'intervention"}
         </h1>
-      </div> */}
+      </div>
 
       <form.Subscribe selector={(state) => state.values.interneExterne}>
         {(interneExterneValue) => {
           const isInterne = interneExterneValue === "INTERNE";
-          if (isInterne) {
+          if (isInterne && mode === "create") {
             form.setFieldValue("agenceDebiteur", "");
             form.setFieldValue("serviceDebiteur", "");
             form.setFieldValue("numClient", "");
@@ -191,7 +217,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                 e.preventDefault();
                 form.handleSubmit();
               }}
-              className="space-y-6 border p-10 max-w-6xl mx-auto"
+              className="space-y-6 border border-t-0 p-10 max-w-6xl mx-auto"
             >
               <div className="grid gap-6">
                 {/* Section Demande */}
@@ -330,6 +356,8 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                             ></form.Field>
                           ))}
                         </div>
+
+                        {/* Emmetteur */}
                         <div className="flex flex-col gap-4 w-full">
                           {emetteurFields.map((config) => (
                             <form.Field
@@ -377,7 +405,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                         <div className="h-1 bg-brand-primary "></div>
                       </div>
                       <div className="space-y-4 flex gap-4  ">
-                        <div className="flex flex-col gap-4 w-full">
+                        <div className="grid md:grid-cols-2 gap-4 w-full">
                           {infoClientFields.map((config) => (
                             <form.Field
                               key={config.name}
@@ -407,7 +435,17 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                                               ? nomClientOptions
                                               : (config.options ?? []),
                                         value: field.state.value,
-                                        onChange: field.handleChange,
+                                        onChange: (value) => {
+                                          if (
+                                            config.name === "numClient" ||
+                                            config.name === "nomClient"
+                                          ) {
+                                            syncClient(config.name, value);
+                                            return;
+                                          }
+
+                                          field.handleChange(value);
+                                        },
                                         disabled: shouldDisable,
                                       }}
                                     />

@@ -73,6 +73,10 @@ function AppRoutes() {
           path: "/atelier/demande-intervention/duplication/:numeroDemandeIntervention",
           element: <DitDuplication />,
         },
+        {
+          path: "/atelier/demande-intervention/details/:numeroDemandeIntervention",
+          // element: <DitDuplication />,
+        },
         // {
         //   path: "/atelier/demande-intervention/new",
         //   element: <PlanningList />,

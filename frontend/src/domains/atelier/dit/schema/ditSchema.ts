@@ -25,8 +25,11 @@ export interface Dit {
 
   dateDemande: string;
 
-  agenceServiceEmetteur: string;
-  agenceServiceDebiteur: string;
+  agenceEmetteur: string;
+  serviceEmmeteur: string;
+
+  agenceDebiteur: string;
+  serviceDebiteur: string;
 
   sectionAffectee: string | null;
 
@@ -178,4 +181,5 @@ export const ditFormSchema = z.discriminatedUnion("interneExterne", [
   interneSchema,
   externeSchema,
 ]);
+
 export type DitFormValues = z.infer<typeof ditFormSchema>;

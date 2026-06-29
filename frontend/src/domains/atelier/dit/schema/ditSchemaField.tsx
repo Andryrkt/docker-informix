@@ -1,10 +1,49 @@
 import { getAgences } from "@/domains/agence/api";
+import { getNiveauUrgence } from "@/domains/niveauUrgence/api";
+import {
+  getReparationTypes,
+  reparationRealiseParOptions,
+} from "@/domains/reparation/api";
 import { getServicesDebiteur } from "@/domains/service/api";
 
-export type FilterOption = {
+export type SelectOption = {
   label: string;
   value: string;
 };
+
+export const interneExterneOptions: SelectOption[] = [
+  { label: "INTERNE", value: "INTERNE" },
+  { label: "EXTERNE", value: "EXTERNE" },
+];
+
+export const yesNoOptions: SelectOption[] = [
+  { label: "Oui", value: "OUI" },
+  { label: "Non", value: "NON" },
+];
+
+// back
+//  Niveau d'urgence
+// reparation realisation
+
+//
+export const typeDocumentOptions: SelectOption[] = [
+  { label: "Autres", value: "Autres" },
+  { label: "Maintenance curative", value: "Maintenance curative" },
+  { label: "Maintenance préventive", value: "Maintenance préventive" },
+  { label: "Préparation vente", value: "Préparation vente" },
+];
+
+//
+export const categorieDemandeOptions: SelectOption[] = [
+  { label: "AUTRES", value: "AUTRES" },
+  { label: "LANCEMENT SAV", value: "LANCEMENT SAV" },
+  { label: "FOURNITURES PIECES", value: "FOURNITURES PIECES" },
+  { label: "GARANTIE", value: "GARANTIE" },
+  { label: "RECEPTION", value: "RECEPTION" },
+  { label: "ENTRETIENT", value: "ENTRETIENT" },
+  { label: "REPARATION", value: "REPARATION" },
+];
+
 export type DitField =
   | {
       name: string;
@@ -12,6 +51,7 @@ export type DitField =
       type: "text" | "number" | "textarea";
       placeholder?: string;
       validate?: (value: string) => boolean;
+      readOnly?: boolean;
     }
   | {
       name: string;
@@ -20,14 +60,16 @@ export type DitField =
       placeholder?: string;
       // async mode
       queryKey?: string;
-      queryFn?: () => Promise<FilterOption[]>;
-      options?: FilterOption[];
+      queryFn?: () => Promise<SelectOption[]>;
+      options?: SelectOption[];
       enabled?: boolean;
+      readOnly?: boolean;
     }
   | {
       name: string;
       label: string;
       type: "date-range";
+      readOnly?: boolean;
     }
   | {
       name: string;
@@ -46,8 +88,8 @@ export type DitField =
       placeholder?: string;
       // async mode
       queryKey?: string;
-      queryFn?: () => Promise<FilterOption[]>;
-      options?: FilterOption[];
+      queryFn?: () => Promise<SelectOption[]>;
+      options?: SelectOption[];
       enabled?: boolean;
     }
   | {
@@ -57,9 +99,9 @@ export type DitField =
       direction?: "horizontal" | "vertical";
       // async mode
       queryKey?: string;
-      queryFn?: () => Promise<FilterOption[]>;
+      queryFn?: () => Promise<SelectOption[]>;
       // static mode
-      options?: FilterOption[];
+      options?: SelectOption[];
 
       enabled?: boolean;
     }
@@ -86,8 +128,8 @@ export type DitField =
       placeholder?: string;
       // async mode
       queryKey?: string;
-      queryFn?: () => Promise<FilterOption[]>;
-      options?: FilterOption[];
+      queryFn?: () => Promise<SelectOption[]>;
+      options?: SelectOption[];
       enabled?: boolean;
     };
 
@@ -110,51 +152,38 @@ export const traitFields: DitField[] = [
     name: "typeDocument",
     label: "Type document",
     type: "select",
-    queryKey: "typeDocument",
-    queryFn: () => getAgences(),
+    options: typeDocumentOptions,
   },
   {
     name: "categorieDemande",
     label: "Catégorie demande",
     type: "select",
     queryKey: "categorieDemande",
-    queryFn: () => getAgences(),
+    options: categorieDemandeOptions,
   },
   {
     name: "interneExterne",
     label: "Interne externe",
     type: "multiSelect",
-    options: [
-      { label: "INTERNE", value: "INTERNE" },
-      { label: "EXTERNE", value: "EXTERNE" },
-    ],
+    options: interneExterneOptions,
   },
   {
     name: "demandeDevis",
     label: "Demande de devis",
     type: "multiSelect",
-    options: [
-      { label: "Oui", value: "OUI" },
-      { label: "Non", value: "NON" },
-    ],
+    options: yesNoOptions,
   },
   {
     name: "livraisonPartielle",
     label: "Livraison Partielle",
     type: "multiSelect",
-    options: [
-      { label: "Oui", value: "OUI" },
-      { label: "Non", value: "NON" },
-    ],
+    options: yesNoOptions,
   },
   {
     name: "avisRecouvrement",
     label: "Avis de recouvrement",
     type: "multiSelect",
-    options: [
-      { label: "Oui", value: "OUI" },
-      { label: "Non", value: "NON" },
-    ],
+    options: yesNoOptions,
   },
 ];
 
@@ -179,6 +208,7 @@ export const agenceServiceFields: DitField[] = [
     label: "Agence émetteur",
     type: "text",
     placeholder: "Agence emetteur",
+    readOnly: true,
   },
 
   {
@@ -186,6 +216,7 @@ export const agenceServiceFields: DitField[] = [
     label: "Service émetteur",
     type: "text",
     placeholder: "Service emetteur",
+    readOnly: true,
   },
 ];
 export const interventionFields: DitField[] = [
@@ -194,7 +225,7 @@ export const interventionFields: DitField[] = [
     label: "Niveau d'urgence",
     type: "select",
     queryKey: "worNiveauUrgence",
-    queryFn: () => getAgences(),
+    queryFn: () => getNiveauUrgence(),
   },
   {
     name: "datePrevue",
@@ -208,14 +239,13 @@ export const reparationFields: DitField[] = [
     label: "Type de reparation",
     type: "select",
     queryKey: "typeReparation",
-    queryFn: () => getAgences(),
+    queryFn: () => getReparationTypes(),
   },
   {
     name: "reparationPar",
     label: "Réparation réalisé par",
     type: "select",
-    queryKey: "reparationPar",
-    queryFn: () => getAgences(),
+    options: reparationRealiseParOptions,
   },
 ];
 export const infoClientFields: DitField[] = [

@@ -6,7 +6,7 @@ import { buildExcelFilename } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import DitTable from "../components/DitTable";
 import GlobalPagination from "@/components/common/pagination/GlobalPagination";
-import { fetchDit } from "../api/ditApi";
+import { fetchDits } from "../api/ditApi";
 import { ditMock } from "../schema/ditMock";
 import { ditFieldFilter } from "../filter/DitFieldfilter";
 import LivraisonStatutsList from "@/components/common/LivraisonStatusBadge";
@@ -24,7 +24,7 @@ function DitList() {
     isFetching,
   } = useQuery({
     queryKey: ["dit", selectedFilters, currentPage],
-    queryFn: () => fetchDit(selectedFilters, currentPage),
+    queryFn: () => fetchDits(selectedFilters, currentPage),
     staleTime: 0 * 60 * 1000,
     gcTime: 0 * 60 * 1000,
     refetchOnWindowFocus: false,

@@ -43,6 +43,7 @@ export function FieldRenderer({ field }: any) {
             field.onChange(value);
           }}
           disabled={field.disabled}
+          readOnly={field.readOnly}
         />
       );
 
@@ -53,6 +54,7 @@ export function FieldRenderer({ field }: any) {
           value={field.value ?? ""}
           onChange={(e) => field.onChange(e.target.value)}
           disabled={field.disabled}
+          readOnly={field.readOnly}
         />
       );
 
@@ -82,6 +84,7 @@ export function FieldRenderer({ field }: any) {
           value={field.value ?? ""}
           onChange={(e) => field.onChange(e.target.value)}
           disabled={field.disabled}
+          readOnly={field.readOnly}
         />
       );
 
@@ -103,6 +106,7 @@ export function FieldRenderer({ field }: any) {
               })
             }
             disabled={field.disabled}
+            readOnly={field.readOnly}
           />
 
           <Input
@@ -115,6 +119,7 @@ export function FieldRenderer({ field }: any) {
               })
             }
             disabled={field.disabled}
+            readOnly={field.readOnly}
           />
         </div>
       );
@@ -130,6 +135,7 @@ export function FieldRenderer({ field }: any) {
             field.onChange(files ? Array.from(files) : []);
           }}
           disabled={field.disabled}
+          readOnly={field.readOnly}
         />
       );
     // MULTICHOICE (checkbox group)
@@ -151,6 +157,7 @@ export function FieldRenderer({ field }: any) {
                 <Checkbox
                   checked={checked}
                   disabled={field.disabled}
+                  readOnly={field.readOnly}
                   onCheckedChange={(checked) => {
                     field.onChange(
                       checked

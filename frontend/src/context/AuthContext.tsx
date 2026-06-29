@@ -15,6 +15,8 @@ interface User {
   username?: string;
   email: string;
   id: number;
+  agence?: string;
+  service?: string;
   roles: string[];
 }
 
@@ -44,6 +46,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const profile: User = {
     displayName: "Andrialazantsoa ",
     email: "hajaina@test.com",
+    agence: "AG-014",
+    service: "Informatique",
     id: 0,
     roles: [],
   };
@@ -58,7 +62,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setIsLoading(false);
       }
     };
-    
+
     fetchUser();
   }, []);
 

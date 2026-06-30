@@ -173,7 +173,7 @@ function DitView({ dit, bilanFinancier, materiel }: Props) {
           {/* Commande */}
           <div className="gap-6">
             <ViewSection title={"Commande"}>
-              <div className="flex flex-col gap-2 max-h-75">
+              <div className="flex flex-col gap-2 max-h-75 overflow-auto">
                 <Table>
                   <TableHeader className="sticky top-0 bg-white ">
                     <TableRow>

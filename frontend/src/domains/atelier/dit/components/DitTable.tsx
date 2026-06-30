@@ -13,14 +13,36 @@ import { MoreVerticalIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import DotsMenu from "./Dots.Menu";
+import { useRef } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const rowVirtualizer = useVirtualizer({
+    count: dit?.length ?? 0,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 40, // Balanced baseline height matching small text sizes
+    overscan: 10, // Pre-renders 10 items out of view to ensure buttery-smooth scrolling with 300+ items
+  });
+  const virtualRows = rowVirtualizer.getVirtualItems();
+  const totalSize = rowVirtualizer.getTotalSize();
+
+  const paddingTop = virtualRows.length > 0 ? virtualRows[0].start : 0;
+  const paddingBottom =
+    virtualRows.length > 0
+      ? totalSize - virtualRows[virtualRows.length - 1].end
+      : 0;
+
   // if (loading) return <DitTableSkeleton></DitTableSkeleton>;
   return (
-    <div className="w-full overflow-auto py-4">
-      <Table className="  min-w-max text-xs">
-        <TableHeader className=" bg-brand-dark  [&_th]:text-white">
-          <TableRow className="hover:bg-brand-dark border-b-0 ">
+    <div
+      ref={parentRef}
+      className="w-full h-125 overflow-auto  rounded-md relative"
+    >
+      <Table className="min-w-max text-xs">
+        <TableHeader className=" bg-brand-dark  [&_th]:text-white sticky top-0">
+          <TableRow className="hover:bg-brand-dark border-b-0  ">
             <TableHead>
               <MoreVerticalIcon className="h-4 w-4" />
             </TableHead>
@@ -71,13 +93,29 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {dit?.map((d, index) => {
+          {/* Top Virtual Spacer Row */}
+          {paddingTop > 0 && (
+            <TableRow className="border-none hover:bg-transparent">
+              <TableCell
+                colSpan={25}
+                style={{ height: `${paddingTop}px` }}
+                className="p-0 border-none pointer-events-none"
+              />
+            </TableRow>
+          )}
+
+          {virtualRows?.map((virtualRow) => {
+            const d = dit[virtualRow.index];
+            if (!d) return null;
+
             return (
               <TableRow
                 className="font-mono text-gray-600  wrap-break-word whitespace-normal text-center text-[0.65rem]"
-                key={index}
+                key={virtualRow.index}
+                data-index={virtualRow.index}
+                ref={rowVirtualizer.measureElement}
               >
-                <TableCell className=" font-mono text-gray-600  max-w-auto">
+                <TableCell className=" font-mono text-gray-600  max-w-auto cursor-p">
                   <DotsMenu
                     numeroDemandeIntervention={d.numeroDemandeIntervention}
                   ></DotsMenu>
@@ -169,6 +207,16 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
             );
           })}
 
+          {/* Bottom Virtual Spacer Row */}
+          {paddingBottom > 0 && (
+            <TableRow className="border-none hover:bg-transparent">
+              <TableCell
+                colSpan={25}
+                style={{ height: `${paddingBottom}px` }}
+                className="p-0 border-none pointer-events-none"
+              />
+            </TableRow>
+          )}
           {dit?.length === 0 && (
             <TableRow>
               <TableCell className=" font-mono text-gray-600"></TableCell>

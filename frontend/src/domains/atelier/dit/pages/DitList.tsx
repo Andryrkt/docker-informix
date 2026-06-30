@@ -75,7 +75,8 @@ function DitList() {
             filename={buildExcelFilename(selectedFilters, dit)}
           ></ExcelDownloadButton>
           <div className="flex items-center gap-2 ">
-            <span className="">{dit?.total ?? 0}</span>
+            {/* <span className="">{dit?.total ?? 0}</span> */}
+            <span className="">{ditMock.length ?? 0}</span>
             <span className="text-muted-foreground text-sm">Résultats</span>
           </div>
           <div className="">

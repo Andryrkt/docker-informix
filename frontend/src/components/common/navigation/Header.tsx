@@ -9,6 +9,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -19,15 +22,16 @@ import {
 import { useAuth } from "@/context/authContext";
 import VisualTimer from "@/layout/VisualTimer";
 import {
+  Briefcase,
+  Building2,
   ChevronDown,
+  ChevronRight,
   Info,
-  LayoutDashboard,
+  Layers,
   LogOut,
-  Settings,
-  Shield,
   ShieldUser,
-  User,
   User2Icon,
+  Users,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useConfirm } from "../ConfirmDialog";
@@ -160,15 +164,40 @@ function Header({ logoSrc, userName }: HeaderProps) {
                   </Button>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="lg:hidden block"></DropdownMenuSeparator>
-                <DropdownMenuItem asChild>
-                  <Link
-                    to={""}
-                    className="flex items-center w-full cursor-pointer"
-                  >
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger className="flex items-center w-full cursor-pointer">
                     <ShieldUser className="mr-2 h-4 w-4" />
                     <span>Administration</span>
-                  </Link>
-                </DropdownMenuItem>
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="bg-brand-dark text-brand-primary">
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin/societes" className="flex items-center w-full cursor-pointer">
+                        <Building2 className="mr-2 h-4 w-4" />
+                        <span>Sociétés</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin/agences" className="flex items-center w-full cursor-pointer">
+                        <Layers className="mr-2 h-4 w-4" />
+                        <span>Agences</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin/services" className="flex items-center w-full cursor-pointer">
+                        <Briefcase className="mr-2 h-4 w-4" />
+                        <span>Services</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin/utilisateurs" className="flex items-center w-full cursor-pointer">
+                        <Users className="mr-2 h-4 w-4" />
+                        <span>Utilisateurs</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+
+                <DropdownMenuSeparator />
 
                 <DropdownMenuItem
                   onClick={handleLogout}

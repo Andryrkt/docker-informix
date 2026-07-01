@@ -12,11 +12,16 @@ use App\Security\Entity\User;
 use App\Security\Entity\UserPermission;
 use App\Security\Entity\UserScope;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class UserLantoFixtures extends Fixture implements DependentFixtureInterface
+class UserLantoFixtures extends Fixture implements FixtureGroupInterface
 {
+    public static function getGroups(): array
+    {
+        return ['lanto'];
+    }
+
     public function load(ObjectManager $manager): void
     {
         // 1. Récupérer l'utilisateur lanto (déjà créé par LDAP) ou le créer s'il n'existe pas encore en base
@@ -29,10 +34,11 @@ class UserLantoFixtures extends Fixture implements DependentFixtureInterface
             $manager->persist($user);
         }
 
-        $companies = [
-            $this->getReference(CompanyFixtures::COMPANY_HFF, Company::class),
-            $this->getReference(CompanyFixtures::COMPANY_FRAISE, Company::class),
-        ];
+        // Charger les sociétés depuis la BDD (fonctionne en --append sans références de fixture)
+        $companies = $manager->getRepository(Company::class)->findAll();
+        if (empty($companies)) {
+            return;
+        }
 
         $modules = $manager->getRepository(AppModule::class)->findAll();
         $menus   = $manager->getRepository(AppMenu::class)->findAll();
@@ -46,8 +52,7 @@ class UserLantoFixtures extends Fixture implements DependentFixtureInterface
                 $perm->setResourceType('module');
                 $perm->setResourceId($module->getId());
                 $perm->setActions([AppAction::VIEW]);
-                $perm->setAllAgences(true);
-                $perm->setAllServices(true);
+                $perm->setScopeAll(true);
                 $manager->persist($perm);
             }
 
@@ -59,8 +64,7 @@ class UserLantoFixtures extends Fixture implements DependentFixtureInterface
                 $perm->setResourceType('menu');
                 $perm->setResourceId($menu->getId());
                 $perm->setActions(AppAction::ALL);
-                $perm->setAllAgences(true);
-                $perm->setAllServices(true);
+                $perm->setScopeAll(true);
                 $manager->persist($perm);
             }
         }
@@ -88,13 +92,4 @@ class UserLantoFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
-    public function getDependencies(): array
-    {
-        return [
-            CompanyFixtures::class,
-            ServiceFixtures::class,
-            AgencyFixtures::class,
-            NavigationFixtures::class,
-        ];
-    }
 }

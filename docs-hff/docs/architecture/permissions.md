@@ -26,7 +26,7 @@ Chaque ressource possède un `slug` unique qui peut être utilisé directement d
 
 ### AppAction — Actions disponibles
 
-Toutes les actions possibles sont centralisées dans `AppAction` ([backend/src/Security/AppAction.php](../../backend/src/Security/AppAction.php)) :
+Les actions sont stockées en base dans la table `app_action_def` et gérables via l'interface d'administration (`/admin/actions`). La liste ci-dessous correspond aux 13 actions chargées par défaut via les fixtures :
 
 | Catégorie | Actions |
 |---|---|
@@ -35,6 +35,10 @@ Toutes les actions possibles sont centralisées dans `AppAction` ([backend/src/S
 | Métier | `validate`, `approve`, `duplicate`, `archive` |
 | Import | `import` |
 | Administration | `manage_users`, `manage_permissions` |
+
+> Les constantes `AppAction::ALL` dans `AppAction.php` sont conservées pour la validation backend dans `AdminUserPermissionController`. L'UI lit les actions depuis l'API (`/api/admin/actions`) et non depuis ce fichier.
+>
+> Voir [Interface d'administration — Gestion des actions](./administration.md#gestion-des-actions-de-permission) pour ajouter ou modifier des actions.
 
 ### UserPermission — Droits par utilisateur
 

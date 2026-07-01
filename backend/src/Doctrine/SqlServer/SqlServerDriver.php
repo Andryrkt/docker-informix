@@ -29,11 +29,16 @@ class SqlServerDriver implements Driver
             $dbname,
         );
 
+        // SQLSRV_ENCODING_UTF8 = 65001 : force pdo_sqlsrv à envoyer/recevoir
+        // les chaînes en UTF-8 plutôt qu'en Windows-1252 (encodage système par défaut).
+        $options = [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION];
+        if (defined('PDO::SQLSRV_ATTR_ENCODING') && defined('PDO::SQLSRV_ENCODING_UTF8')) {
+            $options[\PDO::SQLSRV_ATTR_ENCODING] = \PDO::SQLSRV_ENCODING_UTF8;
+        }
+
         try {
             $t = microtime(true);
-            $pdo = new \PDO($dsn, $user, $password, [
-                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-            ]);
+            $pdo = new \PDO($dsn, $user, $password, $options);
             error_log(sprintf('[SQLDRV] PDO connect: %dms | DSN: %s | trace: %s',
                 (int)((microtime(true) - $t) * 1000),
                 $dsn,

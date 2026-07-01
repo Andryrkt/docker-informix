@@ -16,6 +16,13 @@ import DitList from "@/domains/atelier/dit/pages/DitList";
 import DitCreation from "@/domains/atelier/dit/pages/DitCreation";
 import DitDuplication from "@/domains/atelier/dit/pages/DitDuplication";
 import DitDetails from "@/domains/atelier/dit/pages/DitDetails";
+import AdminLayout from "@/domains/admin/layout/AdminLayout";
+import SocietesPage from "@/domains/admin/pages/SocietesPage";
+import AgencesPage from "@/domains/admin/pages/AgencesPage";
+import ServicesPage from "@/domains/admin/pages/ServicesPage";
+import UtilisateursPage from "@/domains/admin/pages/UtilisateursPage";
+import UserPermissionsPage from "@/domains/admin/pages/UserPermissionsPage";
+import ActionsPage from "@/domains/admin/pages/ActionsPage";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -114,8 +121,36 @@ function AppRoutes() {
     },
   ];
 
+  // Routes admin — auth + company required, layout propre avec sidebar
+  const adminRoutes = [
+    {
+      element: (
+        <RequireAuth>
+          <RequireCompany>
+            <AppLayouts />
+          </RequireCompany>
+        </RequireAuth>
+      ),
+      errorElement: <ErrorPage />,
+      children: [
+        {
+          path: "/admin",
+          element: <AdminLayout />,
+          children: [
+            { path: "societes",     element: <SocietesPage />     },
+            { path: "agences",      element: <AgencesPage />      },
+            { path: "services",     element: <ServicesPage />      },
+            { path: "utilisateurs",                      element: <UtilisateursPage />      },
+            { path: "utilisateurs/:userId/permissions", element: <UserPermissionsPage />  },
+            { path: "actions",                          element: <ActionsPage />           },
+          ],
+        },
+      ],
+    },
+  ];
+
   const router = createBrowserRouter(
-    [...publicRoutes, ...privateRoutesNoCompany, ...privateRoutes],
+    [...publicRoutes, ...privateRoutesNoCompany, ...privateRoutes, ...adminRoutes],
     // {
     //   basename: import.meta.env.VITE_APP_BASE || "/",
     // },

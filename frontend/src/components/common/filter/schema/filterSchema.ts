@@ -9,6 +9,7 @@ export type FilterField =
       label: string;
       type: "text" | "number";
       placeholder?: string;
+      validate?: (value: string) => boolean;
     }
   | {
       name: string;

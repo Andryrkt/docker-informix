@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table";
 import DotsMenu from "./Dots.Menu";
 import { MoreVerticalIcon } from "lucide-react";
-import { formatMontant, getStatusClass } from "@/helper/helper";
+import { formatMontant, getStatusDevisClass } from "@/helper/helper";
 import { cn } from "@/lib/utils";
 import { DevisTableSkeleton } from "./DevisTableSkeleton";
 
@@ -58,7 +58,7 @@ function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
                 <TableCell
                   className={cn(
                     "font-mono max-w-30 whitespace-normal wrap-break-word text-center px-2 py-2",
-                    getStatusClass(d.STATUT_DW ? d.STATUT_DW : ""),
+                    getStatusDevisClass(d.STATUT_DW ? d.STATUT_DW : ""),
                   )}
                 >
                   {d.STATUT_DW ? d.STATUT_DW : "-"}
@@ -66,7 +66,7 @@ function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
                 <TableCell
                   className={cn(
                     "font-mono max-w-30 whitespace-normal wrap-break-word text-center px-2 py-2",
-                    getStatusClass(d.STATUT_BC ? d.STATUT_BC : ""),
+                    getStatusDevisClass(d.STATUT_BC ? d.STATUT_BC : ""),
                   )}
                 >
                   {d.STATUT_BC ? d.STATUT_BC : "-"}
@@ -87,7 +87,7 @@ function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
                   {d.NUMERO_DEVIS}
                 </TableCell>
                 <TableCell className=" font-mono text-gray-600 text-right min-w-40">
-                  {formatMontant(d.MONTANT_DEVIS, "Ar")}
+                  {formatMontant({ montant: d.MONTANT_DEVIS, devise: "Ar" })}
                 </TableCell>
                 <TableCell className=" font-mono text-gray-600  wrap-break-word whitespace-normal max-w-20 text-center">
                   {d.DATE_ENVOYE_DEVIS_AU_CLIENT}
@@ -95,7 +95,7 @@ function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
                 <TableCell
                   className={cn(
                     "font-mono text-gray-600 text-center",
-                    getStatusClass(d.STATUT_RELANCE_1 ?? "-"),
+                    getStatusDevisClass(d.STATUT_RELANCE_1 ?? "-"),
                   )}
                 >
                   {d.STATUT_RELANCE_1 ?? "-"}
@@ -103,7 +103,7 @@ function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
                 <TableCell
                   className={cn(
                     "font-mono text-gray-600 text-center",
-                    getStatusClass(d.STATUT_RELANCE_2 ?? "-"),
+                    getStatusDevisClass(d.STATUT_RELANCE_2 ?? "-"),
                   )}
                 >
                   {d.STATUT_RELANCE_2 ?? "-"}
@@ -111,7 +111,7 @@ function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
                 <TableCell
                   className={cn(
                     "font-mono text-gray-600 text-center",
-                    getStatusClass(d.STATUT_RELANCE_3 ?? "-"),
+                    getStatusDevisClass(d.STATUT_RELANCE_3 ?? "-"),
                   )}
                 >
                   {d.STATUT_RELANCE_3 ?? "-"}

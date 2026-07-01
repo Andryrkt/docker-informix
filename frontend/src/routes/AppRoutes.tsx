@@ -10,6 +10,10 @@ import DemandeSupportIT from "@/domains/it/page/DemandeSupportIT";
 import { RequireAuth } from "./guards/RequireAuth";
 import DevisList from "@/domains/magasin/dematerialisation/devis/pages/DevisList";
 import PlanningList from "@/domains/magasin/dematerialisation/planning/pages/PlanningList";
+import DitList from "@/domains/atelier/dit/pages/DitList";
+import DitCreation from "@/domains/atelier/dit/pages/DitCreation";
+import DitDuplication from "@/domains/atelier/dit/pages/DitDuplication";
+import DitDetails from "@/domains/atelier/dit/pages/DitDetails";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -47,6 +51,7 @@ function AppRoutes() {
           path: "/",
           element: <HomePage />,
         },
+        // Magazin -> Dematerialisation
         {
           path: "/magasin/dematerialisation/liste-devis-neg",
           element: <DevisList />,
@@ -55,6 +60,30 @@ function AppRoutes() {
           path: "/magasin/dematerialisation/planning-commande",
           element: <PlanningList />,
         },
+
+        // Atelier -> Demande d'intervention
+        {
+          path: "/atelier/demande-intervention/dit-list",
+          element: <DitList />,
+        },
+        {
+          path: "/atelier/demande-intervention/new",
+          element: <DitCreation />,
+        },
+        {
+          path: "/atelier/demande-intervention/duplication/:numeroDemandeIntervention",
+          element: <DitDuplication />,
+        },
+        {
+          path: "/atelier/demande-intervention/details/:numeroDemandeIntervention",
+          element: <DitDetails />,
+        },
+        // {
+        //   path: "/atelier/demande-intervention/new",
+        //   element: <PlanningList />,
+        // },
+
+        // IT
         {
           path: "/it/demande-support-informatique",
           element: <DemandeSupportIT />,

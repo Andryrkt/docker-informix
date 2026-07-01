@@ -1,4 +1,4 @@
-import type { PaginatedResponse } from "@/conf/api/PaginatedResponse";
+import type { PaginatedResponse } from "@/conf/api/Response";
 import type { Planning } from "../schema/planningSchema";
 import axiosInstance from "@/conf/axios";
 

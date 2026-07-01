@@ -30,6 +30,8 @@ export type SupportField =
       placeholder?: string;
       multiple?: boolean;
     };
+
+
 export const demandeFields: SupportField[] = [
   {
     name: "object",
@@ -44,6 +46,7 @@ export const demandeFields: SupportField[] = [
     placeholder: "Décrivez votre demande",
   },
 ];
+
 export const agenceServiceFields: SupportField[] = [
   {
     name: "agenceDebiteur",

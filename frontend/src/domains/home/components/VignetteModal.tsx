@@ -16,7 +16,7 @@ type Item = {
 };
 
 type Section = {
-  title: string;
+  title?: string;
   icon: React.ElementType;
   items: Item[];
 };
@@ -25,7 +25,8 @@ export type ModalData = {
   title: string;
   description: string;
   icon: React.ElementType;
-  sections: Section[];
+  sections?: Section[];
+  items?: Item[];
 };
 
 export function useVignetteDialog() {
@@ -36,7 +37,8 @@ export function useVignetteDialog() {
     setData(payload);
     setOpen(true);
   };
-
+  const hasSections = data?.sections?.length;
+  const hasItems = data?.items?.length;
   const VignetteDialogComponent = () => (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-h-[80vh] max-w-[75%] overflow-clip overflow-y-auto bg-brand-dark px-10 py-10">
@@ -48,48 +50,65 @@ export function useVignetteDialog() {
           <DialogDescription>{data?.description}</DialogDescription>
         </DialogHeader>
 
-        {/* GRID REPLACEMENT (no accordion) */}
-        <div
-          className={cn("grid w-full gap-8", {
-            "grid-cols-1": data?.sections.length === 1,
-            "grid-cols-1 md:grid-cols-2": data?.sections.length === 2,
-            "grid-cols-1 md:grid-cols-3": data?.sections.length === 3,
-            "grid-cols-1 md:grid-cols-3 lg:grid-cols-4":
-              data?.sections.length >= 4,
-          })}
-        >
-          {data?.sections?.map((section, i) => {
-            const SectionIcon = section.icon;
+        <div>
+          {/* MODE SECTIONS */}
+          {hasItems && (
+            <div className="flex w-full justify-between gap-2">
+              {hasItems &&
+                data?.items!.map((item, j) => {
+                  const ItemIcon = item.icon;
+                  return (
+                    <Link
+                      key={j}
+                      to={item.link}
+                      className="flex items-center gap-2 px-3 py-3 text-brand-primary/75 hover:text-brand-primary"
+                    >
+                      {ItemIcon && <ItemIcon className="size-4" />}
+                      {item.label}
+                    </Link>
+                  );
+                })}
+            </div>
+          )}
+          <div
+            className={cn("grid w-full gap-8", {
+              "grid-cols-1": data?.sections?.length === 1,
+              "grid-cols-1 md:grid-cols-2": data?.sections?.length === 2,
+              "grid-cols-1 md:grid-cols-3": data?.sections?.length === 3,
+              "grid-cols-1 md:grid-cols-3 lg:grid-cols-4":
+                (data?.sections?.length ?? 0) >= 4,
+            })}
+          >
+            {data?.sections?.map((section, i) => {
+              const SectionIcon = section.icon;
 
-            return (
-              <div key={i} className="flex flex-col gap-3">
-                {/* Section Header (replaces AccordionTrigger) */}
-                <div className="flex items-center gap-4 text-sm font-medium text-muted-foreground uppercase">
-                  <SectionIcon className="size-4" />
-                  {section.title}
+              return (
+                <div key={i} className="flex flex-col gap-3 py-2">
+                  <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground uppercase">
+                    <SectionIcon className="size-4" />
+                    {section.title}
+                  </div>
+
+                  <div className="flex flex-col">
+                    {section.items.map((item, j) => {
+                      const ItemIcon = item.icon;
+
+                      return (
+                        <Link
+                          key={j}
+                          to={item.link}
+                          className="flex items-center gap-2 px-2 py-2  text-brand-primary/75 hover:text-brand-primary"
+                        >
+                          {ItemIcon && <ItemIcon className="size-3" />}
+                          {item.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
                 </div>
-
-                {/* Section Content (always visible) */}
-                <div className="flex flex-col">
-                  {section.items.map((item, j) => {
-                    const ItemIcon = item.icon;
-
-                    return (
-                      <Link
-                        key={j}
-                        to={item.link}
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-2 py-4 text-brand-primary/75 hover:text-brand-primary focus-within:text-brand-primary"
-                      >
-                        {ItemIcon && <ItemIcon className="size-3" />}
-                        {item.label}
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </DialogContent>
     </Dialog>

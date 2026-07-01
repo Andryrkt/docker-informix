@@ -15,6 +15,8 @@ interface User {
   username?: string;
   email: string;
   id: number;
+  agence?: string;
+  service?: string;
   roles: string[];
 }
 
@@ -37,9 +39,32 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const { data: user, isLoading, refetch } = useProfile();
+  // const { data: user, isLoading, refetch } = useProfile();
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
+  const profile: User = {
+    displayName: "Andrialazantsoa ",
+    email: "hajaina@test.com",
+    agence: "AG-014",
+    service: "Informatique",
+    id: 0,
+    roles: [],
+  };
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        setUser(profile);
+      } catch (error) {
+        console.error(error);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
+    fetchUser();
+  }, []);
 
   // Login
   const login = async (credentials: LoginCredentials) => {

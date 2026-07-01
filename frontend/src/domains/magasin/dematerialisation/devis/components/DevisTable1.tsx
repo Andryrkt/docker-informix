@@ -87,7 +87,7 @@ export default function DevisTable({ devis }: DevisTableProps) {
                 {d.REFERENCE_CLIENT || "—"}
               </td>
               <td className="px-4 py-3 font-medium text-right whitespace-nowrap text-gray-800">
-                {formatMontant(d.MONTANT_DEVIS, d.DEVISE)}
+                {formatMontant({ montant: d.MONTANT_DEVIS, devise: d.DEVISE })}
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
                 <span

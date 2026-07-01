@@ -1,4 +1,4 @@
-import type { PaginatedResponse } from "@/conf/api/PaginatedResponse";
+import type { PaginatedResponse } from "@/conf/api/Response";
 import axiosInstance from "@/conf/axios";
 
 export interface Devis {

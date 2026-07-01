@@ -43,6 +43,11 @@ axiosInstance.interceptors.request.use(
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
 
+    const activeCompanyId = localStorage.getItem("active_company_id");
+    if (activeCompanyId) {
+      config.headers["X-Active-Company-ID"] = activeCompanyId;
+    }
+
     // Détection automatique du FormData pour multipart
     if (
       config.data &&

@@ -5,9 +5,11 @@ import ErrorPage from "../error/ErrorPage";
 import { AnonymousOnly } from "../auth/guard/AnonymousOnly";
 import AppLayouts from "../layout/AppLayout";
 import Login from "../domains/authentification/pages/Login";
+import SelectCompany from "../domains/authentification/pages/SelectCompany";
 import HomePage from "@/domains/home/page/HomePage";
 import DemandeSupportIT from "@/domains/it/page/DemandeSupportIT";
 import { RequireAuth } from "./guards/RequireAuth";
+import { RequireCompany } from "./guards/RequireCompany";
 import DevisList from "@/domains/magasin/dematerialisation/devis/pages/DevisList";
 import PlanningList from "@/domains/magasin/dematerialisation/planning/pages/PlanningList";
 import DitList from "@/domains/atelier/dit/pages/DitList";
@@ -35,14 +37,34 @@ function AppRoutes() {
     },
   ];
 
+  // Routes nécessitant auth mais PAS de société active (ex: sélection de société)
+  const privateRoutesNoCompany = [
+    {
+      element: (
+        <RequireAuth>
+          <AppLayouts />
+        </RequireAuth>
+      ),
+      errorElement: <ErrorPage />,
+      children: [
+        {
+          path: "/select-company",
+          element: <SelectCompany />,
+        },
+      ],
+    },
+  ];
+
+  // Routes nécessitant auth ET société active sélectionnée
   const privateRoutes = [
     {
       element: (
         <RequireAuth>
-          {/* //Mettre RequireAuth après pour protéger les routes privées */}
-          {/* <LazyWrapper> */}
-          <AppLayouts />
-          {/* </LazyWrapper> */}
+          <RequireCompany>
+            {/* <LazyWrapper> */}
+            <AppLayouts />
+            {/* </LazyWrapper> */}
+          </RequireCompany>
         </RequireAuth>
       ),
       errorElement: <ErrorPage />,
@@ -91,8 +113,9 @@ function AppRoutes() {
       ],
     },
   ];
+
   const router = createBrowserRouter(
-    [...publicRoutes, ...privateRoutes],
+    [...publicRoutes, ...privateRoutesNoCompany, ...privateRoutes],
     // {
     //   basename: import.meta.env.VITE_APP_BASE || "/",
     // },

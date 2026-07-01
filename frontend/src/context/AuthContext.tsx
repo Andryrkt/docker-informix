@@ -2,13 +2,19 @@ import type { LoginCredentials } from "@/domains/authentification/schema/loginSc
 import {
   createContext,
   useContext,
-  useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
 
 import * as authApi from "@/domains/authentification/api/authApi";
 import { useProfile } from "@/domains/authentification/hook/useProfile";
+
+export interface Company {
+  id: number;
+  name: string;
+  code: string;
+}
 
 interface User {
   displayName: string;
@@ -18,20 +24,25 @@ interface User {
   agence?: string;
   service?: string;
   roles: string[];
+  companies: Company[];
 }
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  activeCompany: Company | null;
   login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => Promise<void>;
+  selectCompany: (company: Company) => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  login: async () => { },
-  logout: async () => { },
+  activeCompany: null,
+  login: async () => {},
+  logout: async () => {},
+  selectCompany: () => {},
 });
 
 interface AuthProviderProps {
@@ -41,34 +52,61 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { data: user, isLoading, refetch } = useProfile();
 
-  // Login
+  const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(
+    () => {
+      const saved = localStorage.getItem("active_company_id");
+      return saved ? parseInt(saved, 10) : null;
+    },
+  );
+
+  const activeCompany = useMemo<Company | null>(() => {
+    const companies = user?.companies ?? [];
+    if (!companies.length) return null;
+    if (companies.length === 1) return companies[0];
+    if (selectedCompanyId) {
+      return companies.find((c) => c.id === selectedCompanyId) ?? null;
+    }
+    return null;
+  }, [user, selectedCompanyId]);
+
   const login = async (credentials: LoginCredentials) => {
     const response = await authApi.login(credentials);
-
     localStorage.setItem("access_token", response.token);
     if (response.refresh_token) {
       localStorage.setItem("refresh_token", response.refresh_token);
     }
-    refetch(); // fire-and-forget: profile loads in background after navigation
+    refetch();
   };
 
-  // Logout
   const logout = async () => {
     try {
       await authApi.logout();
     } finally {
-      // 🧹 clear query cache
+      localStorage.removeItem("active_company_id");
+      setSelectedCompanyId(null);
       await refetch();
-
     }
   };
 
+  const selectCompany = (company: Company) => {
+    localStorage.setItem("active_company_id", String(company.id));
+    setSelectedCompanyId(company.id);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading: isLoading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        loading: isLoading,
+        activeCompany,
+        selectCompany,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Custom hook
 export const useAuth = () => useContext(AuthContext);

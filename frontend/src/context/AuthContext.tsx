@@ -39,32 +39,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  // const { data: user, isLoading, refetch } = useProfile();
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const profile: User = {
-    displayName: "Andrialazantsoa ",
-    email: "hajaina@test.com",
-    agence: "AG-014",
-    service: "Informatique",
-    id: 0,
-    roles: [],
-  };
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        setUser(profile);
-      } catch (error) {
-        console.error(error);
-        setUser(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
+  const { data: user, isLoading, refetch } = useProfile();
 
   // Login
   const login = async (credentials: LoginCredentials) => {

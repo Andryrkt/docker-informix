@@ -23,7 +23,7 @@ function AppLayouts() {
   return (
     <div className="flex max-w-screen">
       {/* {user && <AuthSideBar />} */}
-      <div className="w-full min-h-screen flex flex-col flex-1">
+      <div className="w-full  flex flex-col flex-1">
         {user && (
           <>
             <Header
@@ -40,7 +40,7 @@ function AppLayouts() {
           {/* <ScrollRestoration /> */}
           <Toaster richColors />
         </main>
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </div>
   );

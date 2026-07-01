@@ -14,6 +14,7 @@ import DitList from "@/domains/atelier/dit/pages/DitList";
 import DitCreation from "@/domains/atelier/dit/pages/DitCreation";
 import DitDuplication from "@/domains/atelier/dit/pages/DitDuplication";
 import DitDetails from "@/domains/atelier/dit/pages/DitDetails";
+import VerificationPrixSoumission from "@/domains/atelier/soumission/pages/VerificationPrixSoumission";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -77,6 +78,10 @@ function AppRoutes() {
         {
           path: "/atelier/demande-intervention/details/:numeroDemandeIntervention",
           element: <DitDetails />,
+        },
+        {
+          path: "/atelier/demande-intervention/verification_prix/:numeroDemandeIntervention",
+          element: <VerificationPrixSoumission />,
         },
         // {
         //   path: "/atelier/demande-intervention/new",

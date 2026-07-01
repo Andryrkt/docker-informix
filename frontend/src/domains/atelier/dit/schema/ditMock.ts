@@ -4,7 +4,7 @@ export const ditMock: Dit[] = [
   {
     id: 1,
     idStatutDemande: 1,
-    statutDemande: "A AFFECTER",
+    statutDemande: "CLOTUREE VALIDEE",
     numeroDemandeIntervention: "DIT26068682",
     reparationRealise: "ATE TANA",
     typeDocument: "Maintenance préventive",

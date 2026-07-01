@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { FileDropzone } from "../atom/FileDropZone";
 
 export function FieldRenderer({ field }: any) {
   const isSelect = field.type === "select";
@@ -139,6 +140,11 @@ export function FieldRenderer({ field }: any) {
           readOnly={field.readOnly}
         />
       );
+    // Dragaple FileZone
+
+    case "dragfile":
+      return <FileDropzone field={field}></FileDropzone>;
+
     // MULTICHOICE (checkbox group)
     case "multichoice": {
       if (optionsQuery?.isLoading) {
@@ -182,9 +188,12 @@ export function FieldRenderer({ field }: any) {
 
       const options = getOptions(field, optionsQuery);
 
+      const value =
+        field.value ?? (options.length > 0 ? options[0].value : undefined);
+
       return (
         <RadioGroup
-          value={field.value}
+          value={value}
           onValueChange={field.onChange}
           disabled={field.disabled}
           className={

@@ -63,3 +63,20 @@ export const formatLabel = (segment: string) => {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
 };
+
+// File viewer utils
+const urlCache = new WeakMap<File, string>();
+
+export function getFileUrl(file: File | undefined): string | null {
+  if (!file) return null;
+  if (!urlCache.has(file)) {
+    const rawUrl = URL.createObjectURL(file);
+    const cleanUrl =
+      file.type === "application/pdf"
+        ? `${rawUrl}#toolbar=0&navpanes=0&statusbar=0&messages=0&view=FitH`
+        : rawUrl;
+
+    urlCache.set(file, cleanUrl);
+  }
+  return urlCache.get(file) || null;
+}

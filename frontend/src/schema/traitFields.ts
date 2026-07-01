@@ -1,0 +1,97 @@
+export type SelectOption = {
+  label: string;
+  value: string;
+};
+export type FieldTrait =
+  | {
+      name: string;
+      label: string;
+      type: "text" | "number" | "textarea";
+      placeholder?: string;
+      validate?: (value: string) => boolean;
+      readOnly?: boolean;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "select";
+      placeholder?: string;
+      // async mode
+      queryKey?: string;
+      queryFn?: () => Promise<SelectOption[]>;
+      options?: SelectOption[];
+      enabled?: boolean;
+      readOnly?: boolean;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "date-range";
+      readOnly?: boolean;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "file";
+    }
+  | {
+      name: string;
+      label: string;
+      type: "dragfile";
+    }
+  | {
+      name: string;
+      label: string;
+      type: "date";
+    }
+  | {
+      name: string;
+      label: string;
+      type: "multichoice";
+      placeholder?: string;
+      // async mode
+      queryKey?: string;
+      queryFn?: () => Promise<SelectOption[]>;
+      options?: SelectOption[];
+      enabled?: boolean;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "radio";
+      direction?: "horizontal" | "vertical";
+      // async mode
+      queryKey?: string;
+      queryFn?: () => Promise<SelectOption[]>;
+      // static mode
+      options?: SelectOption[];
+
+      enabled?: boolean;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "boolean";
+      variant?: "switch" | "checkbox" | "radio";
+      trueLabel?: string;
+      falseLabel?: string;
+      enabled?: boolean;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "file";
+      placeholder?: string;
+      multiple?: boolean;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "multiSelect";
+      placeholder?: string;
+      // async mode
+      queryKey?: string;
+      queryFn?: () => Promise<SelectOption[]>;
+      options?: SelectOption[];
+      enabled?: boolean;
+    };

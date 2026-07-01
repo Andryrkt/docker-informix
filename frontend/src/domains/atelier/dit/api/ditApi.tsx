@@ -70,6 +70,7 @@ export const createDit = async (
 
   return data;
 };
+
 export const duplicateDit = async (
   payload: DitFormValues,
 ): Promise<ApiResponse<Dit>> => {
@@ -101,6 +102,26 @@ export const duplicateDit = async (
   appendFiles("pieceJoint2", payload.pieceJoint2);
 
   const { data } = await axiosInstance.post("/createDIT", formData);
+
+  return data;
+};
+export interface CheckDitPayload {
+  document: string;
+  numeroDemandeIntervention?: string;
+}
+
+export interface CheckDitResponse {
+  allowed: boolean;
+  message?: string;
+  data?: any;
+}
+export const checkDitSubmission = async (
+  payload: CheckDitPayload,
+): Promise<ApiResponse<CheckDitResponse>> => {
+  const { data } = await axiosInstance.post<ApiResponse<CheckDitResponse>>(
+    "/demande-intervention/check-submission",
+    payload,
+  );
 
   return data;
 };

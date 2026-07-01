@@ -31,22 +31,50 @@ class UserRepository extends ServiceEntityRepository
      */
     public function findOrCreateFromLdap(string $username, array $ldapAttributes): User
     {
+        $ta = microtime(true);
         $user = $this->findByUsername($username);
+        error_log(sprintf('[AUTH] SQL findByUsername: %dms', (int)((microtime(true) - $ta) * 1000)));
+
+        $email       = $ldapAttributes['mail'] ?? null;
+        $displayName = $ldapAttributes['cn'] ?? $ldapAttributes['displayname'] ?? null;
+        $department  = $ldapAttributes['department'] ?? null;
+        $ldapDn      = $ldapAttributes['dn'] ?? null;
 
         if (!$user) {
             $user = new User();
             $user->setUsername($username);
+            $user->setEmail($email);
+            $user->setDisplayName($displayName);
+            $user->setDepartment($department);
+            $user->setLdapDn($ldapDn);
+
+            $em = $this->getEntityManager();
+            $em->persist($user);
+            $tb = microtime(true);
+            $em->flush();
+            error_log(sprintf('[AUTH] SQL flush (insert): %dms', (int)((microtime(true) - $tb) * 1000)));
+
+            return $user;
         }
 
-        $user->setEmail($ldapAttributes['mail'] ?? null);
-        $user->setDisplayName($ldapAttributes['cn'] ?? $ldapAttributes['displayname'] ?? null);
-        $user->setDepartment($ldapAttributes['department'] ?? null);
-        $user->setLdapDn($ldapAttributes['dn'] ?? null);
-        $user->setLastLoginAt(new \DateTime());
+        // Pour un utilisateur existant, ne flusher que si les attributs LDAP ont changé.
+        $changed = $user->getEmail() !== $email
+            || $user->getDisplayName() !== $displayName
+            || $user->getDepartment() !== $department
+            || $user->getLdapDn() !== $ldapDn;
 
-        $em = $this->getEntityManager();
-        $em->persist($user);
-        $em->flush();
+        if ($changed) {
+            $user->setEmail($email);
+            $user->setDisplayName($displayName);
+            $user->setDepartment($department);
+            $user->setLdapDn($ldapDn);
+
+            $tb = microtime(true);
+            $this->getEntityManager()->flush();
+            error_log(sprintf('[AUTH] SQL flush (update): %dms', (int)((microtime(true) - $tb) * 1000)));
+        } else {
+            error_log('[AUTH] SQL flush skipped (no changes)');
+        }
 
         return $user;
     }

@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (response.refresh_token) {
       localStorage.setItem("refresh_token", response.refresh_token);
     }
-    await refetch();
+    refetch(); // fire-and-forget: profile loads in background after navigation
   };
 
   // Logout

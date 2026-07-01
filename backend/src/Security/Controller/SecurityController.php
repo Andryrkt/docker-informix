@@ -80,8 +80,13 @@ class SecurityController extends AbstractController
             return $this->json(['error' => 'Non authentifié.'], 401);
         }
 
-        // Récupérer les sociétés via les permissions
-        $permissions = $this->entityManager->getRepository(UserPermission::class)->findBy(['user' => $user]);
+        // Récupérer les sociétés via les permissions (JOIN pour éviter le N+1)
+        $t0 = microtime(true);
+        $permissions = $this->entityManager->createQuery(
+            'SELECT p, c FROM App\Security\Entity\UserPermission p JOIN p.company c WHERE p.user = :user'
+        )->setParameter('user', $user)->getResult();
+        error_log(sprintf('[ME] permissions+companies query: %dms', (int)((microtime(true) - $t0) * 1000)));
+
         $companies = [];
         foreach ($permissions as $p) {
             $comp = $p->getCompany();
@@ -92,7 +97,14 @@ class SecurityController extends AbstractController
             ];
         }
 
+        $t1 = microtime(true);
         $scope = $securityContext->getUserScope();
+        error_log(sprintf('[ME] getUserScope: %dms', (int)((microtime(true) - $t1) * 1000)));
+
+        $t2 = microtime(true);
+        $agencies = $scope ? $scope->getAgencies()->map(fn($a) => ['id' => $a->getId(), 'name' => $a->getName()])->toArray() : [];
+        $services = $scope ? $scope->getServices()->map(fn($s) => ['id' => $s->getId(), 'name' => $s->getName()])->toArray() : [];
+        error_log(sprintf('[ME] scope collections: %dms', (int)((microtime(true) - $t2) * 1000)));
 
         return $this->json([
             'username'    => $user->getUserIdentifier(),
@@ -103,8 +115,8 @@ class SecurityController extends AbstractController
             'lastLoginAt' => $user->getLastLoginAt()?->format('d/m/Y H:i'),
             'companies'   => array_values($companies),
             'scope'       => [
-                'agencies' => $scope ? $scope->getAgencies()->map(fn($a) => ['id' => $a->getId(), 'name' => $a->getName()])->toArray() : [],
-                'services' => $scope ? $scope->getServices()->map(fn($s) => ['id' => $s->getId(), 'name' => $s->getName()])->toArray() : [],
+                'agencies' => $agencies,
+                'services' => $services,
             ]
         ]);
     }

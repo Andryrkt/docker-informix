@@ -29,34 +29,40 @@ class UserLantoFixtures extends Fixture implements DependentFixtureInterface
             $manager->persist($user);
         }
 
-        $company = $this->getReference(CompanyFixtures::COMPANY_HFF, Company::class);
+        $companies = [
+            $this->getReference(CompanyFixtures::COMPANY_HFF, Company::class),
+            $this->getReference(CompanyFixtures::COMPANY_FRAISE, Company::class),
+        ];
 
-        // 2. Donner accès à tous les Modules (Vignettes)
         $modules = $manager->getRepository(AppModule::class)->findAll();
-        foreach ($modules as $module) {
-            $perm = new UserPermission();
-            $perm->setUser($user);
-            $perm->setCompany($company);
-            $perm->setResourceType('module');
-            $perm->setResourceId($module->getId());
-            $perm->setActions([AppAction::VIEW]);
-            $perm->setAllAgences(true);
-            $perm->setAllServices(true);
-            $manager->persist($perm);
-        }
+        $menus   = $manager->getRepository(AppMenu::class)->findAll();
 
-        // 3. Donner accès à tous les Menus avec tous les droits (CRUD+)
-        $menus = $manager->getRepository(AppMenu::class)->findAll();
-        foreach ($menus as $menu) {
-            $perm = new UserPermission();
-            $perm->setUser($user);
-            $perm->setCompany($company);
-            $perm->setResourceType('menu');
-            $perm->setResourceId($menu->getId());
-            $perm->setActions(AppAction::ALL); // Tous les droits !
-            $perm->setAllAgences(true);
-            $perm->setAllServices(true);
-            $manager->persist($perm);
+        foreach ($companies as $company) {
+            // 2. Donner accès à tous les Modules (Vignettes)
+            foreach ($modules as $module) {
+                $perm = new UserPermission();
+                $perm->setUser($user);
+                $perm->setCompany($company);
+                $perm->setResourceType('module');
+                $perm->setResourceId($module->getId());
+                $perm->setActions([AppAction::VIEW]);
+                $perm->setAllAgences(true);
+                $perm->setAllServices(true);
+                $manager->persist($perm);
+            }
+
+            // 3. Donner accès à tous les Menus avec tous les droits (CRUD+)
+            foreach ($menus as $menu) {
+                $perm = new UserPermission();
+                $perm->setUser($user);
+                $perm->setCompany($company);
+                $perm->setResourceType('menu');
+                $perm->setResourceId($menu->getId());
+                $perm->setActions(AppAction::ALL);
+                $perm->setAllAgences(true);
+                $perm->setAllServices(true);
+                $manager->persist($perm);
+            }
         }
 
         // 4. Définir le Scope (Agences et Services)

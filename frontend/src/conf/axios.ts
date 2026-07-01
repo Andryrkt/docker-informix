@@ -36,6 +36,39 @@ const handleLogout = () => {
   window.location.href = "/login";
 };
 
+/**
+ * Log d'une erreur HTTP via fetch natif.
+ * N'utilise PAS axiosInstance pour éviter une dépendance circulaire avec auditApi.ts.
+ */
+function sendAuditNavigationLog(errorCode: number, errorMessage?: string): void {
+  const token = localStorage.getItem("access_token");
+  const companyId = localStorage.getItem("active_company_id");
+  if (!token) return; // Pas connecté → rien à logger
+
+  const payload = {
+    pageUrl:      window.location.pathname,
+    actionResult: "ERROR_REDIRECT",
+    errorCode,
+    errorMessage: errorMessage ?? null,
+    sessionId:    sessionStorage.getItem("audit_session_id") ?? null,
+  };
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`,
+  };
+  if (companyId) headers["X-Active-Company-ID"] = companyId;
+
+  fetch(`${BASE_URL}/audit/navigation`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+    keepalive: true,
+  }).catch(() => {
+    // Fire-and-forget — on ignore silencieusement les erreurs de logging
+  });
+}
+
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const accessToken = localStorage.getItem("access_token");
@@ -68,7 +101,28 @@ axiosInstance.interceptors.response.use(
       _retry?: boolean;
     };
 
-    if (!error.response || error.response.status !== 401) {
+    if (!error.response) {
+      return Promise.reject(error);
+    }
+
+    const status = error.response.status;
+
+    // Log les erreurs HTTP significatives via fetch natif (évite une dépendance circulaire avec auditApi)
+    if ([403, 404, 422, 500, 502, 503].includes(status)) {
+      const isAuditCall = originalRequest.url?.includes("/audit/");
+      if (!isAuditCall) {
+        const errData = error.response.data as Record<string, unknown> | null;
+        const errMsg = (errData?.message ?? errData?.error ?? errData?.detail ?? "") as string;
+        sendAuditNavigationLog(status, errMsg || undefined);
+      }
+    }
+
+    // Les appels audit sont fire-and-forget — ne jamais déclencher le refresh/logout pour eux
+    if (originalRequest.url?.includes("/audit/")) {
+      return Promise.reject(error);
+    }
+
+    if (status !== 401) {
       return Promise.reject(error);
     }
 

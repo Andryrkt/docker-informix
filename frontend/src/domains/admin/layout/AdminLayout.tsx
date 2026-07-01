@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Building2, Briefcase, LayoutTemplate, Menu, Settings, Users, Layers, ShieldCheck, X } from "lucide-react";
+import { Building2, Briefcase, LayoutTemplate, Menu, Settings, Users, Layers, ShieldCheck, X, MousePointerClick, ClipboardList } from "lucide-react";
 import { NavLink, Outlet } from "react-router";
 import { cn } from "@/lib/utils";
 
@@ -10,6 +10,11 @@ const navItems = [
   { to: "/admin/utilisateurs", label: "Utilisateurs",icon: Users        },
   { to: "/admin/actions",      label: "Actions",     icon: ShieldCheck  },
   { to: "/admin/modeles",      label: "Modèles",     icon: LayoutTemplate },
+];
+
+const auditItems = [
+  { to: "/admin/historique/navigation",  label: "Navigation",  icon: MousePointerClick },
+  { to: "/admin/historique/operations",  label: "Opérations",  icon: ClipboardList     },
 ];
 
 function AdminLayout() {
@@ -33,6 +38,32 @@ function AdminLayout() {
       </div>
       <nav className="flex flex-col gap-0.5 p-2 flex-1 overflow-y-auto">
         {navItems.map(({ to, label, icon: Icon }) => (
+          <NavLink
+            key={to}
+            to={to}
+            onClick={() => setMobileOpen(false)}
+            className={({ isActive }) =>
+              cn(
+                "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
+                isActive
+                  ? "bg-blue-50 text-blue-700 font-medium"
+                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
+              )
+            }
+          >
+            <Icon size={16} />
+            {label}
+          </NavLink>
+        ))}
+
+        {/* Séparateur Historisation */}
+        <div className="pt-3 pb-1 px-3">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+            Historisation
+          </p>
+        </div>
+
+        {auditItems.map(({ to, label, icon: Icon }) => (
           <NavLink
             key={to}
             to={to}

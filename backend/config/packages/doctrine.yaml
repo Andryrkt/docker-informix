@@ -58,6 +58,11 @@ doctrine:
                         type: attribute
                         dir: '%kernel.project_dir%/src/Security/Entity'
                         prefix: 'App\Security\Entity'
+                    Audit:
+                        is_bundle: false
+                        type: attribute
+                        dir: '%kernel.project_dir%/src/Audit/Entity'
+                        prefix: 'App\Audit\Entity'
 when@test:
     doctrine:
         dbal:

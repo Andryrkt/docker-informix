@@ -33,6 +33,17 @@ services:
         bind:
             Doctrine\ORM\EntityManagerInterface: '@doctrine.orm.sqlserver_entity_manager'
 
+    # Audit : les repositories utilisent le ManagerRegistry (autowired).
+    # AuditService utilise DBAL directement via la connexion SQL Server.
+    App\Audit\:
+        resource: '../src/Audit/'
+
+    # AuditService : injection explicite de la connexion DBAL SQL Server
+    # (DBAL ne se ferme pas sur un INSERT raté, contrairement à l'EntityManager)
+    App\Audit\Service\AuditService:
+        bind:
+            Doctrine\DBAL\Connection: '@doctrine.dbal.sqlserver_connection'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 

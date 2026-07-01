@@ -104,7 +104,14 @@ class LdapAuthenticator extends AbstractAuthenticator
 
         // ── 5. Créer/mettre à jour en SQL Server ───────────────────────────────
         $t3 = microtime(true);
-        $user = $this->userRepository->findOrCreateFromLdap($username, $ldapAttributes);
+        try {
+            $user = $this->userRepository->findOrCreateFromLdap($username, $ldapAttributes);
+        } catch (\Throwable $e) {
+            error_log('[AUTH] SQL Server unavailable: ' . $e->getMessage());
+            throw new AuthenticationException(
+                'Le service est temporairement indisponible (base de données inaccessible). Veuillez réessayer dans quelques instants.'
+            );
+        }
         error_log(sprintf('[AUTH] SQL upsert: %dms', (int)((microtime(true) - $t3) * 1000)));
 
         return new SelfValidatingPassport(
@@ -131,8 +138,13 @@ class LdapAuthenticator extends AbstractAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
+        // getMessage() contient notre message personnalisé (ex: "Service indisponible")
+        // getMessageKey() est le fallback Symfony si getMessage() est vide
+        $message = $exception->getMessage()
+            ?: strtr($exception->getMessageKey(), $exception->getMessageData());
+
         return new JsonResponse(
-            ['error' => strtr($exception->getMessageKey(), $exception->getMessageData())],
+            ['error' => $message],
             Response::HTTP_UNAUTHORIZED
         );
     }

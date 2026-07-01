@@ -105,8 +105,8 @@ export default function AgencesPage() {
         </Button>
       </div>
 
-      <div className="border rounded-md overflow-hidden">
-        <Table>
+      <div className="border rounded-md overflow-x-auto">
+        <Table className="min-w-96">
           <TableHeader>
             <TableRow>
               <TableHead>Nom</TableHead>
@@ -158,13 +158,13 @@ export default function AgencesPage() {
         <Field data-invalid={!!errors.name}>
           <FieldLabel>Nom</FieldLabel>
           <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="ex: Agence Antananarivo" />
-          {errors.name && <FieldError errors={[errors.name]} />}
+          {errors.name && <FieldError errors={[{ message: errors.name }]} />}
         </Field>
 
         <Field data-invalid={!!errors.code}>
           <FieldLabel>Code</FieldLabel>
           <Input value={form.code} onChange={(e) => setForm((f) => ({ ...f, code: e.target.value.toUpperCase() }))} placeholder="ex: AGC-TNR" maxLength={20} />
-          {errors.code && <FieldError errors={[errors.code]} />}
+          {errors.code && <FieldError errors={[{ message: errors.code }]} />}
         </Field>
 
         <Field data-invalid={!!errors.companyId}>
@@ -177,7 +177,7 @@ export default function AgencesPage() {
               ))}
             </SelectContent>
           </Select>
-          {errors.companyId && <FieldError errors={[errors.companyId]} />}
+          {errors.companyId && <FieldError errors={[{ message: errors.companyId }]} />}
         </Field>
 
         <Field>

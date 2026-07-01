@@ -76,8 +76,8 @@ export default function ServicesPage() {
         </Button>
       </div>
 
-      <div className="border rounded-md overflow-hidden">
-        <Table>
+      <div className="border rounded-md overflow-x-auto">
+        <Table className="min-w-80">
           <TableHeader>
             <TableRow>
               <TableHead>Nom</TableHead>
@@ -118,12 +118,12 @@ export default function ServicesPage() {
         <Field data-invalid={!!errors.name}>
           <FieldLabel>Nom</FieldLabel>
           <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="ex: Comptabilité" />
-          {errors.name && <FieldError errors={[errors.name]} />}
+          {errors.name && <FieldError errors={[{ message: errors.name }]} />}
         </Field>
         <Field data-invalid={!!errors.code}>
           <FieldLabel>Code</FieldLabel>
           <Input value={form.code} onChange={(e) => setForm((f) => ({ ...f, code: e.target.value.toUpperCase() }))} placeholder="ex: COMPTA" maxLength={20} />
-          {errors.code && <FieldError errors={[errors.code]} />}
+          {errors.code && <FieldError errors={[{ message: errors.code }]} />}
         </Field>
       </AdminCrudDialog>
     </div>

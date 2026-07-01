@@ -126,8 +126,8 @@ export default function ActionsPage() {
               <span className="text-xs text-gray-400">{items.length} action(s)</span>
             </div>
 
-            <div className="border rounded-md overflow-hidden">
-              <Table>
+            <div className="border rounded-md overflow-x-auto">
+              <Table className="min-w-80">
                 <TableHeader>
                   <TableRow>
                     <TableHead>ClÃ© technique</TableHead>

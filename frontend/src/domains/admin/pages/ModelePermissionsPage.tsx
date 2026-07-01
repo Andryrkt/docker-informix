@@ -80,8 +80,8 @@ export default function ModelePermissionsPage() {
           </Button>
         </div>
       ) : (
-        <div className="border rounded-md overflow-hidden">
-          <Table>
+        <div className="border rounded-md overflow-x-auto">
+          <Table className="min-w-96">
             <TableHeader>
               <TableRow>
                 <TableHead>Nom</TableHead>

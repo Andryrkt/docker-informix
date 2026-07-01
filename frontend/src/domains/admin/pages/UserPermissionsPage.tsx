@@ -109,25 +109,28 @@ export default function UserPermissionsPage() {
   return (
     <div className="space-y-6">
       {/* En-tête */}
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="sm" onClick={() => navigate("/admin/utilisateurs")} className="gap-1">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
+        <Button variant="ghost" size="sm" onClick={() => navigate("/admin/utilisateurs")} className="gap-1 self-start">
           <ArrowLeft size={15} /> Retour
         </Button>
-        <div className="flex-1">
-          <h1 className="text-xl font-semibold text-gray-800">
+        <div className="flex-1 min-w-0">
+          <h1 className="text-xl font-semibold text-gray-800 truncate">
             Permissions — {user?.displayName ?? user?.username ?? `Utilisateur #${uid}`}
           </h1>
           <p className="text-sm text-gray-500 mt-0.5">{permissions.length} permission(s) au total</p>
         </div>
-        <Button variant="outline" size="sm" className="gap-2" onClick={() => setCopyDialog(true)}>
-          <Copy size={15} /> Copier depuis…
-        </Button>
-        <Button variant="outline" size="sm" className="gap-2" onClick={() => setTemplateDialog(true)}>
-          <LayoutTemplate size={15} /> Appliquer un modèle
-        </Button>
-        <Button onClick={openCreate} size="sm" className="gap-2">
-          <Plus size={15} /> Ajouter une permission
-        </Button>
+        {/* Groupe de boutons — s'empile sur mobile, s'aligne sur sm+ */}
+        <div className="flex flex-wrap gap-2 sm:flex-nowrap sm:shrink-0">
+          <Button variant="outline" size="sm" className="gap-2" onClick={() => setCopyDialog(true)}>
+            <Copy size={15} /> Copier depuis…
+          </Button>
+          <Button variant="outline" size="sm" className="gap-2" onClick={() => setTemplateDialog(true)}>
+            <LayoutTemplate size={15} /> Appliquer un modèle
+          </Button>
+          <Button onClick={openCreate} size="sm" className="gap-2">
+            <Plus size={15} /> Ajouter
+          </Button>
+        </div>
       </div>
 
       {/* Permissions groupées par société */}
@@ -147,8 +150,8 @@ export default function UserPermissionsPage() {
             <span className="font-mono text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">{company.code}</span>
           </div>
 
-          <div className="border rounded-md overflow-hidden">
-            <Table>
+          <div className="border rounded-md overflow-x-auto">
+            <Table className="min-w-160">
               <TableHeader>
                 <TableRow>
                   <TableHead>Type</TableHead>

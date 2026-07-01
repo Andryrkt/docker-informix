@@ -76,8 +76,8 @@ export default function SocietesPage() {
         </Button>
       </div>
 
-      <div className="border rounded-md overflow-hidden">
-        <Table>
+      <div className="border rounded-md overflow-x-auto">
+        <Table className="min-w-64">
           <TableHeader>
             <TableRow>
               <TableHead>Nom</TableHead>
@@ -118,7 +118,7 @@ export default function SocietesPage() {
         <Field data-invalid={!!errors.name}>
           <FieldLabel>Nom</FieldLabel>
           <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="ex: HOLDING FRAISE" />
-          {errors.name && <FieldError errors={[errors.name]} />}
+          {errors.name && <FieldError errors={[{ message: errors.name }]} />}
         </Field>
         <Field data-invalid={!!errors.code}>
           <FieldLabel>Code</FieldLabel>

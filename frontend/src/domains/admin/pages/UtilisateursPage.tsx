@@ -25,8 +25,8 @@ export default function UtilisateursPage() {
         </div>
       </div>
 
-      <div className="border rounded-md overflow-hidden">
-        <Table>
+      <div className="border rounded-md overflow-x-auto">
+        <Table className="min-w-160">
           <TableHeader>
             <TableRow>
               <TableHead>Nom complet</TableHead>

@@ -1,3 +1,7 @@
+---
+sidebar_position: 2
+---
+
 # Système de Permissions
 
 ## Vue d'ensemble
@@ -51,11 +55,50 @@ app_user_permission
 ├── resourceType   → 'module' ou 'menu'
 ├── resourceId     → ID du module ou menu
 ├── actions        → ["view", "edit", "validate"]  (JSON)
-├── allAgences     → true = accès à toutes les agences
-├── allServices    → true = accès à tous les services
-├── agenceIds      → [1, 3, 5]  (si allAgences = false)
-└── serviceIds     → [2, 4]     (si allServices = false)
+├── scopeAll       → true = accès à toutes les agences et tous leurs services
+└── agencyScopes   → JSON nullable — liste de paires agence/services (voir ci-dessous)
 ```
+
+#### Structure de `agencyScopes`
+
+Quand `scopeAll = false`, la portée est définie par une liste de paires **agence → services** :
+
+```json
+[
+  { "agencyId": 12, "allServices": true,  "serviceIds": []     },
+  { "agencyId": 7,  "allServices": false, "serviceIds": [3, 9] }
+]
+```
+
+Ce modèle remplace l'ancienne approche à quatre champs indépendants (`allAgences`, `allServices`, `agenceIds`, `serviceIds`) qui créait une ambiguïté : cocher l'agence `01` et le service `NEG` donnait accès à `01-NEG` **et** `30-NEG`. La nouvelle structure garantit que seules les paires explicitement configurées sont autorisées.
+
+> **Migration :** les colonnes `allAgences`, `allServices`, `agenceIds`, `serviceIds` ont été supprimées et remplacées par `scopeAll` (bool, NOT NULL) et `agencyScopes` (JSON, nullable).
+
+### PermissionTemplate — Modèles réutilisables
+
+Les modèles permettent de pré-configurer un ensemble de permissions et de les appliquer rapidement à plusieurs utilisateurs.
+
+**Entité :** [PermissionTemplate.php](../../backend/src/Security/Entity/PermissionTemplate.php)  
+**Entité item :** [PermissionTemplateItem.php](../../backend/src/Security/Entity/PermissionTemplateItem.php)
+
+```
+app_permission_template
+├── id          → Identifiant
+├── name        → Nom unique
+└── description → Optionnelle
+
+app_permission_template_item
+├── id           → Identifiant
+├── templateId   → Référence au modèle parent (cascade remove)
+├── companyId    → Société
+├── resourceType → 'module' ou 'menu'
+├── resourceId   → ID du module ou menu
+├── actions      → JSON
+├── scopeAll     → bool
+└── agencyScopes → JSON nullable (même structure que UserPermission)
+```
+
+Un item de modèle est structurellement identique à une `UserPermission` sans le champ `user`. Lors de l'application (`applyTemplate`), chaque item est cloné en `UserPermission` pour l'utilisateur cible.
 
 ### UserScope — Portée des données
 
@@ -184,9 +227,41 @@ Un utilisateur avec le rôle `ROLE_SUPER_ADMIN` bypass tous les voters et n'a pa
    $permission->setResourceType('module');
    $permission->setResourceId($module->getId());
    $permission->setActions([AppAction::VIEW, AppAction::EDIT]);
-   $permission->setAllAgences(true); // ou spécifier agenceIds
+   $permission->setScopeAll(true); // accès à toutes les agences
+   // ou portée restreinte :
+   $permission->setScopeAll(false);
+   $permission->setAgencyScopes([
+       ['agencyId' => 12, 'allServices' => true, 'serviceIds' => []],
+   ]);
    ```
 3. Protéger le contrôleur avec le voter :
    ```php
    $this->denyAccessUnlessGranted(AppAction::VIEW, 'mon-module-slug');
    ```
+
+---
+
+## Réutilisation des permissions
+
+Deux mécanismes sont disponibles pour éviter de reconfigurer manuellement les mêmes permissions pour plusieurs utilisateurs.
+
+### Copie depuis un autre utilisateur
+
+```php
+// Endpoint : POST /api/admin/users/{targetId}/copy-from/{sourceId}
+// Body : { "mode": "replace" | "merge" }
+```
+
+- **replace** — supprime toutes les permissions de la cible, puis clone celles de la source
+- **merge** — n'ajoute que les permissions absentes (clé = companyId + resourceType + resourceId)
+
+### Application d'un modèle
+
+```php
+// Endpoint : POST /api/admin/users/{id}/apply-template/{templateId}
+// Body : { "mode": "replace" | "merge" }
+```
+
+Crée des `UserPermission` à partir des `PermissionTemplateItem` du modèle, avec les mêmes modes replace/merge.
+
+> Voir [Interface d'administration — Modèles de permissions](./administration.md#modèles-de-permissions) pour la gestion des modèles depuis l'UI.

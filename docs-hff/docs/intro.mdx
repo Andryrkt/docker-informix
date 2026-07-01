@@ -2,46 +2,25 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Documentation HFF Intranet
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Bienvenue dans la documentation technique de l'intranet **HFF** (Harbour Freight & Forwarding).
 
-## Getting Started
+## Stack technique
 
-Get started by **creating a new site**.
+| Couche | Technologie |
+|---|---|
+| Backend | Symfony 7 + PHP 8.2 |
+| Base de données | SQL Server (via `pdo_sqlsrv` + Doctrine) |
+| Frontend | React 19 + TypeScript + Vite |
+| Styles | Tailwind CSS + shadcn/ui |
+| État serveur | TanStack Query v5 |
+| Routing | react-router v7 |
+| Auth | JWT (LexikJWTAuthenticationBundle) |
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+## Sections
 
-### What you'll need
-
-- [Node.js](https://nodejs.org/en/download/) version 20.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
-
-## Generate a new site
-
-Generate a new Docusaurus site using the **classic template**.
-
-The classic template will automatically be added to your project after you run the command:
-
-```bash
-npm init docusaurus@latest my-website classic
-```
-
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
-
-```bash
-cd my-website
-npm run start
-```
-
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+- **[Guide Docker](./guide-docker)** — démarrer l'environnement de développement
+- **[Architecture / Authentification](./architecture/authentification)** — JWT, sélection de société, guards React
+- **[Architecture / Permissions](./architecture/permissions)** — voters, scopes, filtrage Doctrine
+- **[Architecture / Administration](./architecture/administration)** — CRUD admin, permissions utilisateurs, modèles

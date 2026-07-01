@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Pencil, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Copy, LayoutTemplate, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -9,8 +9,10 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { PermissionFormDialog } from "../components/PermissionFormDialog";
+import { CopyFromUserDialog } from "../components/CopyFromUserDialog";
+import { ApplyTemplateDialog } from "../components/ApplyTemplateDialog";
 import * as api from "../api/adminApi";
-import type { UserPermission, PermissionPayload } from "../api/adminApi";
+import type { UserPermission, PermissionPayload, CopyMode } from "../api/adminApi";
 
 const ACTION_LABELS: Record<string, string> = {
   view: "Voir", create: "Créer", edit: "Modifier", delete: "Supprimer",
@@ -37,9 +39,11 @@ export default function UserPermissionsPage() {
   const [dialog, setDialog] = useState<{ open: boolean; item: UserPermission | null }>({
     open: false, item: null,
   });
+  const [copyDialog,     setCopyDialog]     = useState(false);
+  const [templateDialog, setTemplateDialog] = useState(false);
 
-  const openCreate = () => setDialog({ open: true, item: null });
-  const openEdit   = (p: UserPermission) => setDialog({ open: true, item: p });
+  const openCreate  = () => setDialog({ open: true, item: null });
+  const openEdit    = (p: UserPermission) => setDialog({ open: true, item: p });
   const closeDialog = () => setDialog({ open: false, item: null });
 
   const saveMutation = useMutation({
@@ -66,6 +70,32 @@ export default function UserPermissionsPage() {
     onError: () => toast.error("Impossible de supprimer cette permission."),
   });
 
+  const copyMutation = useMutation({
+    mutationFn: ({ sourceUserId, mode }: { sourceUserId: number; mode: CopyMode }) =>
+      api.copyPermissionsFromUser(uid, sourceUserId, mode),
+    onSuccess: () => {
+      toast.success("Permissions copiées avec succès.");
+      qc.invalidateQueries({ queryKey: ["admin", "permissions", uid] });
+      setCopyDialog(false);
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.error ?? "Erreur lors de la copie.");
+    },
+  });
+
+  const applyTemplateMutation = useMutation({
+    mutationFn: ({ templateId, mode }: { templateId: number; mode: CopyMode }) =>
+      api.applyPermissionTemplate(uid, templateId, mode),
+    onSuccess: () => {
+      toast.success("Modèle appliqué avec succès.");
+      qc.invalidateQueries({ queryKey: ["admin", "permissions", uid] });
+      setTemplateDialog(false);
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.error ?? "Erreur lors de l'application du modèle.");
+    },
+  });
+
   // Grouper par société
   const grouped = permissions.reduce<Record<number, { company: UserPermission["company"]; perms: UserPermission[] }>>(
     (acc, p) => {
@@ -89,6 +119,12 @@ export default function UserPermissionsPage() {
           </h1>
           <p className="text-sm text-gray-500 mt-0.5">{permissions.length} permission(s) au total</p>
         </div>
+        <Button variant="outline" size="sm" className="gap-2" onClick={() => setCopyDialog(true)}>
+          <Copy size={15} /> Copier depuis…
+        </Button>
+        <Button variant="outline" size="sm" className="gap-2" onClick={() => setTemplateDialog(true)}>
+          <LayoutTemplate size={15} /> Appliquer un modèle
+        </Button>
         <Button onClick={openCreate} size="sm" className="gap-2">
           <Plus size={15} /> Ajouter une permission
         </Button>
@@ -186,6 +222,21 @@ export default function UserPermissionsPage() {
         onSave={(payload) => saveMutation.mutate(payload)}
         isSubmitting={saveMutation.isPending}
         initial={dialog.item}
+      />
+
+      <CopyFromUserDialog
+        open={copyDialog}
+        onClose={() => setCopyDialog(false)}
+        onConfirm={(sourceUserId, mode) => copyMutation.mutate({ sourceUserId, mode })}
+        isSubmitting={copyMutation.isPending}
+        currentUserId={uid}
+      />
+
+      <ApplyTemplateDialog
+        open={templateDialog}
+        onClose={() => setTemplateDialog(false)}
+        onConfirm={(templateId, mode) => applyTemplateMutation.mutate({ templateId, mode })}
+        isSubmitting={applyTemplateMutation.isPending}
       />
     </div>
   );

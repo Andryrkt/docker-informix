@@ -23,6 +23,7 @@ import ServicesPage from "@/domains/admin/pages/ServicesPage";
 import UtilisateursPage from "@/domains/admin/pages/UtilisateursPage";
 import UserPermissionsPage from "@/domains/admin/pages/UserPermissionsPage";
 import ActionsPage from "@/domains/admin/pages/ActionsPage";
+import ModelePermissionsPage from "@/domains/admin/pages/ModelePermissionsPage";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -143,6 +144,7 @@ function AppRoutes() {
             { path: "utilisateurs",                      element: <UtilisateursPage />      },
             { path: "utilisateurs/:userId/permissions", element: <UserPermissionsPage />  },
             { path: "actions",                          element: <ActionsPage />           },
+            { path: "modeles",                          element: <ModelePermissionsPage /> },
           ],
         },
       ],

@@ -1,4 +1,4 @@
-import { Building2, Briefcase, Settings, Users, Layers, ShieldCheck } from "lucide-react";
+import { Building2, Briefcase, LayoutTemplate, Settings, Users, Layers, ShieldCheck } from "lucide-react";
 import { NavLink, Outlet } from "react-router";
 import { cn } from "@/lib/utils";
 
@@ -7,7 +7,8 @@ const navItems = [
   { to: "/admin/agences",     label: "Agences",     icon: Layers      },
   { to: "/admin/services",    label: "Services",    icon: Briefcase   },
   { to: "/admin/utilisateurs",label: "Utilisateurs",icon: Users       },
-  { to: "/admin/actions",     label: "Actions",     icon: ShieldCheck },
+  { to: "/admin/actions",     label: "Actions",     icon: ShieldCheck   },
+  { to: "/admin/modeles",     label: "Modèles",     icon: LayoutTemplate},
 ];
 
 function AdminLayout() {

@@ -212,3 +212,76 @@ export const updateUserPermission = async (id: number, data: PermissionPayload):
 export const deleteUserPermission = async (id: number): Promise<void> => {
   await axiosInstance.delete(`/admin/permissions/${id}`);
 };
+
+export type CopyMode = "replace" | "merge";
+
+export const copyPermissionsFromUser = async (
+  targetUserId: number,
+  sourceUserId: number,
+  mode: CopyMode,
+): Promise<UserPermission[]> => {
+  const res = await axiosInstance.post(`/admin/users/${targetUserId}/copy-from/${sourceUserId}`, { mode });
+  return res.data;
+};
+
+export const applyPermissionTemplate = async (
+  userId: number,
+  templateId: number,
+  mode: CopyMode,
+): Promise<UserPermission[]> => {
+  const res = await axiosInstance.post(`/admin/users/${userId}/apply-template/${templateId}`, { mode });
+  return res.data;
+};
+
+// ── Permission Templates ───────────────────────────────────────────────────
+
+export interface PermissionTemplateItem {
+  id: number;
+  company: Company;
+  resourceType: "module" | "menu";
+  resourceId: number;
+  resourceLabel: string;
+  actions: string[];
+  scopeAll: boolean;
+  agencyScopes: AgencyScope[];
+}
+
+export interface PermissionTemplate {
+  id: number;
+  name: string;
+  description: string | null;
+  items: PermissionTemplateItem[];
+}
+
+export interface PermissionTemplatePayload {
+  name: string;
+  description?: string;
+  items: PermissionPayload[];
+}
+
+export const fetchPermissionTemplates = async (): Promise<PermissionTemplate[]> => {
+  const res = await axiosInstance.get("/admin/permission-templates");
+  return res.data;
+};
+
+export const fetchPermissionTemplate = async (id: number): Promise<PermissionTemplate> => {
+  const res = await axiosInstance.get(`/admin/permission-templates/${id}`);
+  return res.data;
+};
+
+export const createPermissionTemplate = async (data: PermissionTemplatePayload): Promise<PermissionTemplate> => {
+  const res = await axiosInstance.post("/admin/permission-templates", data);
+  return res.data;
+};
+
+export const updatePermissionTemplate = async (
+  id: number,
+  data: PermissionTemplatePayload,
+): Promise<PermissionTemplate> => {
+  const res = await axiosInstance.put(`/admin/permission-templates/${id}`, data);
+  return res.data;
+};
+
+export const deletePermissionTemplate = async (id: number): Promise<void> => {
+  await axiosInstance.delete(`/admin/permission-templates/${id}`);
+};

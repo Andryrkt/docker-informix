@@ -1,3 +1,7 @@
+---
+sidebar_position: 3
+---
+
 # Sélection de société (multi-société)
 
 ## Vue d'ensemble

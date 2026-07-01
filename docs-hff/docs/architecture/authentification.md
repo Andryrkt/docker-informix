@@ -1,3 +1,7 @@
+---
+sidebar_position: 1
+---
+
 # Authentification - Flux LDAP → JWT
 
 ## Vue d'ensemble

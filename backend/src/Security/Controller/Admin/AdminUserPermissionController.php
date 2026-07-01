@@ -7,6 +7,7 @@ use App\Security\Entity\Agency;
 use App\Security\Entity\AppMenu;
 use App\Security\Entity\AppModule;
 use App\Security\Entity\Company;
+use App\Security\Entity\PermissionTemplate;
 use App\Security\Entity\Service;
 use App\Security\Entity\User;
 use App\Security\Entity\UserPermission;
@@ -116,6 +117,119 @@ class AdminUserPermissionController extends AbstractController
         $this->em->flush();
 
         return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    // ── Copie + application de modèle ───────────────────────────────────────
+
+    #[Route('/api/admin/users/{userId}/copy-from/{sourceUserId}', methods: ['POST'])]
+    public function copyFrom(int $userId, int $sourceUserId, Request $request): JsonResponse
+    {
+        $target = $this->em->getRepository(User::class)->find($userId);
+        $source = $this->em->getRepository(User::class)->find($sourceUserId);
+
+        if (!$target || !$source) {
+            return $this->json(['error' => 'Utilisateur introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+
+        $data = json_decode($request->getContent(), true) ?? [];
+        $mode = in_array($data['mode'] ?? '', ['merge']) ? 'merge' : 'replace';
+
+        $sourcePerms = $this->em->getRepository(UserPermission::class)->findBy(['user' => $source]);
+
+        if ($mode === 'replace') {
+            $existing = $this->em->getRepository(UserPermission::class)->findBy(['user' => $target]);
+            foreach ($existing as $p) {
+                $this->em->remove($p);
+            }
+            $this->em->flush();
+        }
+
+        $existingKeys = $this->buildExistingKeys($target);
+
+        foreach ($sourcePerms as $src) {
+            $key = $src->getCompany()->getId() . '-' . $src->getResourceType() . '-' . $src->getResourceId();
+            if ($mode === 'merge' && isset($existingKeys[$key])) {
+                continue;
+            }
+            $copy = $this->clonePermission($src, $target);
+            $this->em->persist($copy);
+        }
+
+        $this->em->flush();
+
+        $perms = $this->em->getRepository(UserPermission::class)->findBy(['user' => $target]);
+        return $this->json(array_map(fn(UserPermission $p) => $this->serializePermission($p), $perms));
+    }
+
+    #[Route('/api/admin/users/{userId}/apply-template/{templateId}', methods: ['POST'])]
+    public function applyTemplate(int $userId, int $templateId, Request $request): JsonResponse
+    {
+        $user     = $this->em->getRepository(User::class)->find($userId);
+        $template = $this->em->getRepository(PermissionTemplate::class)->find($templateId);
+
+        if (!$user) {
+            return $this->json(['error' => 'Utilisateur introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+        if (!$template) {
+            return $this->json(['error' => 'Modèle introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+
+        $data = json_decode($request->getContent(), true) ?? [];
+        $mode = in_array($data['mode'] ?? '', ['merge']) ? 'merge' : 'replace';
+
+        if ($mode === 'replace') {
+            $existing = $this->em->getRepository(UserPermission::class)->findBy(['user' => $user]);
+            foreach ($existing as $p) {
+                $this->em->remove($p);
+            }
+            $this->em->flush();
+        }
+
+        $existingKeys = $this->buildExistingKeys($user);
+
+        foreach ($template->getItems() as $item) {
+            $key = $item->getCompany()->getId() . '-' . $item->getResourceType() . '-' . $item->getResourceId();
+            if ($mode === 'merge' && isset($existingKeys[$key])) {
+                continue;
+            }
+            $perm = new UserPermission();
+            $perm->setUser($user);
+            $perm->setCompany($item->getCompany());
+            $perm->setResourceType($item->getResourceType());
+            $perm->setResourceId($item->getResourceId());
+            $perm->setActions($item->getActions());
+            $perm->setScopeAll($item->isScopeAll());
+            $perm->setAgencyScopes($item->getAgencyScopes());
+            $this->em->persist($perm);
+        }
+
+        $this->em->flush();
+
+        $perms = $this->em->getRepository(UserPermission::class)->findBy(['user' => $user]);
+        return $this->json(array_map(fn(UserPermission $p) => $this->serializePermission($p), $perms));
+    }
+
+    private function buildExistingKeys(User $user): array
+    {
+        $perms = $this->em->getRepository(UserPermission::class)->findBy(['user' => $user]);
+        $keys  = [];
+        foreach ($perms as $p) {
+            $keys[$p->getCompany()->getId() . '-' . $p->getResourceType() . '-' . $p->getResourceId()] = true;
+        }
+        return $keys;
+    }
+
+    private function clonePermission(UserPermission $src, User $target): UserPermission
+    {
+        $copy = new UserPermission();
+        $copy->setUser($target);
+        $copy->setCompany($src->getCompany());
+        $copy->setResourceType($src->getResourceType());
+        $copy->setResourceId($src->getResourceId());
+        $copy->setActions($src->getActions());
+        $copy->setScopeAll($src->isScopeAll());
+        $copy->setAgencyScopes($src->getAgencyScopes());
+        return $copy;
     }
 
     // ── Helpers ─────────────────────────────────────────────────────────────

@@ -90,14 +90,18 @@ class UserRepository extends ServiceEntityRepository
             return $user;
         }
 
+        // LDAP ne fournit pas toujours 'mail' : ne jamais écraser un email déjà
+        // renseigné (LDAP ou saisi manuellement en admin) par une valeur vide.
+        $nextEmail = $email ?? $user->getEmail();
+
         // Pour un utilisateur existant, ne flusher que si les attributs LDAP ont changé.
-        $changed = $user->getEmail() !== $email
+        $changed = $user->getEmail() !== $nextEmail
             || $user->getDisplayName() !== $displayName
             || $user->getDepartment() !== $department
             || $user->getLdapDn() !== $ldapDn;
 
         if ($changed) {
-            $user->setEmail($email);
+            $user->setEmail($nextEmail);
             $user->setDisplayName($displayName);
             $user->setDepartment($department);
             $user->setLdapDn($ldapDn);

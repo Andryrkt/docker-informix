@@ -29,17 +29,20 @@ export function UserAccessDialog({ open, onClose, user }: Props) {
 
   const [isAdmin, setIsAdmin]     = useState(false);
   const [matricule, setMatricule] = useState("");
+  const [email, setEmail]         = useState("");
 
   useEffect(() => {
     if (detail) {
       setIsAdmin(detail.roles.includes("ROLE_ADMIN"));
       setMatricule(detail.matricule ?? "");
+      setEmail(detail.email ?? "");
     }
   }, [detail]);
 
   const saveMutation = useMutation({
     mutationFn: async () => {
       await api.updateUserMatricule(user!.id, matricule.trim());
+      await api.updateUserEmail(user!.id, email.trim());
       await api.updateUserRoles(user!.id, isAdmin ? ["ROLE_ADMIN"] : []);
     },
     onSuccess: () => {
@@ -47,7 +50,10 @@ export function UserAccessDialog({ open, onClose, user }: Props) {
       qc.invalidateQueries({ queryKey: ["admin", "users"] });
       onClose();
     },
-    onError: () => toast.error("Impossible de mettre à jour les accès."),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.error ?? "Impossible de mettre à jour les accès.");
+    },
   });
 
   if (!user) return null;
@@ -62,6 +68,16 @@ export function UserAccessDialog({ open, onClose, user }: Props) {
         </DialogHeader>
 
         <div className="space-y-4 py-2">
+          <Field>
+            <FieldLabel>Email</FieldLabel>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="prenom.nom@hff.mg"
+            />
+          </Field>
+
           <Field>
             <FieldLabel>Matricule (rattachement à la fiche personnel)</FieldLabel>
             <Input

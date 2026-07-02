@@ -223,6 +223,10 @@ export const updateUserMatricule = async (userId: number, matricule: string): Pr
   await axiosInstance.put(`/admin/users/${userId}/matricule`, { matricule });
 };
 
+export const updateUserEmail = async (userId: number, email: string): Promise<void> => {
+  await axiosInstance.put(`/admin/users/${userId}/email`, { email });
+};
+
 // ── Actions ────────────────────────────────────────────────────────────────
 
 export interface ActionDef {

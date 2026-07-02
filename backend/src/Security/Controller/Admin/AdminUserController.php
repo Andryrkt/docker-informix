@@ -90,6 +90,30 @@ class AdminUserController extends AbstractController
     }
 
     /**
+     * Renseigne/modifie manuellement l'email de l'utilisateur (ex: absent de la fiche LDAP).
+     */
+    #[Route('/{id}/email', methods: ['PUT'])]
+    public function updateEmail(int $id, Request $request): JsonResponse
+    {
+        $user = $this->em->getRepository(User::class)->find($id);
+        if (!$user) {
+            return $this->json(['error' => 'Utilisateur introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+
+        $data  = json_decode($request->getContent(), true) ?? [];
+        $email = trim((string) ($data['email'] ?? ''));
+
+        if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return $this->json(['error' => 'Adresse email invalide.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $user->setEmail($email !== '' ? $email : null);
+        $this->em->flush();
+
+        return $this->json(['id' => $user->getId(), 'email' => $user->getEmail()]);
+    }
+
+    /**
      * Remplace les rôles de l'utilisateur (ex: ["ROLE_ADMIN"]).
      * ROLE_USER est toujours implicite, inutile de l'inclure.
      */

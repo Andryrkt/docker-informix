@@ -30,6 +30,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  profileError: boolean;
   activeCompany: Company | null;
   login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => Promise<void>;
@@ -39,6 +40,7 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
+  profileError: false,
   activeCompany: null,
   login: async () => {},
   logout: async () => {},
@@ -50,7 +52,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const { data: user, isLoading, refetch } = useProfile();
+  const { data: user, isLoading, isError, refetch } = useProfile();
 
   const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(
     () => {
@@ -60,11 +62,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   );
 
   const activeCompany = useMemo<Company | null>(() => {
-    const companies = user?.companies ?? [];
+    const companies: Company[] = user?.companies ?? [];
     if (!companies.length) return null;
     if (companies.length === 1) return companies[0];
     if (selectedCompanyId) {
-      return companies.find((c) => c.id === selectedCompanyId) ?? null;
+      return companies.find((c: Company) => c.id === selectedCompanyId) ?? null;
     }
     return null;
   }, [user, selectedCompanyId]);
@@ -100,6 +102,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         login,
         logout,
         loading: isLoading,
+        profileError: isError,
         activeCompany,
         selectCompany,
       }}

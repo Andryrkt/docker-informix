@@ -28,55 +28,55 @@ class AuditNavigation
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(name: 'user_id', type: 'integer', nullable: true)]
     private ?int $userId = null;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $username = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(name: 'company_id', type: 'integer', nullable: true)]
     private ?int $companyId = null;
 
-    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[ORM\Column(name: 'company_code', type: 'string', length: 50, nullable: true)]
     private ?string $companyCode = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(name: 'session_id', type: 'string', length: 255, nullable: true)]
     private ?string $sessionId = null;
 
-    #[ORM\Column(type: 'string', length: 500)]
+    #[ORM\Column(name: 'page_url', type: 'string', length: 500)]
     private string $pageUrl;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(name: 'page_title', type: 'string', length: 255, nullable: true)]
     private ?string $pageTitle = null;
 
     /** Action tentée : DELETE, SEARCH, VIEW, SUBMIT, VALIDATE, etc. */
-    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    #[ORM\Column(name: 'action_attempted', type: 'string', length: 100, nullable: true)]
     private ?string $actionAttempted = null;
 
     /** Résultat : VISITED, SEARCHED, ATTEMPTED, CANCELLED, ERROR_REDIRECT */
-    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[ORM\Column(name: 'action_result', type: 'string', length: 50, nullable: true)]
     private ?string $actionResult = null;
 
     /** Paramètres de recherche en JSON */
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(name: 'search_data', type: 'text', nullable: true)]
     private ?string $searchData = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(name: 'error_code', type: 'integer', nullable: true)]
     private ?int $errorCode = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(name: 'error_message', type: 'text', nullable: true)]
     private ?string $errorMessage = null;
 
-    #[ORM\Column(type: 'string', length: 45, nullable: true)]
+    #[ORM\Column(name: 'ip_address', type: 'string', length: 45, nullable: true)]
     private ?string $ipAddress = null;
 
-    #[ORM\Column(type: 'string', length: 500, nullable: true)]
+    #[ORM\Column(name: 'user_agent', type: 'string', length: 500, nullable: true)]
     private ?string $userAgent = null;
 
-    #[ORM\Column(type: 'string', length: 500, nullable: true)]
+    #[ORM\Column(name: 'referer_url', type: 'string', length: 500, nullable: true)]
     private ?string $refererUrl = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(name: 'created_at', type: 'datetime')]
     private \DateTimeInterface $createdAt;
 
     public function __construct()

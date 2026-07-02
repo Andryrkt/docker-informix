@@ -50,6 +50,7 @@ export function usePageTracker(options?: { enabled?: boolean }): void {
 
     // Évite de logger deux fois la même URL (StrictMode double-render)
     if (path === prevPathRef.current) return;
+    const referer = prevPathRef.current || null;
     prevPathRef.current = path;
 
     postNavigationLog({
@@ -57,7 +58,7 @@ export function usePageTracker(options?: { enabled?: boolean }): void {
       pageTitle:    titleFromPath(location.pathname),
       actionResult: "VISITED",
       sessionId:    sessionId.current,
-      refererUrl:   prevPathRef.current || null,
+      refererUrl:   referer,
       searchData:   location.search
         ? Object.fromEntries(new URLSearchParams(location.search))
         : null,

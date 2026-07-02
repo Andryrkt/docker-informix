@@ -54,70 +54,70 @@ class AuditOperation
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(name: 'user_id', type: 'integer', nullable: true)]
     private ?int $userId = null;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $username = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(name: 'company_id', type: 'integer', nullable: true)]
     private ?int $companyId = null;
 
-    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[ORM\Column(name: 'company_code', type: 'string', length: 50, nullable: true)]
     private ?string $companyCode = null;
 
     /** SOUMISSION | VALIDATION | MODIFICATION | SUPPRESSION | CREATION | CLOTUR | FILE_MERGE | DB_SAV | DW_COP | FILE_UPLOAD | ANNULATION */
-    #[ORM\Column(type: 'string', length: 50)]
+    #[ORM\Column(name: 'operation_type', type: 'string', length: 50)]
     private string $operationType;
 
     /** DIT | OR | FAC | RI | TIK | DA | DOM | BDM | CAS | CDE | DEV | BC | AC | CDEFRN | SW | MUT */
-    #[ORM\Column(type: 'string', length: 20, nullable: true)]
+    #[ORM\Column(name: 'document_type', type: 'string', length: 20, nullable: true)]
     private ?string $documentType = null;
 
     /** Identifiant technique du document */
-    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    #[ORM\Column(name: 'document_id', type: 'string', length: 100, nullable: true)]
     private ?string $documentId = null;
 
     /** Numéro lisible du document (ex: DIT-2025-0001) */
-    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    #[ORM\Column(name: 'document_number', type: 'string', length: 100, nullable: true)]
     private ?string $documentNumber = null;
 
-    #[ORM\Column(type: 'boolean')]
+    #[ORM\Column(name: 'is_success', type: 'boolean')]
     private bool $isSuccess = false;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(name: 'success_message', type: 'text', nullable: true)]
     private ?string $successMessage = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(name: 'error_message', type: 'text', nullable: true)]
     private ?string $errorMessage = null;
 
-    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    #[ORM\Column(name: 'error_code', type: 'string', length: 100, nullable: true)]
     private ?string $errorCode = null;
 
     /** Données du formulaire soumis en JSON (données sensibles expurgées) */
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(name: 'submitted_data', type: 'text', nullable: true)]
     private ?string $submittedData = null;
 
     /** Contraintes métier violées en JSON : [{"field":"numeroOR","message":"..."}] */
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(name: 'constraints_violated', type: 'text', nullable: true)]
     private ?string $constraintsViolated = null;
 
     /** Résultats des opérations fichier en JSON */
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(name: 'file_operations', type: 'text', nullable: true)]
     private ?string $fileOperations = null;
 
     /** URL de la page ayant déclenché l'opération */
-    #[ORM\Column(type: 'string', length: 500, nullable: true)]
+    #[ORM\Column(name: 'page_url', type: 'string', length: 500, nullable: true)]
     private ?string $pageUrl = null;
 
     /** Durée de l'opération en millisecondes */
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(name: 'duration_ms', type: 'integer', nullable: true)]
     private ?int $durationMs = null;
 
-    #[ORM\Column(type: 'string', length: 45, nullable: true)]
+    #[ORM\Column(name: 'ip_address', type: 'string', length: 45, nullable: true)]
     private ?string $ipAddress = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(name: 'created_at', type: 'datetime')]
     private \DateTimeInterface $createdAt;
 
     public function __construct()

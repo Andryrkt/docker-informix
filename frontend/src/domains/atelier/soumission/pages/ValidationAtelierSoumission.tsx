@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
-import { soumettreVerificationPrix } from "../api/verificationOuValidation";
-import VerificationPrixForm from "../components/VerificationPrixForm";
+import ValidationAtelierForm from "../components/ValidationAtelierForm";
 import { formatErrorMessage } from "@/lib/utils";
 import { toast } from "sonner";
+import { soumettreVerificationPrix } from "../api/verificationOuValidation";
 
-function VerificationPrixSoumission() {
+function ValidationAtelierSoumission() {
   const mutation = useMutation({
     mutationFn: soumettreVerificationPrix,
 
@@ -25,16 +25,15 @@ function VerificationPrixSoumission() {
       );
     },
   });
-  
   return (
     <div className="p-4 w-full min-h-screen ">
       <div className=" w-full h-full space-y-6 overflow-x-auto">
         <div>
-          <VerificationPrixForm mutation={mutation}></VerificationPrixForm>
+          <ValidationAtelierForm mutation={mutation}></ValidationAtelierForm>
         </div>
       </div>
     </div>
   );
 }
 
-export default VerificationPrixSoumission;
+export default ValidationAtelierSoumission;

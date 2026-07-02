@@ -11,12 +11,11 @@ import {
   reparationFields,
   traitFields,
 } from "../schema/ditSchemaField";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { formatErrorMessage } from "@/lib/utils";
 import { ditFormSchema, type DitFormValues } from "../schema/ditSchema";
 import { Save } from "lucide-react";
-import { toast } from "sonner";
 import { getMateriels } from "@/domains/materiel/api/materielApi";
 import { useQuery } from "@tanstack/react-query";
 import { MaterielInfoCard } from "@/domains/materiel/components/MaterielInfoCard";

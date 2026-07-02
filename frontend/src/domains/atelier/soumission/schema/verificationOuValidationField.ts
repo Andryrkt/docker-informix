@@ -15,7 +15,7 @@ export const ditFields: FieldTrait[] = [
     readOnly: true,
   },
 ];
-export const verificationPrixFields: FieldTrait[] = [
+export const verificationFields: FieldTrait[] = [
   {
     name: "tachePartsManager",
     type: "radio",
@@ -28,6 +28,17 @@ export const verificationPrixFields: FieldTrait[] = [
     label: "Veuillez insérer le devis à valider *",
     multiple: false,
     pattern: "^DEVIS-.+",
+    maxSize: max_size_upload_file,
+    accept: ".pdf,.doc,.docx,image/*",
+  },
+] as const;
+export const validationFields: FieldTrait[] = [
+  {
+    name: "pieceJointe",
+    type: "dragfile",
+    label: "Veuillez insérer le devis à valider *",
+    multiple: false,
+    pattern: "^ATELIER-.+",
     maxSize: max_size_upload_file,
     accept: ".pdf,.doc,.docx,image/*",
   },

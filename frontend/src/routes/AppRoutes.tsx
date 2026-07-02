@@ -16,6 +16,7 @@ import DitDuplication from "@/domains/atelier/dit/pages/DitDuplication";
 import DitDetails from "@/domains/atelier/dit/pages/DitDetails";
 import VerificationPrixSoumission from "@/domains/atelier/soumission/pages/VerificationPrixSoumission";
 import { verificationDitLoader } from "./guards/verificationDitLoader";
+import ValidationAtelierSoumission from "@/domains/atelier/soumission/pages/ValidationAtelierSoumission";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -87,7 +88,7 @@ function AppRoutes() {
         },
         {
           path: "/atelier/demande-intervention/verification_atelier/:numeroDemandeIntervention",
-          element: <VerificationPrixSoumission />,
+          element: <ValidationAtelierSoumission />,
           loader: verificationDitLoader("verification_atelier"),
         },
 

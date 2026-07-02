@@ -3,6 +3,7 @@ import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
 import {
   ditFields,
+  validationFields,
   verificationFields,
 } from "../schema/verificationOuValidationField";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
@@ -12,26 +13,23 @@ import { Loader2, Save } from "lucide-react";
 import { DocumentViewer } from "@/components/common/DocumentViewer";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { verificationSchema } from "../schema/verificationOuValidationSchema";
-import type { DitFormValues } from "../../dit/schema/ditSchema";
+import { validationSchema } from "../schema/verificationOuValidationSchema";
 import type { UseMutationResult } from "@tanstack/react-query";
 
 type Props = {
   mutation: UseMutationResult<any, any, any>;
 };
-
-function VerificationPrixForm({ mutation }: Props) {
+function ValidationAtelierForm({ mutation }: Props) {
   let params = useParams();
 
   const form = useForm({
     defaultValues: {
       numeroDit: params.numeroDemandeIntervention ?? "",
       numeroDevis: params.numeroDevis ?? "123",
-      tachePartsManager: "VERIF_PRIX",
       pieceJointe: [] as File[],
     },
     validators: {
-      onSubmit: verificationSchema,
+      onSubmit: validationSchema,
     },
 
     onSubmit: async ({ value }) => {
@@ -43,14 +41,13 @@ function VerificationPrixForm({ mutation }: Props) {
     <div className=" mx-auto p-4 md:p-6">
       <div className="flex flex-col space-y-2   mx-auto">
         <h1 className="text-xl font-bold text-white tracking-tight border text-center py-2 bg-brand-dark font-mono ">
-          SOUMISSION DEVIS - Verification de prix Magasin
+          SOUMISSION VALIDATION - Validation atelier
         </h1>
       </div>
       <form
         id="dit-form"
         onSubmit={(e) => {
           e.preventDefault();
-          if (mutation.isPending) return;
           form.handleSubmit();
         }}
         className=" border border-t-0 p-10 space-y-6  mx-auto "
@@ -92,7 +89,7 @@ function VerificationPrixForm({ mutation }: Props) {
                 ></form.Field>
               ))}
             </div>
-            {verificationFields.map((config) => (
+            {validationFields.map((config) => (
               <form.Field
                 key={config.name}
                 name={config.name as never}
@@ -164,4 +161,4 @@ function VerificationPrixForm({ mutation }: Props) {
   );
 }
 
-export default VerificationPrixForm;
+export default ValidationAtelierForm;

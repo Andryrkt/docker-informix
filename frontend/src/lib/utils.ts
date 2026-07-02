@@ -91,3 +91,17 @@ export const formatFileSize = (bytes: number) => {
 
   return `${(bytes / Math.pow(k, i)).toFixed(i === 0 ? 0 : 1)} ${sizes[i]}`;
 };
+
+// Helper pour fichiers
+
+export const appendFiles = (key: string, files: any, formData: any) => {
+  if (!files) return;
+
+  const list = Array.isArray(files) ? files : [files];
+
+  list.forEach((file) => {
+    if (file instanceof File) {
+      formData.append(`${key}[]`, file);
+    }
+  });
+};

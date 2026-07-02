@@ -1,3 +1,5 @@
+export const max_size_upload_file =
+  Number(import.meta.env.VITE_MAX_SIZE_FILE) || 5;
 export type SelectOption = {
   label: string;
   value: string;
@@ -28,17 +30,6 @@ export type FieldTrait =
       label: string;
       type: "date-range";
       readOnly?: boolean;
-    }
-  | {
-      name: string;
-      label: string;
-      type: "file";
-    }
-  | {
-      name: string;
-      label: string;
-      type: "dragfile";
-      multiple?: boolean;
     }
   | {
       name: string;
@@ -83,7 +74,19 @@ export type FieldTrait =
       label: string;
       type: "file";
       placeholder?: string;
-      multiple?: boolean;
+      multiple: boolean;
+      pattern: string;
+      maxSize: number;
+      accept: string;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "dragfile";
+      multiple: boolean;
+      pattern?: string;
+      maxSize: number;
+      accept: string;
     }
   | {
       name: string;

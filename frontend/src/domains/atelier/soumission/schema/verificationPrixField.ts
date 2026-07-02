@@ -1,4 +1,4 @@
-import type { FieldTrait } from "@/schema/traitFields";
+import { max_size_upload_file, type FieldTrait } from "@/schema/traitFields";
 import { TACHE_PARTS_MANAGER_OPTIONS } from "../constant/soumissionConstants";
 
 export const ditFields: FieldTrait[] = [
@@ -26,6 +26,9 @@ export const verificationPrixFields: FieldTrait[] = [
     name: "pieceJointe",
     type: "dragfile",
     label: "Veuillez insérer le devis à valider *",
-    multiple: true,
+    multiple: false,
+    pattern: "^DEVIS-.+",
+    maxSize: max_size_upload_file,
+    accept: ".pdf,.doc,.docx,image/*",
   },
 ] as const;

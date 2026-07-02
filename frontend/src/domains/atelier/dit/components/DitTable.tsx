@@ -79,12 +79,13 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
         },
       },
     ].filter(Boolean) as MenuAction[];
-  }, []); // <-- Empty array means the function reference stays identical across renders
+  }, []);
 
   const checkDocumentMutation = useMutation({
     mutationFn: checkDitSubmission,
     onSuccess: (res, variables) => {
       const allowed = res?.data?.allowed;
+      // const numeroDevis = res.data.numeroDevis;
 
       if (allowed) {
         navigate(

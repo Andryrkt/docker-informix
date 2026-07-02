@@ -135,7 +135,7 @@ export const checkDitSubmission = async (
     setTimeout(() => {
       return resolve({
         data: {
-          allowed: false,
+          allowed: true,
           message: "Mock: submission allowed",
           data: null,
         },

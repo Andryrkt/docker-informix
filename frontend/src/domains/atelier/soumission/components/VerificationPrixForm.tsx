@@ -11,14 +11,17 @@ import { FieldRenderer } from "@/components/common/renderer/FieldRenderer";
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
 import { DocumentViewer } from "@/components/common/DocumentViewer";
+import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 function VerificationPrixForm() {
   const [errors, setErrors] = useState<string[]>([]);
+  let params = useParams();
 
   const form = useForm({
     defaultValues: {
-      numeroDit: "1XXXXX",
-      numeroDevis: "2XXXXX",
+      numeroDit: params.numeroDemandeIntervention ?? "",
+      numeroDevis: params.numeroDevis ?? "123",
       tachePartsManager: "VERIF_PRIX",
       pieceJointe: [] as File[],
     },
@@ -28,6 +31,7 @@ function VerificationPrixForm() {
 
     onSubmit: async ({ value }) => {
       console.log(value);
+      toast("Submited : " + JSON.stringify(value));
       setErrors([]);
       try {
         // await onSubmitDit(value);
@@ -130,7 +134,12 @@ function VerificationPrixForm() {
           {/* --- File Preview Section --- */}
           <form.Subscribe selector={(state) => state.values.pieceJointe}>
             {(pieceJointe) => {
-              return <DocumentViewer files={pieceJointe}></DocumentViewer>;
+              const filesToPreview: File[] = Array.isArray(pieceJointe)
+                ? pieceJointe
+                : pieceJointe
+                  ? [pieceJointe]
+                  : [];
+              return <DocumentViewer files={filesToPreview}></DocumentViewer>;
             }}
           </form.Subscribe>
         </div>

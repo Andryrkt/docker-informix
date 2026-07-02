@@ -35,6 +35,7 @@ export type FieldTrait =
       name: string;
       label: string;
       type: "date";
+      readOnly?: boolean;
     }
   | {
       name: string;

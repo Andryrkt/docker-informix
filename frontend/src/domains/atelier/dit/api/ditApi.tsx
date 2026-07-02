@@ -129,8 +129,6 @@ export interface CheckDitResponse {
 export const checkDitSubmission = async (
   payload: CheckDitPayload,
 ): Promise<ApiResponse<CheckDitResponse>> => {
-  console.log("MOCK checkDitSubmission payload:", payload);
-
   return new Promise((resolve) => {
     setTimeout(() => {
       return resolve({

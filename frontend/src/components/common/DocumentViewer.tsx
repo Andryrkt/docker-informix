@@ -52,7 +52,7 @@ export function DocumentViewer({ files }: DocumentViewerProps) {
       </div>
 
       {/* Preview */}
-      <div className="grid h-130 divide-y divide-gray-800 md:divide-x md:divide-y-0">
+      <div className="grid min-h-140 divide-y divide-gray-800 md:divide-x md:divide-y-0">
         <div className="relative flex items-center justify-center bg-black/80 md:col-span-2">
           {hasFiles && activeFileUrl && primaryFile ? (
             <object

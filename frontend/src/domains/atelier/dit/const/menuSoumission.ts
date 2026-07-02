@@ -6,9 +6,9 @@ export const DW_DOCUMENT_OPTIONS = [
     href: "/dw/dit",
   },
   {
-    value: "verification_atelier",
+    value: "validation_atelier",
     code: "DEVIS",
-    label: "DEVIS - Vérification atelier",
+    label: "DEVIS - Validation atelier",
     href: "/dw/dit",
   },
   {

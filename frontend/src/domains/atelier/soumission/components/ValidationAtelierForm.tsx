@@ -1,10 +1,7 @@
-import { formatErrorMessage } from "@/lib/utils";
 import { useForm } from "@tanstack/react-form";
-import { useState } from "react";
 import {
   ditFields,
   validationFields,
-  verificationFields,
 } from "../schema/verificationOuValidationField";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { FieldRenderer } from "@/components/common/renderer/FieldRenderer";
@@ -12,8 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Save } from "lucide-react";
 import { DocumentViewer } from "@/components/common/DocumentViewer";
 import { useParams } from "react-router-dom";
-import { toast } from "sonner";
-import { validationSchema } from "../schema/verificationOuValidationSchema";
+import { validationSchema, type ValidationPayload } from "../schema/verificationOuValidationSchema";
 import type { UseMutationResult } from "@tanstack/react-query";
 
 type Props = {
@@ -22,7 +18,7 @@ type Props = {
 function ValidationAtelierForm({ mutation }: Props) {
   let params = useParams();
 
-  const form = useForm({
+  const form = useForm<ValidationPayload>({
     defaultValues: {
       numeroDit: params.numeroDemandeIntervention ?? "",
       numeroDevis: params.numeroDevis ?? "123",
@@ -45,7 +41,7 @@ function ValidationAtelierForm({ mutation }: Props) {
         </h1>
       </div>
       <form
-        id="dit-form"
+        id="validation-atelier-form"
         onSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();

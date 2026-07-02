@@ -18,21 +18,8 @@ export const soumettreVerificationPrix = async (
     formData.append(key, value as string);
   });
 
-  // helper pour fichiers
-  const appendFiles = (key: string, files: any) => {
-    if (!files) return;
-
-    const list = Array.isArray(files) ? files : [files];
-
-    list.forEach((file) => {
-      if (file instanceof File) {
-        formData.append(`${key}[]`, file);
-      }
-    });
-  };
-
   // fichiers
-  appendFiles("pieceJointe", payload.pieceJointe);
+  appendFiles("pieceJointe", payload.pieceJointe, formData);
 
   const { data } = await axiosInstance.post(
     "/soumettreVerificationPrix",

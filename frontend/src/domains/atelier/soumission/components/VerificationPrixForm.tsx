@@ -1,6 +1,4 @@
-import { formatErrorMessage } from "@/lib/utils";
 import { useForm } from "@tanstack/react-form";
-import { useState } from "react";
 import {
   ditFields,
   verificationFields,
@@ -11,9 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Save } from "lucide-react";
 import { DocumentViewer } from "@/components/common/DocumentViewer";
 import { useParams } from "react-router-dom";
-import { toast } from "sonner";
-import { verificationSchema } from "../schema/verificationOuValidationSchema";
-import type { DitFormValues } from "../../dit/schema/ditSchema";
+import { verificationSchema, type VerificationPayload } from "../schema/verificationOuValidationSchema";
 import type { UseMutationResult } from "@tanstack/react-query";
 
 type Props = {
@@ -23,7 +19,7 @@ type Props = {
 function VerificationPrixForm({ mutation }: Props) {
   let params = useParams();
 
-  const form = useForm({
+  const form = useForm<VerificationPayload>({
     defaultValues: {
       numeroDit: params.numeroDemandeIntervention ?? "",
       numeroDevis: params.numeroDevis ?? "123",
@@ -47,7 +43,7 @@ function VerificationPrixForm({ mutation }: Props) {
         </h1>
       </div>
       <form
-        id="dit-form"
+        id="verification-prix-form"
         onSubmit={(e) => {
           e.preventDefault();
           if (mutation.isPending) return;

@@ -47,6 +47,9 @@ class ServiceFixtures extends Fixture
             'TUL' => 'TULÉAR',
             'AMB' => 'AMBANJA',
             'LCJ' => 'LCJ',
+            'FOR' => 'FORMATION',
+            'THO' => 'THONIER',
+            'TSD' => 'TSIROANOMANDIDY DISTRIBUTION',
             'TSI' => 'TSIROANOMANDIDY',
             'C1'  => 'TRAVEL AIRWAYS C1',
         ];

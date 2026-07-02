@@ -6,7 +6,7 @@ sidebar_position: 4
 
 ## Vue d'ensemble
 
-L'interface d'administration permet aux utilisateurs disposant des droits suffisants de gérer les entités structurantes de l'intranet : sociétés, agences, services, utilisateurs, actions de permission et modèles de permissions.
+L'interface d'administration permet aux utilisateurs disposant des droits suffisants de gérer les entités structurantes de l'intranet : sociétés, agences, services, centres analytiques, personnel, utilisateurs, actions de permission et modèles de permissions.
 
 Elle est accessible via le menu **Administration** dans le header, et dispose de sa propre mise en page avec une sidebar de navigation.
 
@@ -23,6 +23,8 @@ Toutes les routes admin sont sous le préfixe `/admin` et nécessitent une authe
 | `/admin/societes` | `SocietesPage` | CRUD des sociétés |
 | `/admin/agences` | `AgencesPage` | CRUD des agences |
 | `/admin/services` | `ServicesPage` | CRUD des services |
+| `/admin/centres` | `CentresPage` | CRUD des centres analytiques |
+| `/admin/personnel` | `PersonnelPage` | CRUD du personnel |
 | `/admin/utilisateurs` | `UtilisateursPage` | Liste des utilisateurs |
 | `/admin/utilisateurs/:userId/permissions` | `UserPermissionsPage` | Gestion des permissions d'un utilisateur |
 | `/admin/actions` | `ActionsPage` | CRUD des actions de permission |
@@ -37,6 +39,8 @@ Le layout `AdminLayout` ([frontend/src/domains/admin/layout/AdminLayout.tsx](../
 | GET/POST/PUT/DELETE | `/api/admin/companies` | `AdminCompanyController` | CRUD sociétés |
 | GET/POST/PUT/DELETE | `/api/admin/agencies` | `AdminAgencyController` | CRUD agences |
 | GET/POST/PUT/DELETE | `/api/admin/services` | `AdminServiceController` | CRUD services |
+| GET/POST/PUT/DELETE | `/api/admin/centres` | `AdminCentreController` | CRUD centres analytiques |
+| GET/POST/PUT/DELETE | `/api/admin/personnel` | `AdminPersonnelController` | CRUD personnel |
 | GET | `/api/admin/users` | `AdminUserController` | Liste utilisateurs |
 | GET | `/api/admin/modules` | `AdminUserPermissionController` | Modules + menus (pour formulaire permission) |
 | GET/POST | `/api/admin/users/:id/permissions` | `AdminUserPermissionController` | Permissions d'un utilisateur |
@@ -94,6 +98,110 @@ Champs gérés :
 |---|---|
 | `name` | Obligatoire |
 | `code` | Obligatoire |
+
+---
+
+## Gestion des centres analytiques
+
+**Page :** [CentresPage.tsx](../../../frontend/src/domains/admin/pages/CentresPage.tsx)  
+**Contrôleur :** [AdminCentreController.php](../../../backend/src/Security/Controller/Admin/AdminCentreController.php)  
+**Entité :** `Centre` (table `app_centre`)
+
+Un centre analytique représente la combinaison d'une agence et d'un service, avec ses codes comptables (Sage).
+
+| Champ | Type | Contrainte |
+|---|---|---|
+| `code` | NVARCHAR(20) | Obligatoire — ex : `01-NEG`, `80-INF` |
+| `companyCode` | NVARCHAR(10) | Obligatoire — ex : `HF`, `TA` |
+| `codeSage` | NVARCHAR(20) | Optionnel — ex : `AB11`, `DA14` |
+| `responsable` | NVARCHAR(100) | Optionnel |
+| `agency` | FK → `app_agency` | Obligatoire |
+| `service` | FK → `app_service` | Obligatoire |
+
+**Contrainte d'unicité** : `(code, codeSage)` — un même code peut exister deux fois avec des `codeSage` différents (ex : `01-NEG` avec `AB11` et `01-NEG` avec `AB21`).
+
+### Schéma
+
+```
+app_centre
+├── id           → INT IDENTITY (PK)
+├── agency_id    → FK app_agency
+├── service_id   → FK app_service
+├── code         → ex: 01-NEG
+├── company_code → ex: HF
+├── code_sage    → ex: AB11  (nullable)
+└── responsable  → ex: Prisca (nullable)
+```
+
+### Fixture de données
+
+Les 62 centres sont chargés via `CentreFixtures` (groupe `centres`). La fixture est **idempotente** : elle vérifie l'existence avant d'insérer.
+
+```bash
+docker compose exec backend php bin/console \
+  doctrine:fixtures:load --em=sqlserver --group=centres --append --no-interaction
+```
+
+> La fixture ne dépend d'aucune autre fixture — elle charge agences et services directement depuis la BDD via les repositories. Cela évite la cascade vers `CompanyFixtures` qui échouerait en `--append`.
+
+---
+
+## Gestion du personnel
+
+**Page :** [PersonnelPage.tsx](../../../frontend/src/domains/admin/pages/PersonnelPage.tsx)  
+**Contrôleur :** [AdminPersonnelController.php](../../../backend/src/Security/Controller/Admin/AdminPersonnelController.php)  
+**Entité :** `Personnel` (table `app_personnel`)
+
+Le personnel est lié à un centre analytique et, optionnellement, à un compte utilisateur de l'intranet. La liaison `user` permet d'associer un profil RH à un compte de connexion.
+
+| Champ | Type | Contrainte |
+|---|---|---|
+| `nom` | NVARCHAR(100) | Obligatoire |
+| `prenoms` | NVARCHAR(150) | Obligatoire |
+| `matricule` | NVARCHAR(20) | Obligatoire, **unique** |
+| `codeBancaire` | NVARCHAR(60) | Optionnel |
+| `centre` | ManyToOne → `Centre` | Optionnel — `ON DELETE SET NULL` |
+| `user` | OneToOne → `User` | Optionnel — `ON DELETE SET NULL` |
+
+### Schéma
+
+```
+app_personnel
+├── id            → INT IDENTITY (PK)
+├── centre_id     → FK app_centre (nullable, SET NULL on delete)
+├── user_id       → FK app_user   (nullable, index filtré unique)
+├── nom           → ex: RAKOTO
+├── prenoms       → ex: Jean Pierre
+├── matricule     → ex: 9999  (unique)
+└── code_bancaire → ex: 4875 96321547 89966 3211 4778  (nullable)
+```
+
+**Index filtré sur `user_id`** : SQL Server interdit plusieurs `NULL` dans une contrainte `UNIQUE` standard. Un index filtré `WHERE user_id IS NOT NULL` garantit l'unicité uniquement pour les lignes liées à un utilisateur.
+
+```sql
+CREATE UNIQUE NONCLUSTERED INDEX UQ_personnel_user
+  ON app_personnel(user_id)
+  WHERE user_id IS NOT NULL;
+```
+
+### Relations
+
+```mermaid
+erDiagram
+    Personnel }o--|| Centre : "appartient à"
+    Personnel }o--o| User   : "compte intranet (optionnel)"
+    Centre }o--|| Agency  : "agence"
+    Centre }o--|| Service : "service"
+```
+
+### Fixture de données
+
+```bash
+docker compose exec backend php bin/console \
+  doctrine:fixtures:load --em=sqlserver --group=personnel --append --no-interaction
+```
+
+La fixture `PersonnelFixtures` résout les centres par leur `codeSage` via la map `agServIrium → codeSage` (ex : `center_inf_DA14` → centre avec `codeSage = 'DA14'`).
 
 ---
 
@@ -313,7 +421,7 @@ Les actions sont affichées groupées par catégorie avec des badges colorés. L
 
 ### AdminLayout
 
-[AdminLayout.tsx](../../../frontend/src/domains/admin/layout/AdminLayout.tsx) — Sidebar verticale avec navigation entre les 7 sections admin. Les liens sont actifs (`NavLink`) et se colorent en bleu sur la route courante.
+[AdminLayout.tsx](../../../frontend/src/domains/admin/layout/AdminLayout.tsx) — Sidebar verticale avec navigation entre les 9 sections admin. Les liens sont actifs (`NavLink`) et se colorent en bleu sur la route courante.
 
 ---
 
@@ -345,11 +453,26 @@ Les fixtures implémentent `FixtureGroupInterface` pour permettre un rechargemen
 # Charger uniquement les actions
 doctrine:fixtures:load --em=sqlserver --group=actions --append --no-interaction
 
+# Charger les centres analytiques (idempotent)
+doctrine:fixtures:load --em=sqlserver --group=centres --append --no-interaction
+
+# Charger le personnel (idempotent)
+doctrine:fixtures:load --em=sqlserver --group=personnel --append --no-interaction
+
 # Charger uniquement les données de l'utilisateur lanto (sans retoucher app_company)
 doctrine:fixtures:load --em=sqlserver --group=lanto --append --no-interaction
 ```
 
+| Groupe | Fixture | Dépendances |
+|---|---|---|
+| `actions` | `AppActionDefFixtures` | Aucune |
+| `centres` | `CentreFixtures` | Aucune (lecture directe BDD) |
+| `personnel` | `PersonnelFixtures` | Aucune (lecture directe BDD) |
+| `lanto` | `UserLantoFixtures` | Aucune (lecture directe BDD) |
+
 La fixture `UserLantoFixtures` n'implémente **pas** `DependentFixtureInterface` — elle récupère les sociétés via `findAll()` plutôt que via les références Doctrine. Cela évite de déclencher `CompanyFixtures` lors d'un `--append`.
+
+`CentreFixtures` et `PersonnelFixtures` suivent le même principe : elles sont **idempotentes** (vérifient l'existence avant d'insérer) et ne déclenchent aucune fixture parente.
 
 ### Colonne NOT NULL sur table non vide (SQL Server)
 
@@ -373,6 +496,8 @@ Toutes les fonctions d'accès aux endpoints admin sont centralisées dans [admin
 | Type exporté | Description |
 |---|---|
 | `Company`, `Agency`, `Service` | Entités de structure |
+| `Centre`, `CentrePayload` | Centre analytique (agence × service × codes Sage) |
+| `Personnel`, `PersonnelPayload` | Personnel (profil RH lié à un centre et/ou un user) |
 | `AdminUser` | Utilisateur (liste admin) |
 | `ActionDef` | Action de permission |
 | `AgencyScope` | Paire agence → services `{agencyId, allServices, serviceIds}` |

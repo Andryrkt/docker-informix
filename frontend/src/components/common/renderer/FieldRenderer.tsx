@@ -143,7 +143,7 @@ export function FieldRenderer({ field }: any) {
     // Dragaple FileZone
 
     case "dragfile":
-      return <FileDropzone field={field}></FileDropzone>;
+      return <FileDropzone field={field} />;
 
     // MULTICHOICE (checkbox group)
     case "multichoice": {
@@ -164,7 +164,6 @@ export function FieldRenderer({ field }: any) {
                 <Checkbox
                   checked={checked}
                   disabled={field.disabled}
-                  readOnly={field.readOnly}
                   onCheckedChange={(checked) => {
                     field.onChange(
                       checked

@@ -81,25 +81,29 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
     ].filter(Boolean) as MenuAction[];
   }, []); // <-- Empty array means the function reference stays identical across renders
 
-  // const checkDocumentMutation = useMutation({
-  //   mutationFn: checkDitSubmission,
-  //   onSuccess: (res, variables) => {
-  //     if (res.data.allowed) {
-  //       navigate(
-  //         `/atelier/demande-intervention/${variables.document}/${variables.numeroDemandeIntervention}`,
-  //       );
-  //       return;
-  //     }
+  const checkDocumentMutation = useMutation({
+    mutationFn: checkDitSubmission,
+    onSuccess: (res, variables) => {
+      const allowed = res?.data?.allowed;
 
-  //     toast.error(res.data.message || "Action non autorisée");
-  //   },
+      if (allowed) {
+        navigate(
+          `/atelier/demande-intervention/${variables.document}/${variables.numeroDemandeIntervention}`,
+        );
+      } else {
+        toast.error(
+          res.data.message ?? "Document ne peut pas être soumis sur ce DIT",
+        );
+      }
+    },
 
-  //   onError: () => {
-  //     toast.error("Erreur lors de la vérification");
-  //   },
-  // });
+    onError: () => {
+      toast.error("Erreur lors de la vérification du DIT");
+    },
+  });
 
   // if (loading) return <DitTableSkeleton></DitTableSkeleton>;
+
   return (
     <>
       <div
@@ -305,15 +309,12 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
         onOpenChange={setOpen}
         numeroDemandeIntervention={selectedDit?.numeroDemandeIntervention}
         onSubmitSoumissionDoc={({ document }) => {
-          // checkDocumentMutation.mutate({
-          //   document,
-          //   numeroDemandeIntervention: selectedDit?.numeroDemandeIntervention,
-          // });
-          navigate(
-            `/atelier/demande-intervention/${document}/${selectedDit?.numeroDemandeIntervention}`,
-          );
+          checkDocumentMutation.mutate({
+            document,
+            numeroDemandeIntervention: selectedDit?.numeroDemandeIntervention,
+          });
         }}
-        // isLoading={checkDocumentMutation.isPending}
+        isLoading={checkDocumentMutation.isPending}
       />
     </>
   );

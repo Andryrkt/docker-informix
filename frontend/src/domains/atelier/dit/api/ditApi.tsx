@@ -115,13 +115,33 @@ export interface CheckDitResponse {
   message?: string;
   data?: any;
 }
+// export const checkDitSubmission = async (
+//   payload: CheckDitPayload,
+// ): Promise<ApiResponse<CheckDitResponse>> => {
+//   const { data } = await axiosInstance.post<ApiResponse<CheckDitResponse>>(
+//     "/demande-intervention/check-submission",
+//     payload,
+//   );
+
+//   return data;
+// };
+
 export const checkDitSubmission = async (
   payload: CheckDitPayload,
 ): Promise<ApiResponse<CheckDitResponse>> => {
-  const { data } = await axiosInstance.post<ApiResponse<CheckDitResponse>>(
-    "/demande-intervention/check-submission",
-    payload,
-  );
+  console.log("MOCK checkDitSubmission payload:", payload);
 
-  return data;
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      return resolve({
+        data: {
+          allowed: false,
+          message: "Mock: submission allowed",
+          data: null,
+        },
+        status: 200,
+        success: true,
+      });
+    }, 500);
+  });
 };

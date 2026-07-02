@@ -1,15 +1,26 @@
 import { useState } from "react";
-import { FileText, X } from "lucide-react";
+import { File, FileText, FileUp, UploadCloud, X } from "lucide-react";
+import { cn, formatFileSize } from "@/lib/utils";
 
 export function FileDropzone({ field }: any) {
   const [isDragging, setIsDragging] = useState(false);
 
-  const files: File[] = field.value || [];
+  const files: File[] = Array.isArray(field.value)
+    ? field.value
+    : field.value
+      ? [field.value]
+      : [];
 
   const addFiles = (fileList: FileList | null) => {
     if (!fileList) return;
+
     const newFiles = Array.from(fileList);
-    field.onChange([...(files || []), ...newFiles]);
+
+    if (field.multiple) {
+      field.onChange([...(files || []), ...newFiles]);
+    } else {
+      field.onChange(newFiles[0] ?? null);
+    }
   };
 
   const removeFile = (index: number) => {
@@ -32,12 +43,12 @@ export function FileDropzone({ field }: any) {
           setIsDragging(false);
           addFiles(e.dataTransfer.files);
         }}
-        className={`relative flex flex-col items-center justify-center rounded-md border-2 border-dashed px-6 py-10 text-center transition
-          ${
-            isDragging
-              ? "border-primary bg-primary/5"
-              : "border-muted-foreground/30 bg-muted/30"
-          }`}
+        className={cn(
+          "relative flex flex-col items-center justify-center rounded-md border-2 border-dashed px-6 py-10 text-center transition",
+          isDragging
+            ? "border-brand-primary"
+            : "border-muted-foreground/30 bg-muted/30",
+        )}
       >
         <input
           type="file"
@@ -46,11 +57,27 @@ export function FileDropzone({ field }: any) {
           className="absolute inset-0 opacity-0 cursor-pointer"
           onChange={(e) => addFiles(e.target.files)}
         />
-
-        <p className="text-sm font-medium">
+        <UploadCloud
+          size={40}
+          className={cn(
+            "",
+            isDragging ? "text-brand-primary" : "text-muted-foreground/60",
+          )}
+        ></UploadCloud>
+        <p
+          className={cn(
+            "text-sm font-medium",
+            isDragging ? "text-brand-primary" : "text-muted-foreground/60",
+          )}
+        >
           Glissez et déposez des fichiers ici ou cliquez pour importer
         </p>
-        <p className="text-xs text-muted-foreground mt-1">
+        <p
+          className={cn(
+            "text-xs mt-1",
+            isDragging ? "text-brand-primary" : "text-muted-foreground/60",
+          )}
+        >
           {field.multiple
             ? "Plusieurs fichiers acceptés"
             : "Un seul fichier uniquement"}
@@ -65,9 +92,15 @@ export function FileDropzone({ field }: any) {
               key={index}
               className="flex items-center justify-between  px-3 py-2 bg-background"
             >
-              <div className="text-sm truncate max-w-[80%] flex items-center gap-2">
-                <FileText className="w-6 h-5"></FileText>
-                {file.name}
+              <div className="flex items-center gap-2 max-w-[80%]">
+                <FileText className="w-5 h-5 shrink-0" />
+
+                <div className="flex-1 min-w-0">
+                  <p className="truncate text-sm font-medium">{file.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Taille : {formatFileSize(file.size)}
+                  </p>
+                </div>
               </div>
 
               <button

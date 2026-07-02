@@ -26,5 +26,6 @@ export const verificationPrixFields: FieldTrait[] = [
     name: "pieceJointe",
     type: "dragfile",
     label: "Veuillez insérer le devis à valider *",
+    multiple: true,
   },
 ] as const;

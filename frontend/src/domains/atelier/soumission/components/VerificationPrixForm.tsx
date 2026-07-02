@@ -1,4 +1,4 @@
-import { formatErrorMessage, getFileUrl } from "@/lib/utils";
+import { formatErrorMessage } from "@/lib/utils";
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
 import { verificationPrixSchema } from "../schema/verificationPrixSchema";
@@ -9,7 +9,7 @@ import {
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { FieldRenderer } from "@/components/common/renderer/FieldRenderer";
 import { Button } from "@/components/ui/button";
-import { Eye, FileText, Save, Trash2 } from "lucide-react";
+import { Save } from "lucide-react";
 import { DocumentViewer } from "@/components/common/DocumentViewer";
 
 function VerificationPrixForm() {
@@ -18,7 +18,7 @@ function VerificationPrixForm() {
   const form = useForm({
     defaultValues: {
       numeroDit: "1XXXXX",
-      numeroDevis: "2XXXX",
+      numeroDevis: "2XXXXX",
       tachePartsManager: "VERIF_PRIX",
       pieceJointe: [] as File[],
     },

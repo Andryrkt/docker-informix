@@ -38,6 +38,7 @@ export type FieldTrait =
       name: string;
       label: string;
       type: "dragfile";
+      multiple?: boolean;
     }
   | {
       name: string;

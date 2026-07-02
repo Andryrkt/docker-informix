@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Building2, Briefcase, LayoutTemplate, Menu, Settings, Users, Layers, ShieldCheck, X, MousePointerClick, ClipboardList } from "lucide-react";
+import { Building2, Briefcase, LayoutTemplate, Menu, Settings, Users, Layers, ShieldCheck, X, MousePointerClick, ClipboardList, MapPin } from "lucide-react";
 import { NavLink, Outlet } from "react-router";
 import { cn } from "@/lib/utils";
 
@@ -7,6 +7,7 @@ const navItems = [
   { to: "/admin/societes",     label: "Sociétés",    icon: Building2    },
   { to: "/admin/agences",      label: "Agences",     icon: Layers       },
   { to: "/admin/services",     label: "Services",    icon: Briefcase    },
+  { to: "/admin/centres",      label: "Centres",     icon: MapPin       },
   { to: "/admin/utilisateurs", label: "Utilisateurs",icon: Users        },
   { to: "/admin/actions",      label: "Actions",     icon: ShieldCheck  },
   { to: "/admin/modeles",      label: "Modèles",     icon: LayoutTemplate },

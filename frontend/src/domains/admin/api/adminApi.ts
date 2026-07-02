@@ -32,6 +32,25 @@ export interface AdminUser {
   lastLoginAt: string | null;
 }
 
+export interface Centre {
+  id: number;
+  code: string;
+  companyCode: string;
+  codeSage: string | null;
+  responsable: string | null;
+  agency: { id: number; code: string; name: string };
+  service: { id: number; code: string; name: string };
+}
+
+export interface CentrePayload {
+  agencyId: number;
+  serviceId: number;
+  code: string;
+  companyCode: string;
+  codeSage?: string;
+  responsable?: string;
+}
+
 // ── Companies ──────────────────────────────────────────────────────────────
 
 export const fetchCompanies = async (): Promise<Company[]> => {
@@ -72,6 +91,27 @@ export const updateService = async (id: number, data: { name: string; code: stri
 
 export const deleteService = async (id: number): Promise<void> => {
   await axiosInstance.delete(`/admin/services/${id}`);
+};
+
+// ── Centres ────────────────────────────────────────────────────────────────
+
+export const fetchCentres = async (): Promise<Centre[]> => {
+  const res = await axiosInstance.get("/admin/centres");
+  return res.data;
+};
+
+export const createCentre = async (data: CentrePayload): Promise<Centre> => {
+  const res = await axiosInstance.post("/admin/centres", data);
+  return res.data;
+};
+
+export const updateCentre = async (id: number, data: CentrePayload): Promise<Centre> => {
+  const res = await axiosInstance.put(`/admin/centres/${id}`, data);
+  return res.data;
+};
+
+export const deleteCentre = async (id: number): Promise<void> => {
+  await axiosInstance.delete(`/admin/centres/${id}`);
 };
 
 // ── Agencies ───────────────────────────────────────────────────────────────

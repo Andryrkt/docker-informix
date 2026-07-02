@@ -20,6 +20,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useAuth } from "@/context/authContext";
+import NotificationBell from "@/domains/notifications/components/NotificationBell";
 import VisualTimer from "@/layout/VisualTimer";
 import {
   Briefcase,
@@ -128,6 +129,9 @@ function Header({ logoSrc, userName }: HeaderProps) {
                 Guide utilisateur intranet
               </span>
             </Button>
+          </div>
+          <div className="relative">
+            <NotificationBell />
           </div>
           <div className="relative ">
             <DropdownMenu>

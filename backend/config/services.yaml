@@ -44,6 +44,15 @@ services:
         bind:
             Doctrine\DBAL\Connection: '@doctrine.dbal.sqlserver_connection'
 
+    # Notification : idem AuditService, connexion DBAL SQL Server explicite
+    # (le contrôleur lit/écrit via l'ORM — l'entité Notification est mappée sur sqlserver)
+    App\Notification\:
+        resource: '../src/Notification/'
+        bind:
+            Doctrine\DBAL\Connection: '@doctrine.dbal.sqlserver_connection'
+            Doctrine\ORM\EntityManagerInterface: '@doctrine.orm.sqlserver_entity_manager'
+            $mailerFrom: '%env(MAILER_FROM)%'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 

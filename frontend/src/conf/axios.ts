@@ -3,6 +3,7 @@ import axios, {
   type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from "axios";
+import { clear as clearPersistedQueryCache } from "idb-keyval";
 
 const BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api";
@@ -33,6 +34,9 @@ const processQueue = (error: any) => {
 const handleLogout = () => {
   localStorage.removeItem("access_token");
   localStorage.removeItem("refresh_token");
+  // Purge le cache react-query persisté (IndexedDB) : sinon le profil d'un token
+  // mort reste servi au prochain chargement et relance la boucle 401 → reload.
+  clearPersistedQueryCache().catch(() => {});
   window.location.href = "/login";
 };
 

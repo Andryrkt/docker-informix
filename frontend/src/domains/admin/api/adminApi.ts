@@ -22,14 +22,29 @@ export interface Agency {
   services: Service[];
 }
 
+export interface AgencyRef {
+  id: number;
+  name: string;
+  code: string;
+}
+
+export interface ServiceRef {
+  id: number;
+  name: string;
+  code: string;
+}
+
 export interface AdminUser {
   id: number;
   username: string;
   displayName: string | null;
   email: string | null;
   department: string | null;
+  matricule: string | null;
   roles: string[];
   lastLoginAt: string | null;
+  defaultAgency: AgencyRef | null;
+  defaultService: ServiceRef | null;
 }
 
 export interface Personnel {
@@ -188,6 +203,24 @@ export const deleteAgency = async (id: number): Promise<void> => {
 export const fetchAdminUsers = async (): Promise<AdminUser[]> => {
   const res = await axiosInstance.get("/admin/users");
   return res.data;
+};
+
+export interface AdminUserDetail extends AdminUser {
+  agencyIds: number[];
+  serviceIds: number[];
+}
+
+export const fetchAdminUserDetail = async (userId: number): Promise<AdminUserDetail> => {
+  const res = await axiosInstance.get(`/admin/users/${userId}`);
+  return res.data;
+};
+
+export const updateUserRoles = async (userId: number, roles: string[]): Promise<void> => {
+  await axiosInstance.put(`/admin/users/${userId}/roles`, { roles });
+};
+
+export const updateUserMatricule = async (userId: number, matricule: string): Promise<void> => {
+  await axiosInstance.put(`/admin/users/${userId}/matricule`, { matricule });
 };
 
 // ── Actions ────────────────────────────────────────────────────────────────

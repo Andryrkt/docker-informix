@@ -2,6 +2,8 @@
 
 namespace App\Audit\Service;
 
+use App\Notification\Entity\Notification;
+use App\Notification\Service\NotificationService;
 use App\Security\Entity\User;
 use App\Security\Service\SecurityContextService;
 use Doctrine\DBAL\Connection;
@@ -15,10 +17,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class AuditService
 {
     public function __construct(
-        private readonly Connection              $conn,
-        private readonly Security               $security,
-        private readonly RequestStack           $requestStack,
+        private readonly Connection            $conn,
+        private readonly Security              $security,
+        private readonly RequestStack          $requestStack,
         private readonly SecurityContextService $securityContext,
+        private readonly NotificationService    $notificationService,
     ) {}
 
     // ── Navigation ────────────────────────────────────────────────────────────
@@ -55,6 +58,20 @@ class AuditService
             ];
 
             $this->conn->insert('audit_navigation', array_filter($row, static fn($v) => $v !== null));
+
+            if (($row['action_result'] ?? null) === 'ERROR_REDIRECT') {
+                $this->notificationService->notifyFailure(
+                    Notification::SOURCE_NAVIGATION,
+                    'Erreur de navigation',
+                    sprintf(
+                        "Page : %s\nCode : %s\n%s",
+                        $row['page_url'] ?? '?',
+                        $row['error_code'] ?? '?',
+                        $row['error_message'] ?? '',
+                    ),
+                    $row['page_url'] ?? null,
+                );
+            }
         } catch (\Throwable $e) {
             error_log('[AuditService] logNavigation failed: ' . $e->getMessage());
         }
@@ -99,6 +116,20 @@ class AuditService
             ];
 
             $this->conn->insert('audit_operation', array_filter($row, static fn($v) => $v !== null));
+
+            if (($row['is_success'] ?? 1) === 0) {
+                $this->notificationService->notifyFailure(
+                    Notification::SOURCE_OPERATION,
+                    sprintf('Échec opération %s', $row['operation_type'] ?? '?'),
+                    sprintf(
+                        "Type document : %s\nNuméro : %s\n%s",
+                        $row['document_type']   ?? '?',
+                        $row['document_number'] ?? '?',
+                        $row['error_message']   ?? '',
+                    ),
+                    $row['page_url'] ?? null,
+                );
+            }
         } catch (\Throwable $e) {
             error_log('[AuditService] logOperation failed: ' . $e->getMessage());
         }

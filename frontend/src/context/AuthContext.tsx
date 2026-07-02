@@ -7,6 +7,8 @@ import {
   type ReactNode,
 } from "react";
 
+import { clear as clearPersistedQueryCache } from "idb-keyval";
+
 import * as authApi from "@/domains/authentification/api/authApi";
 import { useProfile } from "@/domains/authentification/hook/useProfile";
 
@@ -52,7 +54,12 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const { data: user, isLoading, isError, refetch } = useProfile();
+  const { data: rawUser, isLoading, isError, refetch } = useProfile();
+
+  // Ne jamais exposer un profil mis en cache (persisté en IndexedDB) une fois
+  // que la requête a échoué : sinon RequireAuth croit l'utilisateur connecté
+  // avec un token mort → boucle de rechargement à chaque appel API qui 401.
+  const user = isError ? undefined : rawUser;
 
   const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(
     () => {
@@ -86,6 +93,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     } finally {
       localStorage.removeItem("active_company_id");
       setSelectedCompanyId(null);
+      clearPersistedQueryCache().catch(() => {});
       await refetch();
     }
   };

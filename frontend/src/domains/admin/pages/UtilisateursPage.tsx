@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ShieldCheck, UserCheck } from "lucide-react";
+import { ShieldCheck, ShieldUser, UserCheck } from "lucide-react";
 import { Link } from "react-router";
 
 import { Button } from "@/components/ui/button";
@@ -7,12 +8,16 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import * as api from "../api/adminApi";
+import type { AdminUser } from "../api/adminApi";
+import { UserAccessDialog } from "../components/UserAccessDialog";
 
 export default function UtilisateursPage() {
   const { data: users = [], isLoading } = useQuery({
     queryKey: ["admin", "users"],
     queryFn: api.fetchAdminUsers,
   });
+
+  const [accessUser, setAccessUser] = useState<AdminUser | null>(null);
 
   return (
     <div className="space-y-6">
@@ -34,6 +39,7 @@ export default function UtilisateursPage() {
               <TableHead>Email</TableHead>
               <TableHead>Département</TableHead>
               <TableHead>Rôles</TableHead>
+              <TableHead>Agence / Service par défaut</TableHead>
               <TableHead>Dernière connexion</TableHead>
               <TableHead className="text-right">Permissions</TableHead>
             </TableRow>
@@ -41,11 +47,11 @@ export default function UtilisateursPage() {
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center text-gray-400 py-8">Chargement...</TableCell>
+                <TableCell colSpan={8} className="text-center text-gray-400 py-8">Chargement...</TableCell>
               </TableRow>
             ) : users.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center text-gray-400 py-8">Aucun utilisateur.</TableCell>
+                <TableCell colSpan={8} className="text-center text-gray-400 py-8">Aucun utilisateur.</TableCell>
               </TableRow>
             ) : users.map((u) => (
               <TableRow key={u.id}>
@@ -72,20 +78,46 @@ export default function UtilisateursPage() {
                     </span>
                   </div>
                 </TableCell>
+                <TableCell className="text-sm text-gray-600">
+                  {u.defaultAgency || u.defaultService ? (
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-xs">
+                        {u.defaultAgency ? `${u.defaultAgency.code} — ${u.defaultAgency.name}` : "—"}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        {u.defaultService ? `${u.defaultService.code} — ${u.defaultService.name}` : "—"}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-xs text-gray-300 italic">Non lié à un personnel</span>
+                  )}
+                </TableCell>
                 <TableCell className="text-sm text-gray-500">{u.lastLoginAt ?? "—"}</TableCell>
                 <TableCell className="text-right">
-                  <Button asChild variant="outline" size="sm" className="gap-1.5 text-xs">
-                    <Link to={`/admin/utilisateurs/${u.id}/permissions`}>
-                      <ShieldCheck size={13} />
-                      Permissions
-                    </Link>
-                  </Button>
+                  <div className="flex justify-end gap-2">
+                    <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setAccessUser(u)}>
+                      <ShieldUser size={13} />
+                      Accès
+                    </Button>
+                    <Button asChild variant="outline" size="sm" className="gap-1.5 text-xs">
+                      <Link to={`/admin/utilisateurs/${u.id}/permissions`}>
+                        <ShieldCheck size={13} />
+                        Permissions
+                      </Link>
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
+
+      <UserAccessDialog
+        open={!!accessUser}
+        onClose={() => setAccessUser(null)}
+        user={accessUser}
+      />
     </div>
   );
 }

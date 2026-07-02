@@ -25,6 +25,39 @@ class UserRepository extends ServiceEntityRepository
     }
 
     /**
+     * Utilisateurs ayant ROLE_ADMIN et dont l'agence/service PAR DÉFAUT
+     * (fiche Personnel → Centre) correspond aux codes donnés.
+     *
+     * Le rattachement User ↔ Personnel se fait par matricule (renseigné
+     * manuellement sur User), pas par une FK — volontaire, cf. demande métier.
+     *
+     * Volontairement basé sur l'affectation réelle (Personnel/Centre) plutôt que
+     * sur le périmètre autorisé (UserScope), qui peut être bien plus large pour
+     * un admin ayant accès à plusieurs agences/services.
+     *
+     * @return User[]
+     */
+    public function findAdminsByAgencyAndService(string $agencyCode, string $serviceCode): array
+    {
+        $candidates = $this->createQueryBuilder('u')
+            ->innerJoin('App\Security\Entity\Personnel', 'p', 'WITH', 'p.matricule = u.matricule')
+            ->innerJoin('p.centre', 'c')
+            ->innerJoin('c.agency', 'a')
+            ->innerJoin('c.service', 'sv')
+            ->where('a.code = :agencyCode')
+            ->andWhere('sv.code = :serviceCode')
+            ->setParameter('agencyCode', $agencyCode)
+            ->setParameter('serviceCode', $serviceCode)
+            ->getQuery()
+            ->getResult();
+
+        return array_values(array_filter(
+            $candidates,
+            static fn(User $u) => in_array('ROLE_ADMIN', $u->getRoles(), true),
+        ));
+    }
+
+    /**
      * Crée ou met à jour un utilisateur depuis les attributs LDAP.
      *
      * @param array<string, mixed> $ldapAttributes

@@ -33,6 +33,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $ldapDn = null;
 
     /**
+     * Matricule personnel (renseigné manuellement) — clé de rattachement
+     * vers App\Security\Entity\Personnel::$matricule (agence/service par défaut).
+     */
+    #[ORM\Column(type: 'string', length: 20, nullable: true)]
+    private ?string $matricule = null;
+
+    /**
      * Rôles stockés en JSON (ex: ["ROLE_USER", "ROLE_ADMIN"])
      * @var array<string>
      */
@@ -151,6 +158,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLdapDn(?string $ldapDn): static
     {
         $this->ldapDn = $ldapDn;
+        return $this;
+    }
+
+    public function getMatricule(): ?string
+    {
+        return $this->matricule;
+    }
+
+    public function setMatricule(?string $matricule): static
+    {
+        $this->matricule = $matricule;
         return $this;
     }
 

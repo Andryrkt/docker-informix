@@ -18,6 +18,7 @@ import VerificationPrixSoumission from "@/domains/atelier/soumission/pages/Verif
 import { verificationDitLoader } from "./guards/verificationDitLoader";
 import ValidationAtelierSoumission from "@/domains/atelier/soumission/pages/ValidationAtelierSoumission";
 import BonCommandeSoumission from "@/domains/atelier/soumission/pages/BonCommandeSoumission";
+import OrSoummission from "@/domains/atelier/soumission/pages/OrdreReparationSoummission";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -96,6 +97,12 @@ function AppRoutes() {
           path: "/atelier/demande-intervention/bon_commande/:numeroDemandeIntervention",
           element: <BonCommandeSoumission />,
           loader: verificationDitLoader("bon_commande"),
+        },
+
+        {
+          path: "/atelier/demande-intervention/ordre-reparation/:numeroDemandeIntervention",
+          element: <OrSoummission />,
+          loader: verificationDitLoader("ordre-reparation"),
         },
 
         // {

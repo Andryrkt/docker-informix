@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Save } from "lucide-react";
 import { DocumentViewer } from "@/components/common/DocumentViewer";
 import { useParams } from "react-router-dom";
-import { verificationSchema, type VerificationPayload } from "../schema/verificationOuValidationSchema";
+import { verificationSchema } from "../schema/verificationOuValidationSchema";
 import type { UseMutationResult } from "@tanstack/react-query";
 
 type Props = {
@@ -19,7 +19,7 @@ type Props = {
 function VerificationPrixForm({ mutation }: Props) {
   let params = useParams();
 
-  const form = useForm<VerificationPayload>({
+  const form = useForm({
     defaultValues: {
       numeroDit: params.numeroDemandeIntervention ?? "",
       numeroDevis: params.numeroDevis ?? "123",

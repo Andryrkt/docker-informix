@@ -18,7 +18,7 @@ export const DW_DOCUMENT_OPTIONS = [
     href: "/dw/devis",
   },
   {
-    value: "ordre_reparation",
+    value: "ordre-reparation",
     code: "OR",
     label: "OR - Ordre de réparation",
     href: "/dw/devis",

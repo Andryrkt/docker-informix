@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Save } from "lucide-react";
 import { DocumentViewer } from "@/components/common/DocumentViewer";
 import { useParams } from "react-router-dom";
-import { validationSchema, type ValidationPayload } from "../schema/verificationOuValidationSchema";
+import { validationSchema } from "../schema/verificationOuValidationSchema";
 import type { UseMutationResult } from "@tanstack/react-query";
 
 type Props = {
@@ -18,7 +18,7 @@ type Props = {
 function ValidationAtelierForm({ mutation }: Props) {
   let params = useParams();
 
-  const form = useForm<ValidationPayload>({
+  const form = useForm({
     defaultValues: {
       numeroDit: params.numeroDemandeIntervention ?? "",
       numeroDevis: params.numeroDevis ?? "123",

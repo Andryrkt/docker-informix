@@ -105,3 +105,10 @@ export const appendFiles = (key: string, files: any, formData: any) => {
     }
   });
 };
+
+// Helper function to safely convert any input into a File array
+export const normalizeFiles = (val: any): File[] => {
+  if (Array.isArray(val)) return val;
+  if (val instanceof File) return [val];
+  return [];
+};

@@ -89,7 +89,7 @@ export function FileDropzone({ field }: any) {
           addFiles(e.dataTransfer.files);
         }}
         className={cn(
-          "relative flex flex-col items-center justify-center rounded-md border-2 border-dashed px-6 py-10 text-center transition",
+          "relative flex flex-col items-center justify-center rounded-md border-2 border-dashed px-6 py-10 text-center  duration-150 transition-all",
           isDragging
             ? "border-brand-primary"
             : "border-muted-foreground/30 bg-muted/30",

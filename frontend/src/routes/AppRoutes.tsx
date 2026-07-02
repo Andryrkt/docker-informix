@@ -27,6 +27,7 @@ import ModelePermissionsPage from "@/domains/admin/pages/ModelePermissionsPage";
 import AuditNavigationPage from "@/domains/admin/pages/AuditNavigationPage";
 import AuditOperationPage from "@/domains/admin/pages/AuditOperationPage";
 import CentresPage from "@/domains/admin/pages/CentresPage";
+import PersonnelPage from "@/domains/admin/pages/PersonnelPage";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -145,6 +146,7 @@ function AppRoutes() {
             { path: "agences",      element: <AgencesPage />      },
             { path: "services",     element: <ServicesPage />      },
             { path: "centres",      element: <CentresPage />       },
+            { path: "personnel",    element: <PersonnelPage />     },
             { path: "utilisateurs",                      element: <UtilisateursPage />      },
             { path: "utilisateurs/:userId/permissions", element: <UserPermissionsPage />  },
             { path: "actions",                          element: <ActionsPage />           },

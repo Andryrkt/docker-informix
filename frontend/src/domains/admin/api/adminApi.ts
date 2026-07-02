@@ -32,6 +32,25 @@ export interface AdminUser {
   lastLoginAt: string | null;
 }
 
+export interface Personnel {
+  id: number;
+  nom: string;
+  prenoms: string;
+  matricule: string;
+  codeBancaire: string | null;
+  centre: { id: number; code: string; codeSage: string | null } | null;
+  user: { id: number; username: string; displayName: string | null } | null;
+}
+
+export interface PersonnelPayload {
+  nom: string;
+  prenoms: string;
+  matricule: string;
+  codeBancaire?: string;
+  centreId?: number;
+  userId?: number;
+}
+
 export interface Centre {
   id: number;
   code: string;
@@ -91,6 +110,27 @@ export const updateService = async (id: number, data: { name: string; code: stri
 
 export const deleteService = async (id: number): Promise<void> => {
   await axiosInstance.delete(`/admin/services/${id}`);
+};
+
+// ── Personnel ──────────────────────────────────────────────────────────────
+
+export const fetchPersonnel = async (): Promise<Personnel[]> => {
+  const res = await axiosInstance.get("/admin/personnel");
+  return res.data;
+};
+
+export const createPersonnel = async (data: PersonnelPayload): Promise<Personnel> => {
+  const res = await axiosInstance.post("/admin/personnel", data);
+  return res.data;
+};
+
+export const updatePersonnel = async (id: number, data: PersonnelPayload): Promise<Personnel> => {
+  const res = await axiosInstance.put(`/admin/personnel/${id}`, data);
+  return res.data;
+};
+
+export const deletePersonnel = async (id: number): Promise<void> => {
+  await axiosInstance.delete(`/admin/personnel/${id}`);
 };
 
 // ── Centres ────────────────────────────────────────────────────────────────

@@ -21,6 +21,7 @@ import BonCommandeSoumission from "@/domains/atelier/soumission/pages/BonCommand
 import OrSoummission from "@/domains/atelier/soumission/pages/OrdreReparationSoummission";
 import RapportInterventionSoumission from "@/domains/atelier/soumission/pages/RapportInterventionSoumission";
 import FactureSoummission from "@/domains/atelier/soumission/pages/FactureSoummission";
+import DossierDitDetails from "@/domains/atelier/dossierDit/pages/DossierDitDetails";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -115,6 +116,10 @@ function AppRoutes() {
           path: "/atelier/demande-intervention/facture/:numeroDemandeIntervention",
           element: <FactureSoummission />,
           loader: verificationDitLoader("facture"),
+        },
+        {
+          path: "/atelier/demande-intervention/dossier/:numeroDemandeIntervention",
+          element: <DossierDitDetails />,
         },
 
         // {

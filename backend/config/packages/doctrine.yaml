@@ -68,6 +68,11 @@ doctrine:
                         type: attribute
                         dir: '%kernel.project_dir%/src/Notification/Entity'
                         prefix: 'App\Notification\Entity'
+                    It:
+                        is_bundle: false
+                        type: attribute
+                        dir: '%kernel.project_dir%/src/It/Entity'
+                        prefix: 'App\It\Entity'
 when@test:
     doctrine:
         dbal:

@@ -54,7 +54,7 @@ class NotificationService
                 'message'    => $message,
                 'page_url'   => $pageUrl,
                 'is_read'    => 0,
-                'created_at' => (new \DateTime())->format('Y-m-d H:i:s'),
+                'created_at' => (new \DateTime())->format('Y-m-d\TH:i:s'), // 'T' obligatoire : sinon ce SQL Server inverse jour/mois
             ], static fn($v) => $v !== null));
         } catch (\Throwable $e) {
             error_log('[NotificationService] insertNotification failed: ' . $e->getMessage());

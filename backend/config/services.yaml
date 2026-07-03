@@ -53,6 +53,15 @@ services:
             Doctrine\ORM\EntityManagerInterface: '@doctrine.orm.sqlserver_entity_manager'
             $mailerFrom: '%env(MAILER_FROM)%'
 
+    # It : lecture via l'ORM (mappé sur sqlserver), écriture via DBAL direct —
+    # le driver SQL Server custom ne convertit pas correctement un DateTime lié
+    # en paramètre via l'ORM (cf. AuditService/NotificationService, même limitation).
+    App\It\:
+        resource: '../src/It/'
+        bind:
+            Doctrine\ORM\EntityManagerInterface: '@doctrine.orm.sqlserver_entity_manager'
+            Doctrine\DBAL\Connection: '@doctrine.dbal.sqlserver_connection'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 

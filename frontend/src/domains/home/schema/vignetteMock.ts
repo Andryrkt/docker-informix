@@ -174,6 +174,17 @@ export const vignetteMock = [
             },
           ],
         },
+        {
+          title: "Gestion des tâches",
+          icon: ListChecks,
+          items: [
+            {
+              label: "Tâches à faire",
+              icon: ListTree,
+              link: "/it/taches",
+            },
+          ],
+        },
       ],
     },
   },

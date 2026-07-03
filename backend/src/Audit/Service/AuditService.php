@@ -54,7 +54,7 @@ class AuditService
                 'ip_address'       => $request?->getClientIp(),
                 'user_agent'       => $request ? substr($request->headers->get('User-Agent', ''), 0, 500) : null,
                 'referer_url'      => isset($data['refererUrl']) ? substr((string) $data['refererUrl'], 0, 500) : null,
-                'created_at'       => (new \DateTime())->format('Y-m-d H:i:s'),
+                'created_at'       => (new \DateTime())->format('Y-m-d\TH:i:s'), // 'T' obligatoire : sinon ce SQL Server inverse jour/mois
             ];
 
             $this->conn->insert('audit_navigation', array_filter($row, static fn($v) => $v !== null));
@@ -112,7 +112,7 @@ class AuditService
                 'page_url'             => isset($data['pageUrl']) ? substr((string) $data['pageUrl'], 0, 500) : null,
                 'duration_ms'          => isset($data['durationMs']) ? (int) $data['durationMs'] : null,
                 'ip_address'           => $request?->getClientIp(),
-                'created_at'           => (new \DateTime())->format('Y-m-d H:i:s'),
+                'created_at'           => (new \DateTime())->format('Y-m-d\TH:i:s'), // 'T' obligatoire : sinon ce SQL Server inverse jour/mois
             ];
 
             $this->conn->insert('audit_operation', array_filter($row, static fn($v) => $v !== null));

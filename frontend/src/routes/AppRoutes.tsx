@@ -8,6 +8,7 @@ import Login from "../domains/authentification/pages/Login";
 import SelectCompany from "../domains/authentification/pages/SelectCompany";
 import HomePage from "@/domains/home/page/HomePage";
 import DemandeSupportIT from "@/domains/it/page/DemandeSupportIT";
+import TachesPage from "@/domains/it/page/TachesPage";
 import { RequireAuth } from "./guards/RequireAuth";
 import { RequireCompany } from "./guards/RequireCompany";
 import DevisList from "@/domains/magasin/dematerialisation/devis/pages/DevisList";
@@ -121,6 +122,10 @@ function AppRoutes() {
         {
           path: "/it/demande-support-informatique",
           element: <DemandeSupportIT />,
+        },
+        {
+          path: "/it/taches",
+          element: <TachesPage />,
         },
       ],
     },

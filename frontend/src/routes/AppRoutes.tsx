@@ -20,6 +20,7 @@ import ValidationAtelierSoumission from "@/domains/atelier/soumission/pages/Vali
 import BonCommandeSoumission from "@/domains/atelier/soumission/pages/BonCommandeSoumission";
 import OrSoummission from "@/domains/atelier/soumission/pages/OrdreReparationSoummission";
 import RapportInterventionSoumission from "@/domains/atelier/soumission/pages/RapportInterventionSoumission";
+import FactureSoummission from "@/domains/atelier/soumission/pages/FactureSoummission";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -109,6 +110,11 @@ function AppRoutes() {
           path: "/atelier/demande-intervention/rapport-intervention/:numeroDemandeIntervention",
           element: <RapportInterventionSoumission />,
           loader: verificationDitLoader("rapport-intervention"),
+        },
+        {
+          path: "/atelier/demande-intervention/facture/:numeroDemandeIntervention",
+          element: <FactureSoummission />,
+          loader: verificationDitLoader("facture"),
         },
 
         // {

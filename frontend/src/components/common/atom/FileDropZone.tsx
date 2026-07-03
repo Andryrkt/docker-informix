@@ -33,7 +33,14 @@ export function FileDropzone({ field }: any) {
     if (!field.maxSize) return false;
     return file.size > field.maxSize * 1024 * 1024;
   };
-
+  const isDuplicate = (file: File, list: File[]) => {
+    return list.some(
+      (f) =>
+        f.name === file.name &&
+        f.size === file.size &&
+        f.lastModified === file.lastModified,
+    );
+  };
   const addFiles = (fileList: FileList | null) => {
     if (!fileList) return;
 
@@ -44,7 +51,21 @@ export function FileDropzone({ field }: any) {
     const validFiles: File[] = [];
     const newErrors: Record<string, string> = {};
 
+    const maxFiles = field.maxFiles;
+
+    const existingFiles = Array.isArray(field.value)
+      ? field.value
+      : field.value
+        ? [field.value]
+        : [];
+
+    // 🔥 anti doublon + validation
     for (const file of newFiles) {
+      if (isDuplicate(file, existingFiles)) {
+        newErrors[file.name] = "Ce fichier est déjà ajouté";
+        continue;
+      }
+
       if (isInvalidName(file)) {
         newErrors[file.name] =
           `Nom invalide (format attendu : ${field.pattern})`;
@@ -59,19 +80,43 @@ export function FileDropzone({ field }: any) {
       validFiles.push(file);
     }
 
+    let merged = [...existingFiles, ...validFiles];
+
+    // 🔥 MAX FILES HANDLING PROPRE
+    if (field.multiple && maxFiles && merged.length > maxFiles) {
+      newErrors.maxFiles = `Vous ne pouvez pas dépasser ${maxFiles} fichiers`;
+
+      toast.error(`Maximum ${maxFiles} fichiers autorisés`);
+
+      merged = merged.slice(0, maxFiles);
+    }
+
     setErrors(newErrors);
 
     if (field.multiple) {
-      field.onChange(validFiles);
+      field.onChange(merged);
     } else {
       field.onChange(validFiles.slice(0, 1));
     }
   };
 
   const removeFile = (index: number) => {
-    const updated = [...files];
-    updated.splice(index, 1);
+    const current = Array.isArray(field.value)
+      ? field.value
+      : field.value
+        ? [field.value]
+        : [];
+
+    const updated = current.filter((_, i) => i !== index);
+
     field.onChange(updated);
+
+    // 🔥 reset erreur maxFiles si présent
+    setErrors((prev) => {
+      const copy = { ...prev };
+      delete copy.maxFiles;
+      return copy;
+    });
   };
 
   return (

@@ -106,6 +106,7 @@ export type FieldTrait =
       label: string;
       type: "dragfile";
       multiple: boolean;
+      maxFiles?: number;
       pattern?: string;
       maxSize: number;
       accept: string;

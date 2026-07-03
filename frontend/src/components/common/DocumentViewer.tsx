@@ -14,7 +14,7 @@ export function DocumentViewer({ files }: DocumentViewerProps) {
   const activeFileUrl = primaryFile ? getFileUrl(primaryFile) : null;
 
   return (
-    <div className="overflow-hidden text-sm text-white transition-all duration-200 rounded-xs">
+    <div className="overflow-hidden text-sm text-white transition-all duration-200 rounded-xs border">
       {/* Header */}
       <div className="border-b bg-brand-dark/80">
         <div className="flex items-center justify-between px-4 py-2 font-semibold">

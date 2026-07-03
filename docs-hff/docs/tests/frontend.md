@@ -57,10 +57,12 @@ afterEach(() => server.resetHandlers());       // reset entre chaque test
 afterAll(() => server.close());
 
 // Neutraliser la redirection /login de l'intercepteur axios
-Object.defineProperty(window, "location", { value: { href: "" }, writable: true });
+Object.defineProperty(window, "location", { value: { href: "http://localhost/" }, writable: true });
 
 afterEach(() => localStorage.clear());
 ```
+
+> **`location.href` doit être une URL absolue valide, jamais `""`.** L'intercepteur XHR de `@mswjs/interceptors` (utilisé par MSW) appelle `new URL(url, location.href)` pour résoudre l'URL de la requête — et `new URL(url, base)` lève `TypeError: Invalid base URL` dès que `base` est invalide, **même si `url` est déjà absolue**. Avec `href: ""`, toute requête axios interceptée par MSW échouait silencieusement avant même d'atteindre un handler ; comme les tests existants ne vérifiaient que l'affichage d'un placeholder (jamais le contenu réellement chargé), ce bug était invisible jusqu'à l'écriture d'un test qui asserte sur des données MSW effectivement reçues (`TikActionDialog.test.tsx` → liste des intervenants).
 
 ---
 
@@ -93,6 +95,7 @@ Handlers HTTP déclarés pour `http://localhost:8080/api` :
 | `/admin/users/:userId/permissions` | GET | 1 permission (view + edit sur Magasin) |
 | `/admin/users/:userId/copy-from/:sourceId` | POST | Retourne les permissions copiées |
 | `/admin/users/:userId/apply-template/:templateId` | POST | Retourne les permissions appliquées |
+| `/tik/tickets/intervenants` | GET | 2 intervenants (RAKOTO Jean, RABE Marie) |
 
 ### Surcharge dans un test
 
@@ -190,6 +193,33 @@ Structure symétrique à `CopyFromUserDialog` mais pour les modèles de permissi
 | Mode | Bascule vers Fusionner |
 | Interaction | Clic Annuler → `onClose` appelé |
 | API | La liste des modèles est chargée (MSW retourne `mockTemplates`) |
+
+### `tikApi.test.ts` — Validation des types
+
+Fichier : `src/domains/it/api/__tests__/tikApi.test.ts`
+
+Même approche que `adminApi.test.ts` (aucun appel réseau) appliquée aux types du module [TIK](../architecture/tik.md) : `Tik`, `TikActions`, `TikHistoriqueEntry`, `TikPayload`, `PlanifierPayload`, `CategorieNode` (arbre catégorie → sous-catégorie → autre catégorie).
+
+### `TikActionDialog.test.tsx` — 13 tests
+
+Fichier : `src/domains/it/components/__tests__/TikActionDialog.test.tsx`
+
+Ce dialogue pilote les 8 actions du workflow TIK (`valider`, `refuser`, `planifier`, …) via un objet de configuration ; les tests couvrent le rendu conditionnel des champs et la validation client selon l'action sélectionnée :
+
+| Catégorie | Test |
+|---|---|
+| Rendu | Rien quand `action=null` ou `ticket=null` |
+| Rendu | Titre avec le numéro de ticket |
+| Rendu | Libellé du bouton de confirmation selon l'action (ex : "Clôturer") |
+| Champs conditionnels | Champ intervenant affiché pour `valider` |
+| API | La liste des intervenants disponibles est chargée depuis MSW (`getByRole("option", …)` — vérifie le contenu réel, pas juste un placeholder) |
+| Champs conditionnels | Champs date début/fin affichés pour `planifier` |
+| Champs conditionnels | Pas de champ commentaire pour `planifier` |
+| Champs conditionnels | Champ commentaire obligatoire affiché pour `refuser` |
+| Validation | Erreur si confirmation d'un refus sans commentaire |
+| Validation | Erreur si confirmation d'une planification sans dates |
+| Validation | Erreur si validation sans intervenant choisi |
+| Interaction | Clic Annuler → `onClose` appelé |
 
 ---
 

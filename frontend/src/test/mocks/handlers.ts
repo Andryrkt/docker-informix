@@ -108,6 +108,11 @@ export const mockActions = [
   { id: 4, actionKey: "delete", label: "Supprimer",category: "Écriture", sortOrder: 6 },
 ];
 
+export const mockIntervenants = [
+  { id: 1, nom: "RAKOTO", prenoms: "Jean" },
+  { id: 2, nom: "RABE",   prenoms: "Marie" },
+];
+
 // ── Handlers MSW ──────────────────────────────────────────────────────────
 
 export const handlers = [
@@ -164,5 +169,10 @@ export const handlers = [
   ),
   http.post(`${BASE}/admin/users/:userId/apply-template/:templateId`, () =>
     HttpResponse.json(mockPermissions),
+  ),
+
+  // TIK — Support informatique
+  http.get(`${BASE}/tik/tickets/intervenants`, () =>
+    HttpResponse.json(mockIntervenants),
   ),
 ];

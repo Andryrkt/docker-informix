@@ -21,13 +21,17 @@ Définis dans [`backend/phpunit.dist.xml`](../../backend/phpunit.dist.xml), les 
 ```
 tests/
 ├── Unit/
-│   └── Security/
-│       ├── AppActionTest.php          (6 tests)
-│       └── Entity/
-│           └── UserPermissionTest.php (18 tests)
+│   ├── Security/
+│   │   ├── AppActionTest.php          (6 tests)
+│   │   └── Entity/
+│   │       └── UserPermissionTest.php (18 tests)
+│   └── Tik/
+│       └── TikEntityTest.php          (10 tests)
 ├── Functional/
-│   └── Admin/
-│       └── AdminPermissionTemplateControllerTest.php (9 tests)
+│   ├── Admin/
+│   │   └── AdminPermissionTemplateControllerTest.php (9 tests)
+│   └── Tik/
+│       └── TikControllerTest.php      (13 tests)
 └── Security/
     ├── LdapAuthenticationTest.php     (3 tests)
     └── PermissionSystemTest.php       (5 tests)
@@ -64,12 +68,17 @@ frontend/src/
 │   └── mocks/
 │       ├── server.ts         # Serveur MSW (Node mode)
 │       └── handlers.ts       # Handlers API mockés
-└── domains/admin/
+├── domains/admin/
+│   ├── api/__tests__/
+│   │   └── adminApi.test.ts   (3 suites — types AgencyScope, UserPermission, PermissionTemplate)
+│   └── components/__tests__/
+│       ├── CopyFromUserDialog.test.tsx    (9 tests)
+│       └── ApplyTemplateDialog.test.tsx   (9 tests)
+└── domains/it/                # Module TIK — voir docs/architecture/tik.md
     ├── api/__tests__/
-    │   └── adminApi.test.ts   (3 suites — types AgencyScope, UserPermission, PermissionTemplate)
+    │   └── tikApi.test.ts             (7 suites — types Tik, TikActions, etc.)
     └── components/__tests__/
-        ├── CopyFromUserDialog.test.tsx    (9 tests)
-        └── ApplyTemplateDialog.test.tsx   (9 tests)
+        └── TikActionDialog.test.tsx   (13 tests)
 ```
 
 ### Lancer les tests

@@ -35,12 +35,31 @@ Vérifie la cohérence de la classe `AppAction` (constantes d'actions) :
 
 | Test | Ce qu'il vérifie |
 |---|---|
-| `testAllContainsExpectedNumberOfActions` | `AppAction::ALL` contient exactement 13 actions |
+| `testAllContainsExpectedNumberOfActions` | `AppAction::ALL` contient exactement 14 actions (13 + `intervene`, ajoutée pour [le module TIK](../architecture/tik.md#permissions--module-tik)) |
 | `testAllContainsAllDeclaredConstants` | Chaque constante déclarée est présente dans `ALL` |
 | `testAllHasNoDuplicates` | Pas de doublons dans `ALL` |
 | `testAllActionsAreNonEmptyStrings` | Toutes les actions sont des chaînes non vides |
-| `testActionConstantValues` | Valeurs exactes (`'view'`, `'edit'`, `'manage_permissions'`, …) |
+| `testActionConstantValues` | Valeurs exactes (`'view'`, `'edit'`, `'manage_permissions'`, `'intervene'`, …) |
 | `testActionsUseSnakeCase` | Toutes les valeurs respectent le format `snake_case` |
+
+### `TikEntityTest` — 10 tests
+
+Fichier : `tests/Unit/Tik/TikEntityTest.php`
+
+Teste l'entité `Tik` en mémoire pure (pas de DB, pas de kernel) :
+
+| Test | Ce qu'il vérifie |
+|---|---|
+| `testDefaultStatutIsOuvert` | Statut par défaut = `OUVERT` |
+| `testDefaultNiveauUrgenceIsP4` | Urgence par défaut = `P4` |
+| `testCreatedAtIsSetOnConstruction` | `createdAt` est initialisé à la construction |
+| `testStatutConstantsAreDistinct` | Les 8 constantes de statut ont des valeurs distinctes |
+| `testFluentSettersReturnSelf` | Les setters retournent `$this` (chaînage) |
+| `testGetFileNamesAsArrayReturnsEmptyArrayWhenNull` | Décodage JSON : `null` → `[]` |
+| `testGetFileNamesAsArrayDecodesJson` | Décodage JSON : cas nominal |
+| `testGetFileNamesAsArrayReturnsEmptyArrayOnInvalidJson` | Décodage JSON : JSON invalide → `[]` (pas d'exception) |
+| `testCategorieAssociation` | Association `TikCategorie` |
+| `testIntervenantAndDemandeurAssociations` | Associations `Personnel` (intervenant) et `User` (demandeur/validateur) |
 
 ### `UserPermissionTest` — 18 tests
 
@@ -139,6 +158,56 @@ public function testCreateTemplate(): void
     $this->deleteTemplate($client, $id);   // même $client, pas de re-boot
 }
 ```
+
+### `TikControllerTest` — 13 tests
+
+Fichier : `tests/Functional/Tik/TikControllerTest.php`  
+Route de base : `/api/tik/tickets` — voir [Module TIK](../architecture/tik.md) pour le modèle et le workflow.
+
+#### Particularité — deux formats de body selon l'endpoint
+
+`create()` lit `$request->request->all()` (form-params, compatibilité multipart pour les pièces jointes) ; tous les autres endpoints d'action (`valider`, `refuser`, `planifier`, …) lisent `json_decode($request->getContent())`. Le test fournit donc deux helpers d'envoi :
+
+```php
+private function createTicket(KernelBrowser $client, EntityManagerInterface $em, array $overrides = []): array
+// form-params — pour POST '' uniquement
+
+private function postJson(KernelBrowser $client, string $uri, array $payload = []): void
+// JSON — pour tous les endpoints d'action (valider/refuser/planifier/...)
+```
+
+> Envoyer du JSON à un endpoint d'action avec des form-params (ou l'inverse) échoue silencieusement côté validation métier ("obligatoire") plutôt qu'avec une erreur de parsing explicite — piège rencontré lors de l'écriture de ce test.
+
+#### Octroi de permissions dans le test
+
+Comme le module repose sur `UserPermission` plutôt que sur des rôles ([voir la justification](../architecture/tik.md#pourquoi-pas-des-rôles-globaux)), le test insère directement des permissions via DBAL brut plutôt que de dépendre de fixtures :
+
+```php
+private function grantTikActions(EntityManagerInterface $em, User $user, int $companyId, array $actions): ?int
+// INSERT direct dans app_user_permission, resourceType='module', resourceId=(id de l'AppModule slug='tik')
+```
+
+#### Tableau des tests
+
+| Test | Ce qu'il vérifie |
+|---|---|
+| `testCategoriesTreeReturnsArray` | `GET /api/tik/categories` → tableau JSON |
+| `testDefaultsReturnsExpectedShape` | `GET /defaults` → structure attendue |
+| `testListRequiresAuthentication` | `GET ''` sans JWT → 401 |
+| `testCreateTicketFailsWithoutRequiredFields` | `POST ''` incomplet → 400 |
+| `testCreateTicketSucceeds` | `POST ''` complet → 201, `numeroTicket` au format `TIK########` |
+| `testDetailReturns404ForUnknownTicket` | `GET /999999` → 404 |
+| `testValiderIsForbiddenWithoutValidatePermission` | `valider` sans permission `validate` → 403 |
+| `testRefuserRequiresComment` | `refuser` sans commentaire → 400 |
+| `testRefuserSucceedsWithComment` | `refuser` avec commentaire → statut `REFUSE` |
+| `testFullWorkflowValiderPlanifierResoudreCloturer` | Cycle complet `OUVERT → EN_COURS → PLANIFIE → RESOLU → CLOTURE`, vérifie `statut` + flags `actions.*` à chaque étape + 5 lignes d'historique |
+| `testReouvrirThenReplanifierCycle` | `RESOLU → REOUVERT → PLANIFIE` (cycle de réouverture) |
+| `testCloturerFailsWhenNotResolu` | `cloturer` sur un ticket non résolu → 409 |
+| `testIntervenantsDisponiblesReflectsInterveneAction` | `GET /intervenants` reflète l'octroi/retrait de la permission `intervene` |
+
+#### Nettoyage
+
+`tearDown()` supprime les lignes `tik_historique`/`tik_ticket` créées (`$createdTicketIds`) et les `app_user_permission` créées (`$createdPermissionIds`) — la base de test/dev est partagée, aucune trace ne doit subsister après l'exécution.
 
 ---
 

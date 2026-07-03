@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Save } from "lucide-react";
 import { DocumentViewer } from "@/components/common/DocumentViewer";
 import { useParams } from "react-router-dom";
-import { validationSchema } from "../schema/verificationOuValidationSchema";
 import type { UseMutationResult } from "@tanstack/react-query";
 import {
   ditFields,
@@ -28,9 +27,9 @@ function OrdreReparationForm({ mutation }: Props) {
       observation: "",
 
       pieceJointe1: [] as File[],
-      pieceJointe2: [] as File[],
-      pieceJointe3: [] as File[],
-      pieceJointe4: [] as File[],
+      pieceJointe2: [],
+      pieceJointe3: [],
+      pieceJointe4: [],
     },
     validators: {
       onSubmit: ordreReparationSchema,

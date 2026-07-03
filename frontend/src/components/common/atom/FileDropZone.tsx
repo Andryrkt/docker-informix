@@ -64,7 +64,7 @@ export function FileDropzone({ field }: any) {
     if (field.multiple) {
       field.onChange(validFiles);
     } else {
-      field.onChange(validFiles[0] ?? null);
+      field.onChange(validFiles.slice(0, 1));
     }
   };
 
@@ -89,7 +89,7 @@ export function FileDropzone({ field }: any) {
           addFiles(e.dataTransfer.files);
         }}
         className={cn(
-          "relative flex flex-col items-center justify-center rounded-md border-2 border-dashed px-6 py-10 text-center  duration-150 transition-all",
+          "relative flex flex-col items-center justify-center rounded-md border-2 border-dashed px-6 py-10 text-center  duration-150 transition-all hover:border-brand-primary ",
           isDragging
             ? "border-brand-primary"
             : "border-muted-foreground/30 bg-muted/30",
@@ -107,22 +107,22 @@ export function FileDropzone({ field }: any) {
         <UploadCloud
           size={40}
           className={cn(
-            "",
-            isDragging ? "text-brand-primary" : "text-muted-foreground/60",
+            "hover:text-brand-primary text-muted-foreground/60",
+            isDragging ?? "text-brand-primary",
           )}
         ></UploadCloud>
         <p
           className={cn(
-            "text-sm font-medium",
-            isDragging ? "text-brand-primary" : "text-muted-foreground/60",
+            "text-sm font-medium hover:text-brand-primary text-muted-foreground/60",
+            isDragging ?? "text-brand-primary",
           )}
         >
           Glissez et déposez des fichiers ici ou cliquez pour importer
         </p>
         <p
           className={cn(
-            "text-xs mt-1",
-            isDragging ? "text-brand-primary" : "text-muted-foreground/60",
+            "text-xs mt-1 hover:text-brand-primary text-muted-foreground/60",
+            isDragging ?? "text-brand-primary",
           )}
         >
           {field.multiple

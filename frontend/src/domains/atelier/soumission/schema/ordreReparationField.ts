@@ -21,6 +21,7 @@ export const pieceJointeFields: FieldTrait[] = [
     type: "dragfile",
     label: "Veuillez insérer l'OR à valider *",
     multiple: false,
+    pattern: "^Ordre de réparation.+\\.pdf$",
     maxSize: max_size_upload_file,
     accept: ".pdf,.doc,.docx,image/*",
   },
@@ -29,6 +30,7 @@ export const pieceJointeFields: FieldTrait[] = [
     type: "dragfile",
     label: "Veuillez insérer le devis à fusionner avec l'OR",
     multiple: false,
+    pattern: "^DEVIS.+\\.pdf$",
     maxSize: max_size_upload_file,
     accept: ".pdf,.doc,.docx,image/*",
   },
@@ -38,6 +40,7 @@ export const pieceJointeFields: FieldTrait[] = [
     label:
       "Veuillez insérer le BC ou autre document à fusionner avec l'OR (si existant)",
     multiple: false,
+    pattern: "^BC.+\\.pdf$",
     maxSize: max_size_upload_file,
     accept: ".pdf,.doc,.docx,image/*",
   },

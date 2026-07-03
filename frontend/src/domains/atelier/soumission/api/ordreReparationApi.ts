@@ -1,14 +1,13 @@
 import type { ApiResponse } from "@/conf/api/Response";
 
 import axiosInstance from "@/conf/axios";
-import type { BonCommandePayload } from "../schema/BonCommandeSchema";
+import type { OrdreReparationPayload } from "../schema/ordreReparationSchema";
 import { appendFiles } from "@/lib/utils";
 
 export const soumettreOrdreReparation = async (
-  payload: BonCommandePayload,
+  payload: OrdreReparationPayload,
 ): Promise<ApiResponse<any>> => {
   const formData = new FormData();
-
   // champs simples
   Object.entries(payload).forEach(([key, value]) => {
     if (
@@ -17,16 +16,14 @@ export const soumettreOrdreReparation = async (
       )
     )
       return;
-
     formData.append(key, value as string);
   });
 
   // fichiers
-  appendFiles("pieceJointe1", payload.pieceJointe, formData);
-  appendFiles("pieceJointe2", payload.pieceJointe, formData);
-  appendFiles("pieceJointe3", payload.pieceJointe, formData);
-  appendFiles("pieceJointe4", payload.pieceJointe, formData);
-
+  appendFiles("pieceJointe1", payload.pieceJointe1, formData);
+  appendFiles("pieceJointe2", payload.pieceJointe2, formData);
+  appendFiles("pieceJointe3", payload.pieceJointe3, formData);
+  appendFiles("pieceJointe4", payload.pieceJointe4, formData);
   const { data } = await axiosInstance.post("/soumettreBonCommande", formData);
 
   return data;

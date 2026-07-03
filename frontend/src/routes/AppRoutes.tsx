@@ -19,6 +19,7 @@ import { verificationDitLoader } from "./guards/verificationDitLoader";
 import ValidationAtelierSoumission from "@/domains/atelier/soumission/pages/ValidationAtelierSoumission";
 import BonCommandeSoumission from "@/domains/atelier/soumission/pages/BonCommandeSoumission";
 import OrSoummission from "@/domains/atelier/soumission/pages/OrdreReparationSoummission";
+import RapportInterventionSoumission from "@/domains/atelier/soumission/pages/RapportInterventionSoumission";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -84,25 +85,30 @@ function AppRoutes() {
           element: <DitDetails />,
         },
         {
-          path: "/atelier/demande-intervention/verification_prix/:numeroDemandeIntervention",
+          path: "/atelier/demande-intervention/verification-prix/:numeroDemandeIntervention",
           element: <VerificationPrixSoumission />,
-          loader: verificationDitLoader("verification_prix"),
+          loader: verificationDitLoader("verification-prix"),
         },
         {
-          path: "/atelier/demande-intervention/validation_atelier/:numeroDemandeIntervention",
+          path: "/atelier/demande-intervention/validation-atelier/:numeroDemandeIntervention",
           element: <ValidationAtelierSoumission />,
-          loader: verificationDitLoader("validation_atelier"),
+          loader: verificationDitLoader("validation-atelier"),
         },
         {
-          path: "/atelier/demande-intervention/bon_commande/:numeroDemandeIntervention",
+          path: "/atelier/demande-intervention/bon-commande/:numeroDemandeIntervention",
           element: <BonCommandeSoumission />,
-          loader: verificationDitLoader("bon_commande"),
+          loader: verificationDitLoader("bon-commande"),
         },
 
         {
           path: "/atelier/demande-intervention/ordre-reparation/:numeroDemandeIntervention",
           element: <OrSoummission />,
           loader: verificationDitLoader("ordre-reparation"),
+        },
+        {
+          path: "/atelier/demande-intervention/rapport-intervention/:numeroDemandeIntervention",
+          element: <RapportInterventionSoumission />,
+          loader: verificationDitLoader("rapport-intervention"),
         },
 
         // {

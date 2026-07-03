@@ -1,18 +1,18 @@
 export const DW_DOCUMENT_OPTIONS = [
   {
-    value: "verification_prix",
+    value: "verification-prix",
     code: "DEVIS",
     label: "DEVIS - Vérification de prix",
     href: "/dw/dit",
   },
   {
-    value: "validation_atelier",
+    value: "validation-atelier",
     code: "DEVIS",
     label: "DEVIS - Validation atelier",
     href: "/dw/dit",
   },
   {
-    value: "bon_commande",
+    value: "bon-commande",
     code: "BC",
     label: "BC - Bon de commande",
     href: "/dw/devis",
@@ -24,7 +24,7 @@ export const DW_DOCUMENT_OPTIONS = [
     href: "/dw/devis",
   },
   {
-    value: "ri",
+    value: "rapport-intervention",
     code: "RI",
     label: "RI - Rapport d'intervention",
     href: "/dw/devis",

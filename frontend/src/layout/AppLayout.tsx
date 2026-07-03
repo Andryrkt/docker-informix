@@ -35,7 +35,7 @@ function AppLayouts() {
             </div>
           </>
         )}
-        <main className="grow flex flex-col justify-center items-center ">
+        <main className="grow flex flex-col justify-center items-center  ">
           <Outlet />
           {/* <ScrollRestoration /> */}
           <Toaster richColors />

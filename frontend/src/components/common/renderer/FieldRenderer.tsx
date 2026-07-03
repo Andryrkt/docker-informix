@@ -15,6 +15,14 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { FileDropzone } from "../atom/FileDropZone";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export function FieldRenderer({ field }: any) {
   const isSelect = field.type === "select";
@@ -295,6 +303,88 @@ export function FieldRenderer({ field }: any) {
       );
     }
 
+    // Multichoice table
+    case "multichoice-table": {
+      if (optionsQuery?.isLoading) {
+        return (
+          <div className="text-xs text-muted-foreground">Chargement...</div>
+        );
+      }
+
+      const options = getOptions(field, optionsQuery);
+      const value: string[] = field.value ?? [];
+
+      const toggleValue = (optionValue: string, checked: boolean) => {
+        field.onChange(
+          checked
+            ? [...value, optionValue]
+            : value.filter((v) => v !== optionValue),
+        );
+      };
+
+      const columns = field.columns ?? [];
+
+      return (
+        <div className="overflow-auto lg:max-h-60 max-h-100 rounded-sm border">
+          <Table className="text-base">
+            {/* HEADER */}
+            <TableHeader className="bg-brand-dark [&_th]:text-white sticky top-0 z-50 ">
+              <TableRow className="h-5 hover:bg-brand-dark data-[state=selected]:bg-brand-dark">
+                <TableHead className="w-14 text-center text-white text-sm hover:bg-brand-dark" />
+
+                {columns.map((col: any) => (
+                  <TableHead
+                    key={col.key}
+                    className={cn(
+                      "text-white text-sm font-semibold",
+                      col.className,
+                    )}
+                  >
+                    {col.label}
+                  </TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+
+            {/* BODY */}
+            <TableBody>
+              {options.map((option: any) => {
+                const checked = value.includes(option.value);
+
+                return (
+                  <TableRow
+                    key={option.value}
+                    className={cn(
+                      " transition",
+                      checked ? "bg-brand-dark/5" : "hover:bg-brand-dark/5",
+                    )}
+                  >
+                    {/* CHECKBOX */}
+                    <TableCell className=" px-4">
+                      <Checkbox
+                        checked={checked}
+                        disabled={field.disabled}
+                        onCheckedChange={(checked) =>
+                          toggleValue(option.value, Boolean(checked))
+                        }
+                        className=" data-[state=checked]:bg-brand-dark data-[state=checked]:text-brand-primary"
+                      />
+                    </TableCell>
+
+                    {/* DYNAMIC COLUMNS */}
+                    {columns.map((col: any) => (
+                      <TableCell key={col.key} className=" py-2 text-sm ">
+                        {option?.[col.key] ?? "-"}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
+      );
+    }
     default:
       return null;
   }
@@ -308,7 +398,7 @@ type ReadOnlyFieldProps = {
 
 export function FieldReadOnly({ label, value, className }: ReadOnlyFieldProps) {
   return (
-    <div className={cn("space-y-1 w-full", className)}>
+    <div className={cn("space-y-1 w-20 border", className)}>
       <label className="text-xs font-medium text-gray-800">{label}</label>
       <Input
         readOnly

@@ -4,6 +4,10 @@ export type SelectOption = {
   label: string;
   value: string;
 };
+export type TableChoiceRow = {
+  value: string;
+  [key: string]: string | number;
+};
 export type FieldTrait =
   | {
       name: string;
@@ -46,6 +50,23 @@ export type FieldTrait =
       queryKey?: string;
       queryFn?: () => Promise<SelectOption[]>;
       options?: SelectOption[];
+      enabled?: boolean;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "multichoice-table";
+
+      queryKey?: string;
+      queryFn?: () => Promise<TableChoiceRow[]>;
+      options?: TableChoiceRow[];
+
+      columns: {
+        key: string;
+        label: string;
+        className?: string;
+      }[];
+
       enabled?: boolean;
     }
   | {

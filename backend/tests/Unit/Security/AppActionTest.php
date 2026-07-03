@@ -13,7 +13,7 @@ class AppActionTest extends TestCase
 {
     public function testAllContainsExpectedNumberOfActions(): void
     {
-        $this->assertCount(13, AppAction::ALL);
+        $this->assertCount(14, AppAction::ALL);
     }
 
     public function testAllContainsAllDeclaredConstants(): void
@@ -21,7 +21,7 @@ class AppActionTest extends TestCase
         $expected = [
             AppAction::VIEW, AppAction::EXPORT, AppAction::PRINT,
             AppAction::CREATE, AppAction::EDIT, AppAction::DELETE,
-            AppAction::VALIDATE, AppAction::APPROVE, AppAction::DUPLICATE, AppAction::ARCHIVE,
+            AppAction::VALIDATE, AppAction::APPROVE, AppAction::DUPLICATE, AppAction::ARCHIVE, AppAction::INTERVENE,
             AppAction::IMPORT, AppAction::MANAGE_USERS, AppAction::MANAGE_PERMS,
         ];
 
@@ -60,6 +60,7 @@ class AppActionTest extends TestCase
         $this->assertSame('approve',            AppAction::APPROVE);
         $this->assertSame('duplicate',          AppAction::DUPLICATE);
         $this->assertSame('archive',            AppAction::ARCHIVE);
+        $this->assertSame('intervene',          AppAction::INTERVENE);
         $this->assertSame('import',             AppAction::IMPORT);
         $this->assertSame('manage_users',       AppAction::MANAGE_USERS);
         $this->assertSame('manage_permissions', AppAction::MANAGE_PERMS);

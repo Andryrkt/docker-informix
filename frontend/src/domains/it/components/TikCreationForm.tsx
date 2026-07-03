@@ -6,8 +6,8 @@ import { Paperclip, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import WysiwygEditor from "@/components/common/WysiwygEditor";
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { fetchAgencies } from "@/domains/admin/api/adminApi";
 import * as api from "../api/tikApi";
@@ -101,8 +101,9 @@ export default function TikCreationForm() {
 
   const validate = (): boolean => {
     const e: FormErrors = {};
+    const detailText = form.detailDemande.replace(/<[^>]*>/g, "").trim();
     if (!form.objetDemande.trim())   e.objetDemande      = "L'objet est obligatoire.";
-    if (!form.detailDemande.trim())  e.detailDemande     = "Le détail est obligatoire.";
+    if (!detailText)                 e.detailDemande     = "Le détail est obligatoire.";
     if (!form.categorieId)           e.categorieId       = "La catégorie est obligatoire.";
     if (!form.agenceDebiteurId)      e.agenceDebiteurId  = "L'agence débiteur est obligatoire.";
     if (!form.serviceDebiteurId)     e.serviceDebiteurId = "Le service débiteur est obligatoire.";
@@ -154,12 +155,10 @@ export default function TikCreationForm() {
 
               <Field data-invalid={!!errors.detailDemande}>
                 <FieldLabel>Détail de la demande *</FieldLabel>
-                <Textarea
+                <WysiwygEditor
                   value={form.detailDemande}
-                  onChange={(e) => set("detailDemande", e.target.value)}
+                  onChange={(html) => set("detailDemande", html)}
                   placeholder="Veuillez décrire les détails de votre demande ici..."
-                  rows={4}
-                  maxLength={5000}
                 />
                 {errors.detailDemande && <FieldError errors={[{ message: errors.detailDemande }]} />}
               </Field>

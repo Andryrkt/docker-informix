@@ -111,7 +111,8 @@ export function UserAccessDialog({ open, onClose, user }: Props) {
           </label>
 
           <p className="text-xs text-gray-400">
-            Les agences/services autorisés se gèrent désormais via les Permissions de l'utilisateur.
+            Les autres accès (agences/services, validation/intervention sur les tickets support IT, etc.)
+            se gèrent via les Permissions de l'utilisateur (module "Support Informatique").
           </p>
         </div>
 

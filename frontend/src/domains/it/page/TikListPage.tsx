@@ -1,24 +1,23 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarClock, Paperclip, Plus } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ChevronRight, Paperclip, Plus } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import PlanifierDialog from "../components/PlanifierDialog";
 import * as api from "../api/tikApi";
-import type { Tik, Statut } from "../api/tikApi";
+import type { Statut } from "../api/tikApi";
 
 const STATUT_CONFIG: Record<Statut, { label: string; className: string }> = {
-  OUVERT:    { label: "Ouvert",    className: "bg-blue-50 text-blue-700" },
-  PLANIFIE:  { label: "Planifié",  className: "bg-purple-50 text-purple-700" },
-  EN_COURS:  { label: "En cours",  className: "bg-yellow-50 text-yellow-800" },
-  RESOLU:    { label: "Résolu",    className: "bg-green-50 text-green-700" },
-  REFUSE:    { label: "Refusé",    className: "bg-red-50 text-red-700" },
-  CLOTURE:   { label: "Clôturé",   className: "bg-gray-100 text-gray-600" },
-  REOUVERT:  { label: "Réouvert",  className: "bg-orange-50 text-orange-700" },
+  OUVERT:      { label: "Ouvert",      className: "bg-blue-50 text-blue-700" },
+  PLANIFIE:    { label: "Planifié",    className: "bg-purple-50 text-purple-700" },
+  EN_COURS:    { label: "En cours",    className: "bg-yellow-50 text-yellow-800" },
+  RESOLU:      { label: "Résolu",      className: "bg-green-50 text-green-700" },
+  REFUSE:      { label: "Refusé",      className: "bg-red-50 text-red-700" },
+  CLOTURE:     { label: "Clôturé",     className: "bg-gray-100 text-gray-600" },
+  REOUVERT:    { label: "Réouvert",    className: "bg-orange-50 text-orange-700" },
+  EN_ATTENTE:  { label: "En attente",  className: "bg-amber-50 text-amber-700" },
 };
 
 const URGENCE_CLASSNAME: Record<string, string> = {
@@ -34,12 +33,12 @@ function fmtDate(iso: string) {
 }
 
 export default function TikListPage() {
+  const navigate = useNavigate();
+
   const { data: tickets = [], isLoading } = useQuery({
     queryKey: ["tik", "tickets"],
     queryFn: api.fetchTickets,
   });
-
-  const [planifierTicket, setPlanifierTicket] = useState<Tik | null>(null);
 
   return (
     <div className="space-y-6 p-4">
@@ -66,7 +65,7 @@ export default function TikListPage() {
               <TableHead>Demandeur</TableHead>
               <TableHead>Intervenant</TableHead>
               <TableHead>Statut</TableHead>
-              <TableHead className="w-24 text-right">Actions</TableHead>
+              <TableHead className="w-8" />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -79,7 +78,11 @@ export default function TikListPage() {
                 <TableCell colSpan={8} className="text-center text-gray-400 py-8">Aucun ticket.</TableCell>
               </TableRow>
             ) : tickets.map((t) => (
-              <TableRow key={t.id}>
+              <TableRow
+                key={t.id}
+                className="cursor-pointer hover:bg-gray-50"
+                onClick={() => navigate(`/it/tickets/${t.id}`)}
+              >
                 <TableCell className="font-mono text-xs">{t.numeroTicket}</TableCell>
                 <TableCell>
                   <div className="font-medium flex items-center gap-1.5">
@@ -112,20 +115,14 @@ export default function TikListPage() {
                     {STATUT_CONFIG[t.statut].label}
                   </span>
                 </TableCell>
-                <TableCell className="text-right">
-                  {t.statut === "OUVERT" && (
-                    <Button variant="ghost" size="sm" onClick={() => setPlanifierTicket(t)} title="Planifier">
-                      <CalendarClock size={14} />
-                    </Button>
-                  )}
+                <TableCell>
+                  <ChevronRight size={14} className="text-gray-300" />
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
-
-      <PlanifierDialog ticket={planifierTicket} onClose={() => setPlanifierTicket(null)} />
     </div>
   );
 }

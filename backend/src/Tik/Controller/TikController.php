@@ -2,13 +2,18 @@
 
 namespace App\Tik\Controller;
 
+use App\Security\AppAction;
 use App\Security\Entity\Agency;
+use App\Security\Entity\AppModule;
 use App\Security\Entity\Personnel;
 use App\Security\Entity\Service;
 use App\Security\Entity\User;
+use App\Security\Entity\UserPermission;
 use App\Security\Service\SecurityContextService;
 use App\Tik\Entity\Tik;
 use App\Tik\Entity\TikCategorie;
+use App\Tik\Entity\TikHistorique;
+use App\Tik\Repository\TikHistoriqueRepository;
 use App\Tik\Repository\TikRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,6 +33,8 @@ use Symfony\Component\Routing\Attribute\Route;
  * Lecture via l'ORM (mappé sqlserver), écriture via DBAL direct — le driver
  * SQL Server custom ne convertit pas correctement un DateTime lié en
  * paramètre via l'ORM (cf. AuditService/NotificationService).
+ *
+ * Workflow (lot 2) — voir App\Tik\Entity\Tik pour le diagramme des statuts.
  */
 #[Route('/api/tik/tickets')]
 class TikController extends AbstractController
@@ -47,6 +54,7 @@ class TikController extends AbstractController
         private readonly EntityManagerInterface  $em,
         private readonly Connection              $conn,
         private readonly TikRepository           $tikRepo,
+        private readonly TikHistoriqueRepository $historiqueRepo,
         private readonly SecurityContextService  $securityContext,
         private readonly KernelInterface         $kernel,
     ) {}
@@ -54,7 +62,36 @@ class TikController extends AbstractController
     #[Route('', methods: ['GET'])]
     public function list(): JsonResponse
     {
-        return $this->json(array_map(fn(Tik $t) => $this->serialize($t), $this->tikRepo->findAllOrdered()));
+        /** @var User $user */
+        $user = $this->getUser();
+
+        return $this->json(array_map(fn(Tik $t) => $this->serialize($t, $user), $this->tikRepo->findAllOrdered()));
+    }
+
+    /**
+     * Personnel éligible à être assigné comme intervenant — utilisateurs
+     * ayant la permission "intervene" sur le module TIK (société active),
+     * rattachés à leur fiche Personnel via matricule.
+     */
+    #[Route('/intervenants', methods: ['GET'])]
+    public function intervenantsDisponibles(): JsonResponse
+    {
+        $matricules = array_filter(array_map(
+            fn(User $u) => $u->getMatricule(),
+            $this->usersWithTikAction(AppAction::INTERVENE),
+        ));
+
+        if (!$matricules) {
+            return $this->json([]);
+        }
+
+        $personnels = $this->em->getRepository(Personnel::class)->findBy(['matricule' => array_values($matricules)]);
+
+        return $this->json(array_map(fn(Personnel $p) => [
+            'id' => $p->getId(),
+            'nom' => $p->getNom(),
+            'prenoms' => $p->getPrenoms(),
+        ], $personnels));
     }
 
     /**
@@ -81,12 +118,36 @@ class TikController extends AbstractController
     #[Route('/{id}', methods: ['GET'])]
     public function detail(int $id): JsonResponse
     {
+        /** @var User $user */
+        $user = $this->getUser();
         $tik = $this->tikRepo->find($id);
         if (!$tik) {
             return $this->json(['error' => 'Ticket introuvable.'], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->json($this->serialize($tik));
+        return $this->json($this->serialize($tik, $user));
+    }
+
+    /**
+     * Historique des changements de statut du ticket.
+     */
+    #[Route('/{id}/historique', methods: ['GET'])]
+    public function historique(int $id): JsonResponse
+    {
+        if (!$this->tikRepo->find($id)) {
+            return $this->json(['error' => 'Ticket introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->json(array_map(fn(TikHistorique $h) => [
+            'id'          => $h->getId(),
+            'statut'      => $h->getStatut(),
+            'commentaire' => $h->getCommentaire(),
+            'user'        => $h->getUser() ? [
+                'id' => $h->getUser()->getId(),
+                'displayName' => $h->getUser()->getDisplayName() ?? $h->getUser()->getUsername(),
+            ] : null,
+            'createdAt'   => $h->getCreatedAt()->format(\DateTimeInterface::ATOM),
+        ], $this->historiqueRepo->findForTik($id)));
     }
 
     /**
@@ -167,8 +228,9 @@ class TikController extends AbstractController
         ], static fn($v) => $v !== null));
 
         $id = (int) $this->conn->lastInsertId();
+        $this->recordHistory($id, Tik::STATUT_OUVERT, null, $user);
 
-        return $this->json($this->serialize($this->tikRepo->find($id)), Response::HTTP_CREATED);
+        return $this->json($this->serialize($this->tikRepo->find($id), $user), Response::HTTP_CREATED);
     }
 
     /**
@@ -206,29 +268,138 @@ class TikController extends AbstractController
     }
 
     /**
-     * Planifie le ticket : assigne un intervenant et une plage date/heure.
+     * Le validateur valide la demande : assigne un intervenant, le ticket
+     * passe en cours de traitement.
      */
-    #[Route('/{id}/planifier', methods: ['POST'])]
-    public function planifier(int $id, Request $request): JsonResponse
+    #[Route('/{id}/valider', methods: ['POST'])]
+    public function valider(int $id, Request $request): JsonResponse
     {
+        /** @var User $user */
+        $user = $this->getUser();
         $tik = $this->tikRepo->find($id);
         if (!$tik) {
             return $this->json(['error' => 'Ticket introuvable.'], Response::HTTP_NOT_FOUND);
         }
-
-        $data = json_decode($request->getContent(), true) ?? [];
-
-        $intervenantId = isset($data['intervenantId']) ? (int) $data['intervenantId'] : null;
-        $debut         = trim((string) ($data['dateDebutPlanning'] ?? ''));
-        $fin           = trim((string) ($data['dateFinPlanning']   ?? ''));
-
-        if (!$intervenantId || $debut === '' || $fin === '') {
-            return $this->json(['error' => 'Intervenant, date de début et date de fin sont obligatoires.'], Response::HTTP_BAD_REQUEST);
+        if (!$this->isValidateur($user)) {
+            return $this->json(['error' => 'Réservé aux validateurs.'], Response::HTTP_FORBIDDEN);
+        }
+        if ($tik->getStatut() !== Tik::STATUT_OUVERT) {
+            return $this->json(['error' => 'Seul un ticket ouvert peut être validé.'], Response::HTTP_CONFLICT);
         }
 
+        $data = json_decode($request->getContent(), true) ?? [];
+        $intervenantId = isset($data['intervenantId']) ? (int) $data['intervenantId'] : null;
+        if (!$intervenantId) {
+            return $this->json(['error' => "L'intervenant est obligatoire."], Response::HTTP_BAD_REQUEST);
+        }
         $intervenant = $this->em->getRepository(Personnel::class)->find($intervenantId);
         if (!$intervenant) {
             return $this->json(['error' => 'Intervenant introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+        $commentaire = trim((string) ($data['commentaire'] ?? '')) ?: null;
+
+        $this->conn->update('tik_ticket', [
+            'intervenant_id' => $intervenant->getId(),
+            'validateur_id'  => $user->getId(),
+            'statut'         => Tik::STATUT_EN_COURS,
+        ], ['id' => $id]);
+        $this->recordHistory($id, Tik::STATUT_EN_COURS, $commentaire, $user);
+
+        return $this->json($this->serializeFresh($id, $user));
+    }
+
+    /**
+     * Le validateur refuse la demande (motif obligatoire).
+     */
+    #[Route('/{id}/refuser', methods: ['POST'])]
+    public function refuser(int $id, Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $tik = $this->tikRepo->find($id);
+        if (!$tik) {
+            return $this->json(['error' => 'Ticket introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+        if (!$this->isValidateur($user)) {
+            return $this->json(['error' => 'Réservé aux validateurs.'], Response::HTTP_FORBIDDEN);
+        }
+        if ($tik->getStatut() !== Tik::STATUT_OUVERT) {
+            return $this->json(['error' => 'Seul un ticket ouvert peut être refusé.'], Response::HTTP_CONFLICT);
+        }
+
+        $data = json_decode($request->getContent(), true) ?? [];
+        $commentaire = trim((string) ($data['commentaire'] ?? ''));
+        if ($commentaire === '') {
+            return $this->json(['error' => 'Un motif de refus est obligatoire.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $this->conn->update('tik_ticket', [
+            'validateur_id' => $user->getId(),
+            'statut'        => Tik::STATUT_REFUSE,
+        ], ['id' => $id]);
+        $this->recordHistory($id, Tik::STATUT_REFUSE, $commentaire, $user);
+
+        return $this->json($this->serializeFresh($id, $user));
+    }
+
+    /**
+     * Le validateur met le ticket en attente (motif obligatoire).
+     */
+    #[Route('/{id}/mettre-en-attente', methods: ['POST'])]
+    public function mettreEnAttente(int $id, Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $tik = $this->tikRepo->find($id);
+        if (!$tik) {
+            return $this->json(['error' => 'Ticket introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+        if (!$this->isValidateur($user)) {
+            return $this->json(['error' => 'Réservé aux validateurs.'], Response::HTTP_FORBIDDEN);
+        }
+        if (in_array($tik->getStatut(), [Tik::STATUT_CLOTURE, Tik::STATUT_REFUSE], true)) {
+            return $this->json(['error' => 'Ce ticket est déjà clôturé ou refusé.'], Response::HTTP_CONFLICT);
+        }
+
+        $data = json_decode($request->getContent(), true) ?? [];
+        $commentaire = trim((string) ($data['commentaire'] ?? ''));
+        if ($commentaire === '') {
+            return $this->json(['error' => 'Un commentaire est obligatoire.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $this->conn->update('tik_ticket', [
+            'validateur_id' => $user->getId(),
+            'statut'        => Tik::STATUT_EN_ATTENTE,
+        ], ['id' => $id]);
+        $this->recordHistory($id, Tik::STATUT_EN_ATTENTE, $commentaire, $user);
+
+        return $this->json($this->serializeFresh($id, $user));
+    }
+
+    /**
+     * L'intervenant assigné planifie une plage horaire d'intervention.
+     */
+    #[Route('/{id}/planifier', methods: ['POST'])]
+    public function planifier(int $id, Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $tik = $this->tikRepo->find($id);
+        if (!$tik) {
+            return $this->json(['error' => 'Ticket introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+        if (!$this->isAssignedIntervenant($tik, $user)) {
+            return $this->json(['error' => "Réservé à l'intervenant assigné."], Response::HTTP_FORBIDDEN);
+        }
+        if (!in_array($tik->getStatut(), [Tik::STATUT_EN_COURS, Tik::STATUT_REOUVERT], true)) {
+            return $this->json(['error' => 'Ce ticket ne peut pas être planifié dans son état actuel.'], Response::HTTP_CONFLICT);
+        }
+
+        $data = json_decode($request->getContent(), true) ?? [];
+        $debut = trim((string) ($data['dateDebutPlanning'] ?? ''));
+        $fin   = trim((string) ($data['dateFinPlanning']   ?? ''));
+        if ($debut === '' || $fin === '') {
+            return $this->json(['error' => 'Date de début et date de fin sont obligatoires.'], Response::HTTP_BAD_REQUEST);
         }
 
         $dateDebut = $this->parseDateTimeLocal($debut);
@@ -238,20 +409,219 @@ class TikController extends AbstractController
         }
 
         $this->conn->update('tik_ticket', [
-            'intervenant_id'       => $intervenant->getId(),
-            'date_debut_planning'  => $dateDebut->format('Y-m-d\TH:i:s'),
-            'date_fin_planning'    => $dateFin->format('Y-m-d\TH:i:s'),
-            'statut'               => Tik::STATUT_PLANIFIE,
+            'date_debut_planning' => $dateDebut->format('Y-m-d\TH:i:s'),
+            'date_fin_planning'   => $dateFin->format('Y-m-d\TH:i:s'),
+            'statut'              => Tik::STATUT_PLANIFIE,
         ], ['id' => $id]);
+        $this->recordHistory($id, Tik::STATUT_PLANIFIE, null, $user);
 
-        // L'entité $tik chargée plus haut reste dans l'identity map de l'ORM :
-        // sans clear(), find() renverrait l'objet en cache, pas la ligne à jour.
-        $this->em->clear();
+        return $this->json($this->serializeFresh($id, $user));
+    }
 
-        return $this->json($this->serialize($this->tikRepo->find($id)));
+    /**
+     * L'intervenant assigné transfère le ticket à un autre intervenant
+     * (le statut ne change pas).
+     */
+    #[Route('/{id}/transferer', methods: ['POST'])]
+    public function transferer(int $id, Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $tik = $this->tikRepo->find($id);
+        if (!$tik) {
+            return $this->json(['error' => 'Ticket introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+        if (!$this->isAssignedIntervenant($tik, $user)) {
+            return $this->json(['error' => "Réservé à l'intervenant assigné."], Response::HTTP_FORBIDDEN);
+        }
+        if (!in_array($tik->getStatut(), [Tik::STATUT_EN_COURS, Tik::STATUT_PLANIFIE, Tik::STATUT_REOUVERT], true)) {
+            return $this->json(['error' => 'Ce ticket ne peut pas être transféré dans son état actuel.'], Response::HTTP_CONFLICT);
+        }
+
+        $data = json_decode($request->getContent(), true) ?? [];
+        $nouvelIntervenantId = isset($data['intervenantId']) ? (int) $data['intervenantId'] : null;
+        if (!$nouvelIntervenantId) {
+            return $this->json(['error' => 'Le nouvel intervenant est obligatoire.'], Response::HTTP_BAD_REQUEST);
+        }
+        $nouvelIntervenant = $this->em->getRepository(Personnel::class)->find($nouvelIntervenantId);
+        if (!$nouvelIntervenant) {
+            return $this->json(['error' => 'Intervenant introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+
+        $this->conn->update('tik_ticket', [
+            'intervenant_id' => $nouvelIntervenant->getId(),
+        ], ['id' => $id]);
+        $this->recordHistory($id, $tik->getStatut(), "Transféré à {$nouvelIntervenant->getNom()} {$nouvelIntervenant->getPrenoms()}", $user);
+
+        return $this->json($this->serializeFresh($id, $user));
+    }
+
+    /**
+     * L'intervenant assigné marque le ticket comme résolu.
+     */
+    #[Route('/{id}/resoudre', methods: ['POST'])]
+    public function resoudre(int $id, Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $tik = $this->tikRepo->find($id);
+        if (!$tik) {
+            return $this->json(['error' => 'Ticket introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+        if (!$this->isAssignedIntervenant($tik, $user)) {
+            return $this->json(['error' => "Réservé à l'intervenant assigné."], Response::HTTP_FORBIDDEN);
+        }
+        if (!in_array($tik->getStatut(), [Tik::STATUT_EN_COURS, Tik::STATUT_PLANIFIE, Tik::STATUT_REOUVERT], true)) {
+            return $this->json(['error' => 'Ce ticket ne peut pas être résolu dans son état actuel.'], Response::HTTP_CONFLICT);
+        }
+
+        $data = json_decode($request->getContent(), true) ?? [];
+        $commentaire = trim((string) ($data['commentaire'] ?? '')) ?: null;
+
+        $this->conn->update('tik_ticket', ['statut' => Tik::STATUT_RESOLU], ['id' => $id]);
+        $this->recordHistory($id, Tik::STATUT_RESOLU, $commentaire, $user);
+
+        return $this->json($this->serializeFresh($id, $user));
+    }
+
+    /**
+     * Le demandeur ou un validateur confirme la résolution et clôture le ticket.
+     */
+    #[Route('/{id}/cloturer', methods: ['POST'])]
+    public function cloturer(int $id, Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $tik = $this->tikRepo->find($id);
+        if (!$tik) {
+            return $this->json(['error' => 'Ticket introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+        if (!$this->isDemandeur($tik, $user) && !$this->isValidateur($user)) {
+            return $this->json(['error' => 'Réservé au demandeur ou à un validateur.'], Response::HTTP_FORBIDDEN);
+        }
+        if ($tik->getStatut() !== Tik::STATUT_RESOLU) {
+            return $this->json(['error' => 'Seul un ticket résolu peut être clôturé.'], Response::HTTP_CONFLICT);
+        }
+
+        $data = json_decode($request->getContent(), true) ?? [];
+        $commentaire = trim((string) ($data['commentaire'] ?? '')) ?: null;
+
+        $this->conn->update('tik_ticket', ['statut' => Tik::STATUT_CLOTURE], ['id' => $id]);
+        $this->recordHistory($id, Tik::STATUT_CLOTURE, $commentaire, $user);
+
+        return $this->json($this->serializeFresh($id, $user));
+    }
+
+    /**
+     * Le demandeur conteste la résolution et réouvre le ticket.
+     */
+    #[Route('/{id}/reouvrir', methods: ['POST'])]
+    public function reouvrir(int $id, Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $tik = $this->tikRepo->find($id);
+        if (!$tik) {
+            return $this->json(['error' => 'Ticket introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+        if (!$this->isDemandeur($tik, $user)) {
+            return $this->json(['error' => 'Réservé au demandeur du ticket.'], Response::HTTP_FORBIDDEN);
+        }
+        if ($tik->getStatut() !== Tik::STATUT_RESOLU) {
+            return $this->json(['error' => 'Seul un ticket résolu peut être réouvert.'], Response::HTTP_CONFLICT);
+        }
+
+        $data = json_decode($request->getContent(), true) ?? [];
+        $commentaire = trim((string) ($data['commentaire'] ?? '')) ?: null;
+
+        $this->conn->update('tik_ticket', ['statut' => Tik::STATUT_REOUVERT], ['id' => $id]);
+        $this->recordHistory($id, Tik::STATUT_REOUVERT, $commentaire, $user);
+
+        return $this->json($this->serializeFresh($id, $user));
     }
 
     // ── Helpers ────────────────────────────────────────────────────────────────
+
+    /**
+     * Basé sur la permission "validate" du module TIK (société active) —
+     * volontairement pas un rôle global : un utilisateur peut valider les
+     * tickets TIK sans être validateur ailleurs dans l'application.
+     */
+    private function isValidateur(User $user): bool
+    {
+        return $this->isGranted(AppAction::VALIDATE, 'tik');
+    }
+
+    private function isDemandeur(Tik $tik, User $user): bool
+    {
+        return $tik->getDemandeur()?->getId() === $user->getId();
+    }
+
+    /**
+     * Utilisateurs ayant l'action donnée sur le module TIK, pour la société
+     * active — repose sur le système de permissions fines (UserPermission),
+     * pas sur les rôles globaux.
+     *
+     * @return User[]
+     */
+    private function usersWithTikAction(string $action): array
+    {
+        $company = $this->securityContext->getActiveCompany();
+        $tikModule = $company ? $this->em->getRepository(AppModule::class)->findOneBy(['slug' => 'tik']) : null;
+        if (!$tikModule) {
+            return [];
+        }
+
+        $permissions = $this->em->getRepository(UserPermission::class)->findBy([
+            'company'      => $company,
+            'resourceType' => 'module',
+            'resourceId'   => $tikModule->getId(),
+        ]);
+
+        return array_values(array_filter(array_map(
+            fn(UserPermission $p) => $p->hasAction($action) ? $p->getUser() : null,
+            $permissions,
+        )));
+    }
+
+    /**
+     * L'intervenant assigné au ticket est un Personnel — on le relie à
+     * l'utilisateur connecté via son matricule (même logique que partout
+     * ailleurs dans le projet pour résoudre Personnel ↔ User).
+     */
+    private function isAssignedIntervenant(Tik $tik, User $user): bool
+    {
+        if (!$tik->getIntervenant() || !$user->getMatricule()) {
+            return false;
+        }
+
+        return $tik->getIntervenant()->getMatricule() === $user->getMatricule();
+    }
+
+    private function recordHistory(int|Tik $tik, string $statut, ?string $commentaire, User $user): void
+    {
+        $tikId = $tik instanceof Tik ? $tik->getId() : $tik;
+
+        $this->conn->insert('tik_historique', array_filter([
+            'tik_id'      => $tikId,
+            'statut'      => $statut,
+            'commentaire' => $commentaire,
+            'user_id'     => $user->getId(),
+            'created_at'  => (new \DateTime())->format('Y-m-d\TH:i:s'),
+        ], static fn($v) => $v !== null));
+    }
+
+    /**
+     * Recharge le ticket après une écriture DBAL : l'entité chargée plus haut
+     * reste dans l'identity map de l'ORM, find() renverrait sinon l'objet en
+     * cache plutôt que la ligne à jour.
+     */
+    private function serializeFresh(int $id, User $user): array
+    {
+        $this->em->clear();
+
+        return $this->serialize($this->tikRepo->find($id), $user);
+    }
 
     /**
      * Dossier de stockage des pièces jointes d'un ticket — volontairement HORS
@@ -358,8 +728,13 @@ class TikController extends AbstractController
         return $date ?: null;
     }
 
-    private function serialize(Tik $t): array
+    private function serialize(Tik $t, User $currentUser): array
     {
+        $statut = $t->getStatut();
+        $isValidateur = $this->isValidateur($currentUser);
+        $isDemandeur  = $this->isDemandeur($t, $currentUser);
+        $isIntervenant = $this->isAssignedIntervenant($t, $currentUser);
+
         return [
             'id'                => $t->getId(),
             'numeroTicket'      => $t->getNumeroTicket(),
@@ -368,7 +743,7 @@ class TikController extends AbstractController
             'niveauUrgence'     => $t->getNiveauUrgence(),
             'parcInformatique'  => $t->getParcInformatique(),
             'dateFinSouhaitee'  => $t->getDateFinSouhaitee()->format('Y-m-d'),
-            'statut'            => $t->getStatut(),
+            'statut'            => $statut,
             'createdAt'         => $t->getCreatedAt()->format(\DateTimeInterface::ATOM),
             'dateDebutPlanning' => $t->getDateDebutPlanning()?->format(\DateTimeInterface::ATOM),
             'dateFinPlanning'   => $t->getDateFinPlanning()?->format(\DateTimeInterface::ATOM),
@@ -393,6 +768,10 @@ class TikController extends AbstractController
                 'username' => $t->getDemandeur()->getUsername(),
                 'displayName' => $t->getDemandeur()->getDisplayName(),
             ] : null,
+            'validateur'        => $t->getValidateur() ? [
+                'id' => $t->getValidateur()->getId(),
+                'displayName' => $t->getValidateur()->getDisplayName() ?? $t->getValidateur()->getUsername(),
+            ] : null,
             'intervenant'       => $t->getIntervenant() ? [
                 'id' => $t->getIntervenant()->getId(),
                 'nom' => $t->getIntervenant()->getNom(),
@@ -403,6 +782,18 @@ class TikController extends AbstractController
                 'sizeKb' => $f['sizeKb'],
                 'url' => "/api/tik/tickets/{$t->getId()}/fichiers/{$f['storedName']}",
             ], $t->getFileNamesAsArray()),
+            // Permissions calculées côté serveur — le frontend n'a qu'à
+            // afficher/masquer les boutons en fonction de ces indicateurs.
+            'actions' => [
+                'peutValider'         => $isValidateur && $statut === Tik::STATUT_OUVERT,
+                'peutRefuser'         => $isValidateur && $statut === Tik::STATUT_OUVERT,
+                'peutMettreEnAttente' => $isValidateur && !in_array($statut, [Tik::STATUT_CLOTURE, Tik::STATUT_REFUSE], true),
+                'peutPlanifier'       => $isIntervenant && in_array($statut, [Tik::STATUT_EN_COURS, Tik::STATUT_REOUVERT], true),
+                'peutTransferer'      => $isIntervenant && in_array($statut, [Tik::STATUT_EN_COURS, Tik::STATUT_PLANIFIE, Tik::STATUT_REOUVERT], true),
+                'peutResoudre'        => $isIntervenant && in_array($statut, [Tik::STATUT_EN_COURS, Tik::STATUT_PLANIFIE, Tik::STATUT_REOUVERT], true),
+                'peutCloturer'        => ($isDemandeur || $isValidateur) && $statut === Tik::STATUT_RESOLU,
+                'peutReouvrir'        => $isDemandeur && $statut === Tik::STATUT_RESOLU,
+            ],
         ];
     }
 }

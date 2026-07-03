@@ -11,9 +11,14 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Ticket de support informatique (portage du module TIK du legacy).
- * Lot 1 : ticket + catégorisation + urgence + planification (intervenant/date).
- * Le statut est un champ simple pour l'instant — l'historique complet des
- * changements de statut (clôture/réouverture) sera ajouté dans un lot suivant.
+ *
+ * Workflow (lot 2) :
+ *   OUVERT --valider(VALIDATEUR)--> ENCOURS --planifier(intervenant)--> PLANIFIE
+ *   OUVERT --refuser(VALIDATEUR)--> REFUSE
+ *   (ENCOURS|PLANIFIE|REOUVERT) --resoudre(intervenant)--> RESOLU
+ *   RESOLU --cloturer(demandeur|VALIDATEUR)--> CLOTURE
+ *   RESOLU --reouvrir(demandeur)--> REOUVERT
+ *   non-terminal --mettreEnAttente(VALIDATEUR)--> EN_ATTENTE
  */
 #[ORM\Entity(repositoryClass: TikRepository::class)]
 #[ORM\Table(name: 'tik_ticket')]
@@ -22,13 +27,14 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(columns: ['intervenant_id'], name: 'idx_tik_intervenant')]
 class Tik
 {
-    public const STATUT_OUVERT   = 'OUVERT';
-    public const STATUT_PLANIFIE = 'PLANIFIE';
-    public const STATUT_EN_COURS = 'EN_COURS';
-    public const STATUT_RESOLU   = 'RESOLU';
-    public const STATUT_REFUSE   = 'REFUSE';
-    public const STATUT_CLOTURE  = 'CLOTURE';
-    public const STATUT_REOUVERT = 'REOUVERT';
+    public const STATUT_OUVERT      = 'OUVERT';
+    public const STATUT_PLANIFIE    = 'PLANIFIE';
+    public const STATUT_EN_COURS    = 'EN_COURS';
+    public const STATUT_RESOLU      = 'RESOLU';
+    public const STATUT_REFUSE      = 'REFUSE';
+    public const STATUT_CLOTURE     = 'CLOTURE';
+    public const STATUT_REOUVERT    = 'REOUVERT';
+    public const STATUT_EN_ATTENTE  = 'EN_ATTENTE';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -92,6 +98,11 @@ class Tik
     #[ORM\ManyToOne(targetEntity: Personnel::class)]
     #[ORM\JoinColumn(name: 'intervenant_id', referencedColumnName: 'id', nullable: true)]
     private ?Personnel $intervenant = null;
+
+    /** L'utilisateur ROLE_VALIDATEUR qui a traité le ticket (valider/refuser/attente). */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'validateur_id', referencedColumnName: 'id', nullable: true)]
+    private ?User $validateur = null;
 
     #[ORM\Column(name: 'date_debut_planning', type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $dateDebutPlanning = null;
@@ -160,6 +171,9 @@ class Tik
 
     public function getIntervenant(): ?Personnel { return $this->intervenant; }
     public function setIntervenant(?Personnel $intervenant): static { $this->intervenant = $intervenant; return $this; }
+
+    public function getValidateur(): ?User { return $this->validateur; }
+    public function setValidateur(?User $validateur): static { $this->validateur = $validateur; return $this; }
 
     public function getDateDebutPlanning(): ?\DateTimeInterface { return $this->dateDebutPlanning; }
     public function setDateDebutPlanning(?\DateTimeInterface $dateDebutPlanning): static { $this->dateDebutPlanning = $dateDebutPlanning; return $this; }

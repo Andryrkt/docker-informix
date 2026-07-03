@@ -67,6 +67,7 @@ BEGIN
         statut               NVARCHAR(20)   NOT NULL DEFAULT 'OUVERT',
 
         intervenant_id       INT            NULL,
+        validateur_id        INT            NULL,
         date_debut_planning  DATETIME       NULL,
         date_fin_planning    DATETIME       NULL,
 
@@ -87,7 +88,8 @@ BEGIN
         CONSTRAINT FK_tik_service_emetteur FOREIGN KEY (service_emetteur_id) REFERENCES app_service(id),
         CONSTRAINT FK_tik_agence_debiteur  FOREIGN KEY (agence_debiteur_id)  REFERENCES app_agency(id),
         CONSTRAINT FK_tik_service_debiteur FOREIGN KEY (service_debiteur_id) REFERENCES app_service(id),
-        CONSTRAINT FK_tik_intervenant      FOREIGN KEY (intervenant_id)      REFERENCES app_personnel(id)
+        CONSTRAINT FK_tik_intervenant      FOREIGN KEY (intervenant_id)      REFERENCES app_personnel(id),
+        CONSTRAINT FK_tik_validateur       FOREIGN KEY (validateur_id)       REFERENCES app_user(id)
     );
 
     CREATE INDEX idx_tik_statut      ON tik_ticket (statut);
@@ -95,6 +97,32 @@ BEGIN
     CREATE INDEX idx_tik_intervenant ON tik_ticket (intervenant_id);
 
     PRINT 'Table tik_ticket créée.';
+END
+GO
+
+-- ============================================================
+-- Lot 2 : workflow (valider/refuser/planifier/résoudre/transférer/
+-- clôturer/réouvrir/mettre en attente) + historique des statuts
+-- ============================================================
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE name = 'tik_historique' AND type = 'U')
+BEGIN
+    CREATE TABLE tik_historique (
+        id          INT           IDENTITY(1,1) NOT NULL,
+        tik_id      INT           NOT NULL,
+        statut      NVARCHAR(20)  NOT NULL,
+        commentaire NVARCHAR(MAX) NULL,
+        user_id     INT           NULL,
+        created_at  DATETIME      NOT NULL DEFAULT GETDATE(),
+
+        CONSTRAINT PK_tik_historique PRIMARY KEY (id),
+        CONSTRAINT FK_tik_historique_tik  FOREIGN KEY (tik_id)  REFERENCES tik_ticket(id),
+        CONSTRAINT FK_tik_historique_user FOREIGN KEY (user_id) REFERENCES app_user(id)
+    );
+
+    CREATE INDEX idx_tik_historique_tik ON tik_historique (tik_id);
+
+    PRINT 'Table tik_historique créée.';
 END
 GO
 

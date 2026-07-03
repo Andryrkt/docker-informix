@@ -1,6 +1,6 @@
 import axiosInstance from "@/conf/axios";
 
-export type Statut = "OUVERT" | "PLANIFIE" | "EN_COURS" | "RESOLU" | "REFUSE" | "CLOTURE" | "REOUVERT";
+export type Statut = "OUVERT" | "PLANIFIE" | "EN_COURS" | "RESOLU" | "REFUSE" | "CLOTURE" | "REOUVERT" | "EN_ATTENTE";
 export type NiveauUrgence = "P1" | "P2" | "P3" | "P4" | "P5";
 
 export interface CategorieRef {
@@ -37,6 +37,23 @@ export interface TikFichier {
   url: string;
 }
 
+export interface PersonnelRef {
+  id: number;
+  nom: string;
+  prenoms: string;
+}
+
+export interface TikActions {
+  peutValider: boolean;
+  peutRefuser: boolean;
+  peutMettreEnAttente: boolean;
+  peutPlanifier: boolean;
+  peutTransferer: boolean;
+  peutResoudre: boolean;
+  peutCloturer: boolean;
+  peutReouvrir: boolean;
+}
+
 export interface Tik {
   id: number;
   numeroTicket: string;
@@ -57,8 +74,18 @@ export interface Tik {
   sousCategorie: CategorieRef | null;
   autresCategorie: CategorieRef | null;
   demandeur: { id: number; username: string; displayName: string | null } | null;
-  intervenant: { id: number; nom: string; prenoms: string } | null;
+  validateur: { id: number; displayName: string } | null;
+  intervenant: PersonnelRef | null;
   fichiers: TikFichier[];
+  actions: TikActions;
+}
+
+export interface TikHistoriqueEntry {
+  id: number;
+  statut: Statut;
+  commentaire: string | null;
+  user: { id: number; displayName: string } | null;
+  createdAt: string;
 }
 
 export interface TikDefaults {
@@ -80,7 +107,6 @@ export interface TikPayload {
 }
 
 export interface PlanifierPayload {
-  intervenantId: number | undefined;
   dateDebutPlanning: string;
   dateFinPlanning: string;
 }
@@ -92,6 +118,16 @@ export const fetchCategoriesTree = async (): Promise<CategorieNode[]> => {
 
 export const fetchTikDefaults = async (): Promise<TikDefaults> => {
   const { data } = await axiosInstance.get("/tik/tickets/defaults");
+  return data;
+};
+
+export const fetchIntervenantsDisponibles = async (): Promise<PersonnelRef[]> => {
+  const { data } = await axiosInstance.get("/tik/tickets/intervenants");
+  return data;
+};
+
+export const fetchHistorique = async (id: number): Promise<TikHistoriqueEntry[]> => {
+  const { data } = await axiosInstance.get(`/tik/tickets/${id}/historique`);
   return data;
 };
 
@@ -123,5 +159,40 @@ export const createTicket = async (payload: TikPayload): Promise<Tik> => {
 
 export const planifierTicket = async (id: number, payload: PlanifierPayload): Promise<Tik> => {
   const { data } = await axiosInstance.post(`/tik/tickets/${id}/planifier`, payload);
+  return data;
+};
+
+export const validerTicket = async (id: number, payload: { intervenantId: number | undefined; commentaire?: string }): Promise<Tik> => {
+  const { data } = await axiosInstance.post(`/tik/tickets/${id}/valider`, payload);
+  return data;
+};
+
+export const refuserTicket = async (id: number, commentaire: string): Promise<Tik> => {
+  const { data } = await axiosInstance.post(`/tik/tickets/${id}/refuser`, { commentaire });
+  return data;
+};
+
+export const mettreEnAttenteTicket = async (id: number, commentaire: string): Promise<Tik> => {
+  const { data } = await axiosInstance.post(`/tik/tickets/${id}/mettre-en-attente`, { commentaire });
+  return data;
+};
+
+export const resoudreTicket = async (id: number, commentaire?: string): Promise<Tik> => {
+  const { data } = await axiosInstance.post(`/tik/tickets/${id}/resoudre`, { commentaire });
+  return data;
+};
+
+export const transfererTicket = async (id: number, intervenantId: number | undefined): Promise<Tik> => {
+  const { data } = await axiosInstance.post(`/tik/tickets/${id}/transferer`, { intervenantId });
+  return data;
+};
+
+export const cloturerTicket = async (id: number, commentaire?: string): Promise<Tik> => {
+  const { data } = await axiosInstance.post(`/tik/tickets/${id}/cloturer`, { commentaire });
+  return data;
+};
+
+export const reouvrirTicket = async (id: number, commentaire?: string): Promise<Tik> => {
+  const { data } = await axiosInstance.post(`/tik/tickets/${id}/reouvrir`, { commentaire });
   return data;
 };

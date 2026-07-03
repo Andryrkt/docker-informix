@@ -175,13 +175,13 @@ export const vignetteMock = [
           ],
         },
         {
-          title: "Gestion des tâches",
+          title: "Tickets",
           icon: ListChecks,
           items: [
             {
-              label: "Tâches à faire",
+              label: "Suivi des tickets",
               icon: ListTree,
-              link: "/it/taches",
+              link: "/it/tickets",
             },
           ],
         },

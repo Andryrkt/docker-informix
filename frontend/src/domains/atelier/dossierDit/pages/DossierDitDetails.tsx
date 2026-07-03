@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 import DossierDitView from "../components/DossierDitView";
-import { getDossierDit } from "../api/dossierDitapi";
+import { fetchDossierDitDetails } from "../api/dossierDitapi";
 import { dossierDitMock } from "../schema/dossierDitMock";
 
 function DossierDitDetails() {
@@ -15,7 +15,7 @@ function DossierDitDetails() {
     error,
   } = useQuery({
     queryKey: ["dossier-dit", id],
-    queryFn: () => getDossierDit(id!),
+    queryFn: () => fetchDossierDitDetails(id!),
     enabled: !!id,
     select: (response) => response.data,
   });

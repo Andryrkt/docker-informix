@@ -43,10 +43,10 @@ export function DocTypeBadge({ type }: { type: string }) {
 
   return (
     <div className="flex items-center gap-2">
-      <div className={`p-1.5 rounded-md ${color} shrink-0`}>
+      <div className={`p-1 py-1.5 rounded-md ${color} shrink-0`}>
         <Icon className="h-4 w-4" />
       </div>
-      <span className="capitalize font-normal text-foreground">{type}</span>
+      <span className="capitalize  text-foreground  text-[0.6rem]">{type}</span>
     </div>
   );
 }

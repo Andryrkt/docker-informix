@@ -22,6 +22,7 @@ import OrSoummission from "@/domains/atelier/soumission/pages/OrdreReparationSou
 import RapportInterventionSoumission from "@/domains/atelier/soumission/pages/RapportInterventionSoumission";
 import FactureSoummission from "@/domains/atelier/soumission/pages/FactureSoummission";
 import DossierDitDetails from "@/domains/atelier/dossierDit/pages/DossierDitDetails";
+import DossierList from "@/domains/atelier/dossierDit/components/DossierList";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -120,6 +121,10 @@ function AppRoutes() {
         {
           path: "/atelier/demande-intervention/dossier/:numeroDemandeIntervention",
           element: <DossierDitDetails />,
+        },
+        {
+          path: "/atelier/demande-intervention/dossier-list",
+          element: <DossierList />,
         },
 
         // {

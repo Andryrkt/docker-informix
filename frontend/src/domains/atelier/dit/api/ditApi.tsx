@@ -8,6 +8,7 @@ export interface ditParams {
   skip?: number;
   limit?: number;
 }
+
 export async function fetchDits(
   params: ditParams = {},
   page = 1,
@@ -27,6 +28,8 @@ export async function fetchDits(
 
   return response.data;
 }
+
+
 export async function fetchDitDetails(
   id: number | string,
 ): Promise<DitFormValues> {

@@ -48,7 +48,7 @@ function DossierDitView({ dossierDit }: Props) {
     <div className=" mx-auto ">
       <div className="flex flex-col space-y-2   mx-auto">
         <h1 className="text-2xl font-bold  tracking-tight py-2">
-          Dossier Demande d'intervention : {"XXXXXXXXX"}
+          Dossier : {"XXXXXXXXX"}
         </h1>
       </div>
 

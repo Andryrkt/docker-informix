@@ -2,6 +2,7 @@ import { useState } from "react";
 import { File, FileText, FileUp, UploadCloud, X } from "lucide-react";
 import { cn, formatFileSize } from "@/lib/utils";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 export function FileDropzone({ field }: any) {
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -170,11 +171,15 @@ export function FileDropzone({ field }: any) {
             isDragging ?? "text-brand-primary",
           )}
         >
+          {field.maxFiles && `Nombre max ${field.maxFiles} fichiers`}
+          {field.maxSize && ` • Taille max ${field.maxSize} Mo`}
+        </p>
+
+        <Button type="button" variant="brand" className="mt-3 text-white">
           {field.multiple
             ? "Plusieurs fichiers acceptés"
             : "Un seul fichier uniquement"}
-          {field.maxSize && ` • Max ${field.maxSize} Mo`}
-        </p>
+        </Button>
       </div>
 
       {/* Errors list */}

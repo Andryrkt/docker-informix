@@ -17,7 +17,7 @@ export const soumettreFacture = async (
   // fichiers
   appendFiles("pieceJointes", payload.pieceJointes, formData);
 
-  const { data } = await axiosInstance.post("/soumettreBonCommande", formData);
+  const { data } = await axiosInstance.post("/soumettreFacture", formData);
 
   return data;
 };

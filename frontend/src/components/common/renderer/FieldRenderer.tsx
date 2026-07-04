@@ -147,11 +147,12 @@ export function FieldRenderer({ field }: any) {
           disabled={field.disabled}
           readOnly={field.readOnly}
         />
+
       );
     // Dragaple FileZone
 
     case "dragfile":
-      return <FileDropzone field={field} />;
+      return <FileDropzone field={field}  />;
 
     // MULTICHOICE (checkbox group)
     case "multichoice": {

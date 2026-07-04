@@ -115,6 +115,11 @@ function OrdreReparationForm({ mutation }: Props) {
                             ...config,
                             value: field.state.value,
                             onChange: field.handleChange,
+                            // 👇 OCR validation
+                            ocrValidation: ["Hajaina"], // requires both words
+                            // or ocrValidation: "facture",        // requires at least one
+                            // or ocrValidation: (text) => text.includes("facture") && text.length > 100,
+                            ocrLanguage: "fra",
                           }}
                         />
 

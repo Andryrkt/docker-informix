@@ -10,6 +10,8 @@ import type { UseMutationResult } from "@tanstack/react-query";
 import { normalizeFiles } from "@/lib/utils";
 import { factureSchema } from "../schema/factureSchema";
 import { ditFields, pieceJointesFields } from "../schema/factureField";
+import type { AnalysisResult } from "@/lib/document-analysis";
+import { useState } from "react";
 
 type Props = {
   mutation: UseMutationResult<any, any, any>;
@@ -17,6 +19,9 @@ type Props = {
 function FactureForm({ mutation }: Props) {
   let params = useParams();
 
+  const [analysisResults, setAnalysisResults] = useState<
+    Map<string, AnalysisResult>
+  >(new Map());
   const form = useForm({
     defaultValues: {
       numeroDit: params.numeroDemandeIntervention ?? "",
@@ -107,6 +112,7 @@ function FactureForm({ mutation }: Props) {
                             ...config,
                             value: field.state.value,
                             onChange: field.handleChange,
+                            onResults: setAnalysisResults,
                           }}
                         />
 
@@ -123,10 +129,14 @@ function FactureForm({ mutation }: Props) {
           {/* --- File Preview Section --- */}
           <form.Subscribe selector={(state) => [state.values.pieceJointes]}>
             {([pj]) => {
-              // Combine all arrays into one unique array of files
-              const allFiles = [...normalizeFiles(pj)];
+              const allFiles = normalizeFiles(pj);
 
-              return <DocumentViewer files={allFiles} />;
+              return (
+                <DocumentViewer
+                  files={allFiles}
+                  analysisResults={analysisResults}
+                />
+              );
             }}
           </form.Subscribe>
         </div>

@@ -25,5 +25,10 @@ export const pieceJointesFields: FieldTrait[] = [
     // pattern: "^Facture.+\\.pdf$",
     maxSize: max_size_upload_file,
     accept: ".pdf,.doc,.docx,image/*",
+    ocrValidation: {
+      targetWords: ["pamplemousse", "hajaina"], // au lieu de "pamplemousse"
+      minOccurrences: 1, // au lieu de 4
+      maxNormalizedDistance: 0.25, // plus strict que 0.3
+    },
   },
 ] as const;

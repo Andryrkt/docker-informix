@@ -1,3 +1,5 @@
+import type { AnalysisResult, PipelineOptions } from "@/lib/document-analysis";
+
 export const max_size_upload_file =
   Number(import.meta.env.VITE_MAX_SIZE_FILE) || 5;
 export type SelectOption = {
@@ -110,6 +112,8 @@ export type FieldTrait =
       pattern?: string;
       maxSize: number;
       accept: string;
+      ocrValidation?: string | string[] | Partial<PipelineOptions>;
+      onResults?: (results: Map<string, AnalysisResult>) => void;
     }
   | {
       name: string;

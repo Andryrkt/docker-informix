@@ -162,7 +162,15 @@ export const planifierTicket = async (id: number, payload: PlanifierPayload): Pr
   return data;
 };
 
-export const validerTicket = async (id: number, payload: { intervenantId: number | undefined; commentaire?: string }): Promise<Tik> => {
+export interface ValiderPayload {
+  intervenantId: number | undefined;
+  commentaire?: string;
+  sousCategorieId?: number;
+  autresCategorieId?: number;
+  niveauUrgence?: NiveauUrgence;
+}
+
+export const validerTicket = async (id: number, payload: ValiderPayload): Promise<Tik> => {
   const { data } = await axiosInstance.post(`/tik/tickets/${id}/valider`, payload);
   return data;
 };

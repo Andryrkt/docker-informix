@@ -31,12 +31,17 @@ const processQueue = (error: any) => {
   failedQueue = [];
 };
 
-const handleLogout = () => {
+const handleLogout = async () => {
   localStorage.removeItem("access_token");
   localStorage.removeItem("refresh_token");
-  // Purge le cache react-query persisté (IndexedDB) : sinon le profil d'un token
-  // mort reste servi au prochain chargement et relance la boucle 401 → reload.
-  clearPersistedQueryCache().catch(() => {});
+  // Purge le cache react-query persisté (IndexedDB) et ATTEND la fin de l'opération :
+  // sinon window.location.href déclenche le reload avant que le clear ne soit committé,
+  // le profil d'un token mort reste servi au prochain chargement et relance la boucle 401 → reload.
+  try {
+    await clearPersistedQueryCache();
+  } catch {
+    // ignore
+  }
   window.location.href = "/login";
 };
 

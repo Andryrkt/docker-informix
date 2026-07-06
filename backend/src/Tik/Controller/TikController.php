@@ -11,8 +11,10 @@ use App\Security\Entity\User;
 use App\Security\Entity\UserPermission;
 use App\Security\Service\SecurityContextService;
 use App\Tik\Entity\Tik;
+use App\Tik\Entity\TikAutresCategorie;
 use App\Tik\Entity\TikCategorie;
 use App\Tik\Entity\TikHistorique;
+use App\Tik\Entity\TikSousCategorie;
 use App\Tik\Repository\TikHistoriqueRepository;
 use App\Tik\Repository\TikRepository;
 use Doctrine\DBAL\Connection;
@@ -40,6 +42,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class TikController extends AbstractController
 {
     private const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 Mo
+    private const NIVEAUX_URGENCE = ['P1', 'P2', 'P3', 'P4', 'P5'];
     private const ALLOWED_MIME_TYPES = [
         'application/pdf',
         'image/jpeg',
@@ -268,8 +271,10 @@ class TikController extends AbstractController
     }
 
     /**
-     * Le validateur valide la demande : assigne un intervenant, le ticket
-     * passe en cours de traitement.
+     * Le validateur valide la demande : assigne un intervenant, affine
+     * éventuellement la classification (triage — sous-catégorie, autres
+     * catégorie, niveau d'urgence, non saisis à la création, cf. create()),
+     * le ticket passe en cours de traitement.
      */
     #[Route('/{id}/valider', methods: ['POST'])]
     public function valider(int $id, Request $request): JsonResponse
@@ -296,13 +301,42 @@ class TikController extends AbstractController
         if (!$intervenant) {
             return $this->json(['error' => 'Intervenant introuvable.'], Response::HTTP_NOT_FOUND);
         }
-        $commentaire = trim((string) ($data['commentaire'] ?? '')) ?: null;
 
-        $this->conn->update('tik_ticket', [
+        $update = [
             'intervenant_id' => $intervenant->getId(),
             'validateur_id'  => $user->getId(),
             'statut'         => Tik::STATUT_EN_COURS,
-        ], ['id' => $id]);
+        ];
+
+        if (array_key_exists('niveauUrgence', $data) && $data['niveauUrgence']) {
+            $niveauUrgence = (string) $data['niveauUrgence'];
+            if (!in_array($niveauUrgence, self::NIVEAUX_URGENCE, true)) {
+                return $this->json(['error' => "Niveau d'urgence invalide."], Response::HTTP_BAD_REQUEST);
+            }
+            $update['niveau_urgence'] = $niveauUrgence;
+        }
+
+        $sousCategorie = null;
+        if (array_key_exists('sousCategorieId', $data) && $data['sousCategorieId']) {
+            $sousCategorie = $this->em->getRepository(TikSousCategorie::class)->find((int) $data['sousCategorieId']);
+            if (!$sousCategorie || $sousCategorie->getCategorie()?->getId() !== $tik->getCategorie()?->getId()) {
+                return $this->json(['error' => 'Sous-catégorie invalide pour ce ticket.'], Response::HTTP_BAD_REQUEST);
+            }
+            $update['sous_categorie_id'] = $sousCategorie->getId();
+        }
+
+        if (array_key_exists('autresCategorieId', $data) && $data['autresCategorieId']) {
+            $autresCategorie = $this->em->getRepository(TikAutresCategorie::class)->find((int) $data['autresCategorieId']);
+            $sousCategorieRef = $sousCategorie ?? $tik->getSousCategorie();
+            if (!$autresCategorie || $autresCategorie->getSousCategorie()?->getId() !== $sousCategorieRef?->getId()) {
+                return $this->json(['error' => 'Autre catégorie invalide pour cette sous-catégorie.'], Response::HTTP_BAD_REQUEST);
+            }
+            $update['autres_categorie_id'] = $autresCategorie->getId();
+        }
+
+        $commentaire = trim((string) ($data['commentaire'] ?? '')) ?: null;
+
+        $this->conn->update('tik_ticket', $update, ['id' => $id]);
         $this->recordHistory($id, Tik::STATUT_EN_COURS, $commentaire, $user);
 
         return $this->json($this->serializeFresh($id, $user));

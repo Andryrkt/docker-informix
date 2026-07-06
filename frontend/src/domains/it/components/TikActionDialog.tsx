@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -9,22 +9,25 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/textarea";
 import * as api from "../api/tikApi";
-import type { Tik } from "../api/tikApi";
+import type { NiveauUrgence, Tik } from "../api/tikApi";
 
 export type TikActionKind =
   | "valider" | "refuser" | "mettreEnAttente"
   | "planifier" | "transferer" | "resoudre"
   | "cloturer" | "reouvrir";
 
+const NIVEAUX_URGENCE: NiveauUrgence[] = ["P1", "P2", "P3", "P4", "P5"];
+
 const ACTION_CONFIG: Record<TikActionKind, {
   title: string;
   needsIntervenant?: boolean;
   needsDates?: boolean;
+  needsTriage?: boolean;
   commentRequired?: boolean;
   commentLabel?: string;
   confirmLabel: string;
 }> = {
-  valider:         { title: "Valider le ticket",        needsIntervenant: true,  commentLabel: "Commentaire (optionnel)", confirmLabel: "Valider" },
+  valider:         { title: "Valider le ticket",        needsIntervenant: true,  needsTriage: true, commentLabel: "Commentaire (optionnel)", confirmLabel: "Valider" },
   refuser:         { title: "Refuser le ticket",        commentRequired: true,   commentLabel: "Motif du refus",          confirmLabel: "Refuser" },
   mettreEnAttente: { title: "Mettre en attente",        commentRequired: true,   commentLabel: "Motif",                   confirmLabel: "Mettre en attente" },
   planifier:       { title: "Planifier l'intervention", needsDates: true,        confirmLabel: "Planifier" },
@@ -49,17 +52,42 @@ export default function TikActionDialog({ ticket, action, onClose }: Props) {
     enabled: !!action && ACTION_CONFIG[action].needsIntervenant,
   });
 
+  const { data: categoriesTree = [] } = useQuery({
+    queryKey: ["tik", "categories"],
+    queryFn: api.fetchCategoriesTree,
+    enabled: !!action && ACTION_CONFIG[action].needsTriage,
+  });
+
   const [intervenantId, setIntervenantId] = useState<number | undefined>(undefined);
   const [commentaire, setCommentaire] = useState("");
   const [debut, setDebut] = useState("");
   const [fin, setFin] = useState("");
+  const [sousCategorieId, setSousCategorieId] = useState<number | undefined>(undefined);
+  const [autresCategorieId, setAutresCategorieId] = useState<number | undefined>(undefined);
+  const [niveauUrgence, setNiveauUrgence] = useState<NiveauUrgence | "">("");
   const [error, setError] = useState<string | null>(null);
+
+  // Le triage (sous-catégorie/autres-catégorie/niveau d'urgence) reprend les
+  // valeurs déjà présentes sur le ticket, à affiner par le validateur.
+  useEffect(() => {
+    if (action === "valider" && ticket) {
+      setSousCategorieId(ticket.sousCategorie?.id);
+      setAutresCategorieId(ticket.autresCategorie?.id);
+      setNiveauUrgence(ticket.niveauUrgence);
+    }
+  }, [action, ticket]);
+
+  const categorieNode = categoriesTree.find((c) => c.id === ticket?.categorie?.id);
+  const sousCategorieNode = categorieNode?.sousCategories.find((sc) => sc.id === sousCategorieId);
 
   const reset = () => {
     setIntervenantId(undefined);
     setCommentaire("");
     setDebut("");
     setFin("");
+    setSousCategorieId(undefined);
+    setAutresCategorieId(undefined);
+    setNiveauUrgence("");
     setError(null);
   };
 
@@ -72,7 +100,13 @@ export default function TikActionDialog({ ticket, action, onClose }: Props) {
     mutationFn: () => {
       if (!ticket || !action) throw new Error("no action");
       switch (action) {
-        case "valider":         return api.validerTicket(ticket.id, { intervenantId, commentaire: commentaire || undefined });
+        case "valider":         return api.validerTicket(ticket.id, {
+          intervenantId,
+          commentaire: commentaire || undefined,
+          sousCategorieId,
+          autresCategorieId,
+          niveauUrgence: niveauUrgence || undefined,
+        });
         case "refuser":         return api.refuserTicket(ticket.id, commentaire);
         case "mettreEnAttente": return api.mettreEnAttenteTicket(ticket.id, commentaire);
         case "planifier":       return api.planifierTicket(ticket.id, { dateDebutPlanning: debut, dateFinPlanning: fin });
@@ -122,6 +156,53 @@ export default function TikActionDialog({ ticket, action, onClose }: Props) {
         </DialogHeader>
 
         <div className="space-y-4 py-2">
+          {config.needsTriage && (
+            <div className="grid grid-cols-2 gap-4">
+              <Field>
+                <FieldLabel>Sous-catégorie</FieldLabel>
+                <select
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                  value={sousCategorieId ?? ""}
+                  onChange={(e) => {
+                    setSousCategorieId(e.target.value ? Number(e.target.value) : undefined);
+                    setAutresCategorieId(undefined);
+                  }}
+                >
+                  <option value="">-- Choisir une sous-catégorie --</option>
+                  {categorieNode?.sousCategories.map((sc) => (
+                    <option key={sc.id} value={sc.id}>{sc.description}</option>
+                  ))}
+                </select>
+              </Field>
+              <Field>
+                <FieldLabel>Autres catégories</FieldLabel>
+                <select
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                  value={autresCategorieId ?? ""}
+                  onChange={(e) => setAutresCategorieId(e.target.value ? Number(e.target.value) : undefined)}
+                  disabled={!sousCategorieNode}
+                >
+                  <option value="">-- Choisir une autre catégorie --</option>
+                  {sousCategorieNode?.autresCategories.map((ac) => (
+                    <option key={ac.id} value={ac.id}>{ac.description}</option>
+                  ))}
+                </select>
+              </Field>
+              <Field className="col-span-2">
+                <FieldLabel>Niveau d'urgence</FieldLabel>
+                <select
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                  value={niveauUrgence}
+                  onChange={(e) => setNiveauUrgence(e.target.value as NiveauUrgence)}
+                >
+                  {NIVEAUX_URGENCE.map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </select>
+              </Field>
+            </div>
+          )}
+
           {config.needsIntervenant && (
             <Field data-invalid={!!error}>
               <FieldLabel>Intervenant</FieldLabel>

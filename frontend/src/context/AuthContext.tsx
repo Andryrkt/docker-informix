@@ -56,10 +56,16 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { data: rawUser, isLoading, isError, refetch } = useProfile();
 
-  // Ne jamais exposer un profil mis en cache (persisté en IndexedDB) une fois
-  // que la requête a échoué : sinon RequireAuth croit l'utilisateur connecté
-  // avec un token mort → boucle de rechargement à chaque appel API qui 401.
-  const user = isError ? undefined : rawUser;
+  const hasToken =
+    typeof window !== "undefined" && !!localStorage.getItem("access_token");
+
+  // Ne jamais exposer un profil mis en cache (persisté en IndexedDB) :
+  // - si la requête a échoué (token mort) ;
+  // - ou s'il n'y a plus de token du tout (ex: juste après un logout, avant que
+  //   le cache IndexedDB n'ait fini de se purger).
+  // Sinon RequireAuth/AnonymousOnly croient l'utilisateur connecté avec un token
+  // mort ou absent → boucle de rechargement login → accueil → login.
+  const user = !hasToken || isError ? undefined : rawUser;
 
   const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(
     () => {

@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import TikActionDialog from "../components/TikActionDialog";
 import type { TikActionKind } from "../components/TikActionDialog";
+import TikDiscussion from "../components/TikDiscussion";
 import * as api from "../api/tikApi";
 import type { Statut } from "../api/tikApi";
 
@@ -159,6 +160,8 @@ export default function TikDetailPage() {
               ))}
             </ol>
           </div>
+
+          <TikDiscussion ticketId={ticket.id} canComment={ticket.actions.peutCommenter} />
         </div>
 
         {/* Colonne latérale */}

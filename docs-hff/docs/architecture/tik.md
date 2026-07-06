@@ -216,18 +216,39 @@ Tous sous `#[Route('/api/tik/tickets')]`, contrôleur [TikController.php](../../
 | GET | `/{id}/historique` | Historique des changements de statut |
 | POST | `` | Création (multipart/form-data — pièces jointes) |
 | GET | `/{id}/fichiers/{storedName}` | Téléchargement d'une pièce jointe (authentifié) |
-| POST | `/{id}/valider` | `{ intervenantId, commentaire? }` |
+| POST | `/{id}/valider` | `{ intervenantId, commentaire?, sousCategorieId?, autresCategorieId?, niveauUrgence? }` — le triage (sous-catégorie/autres-catégorie/niveau d'urgence) s'affine ici, pas à la création |
 | POST | `/{id}/refuser` | `{ commentaire }` (obligatoire) |
 | POST | `/{id}/mettre-en-attente` | `{ commentaire }` (obligatoire) |
-| POST | `/{id}/planifier` | `{ dateDebutPlanning, dateFinPlanning }` |
+| POST | `/{id}/planifier` | `{ date, partOfDay }` — `partOfDay` : `AM` (08:00-12:00) ou `PM` (13:30-17:30), comme le legacy ; contrairement au legacy, une seule plage est stockée sur le ticket (pas de découpage par jour ouvré ni d'entité calendrier dédiée) |
 | POST | `/{id}/transferer` | `{ intervenantId }` |
 | POST | `/{id}/resoudre` | `{ commentaire? }` |
 | POST | `/{id}/cloturer` | `{ commentaire? }` |
 | POST | `/{id}/reouvrir` | `{ commentaire? }` |
+| GET | `/{id}/commentaires` | Fil de discussion — réservé au demandeur, au validateur et à l'intervenant assigné |
+| POST | `/{id}/commentaires` | `{ commentaire, fichiers[]? }` (multipart) — message libre, indépendant du statut |
 
 Catégories : [TikCategorieController.php](../../../backend/src/Tik/Controller/TikCategorieController.php) — `GET /api/tik/categories` (arbre à 3 niveaux) + CRUD admin.
 
-> Seule la création (`POST ''`) lit `$request->request->all()` (form-params, pour la compatibilité multipart). Tous les autres endpoints POST lisent `json_decode($request->getContent())`.
+> Seule la création (`POST ''`) et le fil de discussion (`POST '/{id}/commentaires'`) lisent `$request->request->all()`/`$request->request->get()` (form-params, pour la compatibilité multipart). Tous les autres endpoints POST lisent `json_decode($request->getContent())`.
+
+### Fil de discussion (lot 3)
+
+Portage du legacy `TkiCommentaires` : un message libre par ticket, indépendant des changements de statut (contrairement aux commentaires attachés à `valider`/`refuser`/etc., qui vont dans `tik_historique`). Table `tik_commentaire` ([create_tik_commentaire_table.sql](../../../backend/sql/create_tik_commentaire_table.sql)), entité [TikCommentaire.php](../../../backend/src/Tik/Entity/TikCommentaire.php).
+
+Accès (lecture et écriture) réservé aux trois parties **concrètement impliquées dans ce ticket précis** — `isAuthorizedToComment()` vérifie `demandeur`, `validateur` et `intervenant` de l'entité, pas la permission `validate` globale (contrairement à `isValidateur()`, qui elle ne regarde pas si ce validateur a traité CE ticket) :
+
+```php
+private function isAuthorizedToComment(Tik $tik, User $user): bool
+{
+    return $this->isDemandeur($tik, $user)
+        || $tik->getValidateur()?->getId() === $user->getId()
+        || $this->isAssignedIntervenant($tik, $user);
+}
+```
+
+Les pièces jointes réutilisent `validateAndStoreFiles()` (même dossier `var/uploads/tik/{numeroTicket}/`, mêmes contraintes 5 Mo/PDF-image-Office) et la même route de téléchargement `GET /{id}/fichiers/{storedName}` que les pièces jointes du ticket — `downloadFile()` cherche d'abord parmi les pièces jointes du ticket (non protégées, comportement historique inchangé), puis parmi celles des commentaires (protégées par `isAuthorizedToComment()`, car le fil est privé).
+
+Frontend : [TikDiscussion.tsx](../../../frontend/src/domains/it/components/TikDiscussion.tsx), affiché sur `TikDetailPage` sous l'historique, avec un composeur (texte + pièces jointes) visible seulement si `ticket.actions.peutCommenter`.
 
 ---
 

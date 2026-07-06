@@ -16,6 +16,7 @@ const baseActions: TikActions = {
   peutResoudre:        false,
   peutCloturer:        false,
   peutReouvrir:        false,
+  peutCommenter:       false,
 };
 
 const ticket: Tik = {
@@ -102,10 +103,10 @@ describe("TikActionDialog", () => {
     expect(screen.getByRole("option", { name: "RABE Marie" })).toBeInTheDocument();
   });
 
-  it("affiche les champs date début/fin pour l'action planifier", () => {
+  it("affiche les champs date et période de la journée pour l'action planifier", () => {
     renderDialog({ action: "planifier" });
-    expect(screen.getByText("Début")).toBeInTheDocument();
-    expect(screen.getByText("Fin")).toBeInTheDocument();
+    expect(screen.getByText("Date")).toBeInTheDocument();
+    expect(screen.getByText("Période de la journée")).toBeInTheDocument();
   });
 
   it("n'affiche pas de champ commentaire pour l'action planifier", () => {
@@ -129,13 +130,13 @@ describe("TikActionDialog", () => {
     expect(await screen.findByText(/obligatoire/i)).toBeInTheDocument();
   });
 
-  it("affiche une erreur si on confirme une planification sans dates", async () => {
+  it("affiche une erreur si on confirme une planification sans date ni période", async () => {
     const user = userEvent.setup();
     renderDialog({ action: "planifier" });
 
     await user.click(screen.getByRole("button", { name: "Planifier" }));
 
-    expect(await screen.findByText(/dates de début et de fin sont obligatoires/i)).toBeInTheDocument();
+    expect(await screen.findByText(/date et la période de la journée sont obligatoires/i)).toBeInTheDocument();
   });
 
   it("affiche une erreur si on valide sans choisir d'intervenant", async () => {

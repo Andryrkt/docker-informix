@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/textarea";
 import * as api from "../api/tikApi";
-import type { NiveauUrgence, Tik } from "../api/tikApi";
+import type { NiveauUrgence, PartOfDay, Tik } from "../api/tikApi";
 
 export type TikActionKind =
   | "valider" | "refuser" | "mettreEnAttente"
@@ -18,10 +18,15 @@ export type TikActionKind =
 
 const NIVEAUX_URGENCE: NiveauUrgence[] = ["P1", "P2", "P3", "P4", "P5"];
 
+const PARTS_OF_DAY: { value: PartOfDay; label: string }[] = [
+  { value: "AM", label: "AM (08:00 - 12:00)" },
+  { value: "PM", label: "PM (13:30 - 17:30)" },
+];
+
 const ACTION_CONFIG: Record<TikActionKind, {
   title: string;
   needsIntervenant?: boolean;
-  needsDates?: boolean;
+  needsPlanningSlot?: boolean;
   needsTriage?: boolean;
   commentRequired?: boolean;
   commentLabel?: string;
@@ -30,7 +35,7 @@ const ACTION_CONFIG: Record<TikActionKind, {
   valider:         { title: "Valider le ticket",        needsIntervenant: true,  needsTriage: true, commentLabel: "Commentaire (optionnel)", confirmLabel: "Valider" },
   refuser:         { title: "Refuser le ticket",        commentRequired: true,   commentLabel: "Motif du refus",          confirmLabel: "Refuser" },
   mettreEnAttente: { title: "Mettre en attente",        commentRequired: true,   commentLabel: "Motif",                   confirmLabel: "Mettre en attente" },
-  planifier:       { title: "Planifier l'intervention", needsDates: true,        confirmLabel: "Planifier" },
+  planifier:       { title: "Planifier l'intervention", needsPlanningSlot: true, confirmLabel: "Planifier" },
   transferer:      { title: "Transférer le ticket",     needsIntervenant: true,  confirmLabel: "Transférer" },
   resoudre:        { title: "Marquer comme résolu",     commentLabel: "Commentaire (optionnel)", confirmLabel: "Résoudre" },
   cloturer:        { title: "Clôturer le ticket",       commentLabel: "Commentaire (optionnel)", confirmLabel: "Clôturer" },
@@ -60,8 +65,8 @@ export default function TikActionDialog({ ticket, action, onClose }: Props) {
 
   const [intervenantId, setIntervenantId] = useState<number | undefined>(undefined);
   const [commentaire, setCommentaire] = useState("");
-  const [debut, setDebut] = useState("");
-  const [fin, setFin] = useState("");
+  const [planningDate, setPlanningDate] = useState("");
+  const [partOfDay, setPartOfDay] = useState<PartOfDay | "">("");
   const [sousCategorieId, setSousCategorieId] = useState<number | undefined>(undefined);
   const [autresCategorieId, setAutresCategorieId] = useState<number | undefined>(undefined);
   const [niveauUrgence, setNiveauUrgence] = useState<NiveauUrgence | "">("");
@@ -83,8 +88,8 @@ export default function TikActionDialog({ ticket, action, onClose }: Props) {
   const reset = () => {
     setIntervenantId(undefined);
     setCommentaire("");
-    setDebut("");
-    setFin("");
+    setPlanningDate("");
+    setPartOfDay("");
     setSousCategorieId(undefined);
     setAutresCategorieId(undefined);
     setNiveauUrgence("");
@@ -109,7 +114,7 @@ export default function TikActionDialog({ ticket, action, onClose }: Props) {
         });
         case "refuser":         return api.refuserTicket(ticket.id, commentaire);
         case "mettreEnAttente": return api.mettreEnAttenteTicket(ticket.id, commentaire);
-        case "planifier":       return api.planifierTicket(ticket.id, { dateDebutPlanning: debut, dateFinPlanning: fin });
+        case "planifier":       return api.planifierTicket(ticket.id, { date: planningDate, partOfDay: partOfDay as PartOfDay });
         case "transferer":      return api.transfererTicket(ticket.id, intervenantId);
         case "resoudre":        return api.resoudreTicket(ticket.id, commentaire || undefined);
         case "cloturer":        return api.cloturerTicket(ticket.id, commentaire || undefined);
@@ -136,8 +141,8 @@ export default function TikActionDialog({ ticket, action, onClose }: Props) {
       setError("L'intervenant est obligatoire.");
       return;
     }
-    if (config.needsDates && (!debut || !fin)) {
-      setError("Les dates de début et de fin sont obligatoires.");
+    if (config.needsPlanningSlot && (!planningDate || !partOfDay)) {
+      setError("La date et la période de la journée sont obligatoires.");
       return;
     }
     if (config.commentRequired && !commentaire.trim()) {
@@ -224,25 +229,29 @@ export default function TikActionDialog({ ticket, action, onClose }: Props) {
             </Field>
           )}
 
-          {config.needsDates && (
+          {config.needsPlanningSlot && (
             <div className="grid grid-cols-2 gap-4">
               <Field data-invalid={!!error}>
-                <FieldLabel>Début</FieldLabel>
+                <FieldLabel>Date</FieldLabel>
                 <input
-                  type="datetime-local"
+                  type="date"
                   className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
-                  value={debut}
-                  onChange={(e) => setDebut(e.target.value)}
+                  value={planningDate}
+                  onChange={(e) => setPlanningDate(e.target.value)}
                 />
               </Field>
               <Field data-invalid={!!error}>
-                <FieldLabel>Fin</FieldLabel>
-                <input
-                  type="datetime-local"
+                <FieldLabel>Période de la journée</FieldLabel>
+                <select
                   className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
-                  value={fin}
-                  onChange={(e) => setFin(e.target.value)}
-                />
+                  value={partOfDay}
+                  onChange={(e) => setPartOfDay(e.target.value as PartOfDay)}
+                >
+                  <option value="">-- Choisir une période --</option>
+                  {PARTS_OF_DAY.map((p) => (
+                    <option key={p.value} value={p.value}>{p.label}</option>
+                  ))}
+                </select>
               </Field>
             </div>
           )}

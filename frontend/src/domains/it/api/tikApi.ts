@@ -52,6 +52,7 @@ export interface TikActions {
   peutResoudre: boolean;
   peutCloturer: boolean;
   peutReouvrir: boolean;
+  peutCommenter: boolean;
 }
 
 export interface Tik {
@@ -88,6 +89,14 @@ export interface TikHistoriqueEntry {
   createdAt: string;
 }
 
+export interface TikCommentaireEntry {
+  id: number;
+  commentaire: string;
+  fichiers: TikFichier[];
+  user: { id: number; displayName: string } | null;
+  createdAt: string;
+}
+
 export interface TikDefaults {
   agenceEmetteur: AgenceServiceRef | null;
   serviceEmetteur: AgenceServiceRef | null;
@@ -106,9 +115,11 @@ export interface TikPayload {
   fichiers?: File[];
 }
 
+export type PartOfDay = "AM" | "PM";
+
 export interface PlanifierPayload {
-  dateDebutPlanning: string;
-  dateFinPlanning: string;
+  date: string;
+  partOfDay: PartOfDay;
 }
 
 export const fetchCategoriesTree = async (): Promise<CategorieNode[]> => {
@@ -128,6 +139,20 @@ export const fetchIntervenantsDisponibles = async (): Promise<PersonnelRef[]> =>
 
 export const fetchHistorique = async (id: number): Promise<TikHistoriqueEntry[]> => {
   const { data } = await axiosInstance.get(`/tik/tickets/${id}/historique`);
+  return data;
+};
+
+export const fetchCommentaires = async (id: number): Promise<TikCommentaireEntry[]> => {
+  const { data } = await axiosInstance.get(`/tik/tickets/${id}/commentaires`);
+  return data;
+};
+
+export const postCommentaire = async (id: number, commentaire: string, fichiers?: File[]): Promise<TikCommentaireEntry> => {
+  const formData = new FormData();
+  formData.append("commentaire", commentaire);
+  (fichiers ?? []).forEach((file) => formData.append("fichiers[]", file));
+
+  const { data } = await axiosInstance.post(`/tik/tickets/${id}/commentaires`, formData);
   return data;
 };
 

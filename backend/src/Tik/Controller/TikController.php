@@ -13,8 +13,10 @@ use App\Security\Service\SecurityContextService;
 use App\Tik\Entity\Tik;
 use App\Tik\Entity\TikAutresCategorie;
 use App\Tik\Entity\TikCategorie;
+use App\Tik\Entity\TikCommentaire;
 use App\Tik\Entity\TikHistorique;
 use App\Tik\Entity\TikSousCategorie;
+use App\Tik\Repository\TikCommentaireRepository;
 use App\Tik\Repository\TikHistoriqueRepository;
 use App\Tik\Repository\TikRepository;
 use Doctrine\DBAL\Connection;
@@ -43,6 +45,11 @@ class TikController extends AbstractController
 {
     private const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 Mo
     private const NIVEAUX_URGENCE = ['P1', 'P2', 'P3', 'P4', 'P5'];
+    /** Créneaux horaires fixes du planning intervenant — mêmes horaires que le legacy. */
+    private const PART_OF_DAY = [
+        'AM' => [[8, 0], [12, 0]],
+        'PM' => [[13, 30], [17, 30]],
+    ];
     private const ALLOWED_MIME_TYPES = [
         'application/pdf',
         'image/jpeg',
@@ -54,12 +61,13 @@ class TikController extends AbstractController
     ];
 
     public function __construct(
-        private readonly EntityManagerInterface  $em,
-        private readonly Connection              $conn,
-        private readonly TikRepository           $tikRepo,
-        private readonly TikHistoriqueRepository $historiqueRepo,
-        private readonly SecurityContextService  $securityContext,
-        private readonly KernelInterface         $kernel,
+        private readonly EntityManagerInterface   $em,
+        private readonly Connection               $conn,
+        private readonly TikRepository            $tikRepo,
+        private readonly TikHistoriqueRepository  $historiqueRepo,
+        private readonly TikCommentaireRepository $commentaireRepo,
+        private readonly SecurityContextService   $securityContext,
+        private readonly KernelInterface          $kernel,
     ) {}
 
     #[Route('', methods: ['GET'])]
@@ -154,6 +162,69 @@ class TikController extends AbstractController
     }
 
     /**
+     * Fil de discussion du ticket — réservé au demandeur, au validateur et à
+     * l'intervenant assigné (même portée que le legacy).
+     */
+    #[Route('/{id}/commentaires', methods: ['GET'])]
+    public function commentaires(int $id): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $tik = $this->tikRepo->find($id);
+        if (!$tik) {
+            return $this->json(['error' => 'Ticket introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+        if (!$this->isAuthorizedToComment($tik, $user)) {
+            return $this->json(['error' => 'Accès réservé au demandeur, au validateur et à l\'intervenant du ticket.'], Response::HTTP_FORBIDDEN);
+        }
+
+        return $this->json(array_map(fn(TikCommentaire $c) => $this->serializeCommentaire($c), $this->commentaireRepo->findForTik($id)));
+    }
+
+    /**
+     * Poste un message dans le fil de discussion — multipart/form-data (le
+     * message peut inclure des pièces jointes, comme le legacy).
+     */
+    #[Route('/{id}/commentaires', methods: ['POST'])]
+    public function postCommentaire(int $id, Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $tik = $this->tikRepo->find($id);
+        if (!$tik) {
+            return $this->json(['error' => 'Ticket introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+        if (!$this->isAuthorizedToComment($tik, $user)) {
+            return $this->json(['error' => 'Accès réservé au demandeur, au validateur et à l\'intervenant du ticket.'], Response::HTTP_FORBIDDEN);
+        }
+
+        $commentaire = trim((string) $request->request->get('commentaire', ''));
+        if ($commentaire === '') {
+            return $this->json(['error' => 'Le message est obligatoire.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        /** @var UploadedFile[] $uploadedFiles */
+        $uploadedFiles = $request->files->all('fichiers') ?: [];
+        [$fileError, $storedFiles] = $this->validateAndStoreFiles($uploadedFiles, $tik->getNumeroTicket());
+        if ($fileError) {
+            return $this->json(['error' => $fileError], Response::HTTP_BAD_REQUEST);
+        }
+
+        $this->conn->insert('tik_commentaire', array_filter([
+            'tik_id'      => $id,
+            'user_id'     => $user->getId(),
+            'commentaire' => $commentaire,
+            'file_names'  => $storedFiles ? json_encode($storedFiles, JSON_UNESCAPED_UNICODE) : null,
+            'created_at'  => (new \DateTime())->format('Y-m-d\TH:i:s'),
+        ], static fn($v) => $v !== null));
+
+        $newId = (int) $this->conn->lastInsertId();
+        $this->em->clear();
+
+        return $this->json($this->serializeCommentaire($this->commentaireRepo->find($newId)), Response::HTTP_CREATED);
+    }
+
+    /**
      * multipart/form-data (et non JSON) : le formulaire peut inclure des
      * pièces jointes (fichiers[]).
      */
@@ -243,6 +314,8 @@ class TikController extends AbstractController
     #[Route('/{id}/fichiers/{storedName}', methods: ['GET'])]
     public function downloadFile(int $id, string $storedName): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
         $tik = $this->tikRepo->find($id);
         if (!$tik) {
             return $this->json(['error' => 'Ticket introuvable.'], Response::HTTP_NOT_FOUND);
@@ -255,6 +328,24 @@ class TikController extends AbstractController
                 break;
             }
         }
+
+        // Pas trouvé parmi les pièces jointes du ticket : cherche dans celles du
+        // fil de discussion — privé, donc soumis à la même autorisation que
+        // les commentaires (contrairement aux pièces jointes du ticket lui-même).
+        if (!$file) {
+            foreach ($this->commentaireRepo->findForTik($id) as $c) {
+                foreach ($c->getFileNamesAsArray() as $f) {
+                    if ($f['storedName'] === $storedName) {
+                        if (!$this->isAuthorizedToComment($tik, $user)) {
+                            return $this->json(['error' => 'Accès refusé.'], Response::HTTP_FORBIDDEN);
+                        }
+                        $file = $f;
+                        break 2;
+                    }
+                }
+            }
+        }
+
         if (!$file) {
             return $this->json(['error' => 'Fichier introuvable.'], Response::HTTP_NOT_FOUND);
         }
@@ -411,7 +502,10 @@ class TikController extends AbstractController
     }
 
     /**
-     * L'intervenant assigné planifie une plage horaire d'intervention.
+     * L'intervenant assigné planifie une plage horaire d'intervention : une
+     * date et une demi-journée (AM/PM), comme le legacy — pas de plage libre.
+     * Contrairement au legacy, une seule plage est stockée sur le ticket
+     * (pas de découpage par jour ouvré ni d'entité calendrier dédiée).
      */
     #[Route('/{id}/planifier', methods: ['POST'])]
     public function planifier(int $id, Request $request): JsonResponse
@@ -430,17 +524,23 @@ class TikController extends AbstractController
         }
 
         $data = json_decode($request->getContent(), true) ?? [];
-        $debut = trim((string) ($data['dateDebutPlanning'] ?? ''));
-        $fin   = trim((string) ($data['dateFinPlanning']   ?? ''));
-        if ($debut === '' || $fin === '') {
-            return $this->json(['error' => 'Date de début et date de fin sont obligatoires.'], Response::HTTP_BAD_REQUEST);
+        $date = trim((string) ($data['date'] ?? ''));
+        $partOfDay = trim((string) ($data['partOfDay'] ?? ''));
+        if ($date === '' || $partOfDay === '') {
+            return $this->json(['error' => 'Date et période de la journée sont obligatoires.'], Response::HTTP_BAD_REQUEST);
+        }
+        if (!isset(self::PART_OF_DAY[$partOfDay])) {
+            return $this->json(['error' => 'Période de la journée invalide.'], Response::HTTP_BAD_REQUEST);
         }
 
-        $dateDebut = $this->parseDateTimeLocal($debut);
-        $dateFin   = $this->parseDateTimeLocal($fin);
-        if (!$dateDebut || !$dateFin) {
+        $jour = \DateTime::createFromFormat('Y-m-d', $date);
+        if (!$jour) {
             return $this->json(['error' => 'Date invalide.'], Response::HTTP_BAD_REQUEST);
         }
+
+        [$heureDebut, $heureFin] = self::PART_OF_DAY[$partOfDay];
+        $dateDebut = (clone $jour)->setTime(...$heureDebut);
+        $dateFin   = (clone $jour)->setTime(...$heureFin);
 
         $this->conn->update('tik_ticket', [
             'date_debut_planning' => $dateDebut->format('Y-m-d\TH:i:s'),
@@ -632,6 +732,18 @@ class TikController extends AbstractController
         return $tik->getIntervenant()->getMatricule() === $user->getMatricule();
     }
 
+    /**
+     * Le fil de discussion est privé aux trois parties concrètement
+     * impliquées dans CE ticket — pas à n'importe quel utilisateur ayant la
+     * permission "validate" globale (contrairement à isValidateur()).
+     */
+    private function isAuthorizedToComment(Tik $tik, User $user): bool
+    {
+        return $this->isDemandeur($tik, $user)
+            || $tik->getValidateur()?->getId() === $user->getId()
+            || $this->isAssignedIntervenant($tik, $user);
+    }
+
     private function recordHistory(int|Tik $tik, string $statut, ?string $commentaire, User $user): void
     {
         $tikId = $tik instanceof Tik ? $tik->getId() : $tik;
@@ -753,15 +865,6 @@ class TikController extends AbstractController
         return $date;
     }
 
-    private function parseDateTimeLocal(string $value): ?\DateTime
-    {
-        // Accepte 'YYYY-MM-DDTHH:MM' (input datetime-local HTML) ou avec secondes.
-        $date = \DateTime::createFromFormat('Y-m-d\TH:i:s', $value)
-            ?: \DateTime::createFromFormat('Y-m-d\TH:i', $value);
-
-        return $date ?: null;
-    }
-
     private function serialize(Tik $t, User $currentUser): array
     {
         $statut = $t->getStatut();
@@ -827,7 +930,26 @@ class TikController extends AbstractController
                 'peutResoudre'        => $isIntervenant && in_array($statut, [Tik::STATUT_EN_COURS, Tik::STATUT_PLANIFIE, Tik::STATUT_REOUVERT], true),
                 'peutCloturer'        => ($isDemandeur || $isValidateur) && $statut === Tik::STATUT_RESOLU,
                 'peutReouvrir'        => $isDemandeur && $statut === Tik::STATUT_RESOLU,
+                'peutCommenter'       => $this->isAuthorizedToComment($t, $currentUser),
             ],
+        ];
+    }
+
+    private function serializeCommentaire(TikCommentaire $c): array
+    {
+        return [
+            'id'          => $c->getId(),
+            'commentaire' => $c->getCommentaire(),
+            'fichiers'    => array_map(fn(array $f) => [
+                'name'   => $f['name'],
+                'sizeKb' => $f['sizeKb'],
+                'url'    => "/api/tik/tickets/{$c->getTik()->getId()}/fichiers/{$f['storedName']}",
+            ], $c->getFileNamesAsArray()),
+            'user'        => $c->getUser() ? [
+                'id'          => $c->getUser()->getId(),
+                'displayName' => $c->getUser()->getDisplayName() ?? $c->getUser()->getUsername(),
+            ] : null,
+            'createdAt'   => $c->getCreatedAt()->format(\DateTimeInterface::ATOM),
         ];
     }
 }

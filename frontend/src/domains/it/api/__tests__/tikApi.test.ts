@@ -23,6 +23,7 @@ const baseActions: TikActions = {
   peutResoudre:        false,
   peutCloturer:        false,
   peutReouvrir:        false,
+  peutCommenter:       false,
 };
 
 function makeTik(overrides: Partial<Tik> = {}): Tik {
@@ -107,7 +108,7 @@ describe("TikActions", () => {
 
   it("les clés couvrent tout le workflow", () => {
     expect(Object.keys(baseActions).sort()).toEqual([
-      "peutCloturer", "peutMettreEnAttente", "peutPlanifier", "peutRefuser",
+      "peutCloturer", "peutCommenter", "peutMettreEnAttente", "peutPlanifier", "peutRefuser",
       "peutReouvrir", "peutResoudre", "peutTransferer", "peutValider",
     ]);
   });
@@ -145,13 +146,13 @@ describe("TikPayload", () => {
 });
 
 describe("PlanifierPayload", () => {
-  it("exige une date de début et de fin", () => {
+  it("exige une date et une période de la journée", () => {
     const payload: PlanifierPayload = {
-      dateDebutPlanning: "2026-07-05T08:00:00",
-      dateFinPlanning:   "2026-07-05T17:00:00",
+      date: "2026-07-05",
+      partOfDay: "AM",
     };
 
-    expect(payload.dateDebutPlanning < payload.dateFinPlanning).toBe(true);
+    expect(payload.partOfDay).toBe("AM");
   });
 });
 

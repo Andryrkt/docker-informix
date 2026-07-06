@@ -559,7 +559,8 @@ function computeImageQualityMetrics(
     widthPx: rawCanvas.width,
     heightPx: rawCanvas.height,
     isTooDark: brightnessMean < 60,
-    isTooBright: brightnessMean > 225,
+    // Augmentation du seuil de surexposition de 225 à 235 pour éviter les faux positifs
+    isTooBright: brightnessMean > 235,
     isBlurry: blurVariance < 80,
     isLowContrast: contrastStdDev < 15,
     isLowResolution: Math.max(rawCanvas.width, rawCanvas.height) < 800,
@@ -579,7 +580,7 @@ function qualityMetricsToScore(metrics: ImageQualityMetrics): number {
 }
 
 /* ----------------------------------------------------------------------- *
- * Recherche floue (Levenshtein)
+ * Recherche floue (Levenshtein) - version améliorée
  * ----------------------------------------------------------------------- */
 
 function levenshteinDistance(a: string, b: string): number {
@@ -604,12 +605,13 @@ function levenshteinDistance(a: string, b: string): number {
   return previousRow[b.length];
 }
 
+// Normalisation : minuscules, suppression des accents, conservation des lettres et chiffres
 function normalizeForMatching(input: string): string {
   return input
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z]/g, "");
+    .replace(/[^a-z0-9]/g, ""); // ← modification clé : on garde les chiffres
 }
 
 function fuzzyCountOccurrences(
@@ -618,10 +620,10 @@ function fuzzyCountOccurrences(
   maxNormalizedDistance: number,
 ): { occurrences: number; matchedWords: string[] } {
   const normalizedTargets = targetWords.map((w) => normalizeForMatching(w));
-  const tokens = text
-    .split(/[^\p{L}]+/u)
+
+  const tokens = (text.match(/[a-zA-Z0-9]+/g) || [])
     .map((t) => t.trim())
-    .filter((t) => t.length >= 4);
+    .filter((t) => t.length > 0);
 
   const matched: string[] = [];
   let totalOccurrences = 0;
@@ -629,24 +631,29 @@ function fuzzyCountOccurrences(
   for (const token of tokens) {
     const normalizedToken = normalizeForMatching(token);
     if (normalizedToken.length === 0) continue;
+
     for (let i = 0; i < normalizedTargets.length; i++) {
       const target = normalizedTargets[i];
-      const lengthDiff = Math.abs(normalizedToken.length - target.length);
-      if (lengthDiff > target.length * maxNormalizedDistance + 2) continue;
+      if (target.length === 0) continue;
+
+      // Calcul de la distance de Levenshtein normalisée
       const distance = levenshteinDistance(normalizedToken, target);
-      if (distance / target.length <= maxNormalizedDistance) {
+      const normalizedDistance = distance / Math.max(target.length, 1);
+
+      // Seulement la distance normalisée, plus de sous-chaîne
+      if (normalizedDistance <= maxNormalizedDistance) {
         matched.push(token);
         totalOccurrences++;
-        break; // un token ne peut correspondre qu'à un seul mot cible
+        break;
       }
     }
   }
+
   return {
     occurrences: totalOccurrences,
     matchedWords: Array.from(new Set(matched)),
   };
 }
-
 /* ----------------------------------------------------------------------- *
  * Score de fraude (complet)
  * ----------------------------------------------------------------------- */
@@ -702,7 +709,7 @@ function computeFraudScore(params: {
         20,
         "Image floue détectée sur au moins une page.",
       );
-      break; // une seule pénalité globale
+      break;
     }
   }
   for (const q of params.qualityFlags) {
@@ -880,6 +887,16 @@ async function processImageFile(
     options.targetWords,
     options.maxNormalizedDistance,
   );
+
+  // --- NOUVEAU : Rejet si aucune occurrence trouvée ---
+  if (occurrences === 0) {
+    throw new PipelineError(
+      "NO_OCCURRENCES",
+      `Aucun des mots cibles (“${options.targetWords.join(", ")}”) n’a été trouvé dans le document.`,
+    );
+  }
+  // ------------------------------------------------
+
   const fraud = computeFraudScore({
     averageOcrConfidence: pageResult.confidence,
     occurrences,
@@ -963,7 +980,6 @@ async function processPdfFile(
     if (typeof pdf.destroy === "function") {
       await pdf.destroy();
     } else if (typeof pdf.cleanup === "function") {
-      // cleanup peut être synchrone dans certaines versions
       pdf.cleanup();
     }
   } catch (_) {
@@ -985,6 +1001,16 @@ async function processPdfFile(
     options.targetWords,
     options.maxNormalizedDistance,
   );
+
+  // --- NOUVEAU : Rejet si aucune occurrence trouvée ---
+  if (occurrences === 0) {
+    throw new PipelineError(
+      "NO_OCCURRENCES",
+      `Aucun des mots cibles (“${options.targetWords.join(", ")}”) n’a été trouvé dans le document.`,
+    );
+  }
+  // ------------------------------------------------
+
   const averageConfidence =
     perPage.reduce((sum, p) => sum + p.confidence, 0) / perPage.length;
 
@@ -1030,7 +1056,6 @@ export async function analyzeDocument(
   const options: PipelineOptions = {
     ...DEFAULT_PIPELINE_OPTIONS,
     ...partialOptions,
-    // S'assurer que targetWords est bien un tableau
     targetWords:
       partialOptions.targetWords || DEFAULT_PIPELINE_OPTIONS.targetWords,
   };

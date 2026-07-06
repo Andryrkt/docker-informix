@@ -1,5 +1,13 @@
 import { useState, useRef, useEffect } from "react";
-import { FileText, ScanText, UploadCloud, X } from "lucide-react";
+import {
+  FileText,
+  ScanText,
+  UploadCloud,
+  X,
+  Loader2,
+  XCircle,
+  LoaderCircle,
+} from "lucide-react";
 import { cn, formatFileSize } from "@/lib/utils";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -18,6 +26,10 @@ export function FileDropzone({ field }: any) {
   const [analysisResults, setAnalysisResults] = useState<
     Map<string, AnalysisResult>
   >(new Map());
+  const [progress, setProgress] = useState(0);
+  const [progressLabel, setProgressLabel] = useState("");
+  const [currentFileIndex, setCurrentFileIndex] = useState(0);
+  const [totalFiles, setTotalFiles] = useState(0);
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -78,9 +90,7 @@ export function FileDropzone({ field }: any) {
     }
     if (typeof field.ocrValidation === "object") {
       const obj = field.ocrValidation as any;
-      // Si l'objet a déjà targetWords, on le garde
       if (obj.targetWords) return obj;
-      // Sinon, on transforme targetWord (rétrocompatibilité)
       if (obj.targetWord) {
         const { targetWord, ...rest } = obj;
         return { ...rest, targetWords: [targetWord] };
@@ -90,12 +100,23 @@ export function FileDropzone({ field }: any) {
     return null;
   };
 
-  // ---------- Fonction addFiles ----------
+  // ---------- Annulation ----------
+  const handleCancel = () => {
+    abortControllerRef.current?.abort();
+    setIsProcessing(false);
+    setProgress(0);
+    setProgressLabel("");
+    toast.info("Analyse annulée par l'utilisateur");
+  };
+
+  // ---------- Fonction addFiles (refondue) ----------
   const addFiles = async (fileList: FileList | null) => {
     if (!fileList) return;
     if (isProcessing) return;
 
     setErrors({});
+    setProgress(0);
+    setProgressLabel("");
 
     const newFiles = Array.from(fileList);
     const maxFiles = field.maxFiles;
@@ -142,84 +163,71 @@ export function FileDropzone({ field }: any) {
       const controller = new AbortController();
       abortControllerRef.current = controller;
 
+      setTotalFiles(validFiles.length);
+      setCurrentFileIndex(0);
+
+      const acceptedFiles: File[] = [];
+      const newAnalysisResults = new Map(analysisResults);
+      const failedFiles: { file: File; error: any }[] = [];
+
       try {
-        const results = await Promise.allSettled(
-          validFiles.map(async (file) => {
+        // Traitement séquentiel pour afficher la progression
+        for (let i = 0; i < validFiles.length; i++) {
+          if (controller.signal.aborted) break;
+
+          const file = validFiles[i];
+          setCurrentFileIndex(i + 1);
+          setProgress((i / validFiles.length) * 100);
+
+          try {
             const result = await analyzeDocument(file, ocrOptions, {
-              onProgress: () => {},
+              onProgress: (progress, label) => {
+                // Progression globale : 50% pour le fichier en cours, le reste pour les suivants
+                const baseProgress = (i / validFiles.length) * 100;
+                const fileProgress =
+                  (progress / 100) * (1 / validFiles.length) * 100;
+                setProgress(baseProgress + fileProgress);
+                setProgressLabel(`(${i + 1}/${validFiles.length}) ${label}`);
+              },
               signal: controller.signal,
             });
-            return { file, result };
-          }),
-        );
 
-        const succeeded: { file: File; result: AnalysisResult }[] = [];
-        const failed: { file: File; error: any }[] = [];
-
-        results.forEach((settled, idx) => {
-          const file = validFiles[idx];
-          if (settled.status === "fulfilled") {
-            succeeded.push(settled.value);
-          } else {
-            failed.push({ file, error: settled.reason });
+            newAnalysisResults.set(getFileKey(file), result);
+            if (result.status !== "SUSPICIOUS") {
+              acceptedFiles.push(file);
+            } else {
+              const warnings =
+                result.warnings.length > 0
+                  ? result.warnings.join(", ")
+                  : `Score de fraude ${result.fraudScore}% (seuil non atteint)`;
+              allErrors[file.name] = `Document suspect : ${warnings}`;
+            }
+          } catch (error) {
+            if (controller.signal.aborted) {
+              // Annulation, on sort
+              break;
+            }
+            let msg = "Erreur technique lors de l'analyse";
+            if (error instanceof PipelineError) {
+              msg = error.message;
+            } else if (error instanceof Error) {
+              msg = error.message;
+            }
+            allErrors[file.name] = msg;
+            failedFiles.push({ file, error });
+            console.error("Erreur analyse", file.name, error);
           }
-        });
-
-        // Mise à jour des résultats d'analyse
-        const newAnalysisResults = new Map(analysisResults);
-        succeeded.forEach(({ file, result }) => {
-          newAnalysisResults.set(getFileKey(file), result);
-        });
-        failed.forEach(({ file, error }) => {
-          newAnalysisResults.set(getFileKey(file), {
-            fileName: file.name,
-            status: "SUSPICIOUS",
-            fraudScore: 0,
-            averageOCRConfidence: 0,
-            processingTimeMs: 0,
-            occurrences: 0,
-            matchedWords: [],
-            warnings: [error?.message || "Erreur inconnue"],
-            pages: 0,
-            text: "",
-            imageQuality: 0,
-            scoreBreakdown: [],
-            perPage: [],
-          } as AnalysisResult);
-        });
-
-        // 🔥 Mise à jour des états + remontée au parent
-        setAnalysisResults(newAnalysisResults);
-        if (field.onResults) {
-          field.onResults(newAnalysisResults);
         }
 
-        // Filtrer les fichiers acceptés
-        const acceptedFiles = succeeded
-          .filter(({ result }) => result.status !== "SUSPICIOUS")
-          .map(({ file }) => file);
-
-        // Construire les erreurs
-        succeeded
-          .filter(({ result }) => result.status === "SUSPICIOUS")
-          .forEach(({ file, result }) => {
-            const warnings =
-              result.warnings.length > 0
-                ? result.warnings.join(", ")
-                : `Score de fraude ${result.fraudScore}% (seuil non atteint)`;
-            allErrors[file.name] = `Document suspect : ${warnings}`;
-          });
-
-        failed.forEach(({ file, error }) => {
-          let msg = "Erreur technique lors de l'analyse";
-          if (error instanceof PipelineError) {
-            msg = error.message;
-          } else if (error instanceof Error) {
-            msg = error.message;
-          }
-          allErrors[file.name] = msg;
-          console.error("Erreur analyse", file.name, error);
-        });
+        // Si annulation, on nettoie
+        if (controller.signal.aborted) {
+          // On ne met pas à jour les fichiers
+          setProgress(0);
+          setProgressLabel("");
+          setIsProcessing(false);
+          abortControllerRef.current = null;
+          return;
+        }
 
         // Appliquer la limite maxFiles
         let merged = [...existingFiles, ...acceptedFiles];
@@ -230,12 +238,19 @@ export function FileDropzone({ field }: any) {
         }
 
         setErrors(allErrors);
+        setAnalysisResults(newAnalysisResults);
+        if (field.onResults) {
+          field.onResults(newAnalysisResults);
+        }
 
         if (field.multiple) {
           field.onChange(merged);
         } else {
           field.onChange(acceptedFiles.slice(0, 1));
         }
+
+        setProgress(100);
+        setProgressLabel("Terminé");
       } catch (error) {
         if ((error as Error).name === "AbortError") {
           // Annulation volontaire, on ignore
@@ -246,6 +261,11 @@ export function FileDropzone({ field }: any) {
       } finally {
         setIsProcessing(false);
         abortControllerRef.current = null;
+        // Remettre la progression à 0 après un court délai
+        setTimeout(() => {
+          setProgress(0);
+          setProgressLabel("");
+        }, 1000);
       }
     } else {
       // Pas d'OCR → comportement original
@@ -296,7 +316,7 @@ export function FileDropzone({ field }: any) {
 
   // ---------- Rendu ----------
   return (
-    <div className={cn("space-y-3 my-2 z-50", isProcessing ?? " cursor-wait")}>
+    <div className={cn("space-y-3 my-2 z-50", isProcessing && "cursor-wait")}>
       <div
         onDragOver={(e) => {
           e.preventDefault();
@@ -310,65 +330,86 @@ export function FileDropzone({ field }: any) {
         }}
         className={cn(
           "relative flex flex-col items-center justify-center rounded-md border-2 border-dashed px-6 py-10 text-center duration-150 transition-all hover:border-brand-primary",
-          isDragging
+          isDragging || isProcessing
             ? "border-brand-primary"
             : "border-muted-foreground/30 bg-muted/30",
-          isProcessing && " cursor-wait",
+          isProcessing && "cursor-wait z-60",
         )}
       >
         <input
           type="file"
           multiple={field.multiple}
           disabled={field.disabled || isProcessing}
-          className="absolute inset-0 opacity-0"
+          className="absolute inset-0 opacity-0 z-40"
           onChange={(e) => addFiles(e.target.files)}
           pattern={field.pattern}
           accept={field.accept}
         />
 
         {isProcessing ? (
-          <ScanText
-            size={40}
-            className={cn(
-              "text-muted-foreground/60 animate-pulse",
-              isDragging && "text-brand-primary",
-            )}
-          />
+          <div className="flex flex-col items-center gap-3 w-full z-50">
+            <LoaderCircle
+              size={40}
+              className="text-brand-primary animate-spin"
+            />
+            <p className="text-sm font-medium text-muted-foreground">
+              {progressLabel || "Analyse en cours..."}
+            </p>
+            {/* Barre de progression */}
+            <div className="w-full max-w-xs h-2 bg-muted rounded-full overflow-hidden">
+              <div
+                className="h-full bg-brand-primary transition-all duration-300 ease-out"
+                style={{ width: `${Math.min(progress, 100)}%` }}
+              />
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="text-xs text-muted-foreground">
+                {Math.round(Math.min(progress, 100))}%
+              </span>
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="flex items-center gap-1 text-xs text-red-500 hover:text-red-700 transition-colors cursor-pointer"
+              >
+                <XCircle size={20} />
+                Annuler
+              </button>
+            </div>
+          </div>
         ) : (
-          <UploadCloud
-            size={40}
-            className={cn(
-              "text-muted-foreground/60",
-              isDragging && "text-brand-primary",
-            )}
-          />
+          <>
+            <UploadCloud
+              size={40}
+              className={cn(
+                "text-muted-foreground/60",
+                isDragging && "text-brand-primary",
+              )}
+            />
+            <p
+              className={cn(
+                "text-sm font-medium text-muted-foreground/60",
+                isDragging && "text-brand-primary",
+              )}
+            >
+              Glissez et déposez des fichiers ici ou cliquez pour importer
+            </p>
+            <p
+              className={cn(
+                "text-xs mt-1 text-muted-foreground/60",
+                isDragging && "text-brand-primary",
+              )}
+            >
+              {field.maxFiles && `Nombre max ${field.maxFiles} fichiers`}
+              {field.maxSize && ` • Taille max ${field.maxSize} Mo`}
+              {field.ocrValidation && ` • Analyse OCR active`}
+            </p>
+            <Button type="button" variant="brand" className="mt-3 text-white">
+              {field.multiple
+                ? "Plusieurs fichiers acceptés"
+                : "Un seul fichier uniquement"}
+            </Button>
+          </>
         )}
-        <p
-          className={cn(
-            "text-sm font-medium text-muted-foreground/60",
-            isDragging && "text-brand-primary",
-          )}
-        >
-          {isProcessing
-            ? "Analyse en cours, veuillez patienter..."
-            : "Glissez et déposez des fichiers ici ou cliquez pour importer"}
-        </p>
-        <p
-          className={cn(
-            "text-xs mt-1 text-muted-foreground/60",
-            isDragging && "text-brand-primary",
-          )}
-        >
-          {field.maxFiles && `Nombre max ${field.maxFiles} fichiers`}
-          {field.maxSize && ` • Taille max ${field.maxSize} Mo`}
-          {field.ocrValidation && ` • Analyse OCR active`}
-        </p>
-
-        <Button type="button" variant="brand" className="mt-3 text-white">
-          {field.multiple
-            ? "Plusieurs fichiers acceptés"
-            : "Un seul fichier uniquement"}
-        </Button>
       </div>
 
       {/* Liste des erreurs */}

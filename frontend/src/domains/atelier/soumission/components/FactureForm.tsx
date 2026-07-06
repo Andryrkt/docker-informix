@@ -41,7 +41,7 @@ function FactureForm({ mutation }: Props) {
     <div className=" mx-auto">
       <div className="flex flex-col space-y-2   mx-auto">
         <h1 className="text-xl font-bold text-white tracking-tight border text-center py-2 bg-brand-dark font-mono ">
-          SOUMISSION OR
+          SOUMISSION FACTURE
         </h1>
       </div>
       <form
@@ -112,6 +112,11 @@ function FactureForm({ mutation }: Props) {
                             ...config,
                             value: field.state.value,
                             onChange: field.handleChange,
+                            ocrValidation: {
+                              targetWords: ["TOMEAU"],
+                              minOccurrences: 1, // au lieu de 4
+                              maxNormalizedDistance: 0.2,
+                            },
                             onResults: setAnalysisResults,
                           }}
                         />

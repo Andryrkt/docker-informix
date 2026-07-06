@@ -113,9 +113,39 @@ function FactureForm({ mutation }: Props) {
                             value: field.state.value,
                             onChange: field.handleChange,
                             ocrValidation: {
-                              targetWords: ["TOMEAU"],
-                              minOccurrences: 1, // au lieu de 4
+                              targetWords: ["41327617", "DIT25079237"],
+                              minOccurrences: 1,
                               maxNormalizedDistance: 0.2,
+                              // fieldRules: [
+                              //   {
+                              //     // Ordre de réparation N° 16424573
+                              //     extractPattern:
+                              //       /Ordre de réparation\s*N°\s*(\d+)/i,
+                              //     validateValue: "16424573",
+                              //     required: true,
+                              //     errorMessage:
+                              //       "Le numéro d'ordre de réparation est incorrect.",
+                              //     penalty: 30,
+                              //   },
+                              //   {
+                              //     // Référence demandée DIT26079999
+                              //     extractPattern: /Référence demandée\s*(\S+)/i,
+                              //     validateValue: "DIT26079999",
+                              //     required: true,
+                              //     errorMessage:
+                              //       "La référence demandée est incorrecte.",
+                              //     penalty: 30,
+                              //   },
+                              //   {
+                              //     // Désignation CHARIOT ELEVATEUR
+                              //     extractPattern: /Désignation\s*(.+)/i,
+                              //     validatePattern: /CHARIOT ELEVATEUR/i, // accepte "Chariot élévateur" ou "CHARIOT ELEVATEUR"
+                              //     required: true,
+                              //     errorMessage:
+                              //       "La désignation du matériel est incorrecte.",
+                              //     penalty: 30,
+                              //   },
+                              // ],
                             },
                             onResults: setAnalysisResults,
                           }}

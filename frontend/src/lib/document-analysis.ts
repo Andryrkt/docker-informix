@@ -68,6 +68,23 @@ export interface AnalysisResult {
   readonly imageQuality: number;
   readonly scoreBreakdown: FraudScoreBreakdown[];
   readonly perPage: PageOcrResult[];
+  readonly fieldErrors?: string[]; // Erreurs de validation des champs (si présentes)
+}
+
+/** Règle de validation d'un champ extrait du texte OCRisé */
+export interface FieldRule {
+  /** Regex avec un groupe de capture pour extraire la valeur (ex: /Objet\s*:\s*(.+)/i) */
+  extractPattern: string | RegExp;
+  /** Optionnel : regex de validation de la valeur extraite (ex: /Commande Pièces HME 014/) */
+  validatePattern?: string | RegExp;
+  /** Optionnel : valeur exacte attendue (ex: "Commande Pièces HME 014 suivant le rapport TA1/TA2") */
+  validateValue?: string;
+  /** Si true, l'absence du champ ou une valeur invalide provoque une erreur (rejet) */
+  required?: boolean;
+  /** Message d'erreur personnalisé */
+  errorMessage?: string;
+  /** Pénalité sur le score si la règle échoue (par défaut 20) */
+  penalty?: number;
 }
 
 /** Options de configuration du pipeline, toutes surchargeables par appel. */
@@ -88,10 +105,12 @@ export interface PipelineOptions {
   minImageDimension: number;
   /** Dimension maximale (px) acceptée pour une image/page. */
   maxImageDimension: number;
+  /** Règles de validation de champs extraits du texte OCRisé */
+  fieldRules?: FieldRule[];
 }
 
 export const DEFAULT_PIPELINE_OPTIONS: PipelineOptions = {
-  targetWords: ["pamplemousse"],
+  targetWords: [""],
   minOccurrences: 4,
   maxNormalizedDistance: 0.3,
   maxFileSizeBytes: 15 * 1024 * 1024,
@@ -99,6 +118,7 @@ export const DEFAULT_PIPELINE_OPTIONS: PipelineOptions = {
   ocrTargetLongEdge: 2000,
   minImageDimension: 200,
   maxImageDimension: 8000,
+  fieldRules: [],
 };
 
 export interface AnalysisCallbacks {
@@ -559,8 +579,7 @@ function computeImageQualityMetrics(
     widthPx: rawCanvas.width,
     heightPx: rawCanvas.height,
     isTooDark: brightnessMean < 60,
-    // Augmentation du seuil de surexposition de 225 à 235 pour éviter les faux positifs
-    isTooBright: brightnessMean > 235,
+    isTooBright: brightnessMean > 235, // seuil relevé
     isBlurry: blurVariance < 80,
     isLowContrast: contrastStdDev < 15,
     isLowResolution: Math.max(rawCanvas.width, rawCanvas.height) < 800,
@@ -580,7 +599,7 @@ function qualityMetricsToScore(metrics: ImageQualityMetrics): number {
 }
 
 /* ----------------------------------------------------------------------- *
- * Recherche floue (Levenshtein) - version améliorée
+ * Recherche floue (Levenshtein) - version stricte sans sous-chaîne
  * ----------------------------------------------------------------------- */
 
 function levenshteinDistance(a: string, b: string): number {
@@ -611,7 +630,7 @@ function normalizeForMatching(input: string): string {
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]/g, ""); // ← modification clé : on garde les chiffres
+    .replace(/[^a-z0-9]/g, "");
 }
 
 function fuzzyCountOccurrences(
@@ -636,11 +655,10 @@ function fuzzyCountOccurrences(
       const target = normalizedTargets[i];
       if (target.length === 0) continue;
 
-      // Calcul de la distance de Levenshtein normalisée
       const distance = levenshteinDistance(normalizedToken, target);
       const normalizedDistance = distance / Math.max(target.length, 1);
 
-      // Seulement la distance normalisée, plus de sous-chaîne
+      // UNIQUEMENT la distance normalisée, pas de vérification de sous-chaîne
       if (normalizedDistance <= maxNormalizedDistance) {
         matched.push(token);
         totalOccurrences++;
@@ -654,8 +672,61 @@ function fuzzyCountOccurrences(
     matchedWords: Array.from(new Set(matched)),
   };
 }
+
 /* ----------------------------------------------------------------------- *
- * Score de fraude (complet)
+ * Validation des champs structurés (fieldRules)
+ * ----------------------------------------------------------------------- */
+
+function validateFieldRules(
+  text: string,
+  rules: FieldRule[],
+): { errors: string[]; penalty: number; warnings: string[] } {
+  let penalty = 0;
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  for (const rule of rules) {
+    const extractRegex = new RegExp(rule.extractPattern, "i");
+    const match = text.match(extractRegex);
+    let value = match?.[1]?.trim() || "";
+
+    if (!value) {
+      if (rule.required) {
+        errors.push(rule.errorMessage || `Champ obligatoire non trouvé.`);
+        penalty += rule.penalty ?? 20;
+      } else {
+        warnings.push(`Champ facultatif non trouvé.`);
+      }
+      continue;
+    }
+
+    let valid = true;
+    if (rule.validatePattern) {
+      const valRegex = new RegExp(rule.validatePattern, "i");
+      valid = valRegex.test(value);
+    }
+    if (valid && rule.validateValue) {
+      valid = value === rule.validateValue;
+    }
+
+    if (!valid) {
+      const msg =
+        rule.errorMessage || `Valeur du champ non valide : "${value}"`;
+      if (rule.required) {
+        errors.push(msg);
+        penalty += rule.penalty ?? 20;
+      } else {
+        warnings.push(msg);
+        penalty += rule.penalty ?? 10;
+      }
+    }
+  }
+
+  return { errors, penalty, warnings };
+}
+
+/* ----------------------------------------------------------------------- *
+ * Score de fraude (incluant la pénalité des champs)
  * ----------------------------------------------------------------------- */
 
 function computeFraudScore(params: {
@@ -664,6 +735,8 @@ function computeFraudScore(params: {
   qualityFlags: ImageQualityMetrics[];
   targetWords: string[];
   minOccurrences: number;
+  fieldPenalty?: number;
+  fieldWarnings?: string[];
 }): { score: number; breakdown: FraudScoreBreakdown[]; warnings: string[] } {
   const breakdown: FraudScoreBreakdown[] = [];
   const warnings: string[] = [];
@@ -745,6 +818,15 @@ function computeFraudScore(params: {
       applyPenalty("Document quasi vide", 30, "Document quasi vide détecté.");
       break;
     }
+  }
+
+  // Nouvelle pénalité pour les règles de champs
+  if (params.fieldPenalty && params.fieldPenalty > 0) {
+    applyPenalty(
+      "Validation des champs échouée",
+      params.fieldPenalty,
+      params.fieldWarnings?.join(", ") || "Erreur de validation de champs",
+    );
   }
 
   return { score: Math.max(0, Math.min(100, score)), breakdown, warnings };
@@ -835,7 +917,7 @@ async function renderPdfPageToCanvas(
       "Contexte Canvas 2D indisponible.",
     );
   await page.render({ canvasContext: ctx, viewport }).promise;
-  page.cleanup(); // libère la mémoire de la page
+  page.cleanup();
   return canvas;
 }
 
@@ -888,14 +970,29 @@ async function processImageFile(
     options.maxNormalizedDistance,
   );
 
-  // --- NOUVEAU : Rejet si aucune occurrence trouvée ---
   if (occurrences === 0) {
     throw new PipelineError(
       "NO_OCCURRENCES",
       `Aucun des mots cibles (“${options.targetWords.join(", ")}”) n’a été trouvé dans le document.`,
     );
   }
-  // ------------------------------------------------
+
+  // Validation des champs
+  let fieldErrors: string[] = [];
+  let fieldPenalty = 0;
+  let fieldWarnings: string[] = [];
+  if (options.fieldRules && options.fieldRules.length > 0) {
+    const result = validateFieldRules(pageResult.text, options.fieldRules);
+    fieldErrors = result.errors;
+    fieldPenalty = result.penalty;
+    fieldWarnings = result.warnings;
+    if (fieldErrors.length > 0) {
+      throw new PipelineError(
+        "FIELD_VALIDATION_FAILED",
+        `Validation des champs échouée : ${fieldErrors.join("; ")}`,
+      );
+    }
+  }
 
   const fraud = computeFraudScore({
     averageOcrConfidence: pageResult.confidence,
@@ -903,6 +1000,8 @@ async function processImageFile(
     qualityFlags: [qualityMetrics],
     targetWords: options.targetWords,
     minOccurrences: options.minOccurrences,
+    fieldPenalty,
+    fieldWarnings,
   });
 
   cb.onProgress(100, "Terminé");
@@ -920,6 +1019,7 @@ async function processImageFile(
     imageQuality: qualityMetricsToScore(qualityMetrics),
     scoreBreakdown: fraud.breakdown,
     perPage: [pageResult],
+    fieldErrors,
   };
 }
 
@@ -961,7 +1061,7 @@ async function processPdfFile(
       rawCanvas.height,
       options,
     );
-    if (!dimCheck.ok) continue; // page ignorée plutôt que document rejeté entièrement
+    if (!dimCheck.ok) continue;
 
     qualityMetrics.push(computeImageQualityMetrics(rawCanvas));
     const preprocessed = preprocessCanvas(rawCanvas);
@@ -975,7 +1075,7 @@ async function processPdfFile(
     textsByPage.push(`[Page ${pageNumber}]\n${pageResult.text}`);
   }
 
-  // Nettoyage du document PDF (robuste)
+  // Nettoyage du document PDF
   try {
     if (typeof pdf.destroy === "function") {
       await pdf.destroy();
@@ -983,7 +1083,7 @@ async function processPdfFile(
       pdf.cleanup();
     }
   } catch (_) {
-    // Ignorer les erreurs de nettoyage
+    // Ignorer
   }
 
   assertNotAborted(cb.signal);
@@ -1002,14 +1102,29 @@ async function processPdfFile(
     options.maxNormalizedDistance,
   );
 
-  // --- NOUVEAU : Rejet si aucune occurrence trouvée ---
   if (occurrences === 0) {
     throw new PipelineError(
       "NO_OCCURRENCES",
       `Aucun des mots cibles (“${options.targetWords.join(", ")}”) n’a été trouvé dans le document.`,
     );
   }
-  // ------------------------------------------------
+
+  // Validation des champs
+  let fieldErrors: string[] = [];
+  let fieldPenalty = 0;
+  let fieldWarnings: string[] = [];
+  if (options.fieldRules && options.fieldRules.length > 0) {
+    const result = validateFieldRules(mergedText, options.fieldRules);
+    fieldErrors = result.errors;
+    fieldPenalty = result.penalty;
+    fieldWarnings = result.warnings;
+    if (fieldErrors.length > 0) {
+      throw new PipelineError(
+        "FIELD_VALIDATION_FAILED",
+        `Validation des champs échouée : ${fieldErrors.join("; ")}`,
+      );
+    }
+  }
 
   const averageConfidence =
     perPage.reduce((sum, p) => sum + p.confidence, 0) / perPage.length;
@@ -1020,6 +1135,8 @@ async function processPdfFile(
     qualityFlags: qualityMetrics,
     targetWords: options.targetWords,
     minOccurrences: options.minOccurrences,
+    fieldPenalty,
+    fieldWarnings,
   });
 
   const averageImageQuality =
@@ -1041,6 +1158,7 @@ async function processPdfFile(
     imageQuality: averageImageQuality,
     scoreBreakdown: fraud.breakdown,
     perPage,
+    fieldErrors,
   };
 }
 
@@ -1058,6 +1176,8 @@ export async function analyzeDocument(
     ...partialOptions,
     targetWords:
       partialOptions.targetWords || DEFAULT_PIPELINE_OPTIONS.targetWords,
+    fieldRules:
+      partialOptions.fieldRules || DEFAULT_PIPELINE_OPTIONS.fieldRules,
   };
 
   const validation = await validateFileFast(file, options);

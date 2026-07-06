@@ -95,7 +95,7 @@ export function DocumentViewer({
   };
 
   return (
-    <div className="flex flex-col h-full w-full overflow-hidden text-sm text-white transition-all duration-200 rounded-xs border border-white/10 bg-black/40">
+    <div className="flex flex-col min-h-150 w-full overflow-hidden text-sm text-white transition-all duration-200 rounded-xs border border-white/10 bg-black/40 ">
       {/* Header */}
       <div className="border-b border-white/10 bg-brand-dark/80 shrink-0">
         <div className="flex items-center justify-between px-4 py-2 font-semibold">
@@ -168,9 +168,9 @@ export function DocumentViewer({
                     <Card className="bg-transparent border-0 text-white w-full">
                       <CardContent className="p-3 space-y-2">
                         {/* Warnings */}
-                        {currentAnalysis.warnings.length > 0 && (
+                        {/* {currentAnalysis.warnings.length > 0 && (
                           <div>
-                            <div className="text-yellow-400 font-medium mb-1 flex items-center gap-1">
+                           <div className="text-yellow-400 font-medium mb-1 flex items-center gap-1">
                               <span>⚠️</span> Avertissements
                             </div>
                             <ul className="list-disc list-inside text-gray-300 space-y-0.5 text-xs">
@@ -179,41 +179,48 @@ export function DocumentViewer({
                               ))}
                             </ul>
                           </div>
-                        )}
+                        )} */}
 
                         {/* Breakdown des pénalités */}
                         {currentAnalysis.scoreBreakdown.length > 0 && (
-                          <div>
-                            <div className="text-gray-400 font-medium mb-1">
-                              Pénalités appliquées
+                          <>
+                            <div className="text-yellow-400 font-medium mb-1 flex items-center gap-1">
+                              <span>⚠️</span> Avertissements
                             </div>
-                            <ul className="space-y-0.5 text-xs">
-                              {currentAnalysis.scoreBreakdown.map((item, i) => (
-                                <li
-                                  key={i}
-                                  className="flex justify-between items-center border-b border-white/5 pb-0.5"
-                                >
-                                  <span className="text-gray-300">
-                                    {item.label}
-                                  </span>
-                                  <span className="text-red-400 font-medium">
-                                    -{item.penalty} pts
-                                  </span>
-                                </li>
-                              ))}
-                            </ul>
-                            <div className="flex justify-between items-center mt-1 pt-1 border-t border-white/10 font-semibold">
-                              <span>Score final</span>
-                              <span
-                                className={cn(
-                                  "font-bold",
-                                  statusColor(currentAnalysis.status),
+                            <div>
+                              <div className="text-gray-400 font-medium mb-1">
+                                Pénalités appliquées
+                              </div>
+                              <ul className="space-y-0.5 text-xs">
+                                {currentAnalysis.scoreBreakdown.map(
+                                  (item, i) => (
+                                    <li
+                                      key={i}
+                                      className="flex justify-between items-center border-b border-white/5 pb-0.5"
+                                    >
+                                      <span className="text-gray-300">
+                                        {item.label}
+                                      </span>
+                                      <span className="text-red-400 font-medium">
+                                        -{item.penalty} pts
+                                      </span>
+                                    </li>
+                                  ),
                                 )}
-                              >
-                                {currentAnalysis.fraudScore}%
-                              </span>
+                              </ul>
+                              <div className="flex justify-between items-center mt-1 pt-1 border-t border-white/10 font-semibold">
+                                <span>Score final</span>
+                                <span
+                                  className={cn(
+                                    "font-bold",
+                                    statusColor(currentAnalysis.status),
+                                  )}
+                                >
+                                  {currentAnalysis.fraudScore}%
+                                </span>
+                              </div>
                             </div>
-                          </div>
+                          </>
                         )}
 
                         {/* Informations supplémentaires */}

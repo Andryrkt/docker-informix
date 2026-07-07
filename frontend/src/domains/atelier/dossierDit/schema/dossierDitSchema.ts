@@ -25,3 +25,22 @@ export interface DossierDit {
 
   pieceJointe: PieceJointe;
 }
+
+export interface DossierDitListItem {
+  dateDemande: string;
+  numeroDemandeIntervention: string;
+
+  idMateriel: string;
+  numParc: string;
+  numSerie: string;
+
+  designation: string | null;
+
+  numeroOr: string | null;
+
+  nbrPj: number;
+
+  interneExterne: "Interne" | "Externe" | null;
+
+  // dossierDit: DossierDit[];
+}

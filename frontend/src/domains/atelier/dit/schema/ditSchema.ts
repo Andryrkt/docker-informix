@@ -9,7 +9,7 @@ export type PieceJointe = {
   url: string;
 };
 export interface Dit {
-  id: number;
+  id?: number;
   numeroDemandeIntervention: string;
 
   idStatutDemande: number;

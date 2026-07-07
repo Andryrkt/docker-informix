@@ -16,10 +16,17 @@ export function usePageSearchParams(
 
   const selectedFilters = useMemo(() => {
     const filters: Record<string, string> = {};
-    for (const key in defaultFilters) {
-      filters[key] = searchParams.get(key) || defaultFilters[key];
-    }
-    return filters;
+
+    searchParams.forEach((value, key) => {
+      if (key !== "page" && key !== "keyword") {
+        filters[key] = value;
+      }
+    });
+
+    return {
+      ...defaultFilters,
+      ...filters,
+    };
   }, [defaultFilters, searchParams]);
 
   const setPage = (page: number) => {

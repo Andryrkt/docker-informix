@@ -1,4 +1,41 @@
-import type { DossierDit } from "./dossierDitSchema";
+import type { DossierDit, DossierDitListItem } from "./dossierDitSchema";
+
+//  Mock DIT (à remplacer par votre vraie requête)
+export const dossierDitListItemMock: DossierDitListItem[] = [
+  {
+    dateDemande: "2026-07-01",
+    numeroDemandeIntervention: "DIT-0001",
+    idMateriel: "MAT-1001",
+    numParc: "PARC-2201",
+    numSerie: "SER-88421",
+    designation: "Maintenance moteur hydraulique",
+    numeroOr: "OR-7781",
+    nbrPj: 3,
+    interneExterne: "Interne",
+  },
+  {
+    dateDemande: "2026-07-01",
+    numeroDemandeIntervention: "DIT-0002",
+    idMateriel: "MAT-1002",
+    numParc: "PARC-2202",
+    numSerie: "SER-88422",
+    designation: "Maintenance moteur hydraulique 2",
+    numeroOr: "OR-7782",
+    nbrPj: 2,
+    interneExterne: "Interne",
+  },
+  {
+    dateDemande: "2026-07-01",
+    numeroDemandeIntervention: "DIT-0003",
+    idMateriel: "MAT-1003",
+    numParc: "PARC-2203",
+    numSerie: "SER-88423",
+    designation: "Maintenance moteur hydraulique 3",
+    numeroOr: "OR-7783",
+    nbrPj: 1,
+    interneExterne: "Interne",
+  },
+];
 
 export const dossierDitMock: DossierDit[] = [
   {

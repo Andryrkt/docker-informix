@@ -1,6 +1,6 @@
-import type { Planning } from "./planningSchema";
+import type { Planning } from "./planningMagasinSchema";
 
-export const planningMock: Planning[] = [
+export const planningMagasinMook: Planning[] = [
   {
     COMMERCIAUX: "DIMBY ANDRIANTSOA",
     AGENCE: "ANTANANARIVO - NEGOCE",

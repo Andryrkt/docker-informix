@@ -1,5 +1,5 @@
 import type { PaginatedResponse } from "@/conf/api/Response";
-import type { Planning } from "../schema/planningSchema";
+import type { Planning } from "../schema/planningMagasinSchema";
 import axiosInstance from "@/conf/axios";
 
 export interface PlanningParams {

@@ -9,7 +9,6 @@ import HomePage from "@/domains/home/page/HomePage";
 import DemandeSupportIT from "@/domains/it/page/DemandeSupportIT";
 import { RequireAuth } from "./guards/RequireAuth";
 import DevisList from "@/domains/magasin/dematerialisation/devis/pages/DevisList";
-import PlanningList from "@/domains/magasin/dematerialisation/planning/pages/PlanningList";
 import DitList from "@/domains/atelier/dit/pages/DitList";
 import DitCreation from "@/domains/atelier/dit/pages/DitCreation";
 import DitDuplication from "@/domains/atelier/dit/pages/DitDuplication";
@@ -23,6 +22,9 @@ import RapportInterventionSoumission from "@/domains/atelier/soumission/pages/Ra
 import FactureSoummission from "@/domains/atelier/soumission/pages/FactureSoummission";
 import DossierDitDetails from "@/domains/atelier/dossierDit/pages/DossierDitDetails";
 import DossierDitList from "@/domains/atelier/dossierDit/pages/DossierDitList";
+import PlanningDitList from "@/domains/atelier/planning/pages/PlanningDitList";
+import PlanningMagasinList from "@/domains/magasin/dematerialisation/planning/pages/PlanningMagasinList";
+import PlanningDitListDetaille from "@/domains/atelier/planning/pages/PlanningDitListDetaille";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -67,7 +69,7 @@ function AppRoutes() {
         },
         {
           path: "/magasin/dematerialisation/planning-commande",
-          element: <PlanningList />,
+          element: <PlanningMagasinList />,
         },
 
         // Atelier -> Demande d'intervention
@@ -87,6 +89,8 @@ function AppRoutes() {
           path: "/atelier/demande-intervention/details/:numeroDemandeIntervention",
           element: <DitDetails />,
         },
+
+        // atelier => soummission
         {
           path: "/atelier/demande-intervention/verification-prix/:numeroDemandeIntervention",
           element: <VerificationPrixSoumission />,
@@ -118,6 +122,8 @@ function AppRoutes() {
           element: <FactureSoummission />,
           loader: verificationDitLoader("facture"),
         },
+
+        // atelier => dossier
         {
           path: "/atelier/demande-intervention/dossier/:numeroDemandeIntervention",
           element: <DossierDitDetails />,
@@ -126,10 +132,20 @@ function AppRoutes() {
           path: "/atelier/demande-intervention/dossier-list",
           element: <DossierDitList />,
         },
+        // atelier => planning
+        {
+          path: "/atelier/demande-intervention/planning-list",
+          element: <PlanningDitList />,
+        },
+
+        {
+          path: "/atelier/demande-intervention/planning-detaille",
+          element: <PlanningDitListDetaille />,
+        },
 
         // {
-        //   path: "/atelier/demande-intervention/new",
-        //   element: <PlanningList />,
+        //   path: "/atelier/demande-intervention/planning-detaille",
+        //   element: <PlanningDitList />,
         // },
 
         // IT

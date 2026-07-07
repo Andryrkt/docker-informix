@@ -152,10 +152,26 @@ export const vignetteMock = [
         },
       ],
       items: [
-        { label: "Glossaire OR", icon: ListChecks },
-        { label: "Planning detailé", icon: ListChecks },
-        { label: "Planning interne Atelier", icon: ListChecks },
-        { label: "Planning", icon: ListChecks },
+        {
+          label: "Glossaire OR",
+          icon: ListChecks,
+          link: "/atelier/demande-intervention/glossaire-or",
+        },
+        {
+          label: "Planning detailé",
+          icon: ListChecks,
+          link: "/atelier/demande-intervention/planning-detaille",
+        },
+        {
+          label: "Planning interne Atelier",
+          icon: ListChecks,
+          link: "/atelier/demande-intervention/planning-interne-atelier",
+        },
+        {
+          label: "Planning",
+          icon: ListChecks,
+          link: "/atelier/demande-intervention/planning-list",
+        },
       ],
     },
   },

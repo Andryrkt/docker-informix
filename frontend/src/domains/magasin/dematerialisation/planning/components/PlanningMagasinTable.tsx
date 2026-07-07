@@ -6,20 +6,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import PlanningTableSkeleton from "./PlanningTableSkeleton";
-import type { Planning } from "../schema/planningSchema";
+import PlanningTableSkeleton from "./PlanningMagasinTableSkeleton";
+import type { Planning } from "../schema/planningMagasinSchema";
 import { cn } from "@/lib/utils";
 import { getEtatPlanningColorMark } from "@/helper/helper";
 
-function PlanningTable({
-  planning,
+function PlanningMagasinTable({
+  planningMagasin,
   loading,
 }: {
-  planning: Planning[];
+  planningMagasin: Planning[];
   loading: boolean;
 }) {
   const months = Array.from(
-    new Set(planning.flatMap((p) => p.MOIS.map((m) => m.date))),
+    new Set(planningMagasin.flatMap((p) => p.MOIS.map((m) => m.date))),
   );
 
   if (loading) return <PlanningTableSkeleton></PlanningTableSkeleton>;
@@ -40,7 +40,7 @@ function PlanningTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {planning?.map((d) => {
+          {planningMagasin?.map((d) => {
             return (
               <TableRow key={d.CODE_CLIENT}>
                 <TableCell>{d.COMMERCIAUX}</TableCell>
@@ -79,7 +79,7 @@ function PlanningTable({
             );
           })}
 
-          {planning.length === 0 && (
+          {planningMagasin.length === 0 && (
             <TableRow>
               <TableCell className=" font-mono text-gray-600"></TableCell>
               <TableCell
@@ -96,4 +96,4 @@ function PlanningTable({
   );
 }
 
-export default PlanningTable;
+export default PlanningMagasinTable;

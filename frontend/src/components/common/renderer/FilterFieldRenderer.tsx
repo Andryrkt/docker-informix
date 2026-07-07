@@ -1,4 +1,4 @@
-import { useFilterOptions } from "./hook/filterHook";
+import { useFilterOptions } from "../filter/hook/filterHook";
 import { Input } from "@/components/ui/input";
 import { SearchableSelect } from "../atom/SearchableSelect";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -36,17 +36,17 @@ export function FilterFieldRenderer({ field }: any) {
     );
   }
   if (field.type === "select") {
+    const options = getOptions(field, optionsQuery);
+
     if (optionsQuery?.isLoading) {
       return <div className="text-xs text-gray-400">Chargement...</div>;
     }
-
-    const options = optionsQuery?.data ?? [];
 
     return (
       <SearchableSelect
         value={field.value}
         onChange={field.onChange}
-        options={options}
+        options={options ?? []}
         placeholder={field.placeholder}
       />
     );
@@ -171,11 +171,15 @@ export function FilterFieldRenderer({ field }: any) {
     // CHECKBOX
     if (field.variant === "checkbox") {
       return (
-        <div className="my-2">
+        <div className="my-2 flex gap-2 items-center ">
           <Checkbox
+            disabled={field.disabled}
             checked={value}
             onCheckedChange={(v) => field.onChange(Boolean(v))}
           />
+          {field.placeholder && (
+            <span className="text-sm">{field.placeholder}</span>
+          )}
         </div>
       );
     }

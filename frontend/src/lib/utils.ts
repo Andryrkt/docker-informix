@@ -112,3 +112,12 @@ export const normalizeFiles = (val: any): File[] => {
   if (val instanceof File) return [val];
   return [];
 };
+
+export const formatMonthDisplay = (
+  monthStr: string,
+  locale: string,
+): string => {
+  const [year, month] = monthStr.split("-").map(Number);
+  const date = new Date(year, month - 1, 1);
+  return date.toLocaleString(locale, { month: "short", year: "numeric" });
+};

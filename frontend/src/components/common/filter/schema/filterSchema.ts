@@ -16,10 +16,9 @@ export type FilterField =
       label: string;
       type: "select";
       placeholder?: string;
-      queryKey: string;
-
-      queryFn: () => Promise<{ label: string; value: string }[]>;
-
+      queryKey?: string;
+      queryFn?: () => Promise<FilterOption[]>;
+      options?: FilterOption[];
       enabled?: boolean;
     }
   | {
@@ -61,7 +60,9 @@ export type FilterField =
       label: string;
       type: "boolean";
       variant?: "switch" | "checkbox" | "radio";
+      placeholder?: string;
       trueLabel?: string;
       falseLabel?: string;
+      hideLabel: boolean;
       enabled?: boolean;
     };

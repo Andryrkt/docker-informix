@@ -1,11 +1,11 @@
 import CollapsibleFilter from "@/components/common/filter/CollapSibleFilter";
 import { usePageSearchParams } from "@/hooks/usePageSearchParams";
 import { useQuery } from "@tanstack/react-query";
-import PlanningTable from "../components/PlanningTable";
+import PlanningMagasinTable from "../components/PlanningMagasinTable";
 import { fetchPlanning } from "../api/planningApi";
-import { planningFieldsFilter } from "../filter/planningFiedfilter";
+import { planningFieldsFilter } from "../filter/planningMagasinFiedfilter";
 
-function PlanningList() {
+function PlanningMagasinList() {
   const { currentPage, selectedFilters, setFilter, reset } =
     usePageSearchParams(1);
 
@@ -43,10 +43,13 @@ function PlanningList() {
           }}
         />
 
-        <PlanningTable planning={items} loading={isLoading || isFetching} />
+        <PlanningMagasinTable
+          planningMagasin={items}
+          loading={isLoading || isFetching}
+        />
       </div>
     </div>
   );
 }
 
-export default PlanningList;
+export default PlanningMagasinList;

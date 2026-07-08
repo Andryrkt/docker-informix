@@ -25,6 +25,7 @@ import DossierDitList from "@/domains/atelier/dossierDit/pages/DossierDitList";
 import PlanningDitList from "@/domains/atelier/planning/pages/PlanningDitList";
 import PlanningMagasinList from "@/domains/magasin/dematerialisation/planning/pages/PlanningMagasinList";
 import PlanningDitListDetaille from "@/domains/atelier/planning/pages/PlanningDitListDetaille";
+import PlanningInterneAtelierList from "@/domains/atelier/planning/pages/PlanningInterneAtelierList";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -141,6 +142,10 @@ function AppRoutes() {
         {
           path: "/atelier/demande-intervention/planning-detaille",
           element: <PlanningDitListDetaille />,
+        },
+        {
+          path: "/atelier/demande-intervention/planning-interne-atelier",
+          element: <PlanningInterneAtelierList />,
         },
 
         // {

@@ -41,6 +41,8 @@ export type FilterField =
       queryFn?: () => Promise<FilterOption[]>;
       options?: FilterOption[];
       enabled?: boolean;
+      dependsOn?: string[];
+      selectAll?: boolean;
     }
   | {
       name: string;

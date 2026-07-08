@@ -6,6 +6,7 @@ import { fetchPlanningDits } from "../api/planningDitApi";
 import { planningDitFieldfilter } from "../filter/planningDitFieldfilter";
 import PlanningDitTable from "../components/PlanningDitTable";
 import { getMockPlanningDits } from "../schema/mock/planningDitMock";
+import { useMemo, useState } from "react";
 
 function PlanningDitList() {
   const { currentPage, setPage, selectedFilters, setFilter, reset } =
@@ -27,18 +28,85 @@ function PlanningDitList() {
   const items = planningDit?.data ?? [];
   const lastPage = planningDit?.totalPages ?? 1;
 
+  const agents = [
+    {
+      label: "Agent 1",
+      value: "1",
+      services: [
+        { label: "Service A", value: "A" },
+        { label: "Service B", value: "B" },
+      ],
+    },
+    {
+      label: "Agent 2",
+      value: "2",
+      services: [{ label: "Service C", value: "C" }],
+    },
+  ];
+
+  const getServicesForAgent = (agentValue: string) => {
+    const agent = agents.find((a) => a.value === agentValue);
+    return agent ? agent.services : [];
+  };
+
+  const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
+
+  const dynamicFields = useMemo(() => {
+    return planningDitFieldfilter.map((column) =>
+      column.map((field) => {
+        if (field.name === "agent_debiteur") {
+          return {
+            ...field,
+
+            queryFn: async () =>
+              agents.map((a) => ({ label: a.label, value: a.value })),
+          };
+        }
+        if (field.name === "service_debiteur") {
+          return {
+            ...field,
+            placeholder: !selectedAgent
+              ? "Sélectionnez d'abord un agent débiteur"
+              : "",
+            selectAll: true,
+            dependsOn: ["agent_debiteur"], // ✅ clears services when agent changes
+            queryKey: `service_debiteur_${selectedAgent || "none"}`,
+            queryFn: async () => {
+              if (!selectedAgent) return [];
+              return getServicesForAgent(selectedAgent);
+            },
+          };
+        }
+        return field;
+      }),
+    );
+  }, [selectedAgent]);
+
+  const handleSearch = (values: Record<string, any>) => {
+    if (values.agent_debiteur !== undefined) {
+      setSelectedAgent(values.agent_debiteur || null);
+    }
+    Object.entries(values).forEach(([key, value]) => {
+      setFilter(key, String(value ?? ""));
+    });
+  };
+
+  const handleReset = () => {
+    setSelectedAgent(null);
+    reset();
+  };
+
   return (
     <div className="p-4 w-full  h-full">
       <div className="w-full  gap-6 overflow-x-auto ">
         <CollapsibleFilter
-          fields={planningDitFieldfilter}
-          onSearch={(values) =>
-            Object.entries(values).forEach(([key, value]) => {
-              setFilter(key, String(value ?? ""));
-            })
-          }
-          onReset={() => {
-            reset();
+          fields={dynamicFields}
+          onSearch={handleSearch}
+          onReset={handleReset}
+          onFieldChange={(name, value) => {
+            if (name === "agent_debiteur") {
+              setSelectedAgent(value || null);
+            }
           }}
         ></CollapsibleFilter>
         <div className="max-w-7xl mx-auto md:flex justify-between">

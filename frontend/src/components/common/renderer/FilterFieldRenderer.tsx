@@ -105,6 +105,11 @@ export function FilterFieldRenderer({ field }: any) {
 
     return (
       <div className="space-y-2">
+        {value.length === 0 && field.placeholder && (
+          <div className="text-xs text-muted-foreground">
+            {field.placeholder}
+          </div>
+        )}
         {options.map((opt: any) => {
           const checked = value.includes(opt.value);
 

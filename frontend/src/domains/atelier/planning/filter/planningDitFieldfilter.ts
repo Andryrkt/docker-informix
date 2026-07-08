@@ -32,12 +32,10 @@ export const planningDitFieldfilter: FilterField[][] = [
   // Colonne 2
   [
     {
-      name: "all_service_debiteur",
+      name: "service_debiteur",
       label: "Service debiteur",
-      type: "boolean",
-      variant: "checkbox",
-      placeholder: "Tout sélectionner",
-      hideLabel: false,
+      type: "multichoice",
+      options: [],
     },
     {
       name: "section_affectee",
@@ -103,7 +101,7 @@ export const planningDitFieldfilter: FilterField[][] = [
       label: "DIT avec Back Order",
       type: "boolean",
       variant: "checkbox",
-      hideLabel: true,
+      hideLabel: false,
       placeholder: "DIT avec Back Order",
     },
     {

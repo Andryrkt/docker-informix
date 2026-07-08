@@ -49,6 +49,21 @@ export function buildExcelFilename(
   return parts.join("_") + ".xlsx";
 }
 
+// Format date au format JJ/MM/AAAA (affichage) — accepte une date ISO
+// ("2026-06-25" ou "2026-06-25T00:00:00") ou un objet Date.
+export function formatDate(value?: string | Date | null): string {
+  if (!value) return "";
+
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  return date.toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
+
 export const customLabels: Record<string, string> = {
   "liste-devis-neg": "Devis",
 };

@@ -6,7 +6,7 @@
 
 @baseUrl = http://localhost:8080/api
 @username = lanto
-@password = Hasina#2026-2
+@password = Hasina*2026-3
 
 # Après avoir envoyé ### 1. Login, coller le token ici si la capture auto ne marche pas :
 @token = eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3ODI4MjU1MzgsImV4cCI6MTc4Mjg1NDMzOCwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoibGFudG8ifQ.pOiSM56OFXUW_dTYxEqj88nCVgOHqw0TNsBAr75fdtQbEma489O2PbDSk90CsdVM_cBIg9Ga5rkzu-dIRFqheOtCiO0nnC8MfDyVCcv9eo1R63wg_tJBtoepj_u1v5ZI1ZmfOd9bhkSmq2v65AsMD_p2BYLCWOppkvZLun3T0H0o99u5B27pdpnUdQRj0zlvzZcgqlHIV5TJwHVzM1vpYMcvAnEjNYkfBnxKg9scRAF-dfkT_50AEZHqAsz09XRliiS8UegsxT3KYd19PCYQRJs3E6M85WvdFV993WyGcoSP9cjKZpRLDBB_BeppNTjcepRah4DfvBchup7lK5SFGw

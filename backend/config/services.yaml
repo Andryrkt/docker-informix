@@ -63,6 +63,16 @@ services:
             Doctrine\ORM\EntityManagerInterface: '@doctrine.orm.sqlserver_entity_manager'
             Doctrine\DBAL\Connection: '@doctrine.dbal.sqlserver_connection'
 
+    # Dit (DIT Atelier) : les repositories résolvent leur entity manager tout
+    # seuls via ManagerRegistry (entités réparties sur irium/ips/sqlserver,
+    # cf. leurs mappings respectifs dans doctrine.yaml). Seul le compteur de
+    # numérotation (SQL Server) a besoin d'un EntityManagerInterface explicite,
+    # nommé pour ne pas entrer en conflit avec le défaut (ips).
+    App\Dit\:
+        resource: '../src/Dit/'
+        bind:
+            $emSqlServer: '@doctrine.orm.sqlserver_entity_manager'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 

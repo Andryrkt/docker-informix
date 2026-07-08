@@ -38,6 +38,11 @@ doctrine:
                         type: attribute
                         dir: '%kernel.project_dir%/src/Magasin/Devis/Entity/Ips'
                         prefix: 'App\Magasin\Devis\Entity\Ips'
+                    DitIps:
+                        is_bundle: false
+                        type: attribute
+                        dir: '%kernel.project_dir%/src/Dit/Entity/Ips'
+                        prefix: 'App\Dit\Entity\Ips'
                 filters:
                     user_scope:
                         class: App\Security\Doctrine\UserScopeFilter
@@ -50,6 +55,11 @@ doctrine:
                         type: attribute
                         dir: '%kernel.project_dir%/src/Magasin/Devis/Entity/Irium'
                         prefix: 'App\Magasin\Devis\Entity\Irium'
+                    DitIrium:
+                        is_bundle: false
+                        type: attribute
+                        dir: '%kernel.project_dir%/src/Dit/Entity/Irium'
+                        prefix: 'App\Dit\Entity\Irium'
             sqlserver:
                 connection: sqlserver
                 mappings:
@@ -73,6 +83,11 @@ doctrine:
                         type: attribute
                         dir: '%kernel.project_dir%/src/Tik/Entity'
                         prefix: 'App\Tik\Entity'
+                    Dit:
+                        is_bundle: false
+                        type: attribute
+                        dir: '%kernel.project_dir%/src/Dit/Entity/SqlServer'
+                        prefix: 'App\Dit\Entity\SqlServer'
 when@test:
     doctrine:
         dbal:

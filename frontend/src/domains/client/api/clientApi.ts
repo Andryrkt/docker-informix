@@ -1,10 +1,7 @@
-import { mockClients } from "../schema/clientMock";
+import axiosInstance from "@/conf/axios";
 import type { Client } from "../schema/clientSchema";
 
 export const getClients = async (): Promise<Client[]> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(mockClients);
-    }, 300);
-  });
+  const { data } = await axiosInstance.get("/dit/clients");
+  return data;
 };

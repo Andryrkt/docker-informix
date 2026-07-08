@@ -5,7 +5,15 @@ import {
   reparationRealiseParOptions,
 } from "@/domains/reparation/api";
 import { getServicesDebiteur } from "@/domains/service/api";
+import {
+  fetchCategoriesDemande,
+  fetchTypesDocument,
+} from "../api/ditApi";
 import type { FieldTrait, SelectOption } from "@/schema/traitFields";
+
+const toSelectOptions = (
+  items: { code: string; label: string }[],
+): SelectOption[] => items.map((i) => ({ label: i.label, value: i.code }));
 
 export const interneExterneOptions: SelectOption[] = [
   { label: "INTERNE", value: "INTERNE" },
@@ -17,32 +25,9 @@ export const yesNoOptions: SelectOption[] = [
   { label: "Non", value: "NON" },
 ];
 
-// back
-//  Niveau d'urgence
-// reparation realisation
-
-//
-export const typeDocumentOptions: SelectOption[] = [
-  { label: "Autres", value: "Autres" },
-  { label: "Maintenance curative", value: "Maintenance curative" },
-  { label: "Maintenance préventive", value: "Maintenance préventive" },
-  { label: "Préparation vente", value: "Préparation vente" },
-];
-
-//
-export const categorieDemandeOptions: SelectOption[] = [
-  { label: "AUTRES", value: "AUTRES" },
-  { label: "LANCEMENT SAV", value: "LANCEMENT SAV" },
-  { label: "FOURNITURES PIECES", value: "FOURNITURES PIECES" },
-  { label: "GARANTIE", value: "GARANTIE" },
-  { label: "RECEPTION", value: "RECEPTION" },
-  { label: "ENTRETIENT", value: "ENTRETIENT" },
-  { label: "REPARATION", value: "REPARATION" },
-];
-
 export const demandeFields: FieldTrait[] = [
   {
-    name: "object",
+    name: "objet",
     label: "Objet",
     type: "text",
     placeholder: "Objet de la demande",
@@ -60,14 +45,15 @@ export const traitFields: FieldTrait[] = [
     name: "typeDocument",
     label: "Type document",
     type: "select",
-    options: typeDocumentOptions,
+    queryKey: "typeDocument",
+    queryFn: () => fetchTypesDocument().then(toSelectOptions),
   },
   {
     name: "categorieDemande",
     label: "Catégorie demande",
     type: "select",
     queryKey: "categorieDemande",
-    options: categorieDemandeOptions,
+    queryFn: () => fetchCategoriesDemande().then(toSelectOptions),
   },
   {
     name: "interneExterne",

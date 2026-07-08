@@ -10,7 +10,7 @@ import type { Dit } from "../schema/ditSchema";
 import { getStatusDevisClass } from "@/helper/helper";
 import { MoreVerticalIcon, ToolCase } from "lucide-react";
 import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 import DotsMenu, { type MenuAction } from "./Dots.Menu";
 import { useCallback, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -242,7 +242,7 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
                   </TableCell>
 
                   <TableCell className=" font-mono text-gray-600 wrap-break-word whitespace-normal max-w-20 text-[0.6rem]">
-                    {d.dateDemande}
+                    {formatDate(d.dateDemande)}
                   </TableCell>
 
                   <TableCell>{d.interneExterne}</TableCell>
@@ -271,7 +271,7 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
 
                   <TableCell>{d.montantOr}</TableCell>
 
-                  <TableCell>{d.dateSoumissionOr}</TableCell>
+                  <TableCell>{formatDate(d.dateSoumissionOr)}</TableCell>
 
                   <TableCell>{d.etatFacturation}</TableCell>
                   <TableCell>{d.ri}</TableCell>

@@ -1,50 +1,24 @@
+import axiosInstance from "@/conf/axios";
+
 export type SelectOption = {
   id: number;
   code?: string;
   label: string;
   value: string;
 };
-const mockReparationTypes: SelectOption[] = [
-  {
-    id: 1,
-    code: "STANDARD",
-    label: "Standard",
-    value: "STANDARD",
-  },
-  {
-    id: 2,
-    code: "URGENTE",
-    label: "Urgente",
-    value: "URGENTE",
-  },
-  {
-    id: 3,
-    code: "PREVENTIVE",
-    label: "Préventive",
-    value: "PREVENTIVE",
-  },
-  {
-    id: 4,
-    code: "CORRECTIVE",
-    label: "Corrective",
-    value: "CORRECTIVE",
-  },
-];
+
 export const getReparationTypes = async (): Promise<SelectOption[]> => {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(mockReparationTypes), 400);
-  });
+  const { data } = await axiosInstance.get<{ code: string; label: string }[]>(
+    "/dit/types-reparation",
+  );
+  return data.map((t, i) => ({ id: i + 1, code: t.code, label: t.label, value: t.code }));
 };
 
 export const getReparationTypeByCode = async (
   code: string,
 ): Promise<SelectOption | undefined> => {
-  return new Promise((resolve) => {
-    setTimeout(
-      () => resolve(mockReparationTypes.find((t) => t.code === code)),
-      300,
-    );
-  });
+  const types = await getReparationTypes();
+  return types.find((t) => t.code === code);
 };
 
 // Reparation realisé par
@@ -86,8 +60,3 @@ export const reparationRealiseParOptions: SelectOption[] = [
     value: "ATE_FTU",
   },
 ];
-
-export const reparationOptions = {
-  types: mockReparationTypes,
-  realisePar: reparationRealiseParOptions,
-};

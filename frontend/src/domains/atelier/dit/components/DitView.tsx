@@ -17,11 +17,12 @@ import {
 } from "./atom/BilanFinanciereCard";
 import { mockCommandes } from "@/domains/commande/commandeMocks";
 import { Paperclip } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 
 type Props = {
   dit: Dit;
-  bilanFinancier: BilanFinancier;
-  materiel: Materiel;
+  bilanFinancier?: BilanFinancier | null;
+  materiel?: Materiel | null;
 };
 function DitView({ dit, bilanFinancier, materiel }: Props) {
   const interventionFields = [
@@ -31,7 +32,7 @@ function DitView({ dit, bilanFinancier, materiel }: Props) {
     },
     {
       label: "Date prévue",
-      value: dit?.datePrevue,
+      value: formatDate(dit?.datePrevue),
     },
     {
       label: "Statut",
@@ -123,7 +124,7 @@ function DitView({ dit, bilanFinancier, materiel }: Props) {
                 ></FieldReadOnly>
                 <FieldReadOnly
                   label="Date Demande"
-                  value={dit?.dateDemande}
+                  value={formatDate(dit?.dateDemande)}
                 ></FieldReadOnly>
                 <FieldReadOnly
                   label="Statut DIT"
@@ -195,9 +196,7 @@ function DitView({ dit, bilanFinancier, materiel }: Props) {
                         className="font-mono text-gray-600  wrap-break-word whitespace-normal text-center"
                       >
                         <TableCell>{cmd.numero}</TableCell>
-                        <TableCell>
-                          {new Date(cmd.date).toLocaleDateString("fr-FR")}
-                        </TableCell>
+                        <TableCell>{formatDate(cmd.date)}</TableCell>
                         <TableCell>
                           <span className={""}>{cmd.statut}</span>
                         </TableCell>

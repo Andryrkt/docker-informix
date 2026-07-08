@@ -30,13 +30,26 @@ export async function fetchDits(
 }
 
 
-export async function fetchDitDetails(
-  id: number | string,
-): Promise<DitFormValues> {
-  const response = await axiosInstance.get<DitFormValues>(
+export async function fetchDitDetails(id: number | string): Promise<Dit> {
+  const response = await axiosInstance.get<Dit>(
     `/demande-intervention/details/${id}`,
   );
   return response.data;
+}
+
+export interface DitLookupOption {
+  code: string;
+  label: string;
+}
+
+export async function fetchTypesDocument(): Promise<DitLookupOption[]> {
+  const { data } = await axiosInstance.get<DitLookupOption[]>("/dit/types-document");
+  return data;
+}
+
+export async function fetchCategoriesDemande(): Promise<DitLookupOption[]> {
+  const { data } = await axiosInstance.get<DitLookupOption[]>("/dit/categories-demande");
+  return data;
 }
 
 export const createDit = async (

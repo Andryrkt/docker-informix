@@ -185,8 +185,8 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
 
     form.setFieldValue("numClient", client.numClient);
     form.setFieldValue("nomClient", client.nomClient);
-    form.setFieldValue("telephoneClient", client.telephoneClient);
-    form.setFieldValue("emailClient", client.emailClient);
+    form.setFieldValue("telephoneClient", client.telephoneClient ?? "");
+    form.setFieldValue("emailClient", client.emailClient ?? "");
   };
 
   return (

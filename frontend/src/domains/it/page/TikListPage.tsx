@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { ChevronRight, GanttChartSquare, Paperclip, Plus } from "lucide-react";
+import {
+  ChevronRight, GanttChartSquare, LayoutDashboard, Paperclip, Plus,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
@@ -48,6 +50,11 @@ export default function TikListPage() {
           <p className="text-sm text-gray-500 mt-0.5">{tickets.length} ticket(s)</p>
         </div>
         <div className="flex items-center gap-2">
+          <Button asChild size="sm" variant="outline" className="gap-2">
+            <Link to="/it/tickets/dashboard">
+              <LayoutDashboard size={15} /> Tableau de bord
+            </Link>
+          </Button>
           <Button asChild size="sm" variant="outline" className="gap-2">
             <Link to="/it/tickets/gantt">
               <GanttChartSquare size={15} /> Diagramme de Gantt

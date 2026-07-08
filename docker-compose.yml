@@ -9,8 +9,10 @@ services:
       - "8080:80"
     volumes:
       - ./backend:/var/www/html
-      # Optimisation cache pour Windows
-      - ./backend/var/cache:/var/www/html/var/cache:delegated
+      # Volumes Linux natifs pour éviter la lenteur des bind mounts Windows
+      # vendor/ et var/cache/ contiennent ~40k fichiers PHP lus à chaque nouveau worker
+      - backend_vendor:/var/www/html/vendor
+      - backend_cache:/var/www/html/var/cache
     extra_hosts:
       - "ol_iriumprod_net:192.168.0.11"
     environment:
@@ -33,6 +35,11 @@ services:
       - /app/node_modules
     environment:
       - VITE_API_URL=http://localhost:8080/api
+      # 🔥 AJOUTER CES VARIABLES POUR LE HOT-RELOAD
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true # Pour Windows
+      - WATCHPACK_POLLING=true # Pour Vite
+      - VITE_USE_POLLING=true # Alternative pour Vite
     restart: unless-stopped
 
   # --- DOCUMENTATION (Docusaurus) ---
@@ -46,4 +53,14 @@ services:
     volumes:
       - ./docs-hff:/app
       - /app/node_modules
+    environment:
+      # 🔥 AJOUTER CES VARIABLES POUR LE HOT-RELOAD
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true # Pour Windows
+      - WATCHPACK_POLLING=true # Pour Vite
+      - VITE_USE_POLLING=true # Alternative pour Vite
     restart: unless-stopped
+
+volumes:
+  backend_vendor:
+  backend_cache:

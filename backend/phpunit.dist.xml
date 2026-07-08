@@ -17,8 +17,24 @@
         <server name="SHELL_VERBOSITY" value="-1" />
     </php>
 
+    <!--
+        Suites disponibles :
+          php bin/phpunit                           → toutes
+          php bin/phpunit -\-testsuite Unit         → unitaires uniquement (rapides, sans DB)
+          php bin/phpunit -\-testsuite Functional   → fonctionnels uniquement (nécessitent DB + kernel)
+          php bin/phpunit -\-testsuite Security     → tests de sécurité (LDAP, voters)
+    -->
     <testsuites>
-        <testsuite name="Project Test Suite">
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Functional">
+            <directory>tests/Functional</directory>
+        </testsuite>
+        <testsuite name="Security">
+            <directory>tests/Security</directory>
+        </testsuite>
+        <testsuite name="All">
             <directory>tests</directory>
         </testsuite>
     </testsuites>

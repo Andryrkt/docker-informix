@@ -1,10 +1,12 @@
 import { useAuth } from "@/context/authContext";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 const VisualTimer = () => {
   const { logout } = useAuth();
-  const totalTime = import.meta.env.VITE_TIMER_SESSION || 900; // 15 minutes in seconds default
+  const totalTime = Number(import.meta.env.VITE_TIMER_SESSION) || 900;
   const [timeLeft, setTimeLeft] = useState(totalTime);
+  const logoutRef = useRef(logout);
+  useEffect(() => { logoutRef.current = logout; }, [logout]);
 
   const resetTimer = useCallback(() => {
     setTimeLeft(totalTime);
@@ -19,29 +21,23 @@ const VisualTimer = () => {
       "scroll",
       "touchstart",
     ];
-
-    // Attach event listeners
     events.forEach((event) => window.addEventListener(event, resetTimer));
-
-    // Cleanup event listeners
     return () => {
       events.forEach((event) => window.removeEventListener(event, resetTimer));
     };
   }, [resetTimer]);
 
-  // Handle Countdown Interval and Toast Trigger
+  // Single interval — created once, never recreated on each tick
   useEffect(() => {
-    if (timeLeft <= 0) {
-      logout();
-      return;
-    }
-
     const timer = setInterval(() => {
-      setTimeLeft((prevTime: number) => prevTime - 1);
+      setTimeLeft((prev) => (prev <= 1 ? 0 : prev - 1));
     }, 1000);
-
     return () => clearInterval(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Separate effect: logout when timer reaches 0
+  useEffect(() => {
+    if (timeLeft === 0) logoutRef.current();
   }, [timeLeft]);
 
   const formatTime = (time: number) => {

@@ -5,9 +5,15 @@ import ErrorPage from "../error/ErrorPage";
 import { AnonymousOnly } from "../auth/guard/AnonymousOnly";
 import AppLayouts from "../layout/AppLayout";
 import Login from "../domains/authentification/pages/Login";
+import SelectCompany from "../domains/authentification/pages/SelectCompany";
 import HomePage from "@/domains/home/page/HomePage";
 import DemandeSupportIT from "@/domains/it/page/DemandeSupportIT";
+import TikListPage from "@/domains/it/page/TikListPage";
+import TikDetailPage from "@/domains/it/page/TikDetailPage";
+import TikGanttPage from "@/domains/it/page/TikGanttPage";
+import TikDashboardPage from "@/domains/it/page/TikDashboardPage";
 import { RequireAuth } from "./guards/RequireAuth";
+import { RequireCompany } from "./guards/RequireCompany";
 import DevisList from "@/domains/magasin/dematerialisation/devis/pages/DevisList";
 import DitList from "@/domains/atelier/dit/pages/DitList";
 import DitCreation from "@/domains/atelier/dit/pages/DitCreation";
@@ -21,11 +27,19 @@ import OrSoummission from "@/domains/atelier/soumission/pages/OrdreReparationSou
 import RapportInterventionSoumission from "@/domains/atelier/soumission/pages/RapportInterventionSoumission";
 import FactureSoummission from "@/domains/atelier/soumission/pages/FactureSoummission";
 import DossierDitDetails from "@/domains/atelier/dossierDit/pages/DossierDitDetails";
-import DossierDitList from "@/domains/atelier/dossierDit/pages/DossierDitList";
-import PlanningDitList from "@/domains/atelier/planning/pages/PlanningDitList";
-import PlanningMagasinList from "@/domains/magasin/dematerialisation/planning/pages/PlanningMagasinList";
-import PlanningDitListDetaille from "@/domains/atelier/planning/pages/PlanningDitListDetaille";
-import PlanningDitInterneAtelierList from "@/domains/atelier/planning/pages/PlanningDitInterneAtelierList";
+import DossierList from "@/domains/atelier/dossierDit/components/DossierList";
+import AdminLayout from "@/domains/admin/layout/AdminLayout";
+import SocietesPage from "@/domains/admin/pages/SocietesPage";
+import AgencesPage from "@/domains/admin/pages/AgencesPage";
+import ServicesPage from "@/domains/admin/pages/ServicesPage";
+import UtilisateursPage from "@/domains/admin/pages/UtilisateursPage";
+import UserPermissionsPage from "@/domains/admin/pages/UserPermissionsPage";
+import ActionsPage from "@/domains/admin/pages/ActionsPage";
+import ModelePermissionsPage from "@/domains/admin/pages/ModelePermissionsPage";
+import AuditNavigationPage from "@/domains/admin/pages/AuditNavigationPage";
+import AuditOperationPage from "@/domains/admin/pages/AuditOperationPage";
+import CentresPage from "@/domains/admin/pages/CentresPage";
+import PersonnelPage from "@/domains/admin/pages/PersonnelPage";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -47,14 +61,34 @@ function AppRoutes() {
     },
   ];
 
+  // Routes nécessitant auth mais PAS de société active (ex: sélection de société)
+  const privateRoutesNoCompany = [
+    {
+      element: (
+        <RequireAuth>
+          <AppLayouts />
+        </RequireAuth>
+      ),
+      errorElement: <ErrorPage />,
+      children: [
+        {
+          path: "/select-company",
+          element: <SelectCompany />,
+        },
+      ],
+    },
+  ];
+
+  // Routes nécessitant auth ET société active sélectionnée
   const privateRoutes = [
     {
       element: (
         <RequireAuth>
-          {/* //Mettre RequireAuth après pour protéger les routes privées */}
-          {/* <LazyWrapper> */}
-          <AppLayouts />
-          {/* </LazyWrapper> */}
+          <RequireCompany>
+            {/* <LazyWrapper> */}
+            <AppLayouts />
+            {/* </LazyWrapper> */}
+          </RequireCompany>
         </RequireAuth>
       ),
       errorElement: <ErrorPage />,
@@ -158,11 +192,61 @@ function AppRoutes() {
           path: "/it/demande-support-informatique",
           element: <DemandeSupportIT />,
         },
+        {
+          path: "/it/tickets",
+          element: <TikListPage />,
+        },
+        {
+          path: "/it/tickets/gantt",
+          element: <TikGanttPage />,
+        },
+        {
+          path: "/it/tickets/dashboard",
+          element: <TikDashboardPage />,
+        },
+        {
+          path: "/it/tickets/:id",
+          element: <TikDetailPage />,
+        },
       ],
     },
   ];
+
+  // Routes admin — auth + company required, layout propre avec sidebar
+  const adminRoutes = [
+    {
+      element: (
+        <RequireAuth>
+          <RequireCompany>
+            <AppLayouts />
+          </RequireCompany>
+        </RequireAuth>
+      ),
+      errorElement: <ErrorPage />,
+      children: [
+        {
+          path: "/admin",
+          element: <AdminLayout />,
+          children: [
+            { path: "societes",     element: <SocietesPage />     },
+            { path: "agences",      element: <AgencesPage />      },
+            { path: "services",     element: <ServicesPage />      },
+            { path: "centres",      element: <CentresPage />       },
+            { path: "personnel",    element: <PersonnelPage />     },
+            { path: "utilisateurs",                      element: <UtilisateursPage />      },
+            { path: "utilisateurs/:userId/permissions", element: <UserPermissionsPage />  },
+            { path: "actions",                          element: <ActionsPage />           },
+            { path: "modeles",                          element: <ModelePermissionsPage /> },
+            { path: "historique/navigation",            element: <AuditNavigationPage />  },
+            { path: "historique/operations",            element: <AuditOperationPage />   },
+          ],
+        },
+      ],
+    },
+  ];
+
   const router = createBrowserRouter(
-    [...publicRoutes, ...privateRoutes],
+    [...publicRoutes, ...privateRoutesNoCompany, ...privateRoutes, ...adminRoutes],
     // {
     //   basename: import.meta.env.VITE_APP_BASE || "/",
     // },

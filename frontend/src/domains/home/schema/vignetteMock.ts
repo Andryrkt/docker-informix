@@ -21,6 +21,8 @@ import {
   Contact,
   FolderTree,
   ListTree,
+  GanttChartSquare,
+  LayoutDashboard,
   Wrench,
   BriefcaseBusiness,
   Folders,
@@ -191,6 +193,27 @@ export const vignetteMock = [
               label: "Formulaire de demande de support",
               icon: HandHelping,
               link: "/it/demande-support-informatique",
+            },
+          ],
+        },
+        {
+          title: "Tickets",
+          icon: ListChecks,
+          items: [
+            {
+              label: "Suivi des tickets",
+              icon: ListTree,
+              link: "/it/tickets",
+            },
+            {
+              label: "Diagramme de Gantt",
+              icon: GanttChartSquare,
+              link: "/it/tickets/gantt",
+            },
+            {
+              label: "Tableau de bord",
+              icon: LayoutDashboard,
+              link: "/it/tickets/dashboard",
             },
           ],
         },

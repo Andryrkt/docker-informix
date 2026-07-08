@@ -1,0 +1,231 @@
+import axiosInstance from "@/conf/axios";
+
+export type Statut = "OUVERT" | "PLANIFIE" | "EN_COURS" | "RESOLU" | "REFUSE" | "CLOTURE" | "REOUVERT" | "EN_ATTENTE";
+export type NiveauUrgence = "P1" | "P2" | "P3" | "P4" | "P5";
+
+export interface CategorieRef {
+  id: number;
+  description: string;
+}
+
+export interface AutresCategorieNode {
+  id: number;
+  description: string;
+}
+
+export interface SousCategorieNode {
+  id: number;
+  description: string;
+  autresCategories: AutresCategorieNode[];
+}
+
+export interface CategorieNode {
+  id: number;
+  description: string;
+  sousCategories: SousCategorieNode[];
+}
+
+export interface AgenceServiceRef {
+  id: number;
+  code: string;
+  name: string;
+}
+
+export interface TikFichier {
+  name: string;
+  sizeKb: number;
+  url: string;
+}
+
+export interface PersonnelRef {
+  id: number;
+  nom: string;
+  prenoms: string;
+}
+
+export interface TikActions {
+  peutValider: boolean;
+  peutRefuser: boolean;
+  peutMettreEnAttente: boolean;
+  peutPlanifier: boolean;
+  peutTransferer: boolean;
+  peutResoudre: boolean;
+  peutCloturer: boolean;
+  peutReouvrir: boolean;
+  peutCommenter: boolean;
+}
+
+export interface Tik {
+  id: number;
+  numeroTicket: string;
+  objetDemande: string;
+  detailDemande: string;
+  niveauUrgence: NiveauUrgence;
+  parcInformatique: string | null;
+  dateFinSouhaitee: string;
+  statut: Statut;
+  createdAt: string;
+  dateDebutPlanning: string | null;
+  dateFinPlanning: string | null;
+  agenceEmetteur: AgenceServiceRef | null;
+  serviceEmetteur: AgenceServiceRef | null;
+  agenceDebiteur: AgenceServiceRef | null;
+  serviceDebiteur: AgenceServiceRef | null;
+  categorie: CategorieRef | null;
+  sousCategorie: CategorieRef | null;
+  autresCategorie: CategorieRef | null;
+  demandeur: { id: number; username: string; displayName: string | null } | null;
+  validateur: { id: number; displayName: string } | null;
+  intervenant: PersonnelRef | null;
+  fichiers: TikFichier[];
+  actions: TikActions;
+}
+
+export interface TikHistoriqueEntry {
+  id: number;
+  statut: Statut;
+  commentaire: string | null;
+  user: { id: number; displayName: string } | null;
+  createdAt: string;
+}
+
+export interface TikCommentaireEntry {
+  id: number;
+  commentaire: string;
+  fichiers: TikFichier[];
+  user: { id: number; displayName: string } | null;
+  createdAt: string;
+}
+
+export interface TikDefaults {
+  agenceEmetteur: AgenceServiceRef | null;
+  serviceEmetteur: AgenceServiceRef | null;
+  codeSociete: string | null;
+  dateFinSouhaiteeDefaut: string;
+}
+
+export interface TikPayload {
+  objetDemande: string;
+  detailDemande: string;
+  categorieId: number | undefined;
+  agenceDebiteurId: number | undefined;
+  serviceDebiteurId: number | undefined;
+  dateFinSouhaitee: string;
+  parcInformatique?: string;
+  fichiers?: File[];
+}
+
+export type PartOfDay = "AM" | "PM";
+
+export interface PlanifierPayload {
+  date: string;
+  partOfDay: PartOfDay;
+}
+
+export const fetchCategoriesTree = async (): Promise<CategorieNode[]> => {
+  const { data } = await axiosInstance.get("/tik/categories");
+  return data;
+};
+
+export const fetchTikDefaults = async (): Promise<TikDefaults> => {
+  const { data } = await axiosInstance.get("/tik/tickets/defaults");
+  return data;
+};
+
+export const fetchIntervenantsDisponibles = async (): Promise<PersonnelRef[]> => {
+  const { data } = await axiosInstance.get("/tik/tickets/intervenants");
+  return data;
+};
+
+export const fetchHistorique = async (id: number): Promise<TikHistoriqueEntry[]> => {
+  const { data } = await axiosInstance.get(`/tik/tickets/${id}/historique`);
+  return data;
+};
+
+export const fetchCommentaires = async (id: number): Promise<TikCommentaireEntry[]> => {
+  const { data } = await axiosInstance.get(`/tik/tickets/${id}/commentaires`);
+  return data;
+};
+
+export const postCommentaire = async (id: number, commentaire: string, fichiers?: File[]): Promise<TikCommentaireEntry> => {
+  const formData = new FormData();
+  formData.append("commentaire", commentaire);
+  (fichiers ?? []).forEach((file) => formData.append("fichiers[]", file));
+
+  const { data } = await axiosInstance.post(`/tik/tickets/${id}/commentaires`, formData);
+  return data;
+};
+
+export const fetchTickets = async (): Promise<Tik[]> => {
+  const { data } = await axiosInstance.get("/tik/tickets");
+  return data;
+};
+
+export const fetchTicket = async (id: number): Promise<Tik> => {
+  const { data } = await axiosInstance.get(`/tik/tickets/${id}`);
+  return data;
+};
+
+export const createTicket = async (payload: TikPayload): Promise<Tik> => {
+  const formData = new FormData();
+
+  formData.append("objetDemande", payload.objetDemande);
+  formData.append("detailDemande", payload.detailDemande);
+  if (payload.categorieId !== undefined)       formData.append("categorieId", String(payload.categorieId));
+  if (payload.agenceDebiteurId !== undefined)  formData.append("agenceDebiteurId", String(payload.agenceDebiteurId));
+  if (payload.serviceDebiteurId !== undefined) formData.append("serviceDebiteurId", String(payload.serviceDebiteurId));
+  formData.append("dateFinSouhaitee", payload.dateFinSouhaitee);
+  if (payload.parcInformatique) formData.append("parcInformatique", payload.parcInformatique);
+  (payload.fichiers ?? []).forEach((file) => formData.append("fichiers[]", file));
+
+  const { data } = await axiosInstance.post("/tik/tickets", formData);
+  return data;
+};
+
+export const planifierTicket = async (id: number, payload: PlanifierPayload): Promise<Tik> => {
+  const { data } = await axiosInstance.post(`/tik/tickets/${id}/planifier`, payload);
+  return data;
+};
+
+export interface ValiderPayload {
+  intervenantId: number | undefined;
+  commentaire?: string;
+  sousCategorieId?: number;
+  autresCategorieId?: number;
+  niveauUrgence?: NiveauUrgence;
+}
+
+export const validerTicket = async (id: number, payload: ValiderPayload): Promise<Tik> => {
+  const { data } = await axiosInstance.post(`/tik/tickets/${id}/valider`, payload);
+  return data;
+};
+
+export const refuserTicket = async (id: number, commentaire: string): Promise<Tik> => {
+  const { data } = await axiosInstance.post(`/tik/tickets/${id}/refuser`, { commentaire });
+  return data;
+};
+
+export const mettreEnAttenteTicket = async (id: number, commentaire: string): Promise<Tik> => {
+  const { data } = await axiosInstance.post(`/tik/tickets/${id}/mettre-en-attente`, { commentaire });
+  return data;
+};
+
+export const resoudreTicket = async (id: number, commentaire?: string): Promise<Tik> => {
+  const { data } = await axiosInstance.post(`/tik/tickets/${id}/resoudre`, { commentaire });
+  return data;
+};
+
+export const transfererTicket = async (id: number, intervenantId: number | undefined): Promise<Tik> => {
+  const { data } = await axiosInstance.post(`/tik/tickets/${id}/transferer`, { intervenantId });
+  return data;
+};
+
+export const cloturerTicket = async (id: number, commentaire?: string): Promise<Tik> => {
+  const { data } = await axiosInstance.post(`/tik/tickets/${id}/cloturer`, { commentaire });
+  return data;
+};
+
+export const reouvrirTicket = async (id: number, commentaire?: string): Promise<Tik> => {
+  const { data } = await axiosInstance.post(`/tik/tickets/${id}/reouvrir`, { commentaire });
+  return data;
+};

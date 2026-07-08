@@ -23,6 +23,14 @@ class InformixDriver implements Driver
             $pdo = new \PDO($dsn, $user, $password, [
                 \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
                 \PDO::ATTR_TIMEOUT => 10,
+                // Le driver Informix renvoie les noms de colonnes en MAJUSCULES
+                // (ex: "ID" au lieu de "id"), y compris pour des alias déclarés
+                // en minuscules dans le SQL. Sans ce forçage, Doctrine ORM ne
+                // peut pas hydrater les entités (IdentifierFlattener cherche
+                // la clé "id" et ne trouve que "ID") et tout accès par clé
+                // minuscule sur un résultat brut (ex: $row['numero_devis'])
+                // échoue silencieusement.
+                \PDO::ATTR_CASE => \PDO::CASE_LOWER,
             ]);
             // echo "✅ Connexion PDO réussie\n";
             return new \Doctrine\DBAL\Driver\PDO\Connection($pdo);

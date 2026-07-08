@@ -1,3 +1,5 @@
+import axiosInstance from "@/conf/axios";
+
 export type SelectOption = {
   id: number;
   code?: string;
@@ -5,28 +7,19 @@ export type SelectOption = {
   value: string;
 };
 
-// Debiteur
-const mockServicesDebiteur: SelectOption[] = [
-  { id: 1, code: "SD001", label: "Comptabilité", value: "SD001" },
-  { id: 2, code: "SD002", label: "Recouvrement", value: "SD002" },
-  { id: 3, code: "SD003", label: "Audit interne", value: "SD003" },
-];
+async function fetchServices(agenceId?: number): Promise<SelectOption[]> {
+  const { data } = await axiosInstance.get<{ id: number; code: string; label: string }[]>(
+    "/dit/services",
+    { params: agenceId ? { agenceId } : {} },
+  );
+  return data.map((s) => ({ ...s, value: String(s.id) }));
+}
 
-export const getServicesDebiteur = async (): Promise<SelectOption[]> => {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(mockServicesDebiteur), 500);
-  });
-};
+export const getServicesDebiteur = async (): Promise<SelectOption[]> => fetchServices();
 
 export const getServiceDebiteurByAgence = async (
   agenceId: number,
-): Promise<SelectOption[]> => {
-  return new Promise((resolve) => {
-    const filtered = mockServicesDebiteur.filter((_, i) => i % agenceId !== 0);
-
-    setTimeout(() => resolve(filtered), 400);
-  });
-};
+): Promise<SelectOption[]> => fetchServices(agenceId);
 
 // Emetteur
 const mockServicesEmetteur: SelectOption[] = [

@@ -34,150 +34,53 @@ class UserPermission
     #[ORM\Column(type: 'json')]
     private array $actions = [];
 
+    /**
+     * true = accès complet (toutes agences, tous services).
+     * false = accès restreint défini par agencyScopes.
+     */
     #[ORM\Column(type: 'boolean')]
-    private bool $allAgences = false;
-
-    #[ORM\Column(type: 'boolean')]
-    private bool $allServices = false;
+    private bool $scopeAll = true;
 
     /**
-     * IDs des agences autorisées pour cette ressource.
-     * @var array<int>
+     * Portée par agence. Utilisé uniquement quand scopeAll = false.
+     * Format : [{agencyId: int, allServices: bool, serviceIds: int[]}]
+     *
+     * - allServices: true  → tous les services de cette agence
+     * - allServices: false → uniquement les services listés dans serviceIds
+     *
+     * @var array<array{agencyId: int, allServices: bool, serviceIds: int[]}>
      */
     #[ORM\Column(type: 'json', nullable: true)]
-    private ?array $agenceIds = [];
+    private array $agencyScopes = [];
 
-    /**
-     * IDs des services autorisés pour cette ressource.
-     * @var array<int>
-     */
-    #[ORM\Column(type: 'json', nullable: true)]
-    private ?array $serviceIds = [];
+    public function getId(): ?int { return $this->id; }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    public function getUser(): ?User { return $this->user; }
+    public function setUser(?User $user): static { $this->user = $user; return $this; }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
+    public function getResourceType(): ?string { return $this->resourceType; }
+    public function setResourceType(string $resourceType): static { $this->resourceType = $resourceType; return $this; }
 
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
-        return $this;
-    }
+    public function getResourceId(): ?int { return $this->resourceId; }
+    public function setResourceId(int $resourceId): static { $this->resourceId = $resourceId; return $this; }
 
-    public function getResourceType(): ?string
-    {
-        return $this->resourceType;
-    }
+    public function getCompany(): ?Company { return $this->company; }
+    public function setCompany(?Company $company): static { $this->company = $company; return $this; }
 
-    public function setResourceType(string $resourceType): static
-    {
-        $this->resourceType = $resourceType;
-        return $this;
-    }
+    /** @return array<string> */
+    public function getActions(): array { return $this->actions; }
 
-    public function getResourceId(): ?int
-    {
-        return $this->resourceId;
-    }
+    /** @param array<string> $actions */
+    public function setActions(array $actions): static { $this->actions = array_unique($actions); return $this; }
 
-    public function setResourceId(int $resourceId): static
-    {
-        $this->resourceId = $resourceId;
-        return $this;
-    }
+    public function hasAction(string $action): bool { return in_array($action, $this->actions, true); }
 
-    public function getCompany(): ?Company
-    {
-        return $this->company;
-    }
+    public function isScopeAll(): bool { return $this->scopeAll; }
+    public function setScopeAll(bool $scopeAll): static { $this->scopeAll = $scopeAll; return $this; }
 
-    public function setCompany(?Company $company): static
-    {
-        $this->company = $company;
-        return $this;
-    }
+    /** @return array<array{agencyId: int, allServices: bool, serviceIds: int[]}> */
+    public function getAgencyScopes(): array { return $this->agencyScopes; }
 
-    /**
-     * @return array<string>
-     */
-    public function getActions(): array
-    {
-        return $this->actions;
-    }
-
-    /**
-     * @param array<string> $actions
-     */
-    public function setActions(array $actions): static
-    {
-        $this->actions = array_unique($actions);
-        return $this;
-    }
-
-    public function hasAction(string $action): bool
-    {
-        return in_array($action, $this->actions, true);
-    }
-
-    public function isAllAgences(): bool
-    {
-        return $this->allAgences;
-    }
-
-    public function setAllAgences(bool $allAgences): static
-    {
-        $this->allAgences = $allAgences;
-        return $this;
-    }
-
-    public function isAllServices(): bool
-    {
-        return $this->allServices;
-    }
-
-    public function setAllServices(bool $allServices): static
-    {
-        $this->allServices = $allServices;
-        return $this;
-    }
-
-    /**
-     * @return array<int>|null
-     */
-    public function getAgenceIds(): ?array
-    {
-        return $this->agenceIds;
-    }
-
-    /**
-     * @param array<int>|null $agenceIds
-     */
-    public function setAgenceIds(?array $agenceIds): static
-    {
-        $this->agenceIds = $agenceIds;
-        return $this;
-    }
-
-    /**
-     * @return array<int>|null
-     */
-    public function getServiceIds(): ?array
-    {
-        return $this->serviceIds;
-    }
-
-    /**
-     * @param array<int>|null $serviceIds
-     */
-    public function setServiceIds(?array $serviceIds): static
-    {
-        $this->serviceIds = $serviceIds;
-        return $this;
-    }
+    /** @param array<array{agencyId: int, allServices: bool, serviceIds: int[]}> $agencyScopes */
+    public function setAgencyScopes(array $agencyScopes): static { $this->agencyScopes = $agencyScopes; return $this; }
 }

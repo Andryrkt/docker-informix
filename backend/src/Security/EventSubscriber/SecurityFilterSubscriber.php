@@ -10,6 +10,14 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class SecurityFilterSubscriber implements EventSubscriberInterface
 {
+    // Routes qui ne font jamais de requêtes Informix — inutile d'établir
+    // une connexion SQL Server juste pour activer le filtre.
+    private const SKIP_ROUTES = [
+        '/api/login',
+        '/api/me',
+        '/api/navigation',
+    ];
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly SecurityContextService $securityContext
@@ -26,6 +34,13 @@ class SecurityFilterSubscriber implements EventSubscriberInterface
     {
         if (!$event->isMainRequest()) {
             return;
+        }
+
+        $path = $event->getRequest()->getPathInfo();
+        foreach (self::SKIP_ROUTES as $skip) {
+            if (str_starts_with($path, $skip)) {
+                return;
+            }
         }
 
         $agencyIds = $this->securityContext->getAllowedAgencyIds();

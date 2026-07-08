@@ -1,6 +1,6 @@
 export interface Client {
   numClient: string;
   nomClient: string;
-  telephoneClient: string;
-  emailClient: string;
+  telephoneClient: string | null;
+  emailClient: string | null;
 }

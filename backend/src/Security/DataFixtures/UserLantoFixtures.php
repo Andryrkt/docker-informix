@@ -12,11 +12,16 @@ use App\Security\Entity\User;
 use App\Security\Entity\UserPermission;
 use App\Security\Entity\UserScope;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class UserLantoFixtures extends Fixture implements DependentFixtureInterface
+class UserLantoFixtures extends Fixture implements FixtureGroupInterface
 {
+    public static function getGroups(): array
+    {
+        return ['lanto'];
+    }
+
     public function load(ObjectManager $manager): void
     {
         // 1. Récupérer l'utilisateur lanto (déjà créé par LDAP) ou le créer s'il n'existe pas encore en base
@@ -29,34 +34,39 @@ class UserLantoFixtures extends Fixture implements DependentFixtureInterface
             $manager->persist($user);
         }
 
-        $company = $this->getReference(CompanyFixtures::COMPANY_HFF, Company::class);
-
-        // 2. Donner accès à tous les Modules (Vignettes)
-        $modules = $manager->getRepository(AppModule::class)->findAll();
-        foreach ($modules as $module) {
-            $perm = new UserPermission();
-            $perm->setUser($user);
-            $perm->setCompany($company);
-            $perm->setResourceType('module');
-            $perm->setResourceId($module->getId());
-            $perm->setActions([AppAction::VIEW]);
-            $perm->setAllAgences(true);
-            $perm->setAllServices(true);
-            $manager->persist($perm);
+        // Charger les sociétés depuis la BDD (fonctionne en --append sans références de fixture)
+        $companies = $manager->getRepository(Company::class)->findAll();
+        if (empty($companies)) {
+            return;
         }
 
-        // 3. Donner accès à tous les Menus avec tous les droits (CRUD+)
-        $menus = $manager->getRepository(AppMenu::class)->findAll();
-        foreach ($menus as $menu) {
-            $perm = new UserPermission();
-            $perm->setUser($user);
-            $perm->setCompany($company);
-            $perm->setResourceType('menu');
-            $perm->setResourceId($menu->getId());
-            $perm->setActions(AppAction::ALL); // Tous les droits !
-            $perm->setAllAgences(true);
-            $perm->setAllServices(true);
-            $manager->persist($perm);
+        $modules = $manager->getRepository(AppModule::class)->findAll();
+        $menus   = $manager->getRepository(AppMenu::class)->findAll();
+
+        foreach ($companies as $company) {
+            // 2. Donner accès à tous les Modules (Vignettes)
+            foreach ($modules as $module) {
+                $perm = new UserPermission();
+                $perm->setUser($user);
+                $perm->setCompany($company);
+                $perm->setResourceType('module');
+                $perm->setResourceId($module->getId());
+                $perm->setActions([AppAction::VIEW]);
+                $perm->setScopeAll(true);
+                $manager->persist($perm);
+            }
+
+            // 3. Donner accès à tous les Menus avec tous les droits (CRUD+)
+            foreach ($menus as $menu) {
+                $perm = new UserPermission();
+                $perm->setUser($user);
+                $perm->setCompany($company);
+                $perm->setResourceType('menu');
+                $perm->setResourceId($menu->getId());
+                $perm->setActions(AppAction::ALL);
+                $perm->setScopeAll(true);
+                $manager->persist($perm);
+            }
         }
 
         // 4. Définir le Scope (Agences et Services)
@@ -82,13 +92,4 @@ class UserLantoFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
-    public function getDependencies(): array
-    {
-        return [
-            CompanyFixtures::class,
-            ServiceFixtures::class,
-            AgencyFixtures::class,
-            NavigationFixtures::class,
-        ];
-    }
 }

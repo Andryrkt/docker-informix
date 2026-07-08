@@ -6,9 +6,13 @@ import LogoHff from "@/assets/logoHFF.jpg";
 import Footer from "./components/Footer";
 import { useAuth } from "@/context/authContext";
 import { AppBreadcrumb } from "@/components/common/AppBreadcrumb";
+import { usePageTracker } from "@/hooks/usePageTracker";
 
 function AppLayouts() {
   const { user } = useAuth();
+
+  // Tracking automatique de navigation — actif uniquement pour les utilisateurs connectés
+  usePageTracker({ enabled: !!user });
 
   const appName = import.meta.env.VITE_APP_NAME;
   const title = import.meta.env.VITE_APP_TITLE;

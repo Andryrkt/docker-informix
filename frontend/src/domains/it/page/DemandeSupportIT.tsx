@@ -1,18 +1,10 @@
-import PageHeader from "@/layout/components/PageHeader";
-import React from "react";
-import SupportITForm from "../components/SupportITForm";
+import TikCreationForm from "../components/TikCreationForm";
 
 function DemandeSupportIT() {
   return (
     <div className="p-4 w-full min-h-screen ">
       <div className=" w-full h-full space-y-6 overflow-x-auto">
-        {/* <PageHeader
-          title="Demande de support IT"
-          description="Vous pouvez faire une demande de support concernant l'intranet."
-        /> */}
-        <div>
-          <SupportITForm></SupportITForm>
-        </div>
+        <TikCreationForm />
       </div>
     </div>
   );

@@ -7,7 +7,6 @@ import { useQuery } from "@tanstack/react-query";
 import DitTable from "../components/DitTable";
 import GlobalPagination from "@/components/common/pagination/GlobalPagination";
 import { fetchDits } from "../api/ditApi";
-import { ditMock } from "../schema/ditMock";
 import { ditFieldFilter } from "../filter/DitFieldfilter";
 import LivraisonStatutsList from "@/components/common/LivraisonStatusBadge";
 import StatusBadgeGroup, {
@@ -75,8 +74,7 @@ function DitList() {
             filename={buildExcelFilename(selectedFilters, ditMock)}
           ></ExcelDownloadButton>
           <div className="flex items-center gap-2 ">
-            {/* <span className="">{dit?.total ?? 0}</span> */}
-            <span className="">{ditMock.length ?? 0}</span>
+            <span className="">{dit?.resultat ?? 0}</span>
             <span className="text-muted-foreground text-sm">Résultats</span>
           </div>
           <div className="">
@@ -88,7 +86,7 @@ function DitList() {
           </div>
         </div>
 
-        <DitTable dit={ditMock} loading={isLoading || isFetching} />
+        <DitTable dit={items} loading={isLoading || isFetching} />
 
         <div className=" flex">
           <div className="m-auto">

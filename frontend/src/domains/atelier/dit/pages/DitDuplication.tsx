@@ -10,46 +10,7 @@ function DitDuplication() {
   const { numeroDemandeIntervention } = useParams();
   const confirm = useConfirm();
 
-  const initialValues: DitFormValues = {
-    objet: "Copie demande intervention",
-    details: "Duplication de la demande existante, ceci est un test",
-
-    typeDocument: "Autres",
-    categorieDemande: "AUTRES",
-    // interneExterne: "INTERNE",
-    interneExterne: "EXTERNE",
-    demandeDevis: "NON",
-    livraisonPartielle: "NON",
-    avisRecouvrement: "NON",
-
-    // agenceDebiteur: "AG001",
-    // serviceDebiteur: "SD001",
-
-    agenceEmetteur: "AG001",
-    serviceEmmetteur: "SV001",
-
-    worNiveauUrgence: "P1",
-    datePrevue: "2026-06-24",
-
-    typeReparation: "STANDARD",
-    reparationPar: "ATE_TANA",
-
-    numClient: "CL-1001",
-    telephoneClient: "0340000000",
-    nomClient: "Société HME SARL",
-    emailClient: "contact@hme.mg",
-    clientSousContrat: "NON",
-
-    pieceJoint: [],
-    pieceJoint1: [],
-    pieceJoint2: [],
-
-    idMateriel: "18837",
-    numParc: "1234-HME149",
-    numSerie: "S6X02021",
-  };
-
-  const { data, isPending, error } = useQuery({
+  const { data: initialValues, isPending, error } = useQuery({
     queryKey: ["dit-details", numeroDemandeIntervention],
     queryFn: () => fetchDitDetails(numeroDemandeIntervention!),
     enabled: !!numeroDemandeIntervention,
@@ -57,13 +18,13 @@ function DitDuplication() {
       objet: dit.objet ?? "Copie demande intervention",
       details: dit.details ?? "Duplication de la demande existante",
       typeDocument: dit.typeDocument ?? "TYPE_1",
-      interneExterne: dit.interneExterne ?? "EXTERNE",
+      interneExterne: dit.interneExterne === "INTERNE" ? "INTERNE" : "EXTERNE",
       demandeDevis: dit.demandeDevis ?? "NON",
       livraisonPartielle: dit.livraisonPartielle ?? "NON",
       avisRecouvrement: dit.avisRecouvrement ?? "NON",
 
-      agenceDebiteur: dit.agenceEmetteur ?? "",
-      serviceDebiteur: dit.serviceEmmetteur ?? "",
+      agenceDebiteur: dit.agenceDebiteur ?? "",
+      serviceDebiteur: dit.serviceDebiteur ?? "",
       agenceEmetteur: dit.agenceEmetteur ?? "",
       serviceEmmetteur: dit.serviceEmmetteur ?? "",
 
@@ -101,21 +62,23 @@ function DitDuplication() {
       // icon: < className="w-5 h-5 text-red-500" />,
     });
     if (!confirmed) {
-      console.log("Action annulée.");
       return;
     }
-    toast(JSON.stringify(values));
-    console.log(values);
-    // await duplicateDit(values);
+    await duplicateDit(values);
+    toast("La demande a été dupliquée.");
   };
 
-  // if (isPending) {
-  //   return <div>Loading...</div>;
-  // }
+  if (isPending) {
+    return <div className="p-4 text-center text-muted-foreground">Chargement...</div>;
+  }
 
-  // if (error || !data) {
-  //   return <div>Unable to load DIT.</div>;
-  // }
+  if (error || !initialValues) {
+    return (
+      <div className="p-4 text-center text-destructive">
+        Impossible de charger la demande d'intervention à dupliquer.
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 w-full min-h-screen ">

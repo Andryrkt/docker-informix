@@ -33,6 +33,46 @@ services:
         bind:
             Doctrine\ORM\EntityManagerInterface: '@doctrine.orm.sqlserver_entity_manager'
 
+    # Audit : les repositories utilisent le ManagerRegistry (autowired).
+    # AuditService utilise DBAL directement via la connexion SQL Server.
+    App\Audit\:
+        resource: '../src/Audit/'
+
+    # AuditService : injection explicite de la connexion DBAL SQL Server
+    # (DBAL ne se ferme pas sur un INSERT raté, contrairement à l'EntityManager)
+    App\Audit\Service\AuditService:
+        bind:
+            Doctrine\DBAL\Connection: '@doctrine.dbal.sqlserver_connection'
+
+    # Notification : idem AuditService, connexion DBAL SQL Server explicite
+    # (le contrôleur lit/écrit via l'ORM — l'entité Notification est mappée sur sqlserver)
+    App\Notification\:
+        resource: '../src/Notification/'
+        bind:
+            Doctrine\DBAL\Connection: '@doctrine.dbal.sqlserver_connection'
+            Doctrine\ORM\EntityManagerInterface: '@doctrine.orm.sqlserver_entity_manager'
+            $mailerFrom: '%env(MAILER_FROM)%'
+
+    # Tik (ticketing IT) : lecture via l'ORM (mappé sur sqlserver), écriture via
+    # DBAL direct — le driver SQL Server custom ne convertit pas correctement un
+    # DateTime lié en paramètre via l'ORM (cf. AuditService/NotificationService,
+    # même limitation).
+    App\Tik\:
+        resource: '../src/Tik/'
+        bind:
+            Doctrine\ORM\EntityManagerInterface: '@doctrine.orm.sqlserver_entity_manager'
+            Doctrine\DBAL\Connection: '@doctrine.dbal.sqlserver_connection'
+
+    # Dit (DIT Atelier) : les repositories résolvent leur entity manager tout
+    # seuls via ManagerRegistry (entités réparties sur irium/ips/sqlserver,
+    # cf. leurs mappings respectifs dans doctrine.yaml). Seul le compteur de
+    # numérotation (SQL Server) a besoin d'un EntityManagerInterface explicite,
+    # nommé pour ne pas entrer en conflit avec le défaut (ips).
+    App\Dit\:
+        resource: '../src/Dit/'
+        bind:
+            $emSqlServer: '@doctrine.orm.sqlserver_entity_manager'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 

@@ -8,16 +8,22 @@ use Doctrine\Persistence\ObjectManager;
 
 class CompanyFixtures extends Fixture
 {
-    public const COMPANY_HFF = 'company_hff';
+    public const COMPANY_HFF    = 'company_hff';
+    public const COMPANY_FRAISE = 'company_fraise';
 
     public function load(ObjectManager $manager): void
     {
-        $company = new Company();
-        $company->setName('HOLDING FRAISE');
-        $company->setCode('HFF');
-        
-        $manager->persist($company);
-        $this->addReference(self::COMPANY_HFF, $company);
+        $hff = new Company();
+        $hff->setName('HOLDING FRAISE');
+        $hff->setCode('HFF');
+        $manager->persist($hff);
+        $this->addReference(self::COMPANY_HFF, $hff);
+
+        $fraise = new Company();
+        $fraise->setName('FRAISE SUD');
+        $fraise->setCode('FS');
+        $manager->persist($fraise);
+        $this->addReference(self::COMPANY_FRAISE, $fraise);
 
         $manager->flush();
     }

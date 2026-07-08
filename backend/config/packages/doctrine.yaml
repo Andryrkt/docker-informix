@@ -21,14 +21,12 @@ doctrine:
                 server: '%env(INFORMIXSERVER)%'
                 protocol: onsoctcp
             sqlserver:
-                driver: pdo_sqlsrv
+                driver_class: App\Doctrine\SqlServer\SqlServerDriver
                 host: '%env(SQLSERVER_HOST)%'
                 port: '%env(SQLSERVER_PORT)%'
                 dbname: '%env(SQLSERVER_DB)%'
                 user: '%env(SQLSERVER_USER)%'
                 password: '%env(SQLSERVER_PASSWORD)%'
-                options:
-                    TrustServerCertificate: true
     orm:
         default_entity_manager: ips
         entity_managers:
@@ -40,6 +38,11 @@ doctrine:
                         type: attribute
                         dir: '%kernel.project_dir%/src/Magasin/Devis/Entity/Ips'
                         prefix: 'App\Magasin\Devis\Entity\Ips'
+                    DitIps:
+                        is_bundle: false
+                        type: attribute
+                        dir: '%kernel.project_dir%/src/Dit/Entity/Ips'
+                        prefix: 'App\Dit\Entity\Ips'
                 filters:
                     user_scope:
                         class: App\Security\Doctrine\UserScopeFilter
@@ -52,6 +55,11 @@ doctrine:
                         type: attribute
                         dir: '%kernel.project_dir%/src/Magasin/Devis/Entity/Irium'
                         prefix: 'App\Magasin\Devis\Entity\Irium'
+                    DitIrium:
+                        is_bundle: false
+                        type: attribute
+                        dir: '%kernel.project_dir%/src/Dit/Entity/Irium'
+                        prefix: 'App\Dit\Entity\Irium'
             sqlserver:
                 connection: sqlserver
                 mappings:
@@ -60,6 +68,26 @@ doctrine:
                         type: attribute
                         dir: '%kernel.project_dir%/src/Security/Entity'
                         prefix: 'App\Security\Entity'
+                    Audit:
+                        is_bundle: false
+                        type: attribute
+                        dir: '%kernel.project_dir%/src/Audit/Entity'
+                        prefix: 'App\Audit\Entity'
+                    Notification:
+                        is_bundle: false
+                        type: attribute
+                        dir: '%kernel.project_dir%/src/Notification/Entity'
+                        prefix: 'App\Notification\Entity'
+                    Tik:
+                        is_bundle: false
+                        type: attribute
+                        dir: '%kernel.project_dir%/src/Tik/Entity'
+                        prefix: 'App\Tik\Entity'
+                    Dit:
+                        is_bundle: false
+                        type: attribute
+                        dir: '%kernel.project_dir%/src/Dit/Entity/SqlServer'
+                        prefix: 'App\Dit\Entity\SqlServer'
 when@test:
     doctrine:
         dbal:

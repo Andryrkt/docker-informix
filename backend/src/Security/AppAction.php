@@ -22,6 +22,7 @@ final class AppAction
     public const APPROVE   = 'approve';    // approuver une demande
     public const DUPLICATE = 'duplicate';  // dupliquer une fiche
     public const ARCHIVE   = 'archive';
+    public const INTERVENE = 'intervene';  // être éligible comme intervenant (ex: tickets TIK)
 
     // Import
     public const IMPORT = 'import';
@@ -33,7 +34,7 @@ final class AppAction
     public const ALL = [
         self::VIEW, self::EXPORT, self::PRINT,
         self::CREATE, self::EDIT, self::DELETE,
-        self::VALIDATE, self::APPROVE, self::DUPLICATE, self::ARCHIVE,
+        self::VALIDATE, self::APPROVE, self::DUPLICATE, self::ARCHIVE, self::INTERVENE,
         self::IMPORT, self::MANAGE_USERS, self::MANAGE_PERMS,
     ];
 }

@@ -5,10 +5,14 @@ WORKDIR /app
 # Installation des outils de base pour le debug réseau
 RUN apk add --no-cache bash curl
 
-# On ne fait plus npm install ici pour éviter le blocage au build
+# Copier et installer les dépendances PENDANT le build
 COPY package*.json ./
+RUN npm install && npm cache clean --force
+
+# Copier le reste du code
+COPY . .
 
 EXPOSE 5173
 
-# On lance l'installation au démarrage du conteneur
-CMD ["sh", "-c", "npm install && npm run dev -- --host"]
+# Démarrer directement sans npm install
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

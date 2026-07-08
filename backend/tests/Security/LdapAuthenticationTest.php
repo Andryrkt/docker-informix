@@ -4,13 +4,16 @@ namespace App\Tests\Security;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
+/**
+ * Tests fonctionnels pour l'authentification LDAP.
+ *
+ * Les credentials de test sont lus depuis les variables d'environnement
+ * définies dans .env.test.local (non commité) :
+ *   TEST_USER=lanto
+ *   TEST_PASSWORD=motdepasse
+ */
 class LdapAuthenticationTest extends WebTestCase
 {
-    /**
-     * Ce test simule une tentative d'authentification.
-     * Note: Pour qu'il passe réellement, le serveur LDAP doit être accessible
-     * ou les services doivent être mockés.
-     */
     public function testLoginFailureWithInvalidCredentials(): void
     {
         $client = static::createClient();
@@ -22,30 +25,27 @@ class LdapAuthenticationTest extends WebTestCase
             [],
             ['CONTENT_TYPE' => 'application/json'],
             json_encode([
-                'username' => 'invalid_user',
-                'password' => 'wrong_password',
+                'username' => 'utilisateur_inexistant_xyz',
+                'password' => 'mauvais_mot_de_passe_xyz',
             ])
         );
 
-        $response = $client->getResponse();
-        
-        // On s'attend à un 401 Unauthorized car les identifiants sont faux
-        $this->assertEquals(401, $response->getStatusCode());
-        
-        $data = json_decode($response->getContent(), true);
+        $this->assertResponseStatusCodeSame(401);
+
+        $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('error', $data);
     }
 
-    /**
-     * Test de la structure de la réponse en cas de succès (si credentials valides fournis)
-     * Attention: Ce test nécessite un vrai LDAP ou un Mock.
-     */
-    public function testLoginSuccessStructure(): void
+    public function testLoginWithValidCredentials(): void
     {
-        // Si tu veux tester un vrai succès, remplace par des identifiants valides
-        // pour ton environnement de test/dev.
-        $username = 'lanto'; 
-        $password = 'Hasina#2026-2';
+        $username = $_ENV['TEST_USER']     ?? getenv('TEST_USER')     ?: null;
+        $password = $_ENV['TEST_PASSWORD'] ?? getenv('TEST_PASSWORD') ?: null;
+
+        if (!$username || !$password) {
+            $this->markTestSkipped(
+                'TEST_USER et TEST_PASSWORD doivent être définis dans .env.test.local pour ce test.'
+            );
+        }
 
         $client = static::createClient();
         $client->request(
@@ -54,21 +54,33 @@ class LdapAuthenticationTest extends WebTestCase
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            json_encode([
-                'username' => $username,
-                'password' => $password,
-            ])
+            json_encode(['username' => $username, 'password' => $password])
         );
 
         $response = $client->getResponse();
 
-        // Si le LDAP n'est pas joignable en test, ce test échouera.
-        // C'est normal sans configuration de Mock LDAP.
-        if ($response->getStatusCode() === 200) {
-            $data = json_decode($response->getContent(), true);
-            $this->assertArrayHasKey('token', $data);
-            $this->assertArrayHasKey('user', $data);
-            $this->assertEquals($username, $data['user']['username']);
+        if ($response->getStatusCode() !== 200) {
+            $this->markTestSkipped('Le serveur LDAP n\'est pas joignable depuis l\'environnement de test.');
         }
+
+        $data = json_decode($response->getContent(), true);
+        $this->assertArrayHasKey('token', $data);
+        $this->assertArrayHasKey('user',  $data);
+        $this->assertSame($username, $data['user']['username']);
+    }
+
+    public function testLoginReturnsJsonOnFailure(): void
+    {
+        $client = static::createClient();
+        $client->request(
+            'POST',
+            '/api/login',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode(['username' => 'x', 'password' => 'x'])
+        );
+
+        $this->assertResponseHeaderSame('content-type', 'application/json');
     }
 }

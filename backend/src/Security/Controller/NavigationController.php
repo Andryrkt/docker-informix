@@ -125,17 +125,15 @@ class NavigationController extends AbstractController
         $perm = $permissionsMap['menu'][$menu->getId()] ?? null;
 
         $data = [
-            'id' => $menu->getId(),
-            'nom' => $menu->getLabel(),
-            'route' => $menu->getRoute(),
-            'actions' => $perm ? $perm->getActions() : [],
-            'scope' => [
-                'allAgences' => $perm ? $perm->isAllAgences() : false,
-                'allServices' => $perm ? $perm->isAllServices() : false,
-                'agenceIds' => $perm ? $perm->getAgenceIds() : [],
-                'serviceIds' => $perm ? $perm->getServiceIds() : []
+            'id'       => $menu->getId(),
+            'nom'      => $menu->getLabel(),
+            'route'    => $menu->getRoute(),
+            'actions'  => $perm ? $perm->getActions() : [],
+            'scope'    => [
+                'scopeAll'     => $perm ? $perm->isScopeAll() : false,
+                'agencyScopes' => $perm ? $perm->getAgencyScopes() : [],
             ],
-            'sous-menu' => [] // Submenus renommé
+            'sous-menu' => [],
         ];
 
         foreach ($menu->getSubMenus() as $subMenu) {

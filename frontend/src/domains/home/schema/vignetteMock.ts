@@ -142,7 +142,11 @@ export const vignetteMock = [
               icon: Search,
               link: "/atelier/demande-intervention/dit-list",
             },
-            { label: "Dossier DIT", icon: Folders },
+            {
+              label: "Dossier DIT",
+              icon: Folders,
+              link: "/atelier/demande-intervention/dossier-list",
+            },
             { label: "Matrice de responsabilité", icon: Grid3x3 },
           ],
         },

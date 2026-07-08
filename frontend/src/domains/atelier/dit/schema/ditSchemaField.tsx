@@ -5,11 +5,7 @@ import {
   reparationRealiseParOptions,
 } from "@/domains/reparation/api";
 import { getServicesDebiteur } from "@/domains/service/api";
-
-export type SelectOption = {
-  label: string;
-  value: string;
-};
+import type { FieldTrait, SelectOption } from "@/schema/traitFields";
 
 export const interneExterneOptions: SelectOption[] = [
   { label: "INTERNE", value: "INTERNE" },
@@ -44,96 +40,7 @@ export const categorieDemandeOptions: SelectOption[] = [
   { label: "REPARATION", value: "REPARATION" },
 ];
 
-export type DitField =
-  | {
-      name: string;
-      label: string;
-      type: "text" | "number" | "textarea";
-      placeholder?: string;
-      validate?: (value: string) => boolean;
-      readOnly?: boolean;
-    }
-  | {
-      name: string;
-      label: string;
-      type: "select";
-      placeholder?: string;
-      // async mode
-      queryKey?: string;
-      queryFn?: () => Promise<SelectOption[]>;
-      options?: SelectOption[];
-      enabled?: boolean;
-      readOnly?: boolean;
-    }
-  | {
-      name: string;
-      label: string;
-      type: "date-range";
-      readOnly?: boolean;
-    }
-  | {
-      name: string;
-      label: string;
-      type: "file";
-    }
-  | {
-      name: string;
-      label: string;
-      type: "date";
-    }
-  | {
-      name: string;
-      label: string;
-      type: "multichoice";
-      placeholder?: string;
-      // async mode
-      queryKey?: string;
-      queryFn?: () => Promise<SelectOption[]>;
-      options?: SelectOption[];
-      enabled?: boolean;
-    }
-  | {
-      name: string;
-      label: string;
-      type: "radio";
-      direction?: "horizontal" | "vertical";
-      // async mode
-      queryKey?: string;
-      queryFn?: () => Promise<SelectOption[]>;
-      // static mode
-      options?: SelectOption[];
-
-      enabled?: boolean;
-    }
-  | {
-      name: string;
-      label: string;
-      type: "boolean";
-      variant?: "switch" | "checkbox" | "radio";
-      trueLabel?: string;
-      falseLabel?: string;
-      enabled?: boolean;
-    }
-  | {
-      name: string;
-      label: string;
-      type: "file";
-      placeholder?: string;
-      multiple?: boolean;
-    }
-  | {
-      name: string;
-      label: string;
-      type: "multiSelect";
-      placeholder?: string;
-      // async mode
-      queryKey?: string;
-      queryFn?: () => Promise<SelectOption[]>;
-      options?: SelectOption[];
-      enabled?: boolean;
-    };
-
-export const demandeFields: DitField[] = [
+export const demandeFields: FieldTrait[] = [
   {
     name: "object",
     label: "Objet",
@@ -148,7 +55,7 @@ export const demandeFields: DitField[] = [
   },
 ];
 
-export const traitFields: DitField[] = [
+export const traitFields: FieldTrait[] = [
   {
     name: "typeDocument",
     label: "Type document",
@@ -188,7 +95,7 @@ export const traitFields: DitField[] = [
   },
 ];
 
-export const agenceAndServiceFields: DitField[] = [
+export const agenceAndServiceFields: FieldTrait[] = [
   {
     name: "agenceDebiteur",
     label: "Agence débiteur",
@@ -220,7 +127,7 @@ export const agenceAndServiceFields: DitField[] = [
     readOnly: true,
   },
 ];
-export const interventionFields: DitField[] = [
+export const interventionFields: FieldTrait[] = [
   {
     name: "worNiveauUrgence",
     label: "Niveau d'urgence",
@@ -234,7 +141,7 @@ export const interventionFields: DitField[] = [
     type: "date",
   },
 ];
-export const reparationFields: DitField[] = [
+export const reparationFields: FieldTrait[] = [
   {
     name: "typeReparation",
     label: "Type de reparation",
@@ -249,7 +156,7 @@ export const reparationFields: DitField[] = [
     options: reparationRealiseParOptions,
   },
 ];
-export const infoClientFields: DitField[] = [
+export const infoClientFields: FieldTrait[] = [
   {
     name: "numClient",
     label: "Numéro du client (*EXTERNE)",
@@ -281,7 +188,7 @@ export const infoClientFields: DitField[] = [
     ],
   },
 ];
-export const piecesJointFields: DitField[] = [
+export const piecesJointFields: FieldTrait[] = [
   {
     name: "pieceJoint",
     label: "Pièce jointe",
@@ -298,7 +205,7 @@ export const piecesJointFields: DitField[] = [
     type: "file",
   },
 ];
-export const infoMaterielFields: DitField[] = [
+export const infoMaterielFields: FieldTrait[] = [
   {
     name: "idMateriel",
     label: "Id materiel",

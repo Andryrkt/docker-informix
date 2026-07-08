@@ -56,7 +56,7 @@ export default function StatusBadgeGroup({
   return (
     <div className="mt-1">
       <div className="text-[0.6rem] text-gray-700 pb-1">{title}</div>
-      <div className="flex flex-wrap gap-2 max-w-lg">
+      <div className="grid grid-cols-3 gap-2 ">
         {items.map((item) => {
           const active = value === item.value;
           const statusClass = getStatusDitClass(item.value);
@@ -66,7 +66,7 @@ export default function StatusBadgeGroup({
               key={item.value}
               onClick={() => onChange?.(item.value)}
               className={cn(
-                "flex items-center gap-2 px-3 py-1 rounded-md border text-xs transition flex-1 font-semibold ",
+                "flex items-center gap-2 px-3 rounded-md border text-[0.65rem] transition flex-1 font-semibold ",
                 statusClass,
                 active
                   ? "ring-2 ring-offset-2 ring-black"

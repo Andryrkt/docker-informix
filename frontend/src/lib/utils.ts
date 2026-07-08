@@ -63,3 +63,52 @@ export const formatLabel = (segment: string) => {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
 };
+
+// File viewer utils
+const urlCache = new WeakMap<File, string>();
+
+export function getFileUrl(file: File | undefined): string | null {
+  if (!file) return null;
+  if (!urlCache.has(file)) {
+    const rawUrl = URL.createObjectURL(file);
+    const cleanUrl =
+      file.type === "application/pdf"
+        ? `${rawUrl}#toolbar=0&navpanes=0&statusbar=0&messages=0&view=FitH`
+        : rawUrl;
+
+    urlCache.set(file, cleanUrl);
+  }
+  return urlCache.get(file) || null;
+}
+
+// Format file size
+export const formatFileSize = (bytes: number) => {
+  if (bytes === 0) return "0 B";
+
+  const k = 1024;
+  const sizes = ["B", "KB", "MB", "GB", "TB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return `${(bytes / Math.pow(k, i)).toFixed(i === 0 ? 0 : 1)} ${sizes[i]}`;
+};
+
+// Helper pour fichiers
+
+export const appendFiles = (key: string, files: any, formData: any) => {
+  if (!files) return;
+
+  const list = Array.isArray(files) ? files : [files];
+
+  list.forEach((file) => {
+    if (file instanceof File) {
+      formData.append(`${key}[]`, file);
+    }
+  });
+};
+
+// Helper function to safely convert any input into a File array
+export const normalizeFiles = (val: any): File[] => {
+  if (Array.isArray(val)) return val;
+  if (val instanceof File) return [val];
+  return [];
+};

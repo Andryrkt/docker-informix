@@ -48,7 +48,7 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className=" bg-gray-400 w-full h-full flex flex-col justify-center items-center">
+    <div className=" bg-gray-400 w-full h-full flex flex-col justify-center items-center min-h-screen">
       <div className="w-full max-w-md border px-8 py-10 mx-auto bg-white shadow-lg ">
         <div className="flex justify-center mb-4">
           <img

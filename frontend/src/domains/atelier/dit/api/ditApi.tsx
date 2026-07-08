@@ -8,6 +8,7 @@ export interface ditParams {
   skip?: number;
   limit?: number;
 }
+
 export async function fetchDits(
   params: ditParams = {},
   page = 1,
@@ -27,6 +28,8 @@ export async function fetchDits(
 
   return response.data;
 }
+
+
 export async function fetchDitDetails(
   id: number | string,
 ): Promise<DitFormValues> {
@@ -70,6 +73,7 @@ export const createDit = async (
 
   return data;
 };
+
 export const duplicateDit = async (
   payload: DitFormValues,
 ): Promise<ApiResponse<Dit>> => {
@@ -103,4 +107,42 @@ export const duplicateDit = async (
   const { data } = await axiosInstance.post("/createDIT", formData);
 
   return data;
+};
+export interface CheckDitPayload {
+  document: string;
+  numeroDemandeIntervention?: string;
+}
+
+export interface CheckDitResponse {
+  allowed: boolean;
+  message?: string;
+  data?: any;
+}
+// export const checkDitSubmission = async (
+//   payload: CheckDitPayload,
+// ): Promise<ApiResponse<CheckDitResponse>> => {
+//   const { data } = await axiosInstance.post<ApiResponse<CheckDitResponse>>(
+//     "/demande-intervention/check-submission",
+//     payload,
+//   );
+
+//   return data;
+// };
+
+export const checkDitSubmission = async (
+  payload: CheckDitPayload,
+): Promise<ApiResponse<CheckDitResponse>> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      return resolve({
+        data: {
+          allowed: true,
+          message: "Mock: submission allowed",
+          data: null,
+        },
+        status: 200,
+        success: true,
+      });
+    }, 500);
+  });
 };

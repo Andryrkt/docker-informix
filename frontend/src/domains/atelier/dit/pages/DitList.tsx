@@ -35,8 +35,8 @@ function DitList() {
   const lastPage = dit?.totalPages ?? 1;
 
   return (
-    <div className="p-4 w-full min-h-screen ">
-      <div className=" w-full h-full space-y-6 overflow-x-auto">
+    <div className="p-4 w-full  ">
+      <div className=" w-full  space-y-6 overflow-x-auto">
         <CollapsibleFilter
           fields={ditFieldFilter}
           onSearch={(values) => {

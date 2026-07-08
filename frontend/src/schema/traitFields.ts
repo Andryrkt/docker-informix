@@ -1,0 +1,128 @@
+import type { AnalysisResult, PipelineOptions } from "@/lib/document-analysis";
+
+export const max_size_upload_file =
+  Number(import.meta.env.VITE_MAX_SIZE_FILE) || 5;
+export type SelectOption = {
+  label: string;
+  value: string;
+};
+export type TableChoiceRow = {
+  value: string;
+  [key: string]: string | number;
+};
+export type FieldTrait =
+  | {
+      name: string;
+      label: string;
+      type: "text" | "number" | "textarea";
+      placeholder?: string;
+      validate?: (value: string) => boolean;
+      readOnly?: boolean;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "select";
+      placeholder?: string;
+      // async mode
+      queryKey?: string;
+      queryFn?: () => Promise<SelectOption[]>;
+      options?: SelectOption[];
+      enabled?: boolean;
+      readOnly?: boolean;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "date-range";
+      readOnly?: boolean;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "date";
+      readOnly?: boolean;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "multichoice";
+      placeholder?: string;
+      // async mode
+      queryKey?: string;
+      queryFn?: () => Promise<SelectOption[]>;
+      options?: SelectOption[];
+      enabled?: boolean;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "multichoice-table";
+
+      queryKey?: string;
+      queryFn?: () => Promise<TableChoiceRow[]>;
+      options?: TableChoiceRow[];
+
+      columns: {
+        key: string;
+        label: string;
+        className?: string;
+      }[];
+
+      enabled?: boolean;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "radio";
+      direction?: "horizontal" | "vertical";
+      // async mode
+      queryKey?: string;
+      queryFn?: () => Promise<SelectOption[]>;
+      // static mode
+      options?: SelectOption[];
+
+      enabled?: boolean;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "boolean";
+      variant?: "switch" | "checkbox" | "radio";
+      trueLabel?: string;
+      falseLabel?: string;
+      enabled?: boolean;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "file";
+      placeholder?: string;
+      multiple: boolean;
+      pattern: string;
+      maxSize: number;
+      accept: string;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "dragfile";
+      multiple: boolean;
+      maxFiles?: number;
+      pattern?: string;
+      maxSize: number;
+      accept: string;
+      ocrValidation?: string | string[] | Partial<PipelineOptions>;
+      onResults?: (results: Map<string, AnalysisResult>) => void;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "multiSelect";
+      placeholder?: string;
+      // async mode
+      queryKey?: string;
+      queryFn?: () => Promise<SelectOption[]>;
+      options?: SelectOption[];
+      enabled?: boolean;
+    };

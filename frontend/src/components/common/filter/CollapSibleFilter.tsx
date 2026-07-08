@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/collapsible";
 import { FilterFieldRenderer } from "./FilterFieldRenderer";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function CollapsibleFilter({
   fields,
@@ -17,12 +18,14 @@ export default function CollapsibleFilter({
   onReset,
   title = "Formulaire de recherche",
   defaultOpen = false,
+  className,
 }: {
   fields: FilterField[];
   onSearch: (v: any) => void;
   onReset?: () => void;
   title?: string;
   defaultOpen?: boolean;
+  className?: string;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   const form = useForm({
@@ -36,7 +39,7 @@ export default function CollapsibleFilter({
     <Collapsible
       open={open}
       onOpenChange={setOpen}
-      className="m-auto max-w-7xl border rounded-sm"
+      className={cn("m-auto max-w-7xl", className)}
     >
       {/* HEADER */}
       <CollapsibleTrigger asChild>

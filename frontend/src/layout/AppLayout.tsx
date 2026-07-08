@@ -26,11 +26,8 @@ function AppLayouts() {
       <div className="w-full  flex flex-col flex-1">
         {user && (
           <>
-            <Header
-              logoSrc={LogoHff}
-              userName={"Andrialazantsoa Narindra Hajaina"}
-            />
-            <div className="px-8 py-6">
+            <Header logoSrc={LogoHff} userName={user.displayName} />
+            <div className="py-2 px-8">
               <AppBreadcrumb />
             </div>
           </>

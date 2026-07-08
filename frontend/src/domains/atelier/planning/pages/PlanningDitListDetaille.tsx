@@ -117,7 +117,7 @@ function PlanningDitListDetaille() {
           </div>
         </div>
         <PlanningDitDetailleTable
-          planningDitDetail={items}
+          data={items}
           loading={isLoading || isFetching}
         />
       </div>

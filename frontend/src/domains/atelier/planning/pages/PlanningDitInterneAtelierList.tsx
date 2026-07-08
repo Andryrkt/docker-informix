@@ -1,33 +1,33 @@
 import CollapsibleFilter from "@/components/common/filter/CollapSibleFilter";
-import LivraisonStatutsList from "@/components/common/LivraisonStatusBadge";
 import { usePageSearchParams } from "@/hooks/usePageSearchParams";
+import { getMockPlanningDitInterneAtelier } from "../schema/mock/planningDitInterneAtelier";
 import { useQuery } from "@tanstack/react-query";
-import { fetchPlanningDits } from "../api/planningDitApi";
-import { planningDitFieldfilter } from "../filter/planningDitFieldfilter";
-import PlanningDitTable from "../components/PlanningDitTable";
-import { getMockPlanningDits } from "../schema/mock/planningDitMock";
 import { useMemo, useState } from "react";
+import { planningDitFieldfilter } from "../filter/planningDitFieldfilter";
+import PlanningDitInterneAtelierTable from "../components/PlanningDitInterneAtelierTable";
+import { planningDitInterneAtelierFieldfilter } from "../filter/planningDitInterneAtelierFieldfilter";
 
-function PlanningDitList() {
+function PlanningDitInterneAtelierList() {
   const { currentPage, setPage, selectedFilters, setFilter, reset } =
     usePageSearchParams(1);
 
   const {
-    data: planningDit,
+    data: planningDitInterneAtelier,
     isLoading,
     isFetching,
   } = useQuery({
-    queryKey: ["planning-dit", selectedFilters, currentPage],
-    queryFn: () => getMockPlanningDits(selectedFilters, currentPage), // ← utiliser le mock
+    queryKey: ["planning-interne-atelier", selectedFilters, currentPage],
+    queryFn: () =>
+      getMockPlanningDitInterneAtelier(selectedFilters, currentPage, 10),
     staleTime: 0 * 60 * 1000,
     gcTime: 0 * 60 * 1000,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
 
-  const items = planningDit?.data ?? [];
-  const lastPage = planningDit?.totalPages ?? 1;
+  const items = planningDitInterneAtelier?.data ?? [];
 
+  // Pour les filtres dynamique agent > debiteur[]
   const agents = [
     {
       label: "Agent 1",
@@ -52,7 +52,7 @@ function PlanningDitList() {
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
 
   const dynamicFields = useMemo(() => {
-    return planningDitFieldfilter.map((column) =>
+    return planningDitInterneAtelierFieldfilter.map((column) =>
       column.map((field) => {
         if (field.name === "agent_debiteur") {
           return {
@@ -109,7 +109,7 @@ function PlanningDitList() {
             }
           }}
         ></CollapsibleFilter>
-        <div className="max-w-7xl mx-auto md:flex justify-between">
+        {/* <div className="max-w-7xl mx-auto md:flex justify-between">
           <div>
             <LivraisonStatutsList
               value={selectedFilters.etat_livraison}
@@ -118,11 +118,14 @@ function PlanningDitList() {
               }}
             ></LivraisonStatutsList>
           </div>
-        </div>
-        <PlanningDitTable data={items} loading={isLoading || isFetching} />
+        </div> */}
+        <PlanningDitInterneAtelierTable
+          data={items}
+          loading={isLoading || isFetching}
+        />
       </div>
     </div>
   );
 }
 
-export default PlanningDitList;
+export default PlanningDitInterneAtelierList;

@@ -20,10 +20,10 @@ const SkeletonRow = ({ colSpan }: { colSpan: number }) => (
 );
 
 function PlanningDitDetailleTable({
-  planningDitDetail,
+  data,
   loading,
 }: {
-  planningDitDetail: PlanningDitDetail[];
+  data: PlanningDitDetail[];
   loading: boolean;
 }) {
   const totalCols = 1 + 12 + 9 + 7 + 1 + 1 + 1;
@@ -135,7 +135,7 @@ function PlanningDitDetailleTable({
     );
   }
 
-  if (!planningDitDetail || planningDitDetail.length === 0) {
+  if (!data || data.length === 0) {
     return (
       <div className="w-full py-8 text-center text-gray-500">
         Aucune donnée de planning détaillé
@@ -284,7 +284,7 @@ function PlanningDitDetailleTable({
         </TableHeader>
 
         <TableBody className="bg-white">
-          {planningDitDetail.map((item, idx) => {
+          {data.map((item, idx) => {
             const maxRows = Math.max(
               item.materiels.length,
               item.ordresReparation.length,

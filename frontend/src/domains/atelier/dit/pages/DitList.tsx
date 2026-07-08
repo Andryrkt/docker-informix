@@ -35,7 +35,7 @@ function DitList() {
   const lastPage = dit?.totalPages ?? 1;
 
   return (
-    <div className="p-4 w-full  ">
+    <div className="px-4 w-full ">
       <div className=" w-full  space-y-6 overflow-x-auto">
         <CollapsibleFilter
           fields={ditFieldFilter}
@@ -72,7 +72,7 @@ function DitList() {
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
           <ExcelDownloadButton
             data={items}
-            filename={buildExcelFilename(selectedFilters, dit)}
+            filename={buildExcelFilename(selectedFilters, ditMock)}
           ></ExcelDownloadButton>
           <div className="flex items-center gap-2 ">
             {/* <span className="">{dit?.total ?? 0}</span> */}

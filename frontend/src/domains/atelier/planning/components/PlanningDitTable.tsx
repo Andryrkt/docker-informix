@@ -11,16 +11,16 @@ import { cn, formatMonthDisplay } from "@/lib/utils";
 import type { PlanningDit } from "../schema/planningDitSchema";
 
 function PlanningDitTable({
-  planningDit,
+  data,
   loading,
   locale = "fr-FR",
 }: {
-  planningDit: PlanningDit[];
+  data: PlanningDit[];
   loading: boolean;
   locale?: string;
 }) {
   // Récupérer tous les mois uniques et les trier
-  const allMonths = planningDit.flatMap((p) => p.mois.map((m) => m.date));
+  const allMonths = data.flatMap((p) => p.mois.map((m) => m.date));
   if (allMonths.length === 0) {
     return (
       <div className="w-full py-8 text-center text-gray-500">
@@ -63,7 +63,7 @@ function PlanningDitTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {planningDit?.map((d) => {
+          {data?.map((d) => {
             return (
               <TableRow key={d.id}>
                 <TableCell>
@@ -105,7 +105,7 @@ function PlanningDitTable({
             );
           })}
 
-          {planningDit.length === 0 && (
+          {data.length === 0 && (
             <TableRow>
               <TableCell
                 colSpan={7 + months.length}

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { ChevronRight, Paperclip, Plus } from "lucide-react";
+import { ChevronRight, GanttChartSquare, Paperclip, Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
@@ -47,11 +47,18 @@ export default function TikListPage() {
           <h1 className="text-xl font-semibold text-gray-800">Tickets — Support IT</h1>
           <p className="text-sm text-gray-500 mt-0.5">{tickets.length} ticket(s)</p>
         </div>
-        <Button asChild size="sm" className="gap-2">
-          <Link to="/it/demande-support-informatique">
-            <Plus size={15} /> Nouveau ticket
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button asChild size="sm" variant="outline" className="gap-2">
+            <Link to="/it/tickets/gantt">
+              <GanttChartSquare size={15} /> Diagramme de Gantt
+            </Link>
+          </Button>
+          <Button asChild size="sm" className="gap-2">
+            <Link to="/it/demande-support-informatique">
+              <Plus size={15} /> Nouveau ticket
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <div className="border rounded-md overflow-x-auto">

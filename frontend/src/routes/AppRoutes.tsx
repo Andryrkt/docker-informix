@@ -10,6 +10,7 @@ import HomePage from "@/domains/home/page/HomePage";
 import DemandeSupportIT from "@/domains/it/page/DemandeSupportIT";
 import TikListPage from "@/domains/it/page/TikListPage";
 import TikDetailPage from "@/domains/it/page/TikDetailPage";
+import TikGanttPage from "@/domains/it/page/TikGanttPage";
 import { RequireAuth } from "./guards/RequireAuth";
 import { RequireCompany } from "./guards/RequireCompany";
 import DevisList from "@/domains/magasin/dematerialisation/devis/pages/DevisList";
@@ -176,6 +177,10 @@ function AppRoutes() {
         {
           path: "/it/tickets",
           element: <TikListPage />,
+        },
+        {
+          path: "/it/tickets/gantt",
+          element: <TikGanttPage />,
         },
         {
           path: "/it/tickets/:id",

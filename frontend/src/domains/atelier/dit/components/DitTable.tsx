@@ -117,7 +117,7 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
               <TableHead>
                 <MoreVerticalIcon className="h-4 w-4" />
               </TableHead>
-              <TableHead className="  px-4 text-center  ">Statut</TableHead>
+              <TableHead className="  px-4 text-center">Statut</TableHead>
               <TableHead>N° DIT</TableHead>
               <TableHead className=" wrap-break-word whitespace-normal max-w-20">
                 Réalisé par

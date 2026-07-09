@@ -27,7 +27,6 @@ import OrSoummission from "@/domains/atelier/soumission/pages/OrdreReparationSou
 import RapportInterventionSoumission from "@/domains/atelier/soumission/pages/RapportInterventionSoumission";
 import FactureSoummission from "@/domains/atelier/soumission/pages/FactureSoummission";
 import DossierDitDetails from "@/domains/atelier/dossierDit/pages/DossierDitDetails";
-import DossierList from "@/domains/atelier/dossierDit/components/DossierList";
 import AdminLayout from "@/domains/admin/layout/AdminLayout";
 import SocietesPage from "@/domains/admin/pages/SocietesPage";
 import AgencesPage from "@/domains/admin/pages/AgencesPage";
@@ -40,6 +39,11 @@ import AuditNavigationPage from "@/domains/admin/pages/AuditNavigationPage";
 import AuditOperationPage from "@/domains/admin/pages/AuditOperationPage";
 import CentresPage from "@/domains/admin/pages/CentresPage";
 import PersonnelPage from "@/domains/admin/pages/PersonnelPage";
+import DossierDitList from "@/domains/atelier/dossierDit/pages/DossierDitList";
+import PlanningDitInterneAtelierList from "@/domains/atelier/planning/pages/PlanningDitInterneAtelierList";
+import PlanningDitList from "@/domains/atelier/planning/pages/PlanningDitList";
+import PlanningDitListDetaille from "@/domains/atelier/planning/pages/PlanningDitListDetaille";
+import PlanningMagasinList from "@/domains/magasin/dematerialisation/planning/pages/PlanningMagasinList";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -228,17 +232,20 @@ function AppRoutes() {
           path: "/admin",
           element: <AdminLayout />,
           children: [
-            { path: "societes",     element: <SocietesPage />     },
-            { path: "agences",      element: <AgencesPage />      },
-            { path: "services",     element: <ServicesPage />      },
-            { path: "centres",      element: <CentresPage />       },
-            { path: "personnel",    element: <PersonnelPage />     },
-            { path: "utilisateurs",                      element: <UtilisateursPage />      },
-            { path: "utilisateurs/:userId/permissions", element: <UserPermissionsPage />  },
-            { path: "actions",                          element: <ActionsPage />           },
-            { path: "modeles",                          element: <ModelePermissionsPage /> },
-            { path: "historique/navigation",            element: <AuditNavigationPage />  },
-            { path: "historique/operations",            element: <AuditOperationPage />   },
+            { path: "societes", element: <SocietesPage /> },
+            { path: "agences", element: <AgencesPage /> },
+            { path: "services", element: <ServicesPage /> },
+            { path: "centres", element: <CentresPage /> },
+            { path: "personnel", element: <PersonnelPage /> },
+            { path: "utilisateurs", element: <UtilisateursPage /> },
+            {
+              path: "utilisateurs/:userId/permissions",
+              element: <UserPermissionsPage />,
+            },
+            { path: "actions", element: <ActionsPage /> },
+            { path: "modeles", element: <ModelePermissionsPage /> },
+            { path: "historique/navigation", element: <AuditNavigationPage /> },
+            { path: "historique/operations", element: <AuditOperationPage /> },
           ],
         },
       ],
@@ -246,7 +253,12 @@ function AppRoutes() {
   ];
 
   const router = createBrowserRouter(
-    [...publicRoutes, ...privateRoutesNoCompany, ...privateRoutes, ...adminRoutes],
+    [
+      ...publicRoutes,
+      ...privateRoutesNoCompany,
+      ...privateRoutes,
+      ...adminRoutes,
+    ],
     // {
     //   basename: import.meta.env.VITE_APP_BASE || "/",
     // },

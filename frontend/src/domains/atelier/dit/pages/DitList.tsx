@@ -12,6 +12,7 @@ import LivraisonStatutsList from "@/components/common/LivraisonStatusBadge";
 import StatusBadgeGroup, {
   ditStatusMock,
 } from "@/components/common/StatusBadgeGroup";
+import { ditMock } from "../schema/ditMock";
 
 function DitList() {
   const { currentPage, setPage, selectedFilters, setFilter, reset } =
@@ -71,8 +72,9 @@ function DitList() {
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
           <ExcelDownloadButton
             data={items}
-            filename={buildExcelFilename(selectedFilters, ditMock)}
+            filename={buildExcelFilename(selectedFilters, ditFieldFilter)}
           ></ExcelDownloadButton>
+          
           <div className="flex items-center gap-2 ">
             <span className="">{dit?.resultat ?? 0}</span>
             <span className="text-muted-foreground text-sm">Résultats</span>

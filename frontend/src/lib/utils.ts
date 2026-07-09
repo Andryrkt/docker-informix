@@ -20,23 +20,33 @@ export async function formatErrorMessage(
     return fallback;
   }
 }
+// ✅ Type guard for nested fields
+function isNestedFields(
+  fields: FilterField[] | FilterField[][],
+): fields is FilterField[][] {
+  return Array.isArray(fields[0]);
+}
 
 export function buildExcelFilename(
   filters: Record<string, any>,
-  fields: FilterField[],
+  fields: FilterField[] | FilterField[][],
 ) {
   const date = new Date().toISOString().split("T")[0];
+
+  // ✅ Use the type guard to safely flatten
+  const flatFields: FilterField[] = isNestedFields(fields)
+    ? fields.flat()
+    : fields;
 
   const parts: string[] = ["devis"];
 
   for (const [key, value] of Object.entries(filters)) {
     if (!value) continue;
 
-    const field = fields.find((f) => f.name === key);
+    const field = flatFields.find((f) => f.name === key);
 
     if (!field) continue;
 
-    // clean value
     const cleanValue = String(value)
       .replace(/\s+/g, "-")
       .replace(/[^a-zA-Z0-9-_]/g, "");

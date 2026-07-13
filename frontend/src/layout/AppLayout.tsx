@@ -27,7 +27,7 @@ function AppLayouts() {
   return (
     <div className="flex max-w-screen">
       {/* {user && <AuthSideBar />} */}
-      <div className="w-full  flex flex-col flex-1">
+      <div className="w-full  flex flex-col flex-1 sticky  top-0">
         {user && (
           <>
             <Header logoSrc={LogoHff} userName={user.displayName} />

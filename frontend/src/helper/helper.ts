@@ -1,7 +1,7 @@
 import type { CommandeStatut } from "@/domains/commande/commandeMocks";
 
 export const getStatusDevisClass = (status?: string) => {
-  if (!status) return "text-gray-600";
+  if (!status) return "text-gray-800";
 
   // DATE CASE
   if (isDateLike(status)) {

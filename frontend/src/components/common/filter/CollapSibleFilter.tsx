@@ -83,6 +83,15 @@ export default function CollapsibleFilter({
     },
   });
 
+  const gridClass = cn("grid gap-4 grid-cols-1", {
+    "lg:grid-cols-1": fields.length === 1,
+    "lg:grid-cols-2": fields.length === 2,
+    "lg:grid-cols-3": fields.length === 3,
+    "lg:grid-cols-4": fields.length === 4,
+    "lg:grid-cols-5": fields.length === 5,
+    "lg:grid-cols-6": fields.length >= 6,
+  });
+
   return (
     <Collapsible
       open={open}
@@ -107,7 +116,7 @@ export default function CollapsibleFilter({
             e.preventDefault();
             form.handleSubmit();
           }}
-          className="grid gap-4 grid-cols-1 lg:grid-cols-4 xl:grid-cols-6"
+          className={gridClass}
         >
           {fields.map((row, rowIndex) => (
             <div key={rowIndex} className="flex flex-col gap-1">

@@ -171,11 +171,9 @@ export default function CollapsibleFilter({
                     };
 
                     return (
-                      <div className="space-y-1">
+                      <div className="space-y-4">
                         {(field.type !== "boolean" || !field.hideLabel) && (
-                          <label className="text-xs font-semibold">
-                            {field.label}
-                          </label>
+                          <label className="text-xs ">{field.label}</label>
                         )}
 
                         {/* Select All checkbox – only for multichoice with selectAll flag */}

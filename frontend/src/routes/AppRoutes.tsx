@@ -44,6 +44,7 @@ import PlanningDitInterneAtelierList from "@/domains/atelier/planning/pages/Plan
 import PlanningDitList from "@/domains/atelier/planning/pages/PlanningDitList";
 import PlanningDitListDetaille from "@/domains/atelier/planning/pages/PlanningDitListDetaille";
 import PlanningMagasinList from "@/domains/magasin/dematerialisation/planning/pages/PlanningMagasinList";
+import OrdreReparationLivrerList from "@/domains/magasin/ordreReparation/livrer/pages/OrdreReparationLivrerList";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -109,6 +110,12 @@ function AppRoutes() {
         {
           path: "/magasin/dematerialisation/planning-commande",
           element: <PlanningMagasinList />,
+        },
+
+        // Magazin -> ordre de reparation
+        {
+          path: "/magasin/ordre-reparation/livrer",
+          element: <OrdreReparationLivrerList />,
         },
 
         // Atelier -> Demande d'intervention
@@ -185,11 +192,6 @@ function AppRoutes() {
           path: "/atelier/demande-intervention/planning-interne-atelier",
           element: <PlanningDitInterneAtelierList />,
         },
-
-        // {
-        //   path: "/atelier/demande-intervention/planning-detaille",
-        //   element: <PlanningDitList />,
-        // },
 
         // IT
         {

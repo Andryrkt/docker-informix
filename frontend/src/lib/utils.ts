@@ -28,6 +28,7 @@ function isNestedFields(
 }
 
 export function buildExcelFilename(
+  base: string,
   filters: Record<string, any>,
   fields: FilterField[] | FilterField[][],
 ) {
@@ -38,7 +39,7 @@ export function buildExcelFilename(
     ? fields.flat()
     : fields;
 
-  const parts: string[] = ["devis"];
+  const parts: string[] = [base];
 
   for (const [key, value] of Object.entries(filters)) {
     if (!value) continue;

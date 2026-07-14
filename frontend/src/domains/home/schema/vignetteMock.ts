@@ -28,7 +28,7 @@ import {
   Folders,
   Grid3x3,
 } from "lucide-react";
-import type { ModalData } from "../components/VignetteModal";
+
 export const vignetteMock = [
   {
     title: "Documentation",
@@ -82,8 +82,16 @@ export const vignetteMock = [
           title: "OR",
           icon: Warehouse,
           items: [
-            { label: "Liste à traiter", icon: ListChecks },
-            { label: "Liste à livrer", icon: ListChecks },
+            {
+              label: "Liste à traiter",
+              icon: ListChecks,
+              link: "/magasin/ordre-reparation/traiter",
+            },
+            {
+              label: "Liste à livrer",
+              icon: ListChecks,
+              link: "/magasin/ordre-reparation/livrer",
+            },
           ],
         },
         {

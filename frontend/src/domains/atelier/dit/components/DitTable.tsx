@@ -25,6 +25,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { checkDitSubmission } from "../api/ditApi";
 import { Button } from "@/components/ui/button";
+import { DitTableSkeleton } from "./DitTableSkeleton";
 
 function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
   const navigate = useNavigate();

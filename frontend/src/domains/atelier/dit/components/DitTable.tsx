@@ -109,7 +109,7 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
     },
   });
 
-  // if (loading) return <DitTableSkeleton></DitTableSkeleton>;
+  if (loading) return <DitTableSkeleton></DitTableSkeleton>;
 
   return (
     <>
@@ -240,7 +240,9 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
 
                   <TableCell className="  text-start ">{d.numSerie}</TableCell>
 
-                  <TableCell className="  ">{d.numParc}</TableCell>
+                  <TableCell className=" wrap-break-word whitespace-normal max-w-20  ">
+                    {d.numParc}
+                  </TableCell>
 
                   <TableCell className="   wrap-break-word whitespace-normal max-w-20 text-[0.6rem]">
                     {formatDate(d.dateDemande)}
@@ -259,47 +261,46 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
                   </TableCell>
 
                   <TableCell className=" text-start   wrap-break-word whitespace-normal max-w-20 text-blue-600 underline">
-                    {d.sectionAffectee ?? "Section TMV Rental"}
+                    {d.sectionAffectee}
                   </TableCell>
 
-                  <TableCell>{d.numeroDevisRattache ?? "123456789"}</TableCell>
+                  <TableCell>{d.numeroDevisRattache}</TableCell>
 
                   <TableCell className="    wrap-break-word whitespace-normal max-w-20 p-1">
-                    {d.statutDevis ?? "En cours de validation"}
+                    {d.statutDevis}
                   </TableCell>
 
                   <TableCell className="underline ">
                     <Button
                       variant="link"
-                      className="bg-green-600 hover:bg-green-700 text-[0.6rem] underline text-white p-0.5 h-fit "
+                      className={cn(
+                        " text-[0.6rem] underline  p-0.5 h-fit ",
+                        // bg-green-600 hover:bg-green-700 text-white
+                      )}
                     >
-                      {d.numeroOr ?? 21311352}
+                      {d.numeroOr}
                     </Button>
                   </TableCell>
 
                   <TableCell className="font-bold max-w-0 py-2  wrap-break-word whitespace-normal">
-                    {d.statutOr ?? "Soumis à validation"}
+                    {d.statutOr}
                   </TableCell>
 
-                  <TableCell>
-                    {d.montantOr ?? formatMontant(10000000, "")}
-                  </TableCell>
+                  <TableCell>{d.montantOr}</TableCell>
 
-                  <TableCell>
-                    {formatDate(d.dateSoumissionOr ?? "2026-07-16")}
-                  </TableCell>
+                  <TableCell>{formatDate(d.dateSoumissionOr)}</TableCell>
 
                   <TableCell>
                     <Button variant="link" className="text-blue-600  ">
-                      {d.etatFacturation ?? "Validé"}
+                      {d.etatFacturation}
                     </Button>
                   </TableCell>
                   <TableCell>
                     <Button variant="link" className="text-blue-600  ">
-                      {d.ri ?? "0/0"}
+                      {d.ri}
                     </Button>
                   </TableCell>
-                  <TableCell className="max-w-10">{d.nbrPj ?? "0"}</TableCell>
+                  <TableCell className="max-w-10">{d.nbrPj}</TableCell>
                   <TableCell>{d.utilisateurDemandeur}</TableCell>
                 </TableRow>
               );

@@ -3,16 +3,16 @@ import CollapsibleFilter from "@/components/common/filter/CollapSibleFilter";
 import SimpleNextPreviousPagination from "@/components/common/pagination/SimpleNextPreviousPagination";
 import { usePageSearchParams } from "@/hooks/usePageSearchParams";
 import { buildExcelFilename } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import DitTable from "../components/DitTable";
 import GlobalPagination from "@/components/common/pagination/GlobalPagination";
 import { fetchDits } from "../api/ditApi";
-import { ditFieldFilter } from "../filter/DitFieldfilter";
 import LivraisonStatutsList from "@/components/common/LivraisonStatusBadge";
 import StatusBadgeGroup, {
   ditStatusMock,
 } from "@/components/common/StatusBadgeGroup";
 import { ditMock } from "../schema/ditMock";
+import { ditFieldFilter } from "../filter/DitFieldfilter";
 
 function DitList() {
   const { currentPage, setPage, selectedFilters, setFilter, reset } =
@@ -23,20 +23,20 @@ function DitList() {
     isLoading,
     isFetching,
   } = useQuery({
-    queryKey: ["dit", selectedFilters, currentPage],
+    queryKey: ["dit", JSON.stringify(selectedFilters), currentPage],
     queryFn: () => fetchDits(selectedFilters, currentPage),
-    staleTime: 0 * 60 * 1000,
-    gcTime: 0 * 60 * 1000,
+    placeholderData: keepPreviousData, // <-- keeps old data during fetch
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
 
   const items = dit?.data ?? [];
   const lastPage = dit?.totalPages ?? 1;
+  const totalResults = dit?.resultat ?? 0;
 
   return (
     <div className="px-2 w-full ">
-      <div className=" w-full  space-y-6 overflow-auto">
+      <div className=" w-full  space-y-4 pb-4 overflow-auto">
         <div className="sticky top-0 space-y-6 ">
           <CollapsibleFilter
             fields={ditFieldFilter}
@@ -73,7 +73,11 @@ function DitList() {
           <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
             <ExcelDownloadButton
               data={items}
-              filename={buildExcelFilename(selectedFilters, ditFieldFilter)}
+              filename={buildExcelFilename(
+                "dit-list",
+                selectedFilters,
+                ditFieldFilter,
+              )}
             ></ExcelDownloadButton>
 
             <div className="flex items-center gap-2 font-bold text-[0.7rem]   ">

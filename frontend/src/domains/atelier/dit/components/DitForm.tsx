@@ -125,37 +125,48 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
   }));
 
   // Materiels options values
-  const idMaterielOptions = materiels.map((m) => ({
-    label: m.idMateriel,
-    value: m.idMateriel,
-  }));
+  const idMaterielOptions = [
+    { label: "Aucun", value: "" },
+    ...materiels
+      .filter((m) => m.idMateriel != null)
+      .map((m) => ({ label: m.idMateriel, value: m.idMateriel })),
+  ];
 
-  const numParcOptions = materiels.map((m) => ({
-    label: m.numParc,
-    value: m.numParc,
-  }));
+  const numParcOptions = [
+    { label: "Aucun", value: "" },
+    ...materiels
+      .filter((m) => m.numParc != null)
+      .map((m) => ({ label: m.numParc, value: m.numParc })),
+  ];
 
-  const numSerieOptions = materiels.map((m) => ({
-    label: m.numSerie,
-    value: m.numSerie,
-  }));
+  const numSerieOptions = [
+    { label: "Aucun", value: "" },
+    ...materiels
+      .filter((m) => m.numSerie != null)
+      .map((m) => ({ label: m.numSerie, value: m.numSerie })),
+  ];
 
-  // Syncronisation Materiel
+  // Synchronisation Materiel
   const syncMateriel = (
     fieldName: "idMateriel" | "numParc" | "numSerie",
     value: string,
   ) => {
-    let materiel;
+    // If "Aucun" (empty string) is selected, clear all fields
+    if (value === "") {
+      form.setFieldValue("idMateriel", "");
+      form.setFieldValue("numParc", "");
+      form.setFieldValue("numSerie", "");
+      return;
+    }
 
+    let materiel;
     switch (fieldName) {
       case "idMateriel":
         materiel = materiels.find((m) => m.idMateriel === value);
         break;
-
       case "numParc":
         materiel = materiels.find((m) => m.numParc === value);
         break;
-
       case "numSerie":
         materiel = materiels.find((m) => m.numSerie === value);
         break;
@@ -163,9 +174,10 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
 
     if (!materiel) return;
 
-    form.setFieldValue("idMateriel", materiel.idMateriel);
-    form.setFieldValue("numParc", materiel.numParc);
-    form.setFieldValue("numSerie", materiel.numSerie);
+    // Set all three fields with the found materiel's values (could be null, but that's fine)
+    form.setFieldValue("idMateriel", materiel.idMateriel ?? ""); // fallback to empty string if null
+    form.setFieldValue("numParc", materiel.numParc ?? "");
+    form.setFieldValue("numSerie", materiel.numSerie ?? "");
   };
 
   // Syncronisation Client

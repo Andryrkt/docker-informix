@@ -147,12 +147,11 @@ export function FieldRenderer({ field }: any) {
           disabled={field.disabled}
           readOnly={field.readOnly}
         />
-
       );
     // Dragaple FileZone
 
     case "dragfile":
-      return <FileDropzone field={field}  />;
+      return <FileDropzone field={field} />;
 
     // MULTICHOICE (checkbox group)
     case "multichoice": {
@@ -399,7 +398,7 @@ type ReadOnlyFieldProps = {
 
 export function FieldReadOnly({ label, value, className }: ReadOnlyFieldProps) {
   return (
-    <div className={cn("space-y-1 w-20 border", className)}>
+    <div className={cn("space-y-1 ", className)}>
       <label className="text-xs font-medium text-gray-800">{label}</label>
       <Input
         readOnly

@@ -1,5 +1,13 @@
 // components/common/GlobalPagination.tsx
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 
 interface GlobalPaginationProps {
@@ -58,12 +66,12 @@ function GlobalPagination({
               <PaginationLink
                 href="#"
                 className={cn(
-                  "px-3 py-2 border text-sm font-medium transition-all duration-200 rounded-none", // base style
-                  "hover:bg-gray-100 hover:text-gray-900", // hover effect
-                  "focus:outline-none focus:ring-1 focus:ring-global-primary ", // accessibility
+                  "px-3 py-2 border w-fit text-sm font-medium transition-all duration-200 rounded-none bg-brand-dark text-brand-primary", // base style
+                  "hover:bg-brand-primary hover:text-gray-900", // hover effect
+                  "focus:outline-none focus:ring-1 focus:ring-brand-primary ", // accessibility
                   currentPage === page
-                    ? "border-global-primary bg-global-primary text-white" // active page
-                    : "border-gray-300 text-gray-700 bg-white", // inactive
+                    ? "text-brand-dark bg-brand-primary"
+                    : "",
                 )}
                 isActive={currentPage === page}
                 onClick={(e) => {

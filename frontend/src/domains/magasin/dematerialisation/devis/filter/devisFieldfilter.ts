@@ -60,106 +60,112 @@ export const STATUT_BC = [
   { label: "Validé", value: "Validé" },
   { label: "A valider PM", value: "A valider PM" },
 ];
-export const devisFieldfilter: FilterField[] = [
-  // 📄 IDENTIFIANTS
-  {
-    name: "numero_devis",
-    label: "Numéro de devis",
-    type: "text",
-  },
+export const devisFieldfilter: FilterField[][] = [
+  [
+    // 📄 IDENTIFIANTS
+    {
+      name: "numero_devis",
+      label: "Numéro de devis",
+      type: "text",
+    },
 
-  {
-    name: "soumis_par",
-    label: "Soumis par",
-    type: "text",
-  },
-  // Agent emetteur
-  {
-    name: "agence_emetteur",
-    label: "Agence émetteur",
-    type: "select",
-    queryKey: "agences",
-    queryFn: async () => [
-      { label: "Antananarivo", value: "ANT" },
-      { label: "Toamasina", value: "TMS" },
-      { label: "Fianarantsoa", value: "FIAN" },
-    ],
-  },
-  // 📅 DATES debut
-  {
-    name: "date_creation_debut",
-    label: "Date création (début)",
-    type: "date",
-  },
-  // 📊 STATUT DEVIS
-  {
-    name: "statut_devis",
-    label: "Statut devis",
-    type: "select",
-    queryKey: "statut_devis",
-    queryFn: async () => STATUT_DEVIS,
-  },
-  // 📊 STATUT BC
-  {
-    name: "statut_bc",
-    label: "Statut BC",
-    type: "select",
-    queryKey: "statut_bc",
-    queryFn: async () => STATUT_BC,
-  },
+    {
+      name: "soumis_par",
+      label: "Soumis par",
+      type: "text",
+    },
+  ],
+  [
+    // 📄 IDENTIFIANTS
 
-  // 👤 CLIENT AUTOCOMPLETE (IMPORTANT)
-  {
-    name: "code_client",
-    label: "Code client",
-    type: "select", // tu peux upgrader en autocomplete plus tard
-    placeholder: "Code client...",
-    queryKey: "statut_bc",
-    queryFn: async () => STATUT_BC,
-  },
-  // 👤 Creer par AUTOCOMPLETE (IMPORTANT)
-  {
-    name: "creer_par",
-    label: "Créer par",
-    type: "text", // tu peux upgrader en autocomplete plus tard
-    placeholder: "Tapez créer par...",
-  },
+    // Agent emetteur
+    {
+      name: "agence_emetteur",
+      label: "Agence émetteur",
+      type: "select",
+      queryKey: "agences",
+      queryFn: async () => [
+        { label: "Antananarivo", value: "ANT" },
+        { label: "Toamasina", value: "TMS" },
+        { label: "Fianarantsoa", value: "FIAN" },
+      ],
+    },
+    // 📅 DATES debut
+    {
+      name: "date_creation_debut",
+      label: "Date création (début)",
+      type: "date",
+    },
+    // 📊 STATUT DEVIS
+    {
+      name: "statut_devis",
+      label: "Statut devis",
+      type: "select",
+      queryKey: "statut_devis",
+      queryFn: async () => STATUT_DEVIS,
+    },
+    // 📊 STATUT BC
+    {
+      name: "statut_bc",
+      label: "Statut BC",
+      type: "select",
+      queryKey: "statut_bc",
+      queryFn: async () => STATUT_BC,
+    },
 
-  // 🧠 SERVICE EMETTEUR(remplace agence SCOMAT rule)
-  {
-    name: "service_emetteur",
-    label: "Service émetteur",
-    type: "select",
-    queryKey: "services",
-    queryFn: async () => SERVICES,
-  },
-  // DATE DE CREATION (FIN)
-  {
-    name: "date_creation_fin",
-    label: "Date création (fin)",
-    type: "date",
-  },
-  // 📍 POSITION IPS
-  {
-    name: "position_ips",
-    label: "Position IPS",
-    type: "select",
-    queryKey: "position_ips",
-    queryFn: async () => POSITION_IPS,
-  },
-  //PO BC Client
-  {
-    name: "po_bc_client",
-    label: "PO / BC Client",
-    type: "text",
-  },
+    // 👤 CLIENT AUTOCOMPLETE (IMPORTANT)
+    {
+      name: "code_client",
+      label: "Code client",
+      type: "select", // tu peux upgrader en autocomplete plus tard
+      placeholder: "Code client...",
+      queryKey: "statut_bc",
+      queryFn: async () => STATUT_BC,
+    },
+    // 👤 Creer par AUTOCOMPLETE (IMPORTANT)
+    {
+      name: "creer_par",
+      label: "Créer par",
+      type: "text", // tu peux upgrader en autocomplete plus tard
+      placeholder: "Tapez créer par...",
+    },
 
-  // 🔁 RELANCE
-  {
-    name: "relance",
-    label: "Filtrer par relance",
-    type: "select",
-    queryKey: "relance",
-    queryFn: async () => FILTER_RELANCE,
-  },
+    // 🧠 SERVICE EMETTEUR(remplace agence SCOMAT rule)
+    {
+      name: "service_emetteur",
+      label: "Service émetteur",
+      type: "select",
+      queryKey: "services",
+      queryFn: async () => SERVICES,
+    },
+    // DATE DE CREATION (FIN)
+    {
+      name: "date_creation_fin",
+      label: "Date création (fin)",
+      type: "date",
+    },
+    // 📍 POSITION IPS
+    {
+      name: "position_ips",
+      label: "Position IPS",
+      type: "select",
+      queryKey: "position_ips",
+      queryFn: async () => POSITION_IPS,
+    },
+    //PO BC Client
+    {
+      name: "po_bc_client",
+      label: "PO / BC Client",
+      type: "text",
+    },
+
+    // 🔁 RELANCE
+    {
+      name: "relance",
+      label: "Filtrer par relance",
+      type: "select",
+      queryKey: "relance",
+      queryFn: async () => FILTER_RELANCE,
+    },
+  ],
 ];

@@ -1,0 +1,10 @@
+{
+  "username": "Username",
+  "password": "Password",
+  "submit": "Sign in",
+  "submitting": "Signing in...",
+  "hint": "The username and password are the same ones used to log in to your computer.",
+  "loginError": "Login failed.",
+  "usernameRequired": "Username is required",
+  "passwordRequired": "Password is required"
+}

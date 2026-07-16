@@ -1,0 +1,91 @@
+{
+  "documentation": {
+    "title": "Documentation",
+    "sections": {
+      "contrat": {
+        "title": "Contrat",
+        "items": {
+          "nouveau-contrat": "Nouveau contrat",
+          "consultation": "Consultation"
+        }
+      }
+    },
+    "items": {
+      "annuaire": "Annuaire",
+      "planning-analytique": "Planning analytique HFF",
+      "document-interne": "Document interne"
+    }
+  },
+  "magasin": {
+    "title": "Magasin",
+    "sections": {
+      "or": {
+        "title": "OR",
+        "items": {
+          "liste-traiter": "Liste à traiter",
+          "liste-livrer": "Liste à livrer"
+        }
+      },
+      "dematerialisation": {
+        "title": "Dematerialisation",
+        "items": {
+          "devis": "Devis",
+          "planning-commande": "Planning de commande Magasin"
+        }
+      },
+      "cis": {
+        "title": "CIS",
+        "items": {
+          "liste-traiter": "Liste à traiter",
+          "liste-spreadsheet": "Liste à traiter"
+        }
+      },
+      "inventaire": {
+        "title": "Inventaire",
+        "items": {
+          "liste": "Liste des inventaires",
+          "detaille": "Inventaire détaillé"
+        }
+      }
+    }
+  },
+  "atelier": {
+    "title": "Atelier",
+    "sections": {
+      "demande-intervention": {
+        "title": "Demande d'intervention",
+        "items": {
+          "nouvelle-demande": "Nouvelle demande",
+          "consultation": "Consultation",
+          "dossier-dit": "Dossier DIT",
+          "matrice-responsabilite": "Matrice de responsabilité"
+        }
+      }
+    },
+    "items": {
+      "glossaire-or": "Glossaire OR",
+      "planning-detaille": "Planning détaillé",
+      "planning-interne-atelier": "Planning interne Atelier",
+      "planning": "Planning"
+    }
+  },
+  "it": {
+    "title": "Support IT",
+    "sections": {
+      "demande-support": {
+        "title": "Demande support informatique",
+        "items": {
+          "formulaire": "Formulaire de demande de support"
+        }
+      },
+      "tickets": {
+        "title": "Tickets",
+        "items": {
+          "suivi": "Suivi des tickets",
+          "gantt": "Diagramme de Gantt",
+          "tableau-de-bord": "Tableau de bord"
+        }
+      }
+    }
+  }
+}

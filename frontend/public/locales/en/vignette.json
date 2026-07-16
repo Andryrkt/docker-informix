@@ -1,0 +1,91 @@
+{
+  "documentation": {
+    "title": "Documentation",
+    "sections": {
+      "contrat": {
+        "title": "Contract",
+        "items": {
+          "nouveau-contrat": "New Contract",
+          "consultation": "Consultation"
+        }
+      }
+    },
+    "items": {
+      "annuaire": "Directory",
+      "planning-analytique": "HFF Analytical Planning",
+      "document-interne": "Internal Documents"
+    }
+  },
+  "magasin": {
+    "title": "Store",
+    "sections": {
+      "or": {
+        "title": "Work Order",
+        "items": {
+          "liste-traiter": "List to process",
+          "liste-livrer": "List to deliver"
+        }
+      },
+      "dematerialisation": {
+        "title": "Dematerialisation",
+        "items": {
+          "devis": "Quotes",
+          "planning-commande": "Store Order Planning"
+        }
+      },
+      "cis": {
+        "title": "CIS",
+        "items": {
+          "liste-traiter": "List to process",
+          "liste-spreadsheet": "List (spreadsheet)"
+        }
+      },
+      "inventaire": {
+        "title": "Inventory",
+        "items": {
+          "liste": "Inventory List",
+          "detaille": "Detailed Inventory"
+        }
+      }
+    }
+  },
+  "atelier": {
+    "title": "Workshop",
+    "sections": {
+      "demande-intervention": {
+        "title": "Intervention Request",
+        "items": {
+          "nouvelle-demande": "New Request",
+          "consultation": "Consultation",
+          "dossier-dit": "DIT Dossier",
+          "matrice-responsabilite": "Responsibility Matrix"
+        }
+      }
+    },
+    "items": {
+      "glossaire-or": "Work Order Glossary",
+      "planning-detaille": "Detailed Planning",
+      "planning-interne-atelier": "Workshop Internal Planning",
+      "planning": "Planning"
+    }
+  },
+  "it": {
+    "title": "IT",
+    "sections": {
+      "demande-support": {
+        "title": "IT Support Request",
+        "items": {
+          "formulaire": "Support Request Form"
+        }
+      },
+      "tickets": {
+        "title": "Tickets",
+        "items": {
+          "suivi": "Ticket Tracking",
+          "gantt": "Gantt Chart",
+          "tableau-de-bord": "Dashboard"
+        }
+      }
+    }
+  }
+}

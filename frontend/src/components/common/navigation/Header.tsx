@@ -27,6 +27,7 @@ import {
   Building2,
   ChevronDown,
   ChevronRight,
+  Globe,
   Info,
   Layers,
   LogOut,
@@ -36,6 +37,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useConfirm } from "../ConfirmDialog";
+import { useTranslation } from "react-i18next";
 
 type HeaderProps = {
   logoSrc: string;
@@ -46,18 +48,38 @@ function Header({ logoSrc, userName }: HeaderProps) {
   const { loading, user, logout } = useAuth();
   const baseUrl = import.meta.env.VITE_APP_BASE || "/";
   const confirm = useConfirm();
+  const { t, i18n } = useTranslation("header");
 
   const handleLogout = async () => {
     const confirmed = await confirm({
-      title: "Confirmer la déconnexion ?",
-      description: "Êtes-vous sûr de vouloir vous déconnecter ?",
-      confirmText: "Se déconnecter",
-      cancelText: "Annuler",
-      variant: "info",
+      title: t("logoutTitle"),
+      description: t("logoutDescription"),
+      confirmText: t("confirm"),
+      cancelText: t("cancel"),
     });
     if (!confirmed) return;
     logout();
   };
+
+  const toggleLanguage = () => {
+    const nextLang = i18n.language === "fr" ? "en" : "fr";
+    i18n.changeLanguage(nextLang);
+  };
+
+  // Render skeleton while loading
+  if (loading) {
+    return (
+      <div className="w-full flex items-center justify-between px-8 py-2 bg-brand-dark shadow-md sticky top-0 z-9998">
+        <div className="flex items-center border">
+          <img
+            src={logoSrc}
+            alt="HFF-logo"
+            className="w-10 object-contain border border-white"
+          />
+        </div>
+      </div>
+    );
+  }
 
   // Render skeleton while loading
   if (loading) {
@@ -74,7 +96,6 @@ function Header({ logoSrc, userName }: HeaderProps) {
     );
   }
 
-  // 👉 Fallback for public users
   return (
     <nav className="w-full flex items-center justify-between px-4 lg:px-8 py-2 bg-brand-dark text-white sticky top-0 z-50">
       <div className="flex justify-between py-2 gap-2 w-full">
@@ -126,8 +147,17 @@ function Header({ logoSrc, userName }: HeaderProps) {
             >
               <Info />
               <span className="text-[0.65rem] lg:block hidden">
-                Guide utilisateur intranet
+                {t("userGuide")}
               </span>
+            </Button>
+          </div>
+          <div className="">
+            <Button
+              onClick={toggleLanguage}
+              className=" flex items-center justify-center bg-transparent hover:bg-transparent text-neutral-200 hover:text-blue-500 focus:text-blue-500"
+              aria-label="Changer la langue"
+            >
+              <span className=" uppercase  ">{i18n.language}</span>
             </Button>
           </div>
           <div className="relative">
@@ -171,31 +201,43 @@ function Header({ logoSrc, userName }: HeaderProps) {
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger className="flex items-center w-full cursor-pointer">
                     <ShieldUser className="mr-2 h-4 w-4" />
-                    <span>Administration</span>
+                    <span>{t("administration")}</span>
                   </DropdownMenuSubTrigger>
                   <DropdownMenuSubContent className="bg-brand-dark text-brand-primary">
                     <DropdownMenuItem asChild>
-                      <Link to="/admin/societes" className="flex items-center w-full cursor-pointer">
+                      <Link
+                        to="/admin/societes"
+                        className="flex items-center w-full cursor-pointer"
+                      >
                         <Building2 className="mr-2 h-4 w-4" />
-                        <span>Sociétés</span>
+                        <span>{t("companies")}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/admin/agences" className="flex items-center w-full cursor-pointer">
+                      <Link
+                        to="/admin/agences"
+                        className="flex items-center w-full cursor-pointer"
+                      >
                         <Layers className="mr-2 h-4 w-4" />
-                        <span>Agences</span>
+                        <span>{t("agencies")}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/admin/services" className="flex items-center w-full cursor-pointer">
+                      <Link
+                        to="/admin/services"
+                        className="flex items-center w-full cursor-pointer"
+                      >
                         <Briefcase className="mr-2 h-4 w-4" />
-                        <span>Services</span>
+                        <span>{t("services")}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/admin/utilisateurs" className="flex items-center w-full cursor-pointer">
+                      <Link
+                        to="/admin/utilisateurs"
+                        className="flex items-center w-full cursor-pointer"
+                      >
                         <Users className="mr-2 h-4 w-4" />
-                        <span>Utilisateurs</span>
+                        <span>{t("users")}</span>
                       </Link>
                     </DropdownMenuItem>
                   </DropdownMenuSubContent>
@@ -208,7 +250,7 @@ function Header({ logoSrc, userName }: HeaderProps) {
                   className="text-red-500 cursor-pointer"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Déconnexion</span>
+                  <span>{t("logout")}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

@@ -1,0 +1,14 @@
+{
+  "logoutTitle": "Confirm Logout",
+  "confirmLogout": "Logout",
+  "logoutDescription": "Are you sure you want to log out?",
+  "confirm": "Logout",
+  "cancel": "Cancel",
+  "logout": "Logout",
+  "userGuide": "Intranet user guide",
+  "administration": "Administration",
+  "companies": "Companies",
+  "agencies": "Agencies",
+  "services": "Services",
+  "users": "Users"
+}

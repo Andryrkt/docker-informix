@@ -1,0 +1,63 @@
+{
+  "home": "Home",
+  "admin": {
+    "root": "Administration",
+    "societes": "Companies",
+    "agences": "Agencies",
+    "services": "Services",
+    "centres": "Centres",
+    "personnel": "Personnel",
+    "utilisateurs": "Users",
+    "permissions": "Permissions",
+    "actions": "Actions",
+    "modeles": "Permission Templates",
+    "historique": {
+      "root": "History",
+      "navigation": "Navigation",
+      "operations": "Operations"
+    }
+  },
+  "atelier": {
+    "root": "Workshop",
+    "demande-intervention": {
+      "root": "Intervention Request",
+      "dit-list": "Requests List",
+      "new": "New Request",
+      "duplication": "Duplication",
+      "details": "Details",
+      "dossier-list": "Dossier List",
+      "dossier": "Dossier",
+      "planning-list": "Planning",
+      "planning-detaille": "Detailed Planning",
+      "planning-interne-atelier": "Workshop Internal Planning",
+      "verification-prix": "Price Verification",
+      "validation-atelier": "Workshop Validation",
+      "bon-commande": "Purchase Order",
+      "ordre-reparation": "Repair Order",
+      "rapport-intervention": "Intervention Report",
+      "facture": "Invoice"
+    }
+  },
+  "magasin": {
+    "root": "Store",
+    "dematerialisation": {
+      "root": "Dematerialisation",
+      "liste-devis-neg": "Quotes",
+      "planning-commande": "Order Planning"
+    },
+    "ordre-reparation": {
+      "root": "Repair Order",
+      "livrer": "Deliver"
+    }
+  },
+  "it": {
+    "root": "IT",
+    "demande-support-informatique": "IT Support Request",
+    "tickets": {
+      "root": "Tickets",
+      "gantt": "Gantt Chart",
+      "dashboard": "Dashboard"
+    }
+  },
+  "select-company": "Select Company"
+}

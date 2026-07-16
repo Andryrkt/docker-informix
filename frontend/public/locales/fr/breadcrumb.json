@@ -1,0 +1,63 @@
+{
+  "home": "Accueil",
+  "admin": {
+    "root": "Administration",
+    "societes": "Sociétés",
+    "agences": "Agences",
+    "services": "Services",
+    "centres": "Centres",
+    "personnel": "Personnel",
+    "utilisateurs": "Utilisateurs",
+    "permissions": "Permissions",
+    "actions": "Actions",
+    "modeles": "Modèles de permissions",
+    "historique": {
+      "root": "Historique",
+      "navigation": "Navigation",
+      "operations": "Opérations"
+    }
+  },
+  "atelier": {
+    "root": "Atelier",
+    "demande-intervention": {
+      "root": "Demande d'intervention",
+      "dit-list": "Liste des demandes",
+      "new": "Nouvelle demande",
+      "duplication": "Duplication",
+      "details": "Détails",
+      "dossier-list": "Liste des dossiers",
+      "dossier": "Dossier",
+      "planning-list": "Planning",
+      "planning-detaille": "Planning détaillé",
+      "planning-interne-atelier": "Planning interne atelier",
+      "verification-prix": "Vérification des prix",
+      "validation-atelier": "Validation atelier",
+      "bon-commande": "Bon de commande",
+      "ordre-reparation": "Ordre de réparation",
+      "rapport-intervention": "Rapport d'intervention",
+      "facture": "Facture"
+    }
+  },
+  "magasin": {
+    "root": "Magasin",
+    "dematerialisation": {
+      "root": "Dématérialisation",
+      "liste-devis-neg": "Devis",
+      "planning-commande": "Planning de commande"
+    },
+    "ordre-reparation": {
+      "root": "Ordre de réparation",
+      "livrer": "Livrer"
+    }
+  },
+  "it": {
+    "root": "IT",
+    "demande-support-informatique": "Demande support informatique",
+    "tickets": {
+      "root": "Tickets",
+      "gantt": "Diagramme de Gantt",
+      "dashboard": "Tableau de bord"
+    }
+  },
+  "select-company": "Sélection de société"
+}

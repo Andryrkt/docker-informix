@@ -15,10 +15,12 @@ import LogoHff from "@/assets/logoHFF.jpg";
 import { formatErrorMessage } from "@/lib/utils";
 import { useAuth } from "@/context/authContext";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation("login");
 
   const [errors, setErrors] = useState<string[]>([]);
   const form = useForm({
@@ -38,7 +40,7 @@ function Login() {
       } catch (error: any) {
         const message = await formatErrorMessage(
           error,
-          "Échec de la connexion.",
+          t("loginError"),
         );
         setErrors([message]);
       }
@@ -79,7 +81,7 @@ function Login() {
                   field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Utilisateur</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>{t("username")}</FieldLabel>
                     <Input
                       id={field.name}
                       name={field.name}
@@ -105,7 +107,7 @@ function Login() {
 
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Mot de passe</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>{t("password")}</FieldLabel>
                     <div className="relative">
                       <Input
                         id={field.name}
@@ -169,10 +171,10 @@ function Login() {
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         />
                       </svg>
-                      Connexion en cours...
+                      {t("submitting")}
                     </span>
                   ) : (
-                    "Se connecter"
+                    t("submit")
                   )}
                 </Button>
               </FieldGroup>
@@ -184,8 +186,7 @@ function Login() {
           <InfoIcon size={16} className="mt-0.5 shrink-0" />
 
           <p className="text-xs leading-relaxed">
-            L'identifiant et le mot de passe sont ceux utilisés pour vous
-            connecter à votre ordinateur.
+            {t("hint")}
           </p>
         </div>
       </div>

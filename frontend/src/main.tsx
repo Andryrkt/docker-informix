@@ -9,6 +9,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { get, set, del } from "idb-keyval";
+import "./i18n";
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -4,10 +4,10 @@ import AppRoutes from "./routes/AppRoutes";
 
 export default function App() {
   return (
-    <ConfirmationDialogProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <ConfirmationDialogProvider>
         <AppRoutes />
-      </AuthProvider>
-    </ConfirmationDialogProvider>
+      </ConfirmationDialogProvider>
+    </AuthProvider>
   );
 }

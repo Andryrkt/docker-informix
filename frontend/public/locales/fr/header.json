@@ -1,0 +1,14 @@
+{
+  "logoutTitle": "Confirmer la déconnexion",
+  "confirmLogout": "Déconnexion",
+  "logoutDescription": "Êtes-vous sûr de vouloir vous déconnecter ?",
+  "confirm": "Déconnexion",
+  "cancel": "Annuler",
+  "logout": "Déconnexion",
+  "userGuide": "Guide utilisateur intranet",
+  "administration": "Administration",
+  "companies": "Sociétés",
+  "agencies": "Agences",
+  "services": "Services",
+  "users": "Utilisateurs"
+}

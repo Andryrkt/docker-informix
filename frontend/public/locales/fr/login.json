@@ -1,0 +1,10 @@
+{
+  "username": "Utilisateur",
+  "password": "Mot de passe",
+  "submit": "Se connecter",
+  "submitting": "Connexion en cours...",
+  "hint": "L'identifiant et le mot de passe sont ceux utilisés pour vous connecter à votre ordinateur.",
+  "loginError": "Échec de la connexion.",
+  "usernameRequired": "Utilisateur obligatoire",
+  "passwordRequired": "Mot de passe obligatoire"
+}

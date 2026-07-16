@@ -31,12 +31,15 @@ export const demandeFields: FieldTrait[] = [
     label: "Objet",
     type: "text",
     placeholder: "Objet de la demande",
+    validate: (value) => value.length <= 86,
   },
   {
     name: "details",
     label: "Détails",
     type: "textarea",
     placeholder: "Détail de la demande",
+    maxLength: 1800,
+    newlinePenalty: 130,
   },
 ];
 
@@ -157,6 +160,7 @@ export const infoClientFields: FieldTrait[] = [
     name: "telephoneClient",
     label: "N° téléphone (*EXTERNE)",
     type: "text",
+    validate: (value) => value.length <= 16,
   },
 
   {

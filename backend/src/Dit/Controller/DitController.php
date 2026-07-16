@@ -81,6 +81,25 @@ class DitController extends AbstractController
         ]);
     }
 
+    /**
+     * Valeurs pré-remplies affichées (lecture seule) sur le formulaire de
+     * création : agence/service émetteur du demandeur, dérivés de sa fiche
+     * Personnel → Centre (même logique que TikController::defaults()).
+     */
+    #[Route('/api/demande-intervention/defaults', methods: ['GET'])]
+    public function defaults(): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        [$agenceEmetteur, $serviceEmetteur, $codeSociete] = $this->resolveDefaultAgenceService($user);
+
+        return $this->json([
+            'agenceEmetteur' => $agenceEmetteur ? ['id' => $agenceEmetteur->getId(), 'code' => $agenceEmetteur->getCode(), 'name' => $agenceEmetteur->getName()] : null,
+            'serviceEmetteur' => $serviceEmetteur ? ['id' => $serviceEmetteur->getId(), 'code' => $serviceEmetteur->getCode(), 'name' => $serviceEmetteur->getName()] : null,
+            'codeSociete' => $codeSociete,
+        ]);
+    }
+
     #[Route('/api/demande-intervention/details/{numero}', methods: ['GET'])]
     public function details(string $numero): JsonResponse
     {

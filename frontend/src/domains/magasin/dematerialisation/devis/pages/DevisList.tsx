@@ -53,7 +53,11 @@ function DevisList() {
         />
         <ExcelDownloadButton
           data={items}
-          filename={buildExcelFilename(selectedFilters, devis)}
+          filename={buildExcelFilename(
+            "devis",
+            selectedFilters,
+            devisFieldfilter,
+          )}
         ></ExcelDownloadButton>
 
         {/* Simple pagination */}

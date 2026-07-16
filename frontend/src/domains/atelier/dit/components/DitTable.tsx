@@ -248,10 +248,10 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
 
                   <TableCell>{d.interneExterne}</TableCell>
 
-                  <TableCell>{d.agenceEmetteur.slice(0, 6)} </TableCell>
+                  <TableCell>{d.agenceServiceEmetteur}</TableCell>
 
                   <TableCell>
-                    {d.agenceDebiteur !== null && d.agenceDebiteur.slice(0, 6)}
+                    {d.agenceDebiteur !== null && d.agenceServiceDebiteur}
                   </TableCell>
 
                   <TableCell className=" px-2 text-start    wrap-break-word whitespace-normal max-w-30">

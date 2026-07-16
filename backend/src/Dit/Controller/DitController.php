@@ -454,6 +454,8 @@ class DitController extends AbstractController
             'dateDemande' => $dit->getDateDemande()->format('Y-m-d'),
             'agenceEmetteur' => $agenceEmetteurLabel,
             'serviceEmmetteur' => $serviceEmetteurLabel,
+            'agenceServiceEmetteur' => $dit->getAgenceServiceEmetteur(),
+            'agenceServiceDebiteur' => $dit->getAgenceServiceDebiteur(),
             'datePrevue' => $dit->getDatePrevueTravaux()?->format('Y-m-d'),
             'typeReparation' => $dit->getTypeReparation(),
             'reparationPar' => $dit->getReparationRealise(),

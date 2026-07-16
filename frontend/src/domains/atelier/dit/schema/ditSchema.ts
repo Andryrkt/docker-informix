@@ -35,6 +35,9 @@ export interface Dit {
 
   agenceEmetteur: string;
   serviceEmmetteur: string;
+  agenceServiceEmetteur : string;
+  agenceServiceDebiteur : string | null;
+  
   datePrevue?: string | null;
   typeReparation?: string | null;
   reparationPar?: string | null;

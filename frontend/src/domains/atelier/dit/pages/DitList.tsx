@@ -73,7 +73,11 @@ function DitList() {
           <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
             <ExcelDownloadButton
               data={items}
-              filename={buildExcelFilename(selectedFilters, ditFieldFilter)}
+              filename={buildExcelFilename(
+                "dit",
+                selectedFilters,
+                ditFieldFilter,
+              )}
             ></ExcelDownloadButton>
 
             <div className="flex items-center gap-2 font-bold text-[0.7rem]   ">

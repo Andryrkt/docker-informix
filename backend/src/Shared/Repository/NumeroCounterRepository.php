@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Dit\Repository;
+namespace App\Shared\Repository;
 
-use App\Dit\Entity\SqlServer\DitCounter;
+use App\Shared\Entity\SqlServer\NumeroCounter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<DitCounter>
+ * @extends ServiceEntityRepository<NumeroCounter>
  */
-class DitCounterRepository extends ServiceEntityRepository
+class NumeroCounterRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, DitCounter::class);
+        parent::__construct($registry, NumeroCounter::class);
     }
 
     /**
@@ -21,11 +21,11 @@ class DitCounterRepository extends ServiceEntityRepository
      * la crée si elle n'existe pas encore. Doit être appelé à l'intérieur
      * d'une transaction ouverte par l'appelant.
      */
-    public function lockOrCreate(string $codeApp): DitCounter
+    public function lockOrCreate(string $codeApp): NumeroCounter
     {
         $counter = $this->findOneBy(['codeApp' => $codeApp]);
         if (!$counter) {
-            $counter = (new DitCounter())->setCodeApp($codeApp);
+            $counter = (new NumeroCounter())->setCodeApp($codeApp);
             $this->getEntityManager()->persist($counter);
             $this->getEntityManager()->flush();
         }

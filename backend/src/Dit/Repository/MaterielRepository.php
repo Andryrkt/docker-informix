@@ -39,4 +39,31 @@ class MaterielRepository extends AbstractInformixRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Résout les id matériel (base "ips") correspondant à un n° parc et/ou n°
+     * série, pour filtrer ensuite `demande_intervention.id_materiel` (base
+     * "irium") — les deux entités vivent sur des connexions Doctrine
+     * différentes, pas de jointure DQL possible entre les deux.
+     *
+     * @return int[]
+     */
+    public function findIdsByNumParcOrNumSerie(?string $numParc, ?string $numSerie): array
+    {
+        $qb = $this->createQueryBuilder('m')->select('m.numMat');
+
+        if ($numParc !== null && $numSerie !== null) {
+            $qb->where('m.numParc LIKE :numParc OR m.numSerie LIKE :numSerie')
+                ->setParameter('numParc', '%' . $numParc . '%')
+                ->setParameter('numSerie', '%' . $numSerie . '%');
+        } elseif ($numParc !== null) {
+            $qb->where('m.numParc LIKE :numParc')->setParameter('numParc', '%' . $numParc . '%');
+        } elseif ($numSerie !== null) {
+            $qb->where('m.numSerie LIKE :numSerie')->setParameter('numSerie', '%' . $numSerie . '%');
+        } else {
+            return [];
+        }
+
+        return array_column($qb->getQuery()->getScalarResult(), 'numMat');
+    }
 }

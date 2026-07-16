@@ -65,11 +65,14 @@ services:
 
     # Dit (DIT Atelier) : les repositories résolvent leur entity manager tout
     # seuls via ManagerRegistry (entités réparties sur irium/ips/sqlserver,
-    # cf. leurs mappings respectifs dans doctrine.yaml). Seul le compteur de
-    # numérotation (SQL Server) a besoin d'un EntityManagerInterface explicite,
-    # nommé pour ne pas entrer en conflit avec le défaut (ips).
+    # cf. leurs mappings respectifs dans doctrine.yaml).
     App\Dit\:
         resource: '../src/Dit/'
+
+    # NumeroGeneratorService (compteur SQL Server partagé DIT/TIK/...) a besoin
+    # d'un EntityManagerInterface explicite, nommé pour ne pas entrer en
+    # conflit avec le défaut (ips).
+    App\Shared\Service\NumeroGeneratorService:
         bind:
             $emSqlServer: '@doctrine.orm.sqlserver_entity_manager'
 

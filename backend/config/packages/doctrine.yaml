@@ -83,11 +83,11 @@ doctrine:
                         type: attribute
                         dir: '%kernel.project_dir%/src/Tik/Entity'
                         prefix: 'App\Tik\Entity'
-                    Dit:
+                    Shared:
                         is_bundle: false
                         type: attribute
-                        dir: '%kernel.project_dir%/src/Dit/Entity/SqlServer'
-                        prefix: 'App\Dit\Entity\SqlServer'
+                        dir: '%kernel.project_dir%/src/Shared/Entity/SqlServer'
+                        prefix: 'App\Shared\Entity\SqlServer'
 when@test:
     doctrine:
         dbal:

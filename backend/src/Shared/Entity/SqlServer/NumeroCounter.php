@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Dit\Entity\SqlServer;
+namespace App\Shared\Entity\SqlServer;
 
-use App\Dit\Repository\DitCounterRepository;
+use App\Shared\Repository\NumeroCounterRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Compteur de numérotation DIT — équivalent de `Application.derniere_id` du
- * legacy (qui n'a pas d'entité générique "Application" dans ce backend). Une
- * seule ligne en pratique (codeApp = 'DIT').
+ * Compteur de numérotation par application (DIT, TIK, ...) — équivalent de
+ * `Application.derniere_id` du legacy (qui n'a pas d'entité générique
+ * "Application" dans ce backend). Une ligne par codeApp (voir
+ * App\Audit\Entity\AuditOperation::DOC_*).
  */
-#[ORM\Entity(repositoryClass: DitCounterRepository::class)]
-#[ORM\Table(name: 'app_dit_counter')]
-class DitCounter
+#[ORM\Entity(repositoryClass: NumeroCounterRepository::class)]
+#[ORM\Table(name: 'app_dit_counter')] // nom historique (créée pour DIT) — table déjà générique par codeApp, pas de migration à faire pour la partager
+class NumeroCounter
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

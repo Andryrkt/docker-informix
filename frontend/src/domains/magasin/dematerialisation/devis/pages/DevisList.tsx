@@ -34,12 +34,8 @@ function DevisList() {
   const lastPage = devis?.totalPages ?? 1;
 
   return (
-    <div className="p-4 w-full min-h-screen ">
+    <div className="px-2 w-full  ">
       <div className=" w-full h-full space-y-6 overflow-x-auto">
-        {/* <PageHeader
-          title="Liste des devis"
-          description="Voici la liste des devis."
-        /> */}
         <CollapsibleFilter
           fields={devisFieldfilter}
           onSearch={(values) => {
@@ -61,8 +57,18 @@ function DevisList() {
         ></ExcelDownloadButton>
 
         {/* Simple pagination */}
-        <div className="p-4 flex">
-          <div className="ml-auto">
+        <div className="p-4 flex items-center justify-between mx-auto max-w-7xl">
+          <div>
+            <ExcelDownloadButton
+              data={items}
+              filename={buildExcelFilename(
+                "devis-list",
+                selectedFilters,
+                devisFieldfilter,
+              )}
+            ></ExcelDownloadButton>
+          </div>
+          <div>
             <SimpleNextPreviousPagination
               currentPage={currentPage}
               lastPage={lastPage}
@@ -71,7 +77,7 @@ function DevisList() {
           </div>
         </div>
 
-        <DevisTable devis={devis} loading={isLoading || isFetching} />
+        <DevisTable devis={items} loading={isLoading || isFetching} />
         <div className="p-4 flex">
           <div className="m-auto">
             <GlobalPagination

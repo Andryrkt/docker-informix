@@ -104,7 +104,7 @@ export function ConfirmationDialogProvider({
     <ConfirmContext.Provider value={confirm}>
       {children}
       <AlertDialog open={visible} onOpenChange={setVisible}>
-        <AlertDialogContent className="rounded-none">
+        <AlertDialogContent className="rounded-sm">
           <AlertDialogHeader>
             <div className="flex items-center gap-2">
               {icon}
@@ -131,7 +131,7 @@ export function ConfirmationDialogProvider({
             <AlertDialogCancel
               onClick={handleCancel}
               disabled={isLoading}
-              className="rounded-none"
+              className="rounded-sm"
             >
               {cancelText}
             </AlertDialogCancel>
@@ -139,7 +139,7 @@ export function ConfirmationDialogProvider({
               onClick={handleConfirm}
               disabled={isLoading}
               className={cn(
-                "rounded-none flex items-center justify-center gap-2",
+                "rounded-sm flex items-center justify-center gap-2",
                 variant === "destructive" &&
                   "bg-red-600 hover:bg-red-700 text-white",
                 variant === "info" &&

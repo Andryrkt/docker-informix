@@ -23,6 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { DynamicSearchableSelect } from "../atom/DynamicSearchableSelect";
 
 export function FieldRenderer({ field }: any) {
   const isSelect = field.type === "select";
@@ -130,6 +131,32 @@ export function FieldRenderer({ field }: any) {
         />
       );
     }
+    case "dynamicSelect": {
+      const options = getOptions(field, optionsQuery);
+      if (optionsQuery?.isLoading) {
+        return (
+          <div className="text-xs text-muted-foreground">Chargement...</div>
+        );
+      }
+
+      return (
+        <DynamicSearchableSelect
+          value={field.value}
+          onChange={field.onChange}
+          options={field.options ?? []}
+          valueField={field.valueField ?? "id"}
+          labelFields={field.labelFields ?? ["label"]}
+          searchFields={field.searchFields}
+          separator={field.labelSeparator ?? " – "}
+          placeholder={field.placeholder ?? "-- Choisir --"}
+          disabled={field.disabled}
+          clearable={field.clearable}
+          clearLabel={field.clearLabel}
+          renderOption={field.renderOption} // <-- Add
+          renderSelected={field.renderSelected} // <-- Add
+        />
+      );
+    }
 
     case "date":
       return (
@@ -191,12 +218,11 @@ export function FieldRenderer({ field }: any) {
           disabled={field.disabled}
           readOnly={field.readOnly}
         />
-
       );
     // Dragaple FileZone
 
     case "dragfile":
-      return <FileDropzone field={field}  />;
+      return <FileDropzone field={field} />;
 
     // MULTICHOICE (checkbox group)
     case "multichoice": {
@@ -443,7 +469,7 @@ type ReadOnlyFieldProps = {
 
 export function FieldReadOnly({ label, value, className }: ReadOnlyFieldProps) {
   return (
-    <div className={cn("space-y-1 w-20 border", className)}>
+    <div className={cn("space-y-1 ", className)}>
       <label className="text-xs font-medium text-gray-800">{label}</label>
       <Input
         readOnly

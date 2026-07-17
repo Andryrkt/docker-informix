@@ -111,7 +111,7 @@ function DitView({ dit, bilanFinancier, materiel }: Props) {
           Details Demande d'intervention
         </h1>
       </div>
-      <div className="space-y-6  border-t-0 mx-auto gap-x-5 max-w-7xl grid md:grid-cols-2 ">
+      <div className="space-y-6  border-t-0 mx-auto gap-x-5 max-w-7xl grid lg:grid-cols-2 ">
         {/* DIT */}
         <div className="gap-6  p-2">
           <ViewSection title={"DIT"}>

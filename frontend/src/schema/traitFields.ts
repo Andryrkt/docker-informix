@@ -56,6 +56,8 @@ export type FieldTrait =
       queryFn?: () => Promise<SelectOption[]>;
       options?: SelectOption[];
       enabled?: boolean;
+      dependsOn?: string[];
+      selectAll?: boolean;
     }
   | {
       name: string;
@@ -128,4 +130,26 @@ export type FieldTrait =
       queryFn?: () => Promise<SelectOption[]>;
       options?: SelectOption[];
       enabled?: boolean;
+    }
+  | {
+      name: string;
+      label: string;
+      type: "dynamicSelect";
+      placeholder?: string;
+      readOnly?: boolean;
+      // async loading
+      queryKey?: string;
+      queryFn?: () => Promise<Record<string, any>[]>;
+      // static options
+      options?: Record<string, any>[];
+      enabled?: boolean;
+      // dynamic configuration
+      valueField?: string; // e.g. "id" (default)
+      labelFields?: string[]; // e.g. ["designation", "piece"] (default ["label"])
+      searchFields?: string[]; // optional, search in all if omitted
+      labelSeparator?: string; // default " – "
+      clearable?: boolean;
+      clearLabel?: string;
+      renderOption?: (item: Record<string, any>) => React.ReactNode;
+      renderSelected?: (item: Record<string, any>) => React.ReactNode;
     };

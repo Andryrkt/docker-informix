@@ -107,8 +107,8 @@ const baseSchema = {
   pieceJoint2: z.any(),
 
   idMateriel: z.string().min(1, "ID matériel requis"),
-  numParc: z.string().min(1, "Numéro parc requis"),
-  numSerie: z.string().min(1, "Numéro de série requis"),
+  numParc: z.string(),
+  numSerie: z.string(),
 };
 export const interneSchema = z.object({
   interneExterne: z.literal("INTERNE"),

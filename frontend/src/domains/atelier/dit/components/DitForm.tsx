@@ -21,6 +21,8 @@ import { useQuery } from "@tanstack/react-query";
 import { MaterielInfoCard } from "@/domains/materiel/components/MaterielInfoCard";
 import { getClients } from "@/domains/client/api/clientApi";
 import { useAuth } from "@/context/authContext";
+import type { Materiel } from "@/domains/materiel/schema/materielSchema";
+import type { Client } from "@/domains/client/schema/clientSchema";
 
 type Props = {
   initialValues?: DitFormValues;
@@ -104,101 +106,81 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
     },
   });
 
-  const { data: materiels = [] } = useQuery({
-    queryKey: ["materiels"],
-    queryFn: getMateriels,
-  });
-
   const { data: clients = [] } = useQuery({
     queryKey: ["clients"],
     queryFn: getClients,
   });
 
   // Clients options values
-  const numeroClientOptions = clients.map((c) => ({
-    label: c.numClient,
-    value: c.numClient,
-  }));
-  const nomClientOptions = clients.map((c) => ({
-    label: c.nomClient,
-    value: c.nomClient,
-  }));
+  const numeroClientOptions = clients;
+  const nomClientOptions = clients;
 
   // Materiels options values
-  const idMaterielOptions = [
-    { label: "Aucun", value: "" },
-    ...materiels
-      .filter((m) => m.idMateriel != null)
-      .map((m) => ({ label: m.idMateriel, value: m.idMateriel })),
-  ];
 
-  const numParcOptions = [
-    { label: "Aucun", value: "" },
-    ...materiels
-      .filter((m) => m.numParc != null)
-      .map((m) => ({ label: m.numParc, value: m.numParc })),
-  ];
-
-  const numSerieOptions = [
-    { label: "Aucun", value: "" },
-    ...materiels
-      .filter((m) => m.numSerie != null)
-      .map((m) => ({ label: m.numSerie, value: m.numSerie })),
-  ];
+  const { data: materiels = [] } = useQuery({
+    queryKey: ["materiels"],
+    queryFn: getMateriels,
+  });
+  const idMaterielOptions = materiels;
+  const numParcOptions = materiels;
+  const numSerieOptions = materiels;
 
   // Synchronisation Materiel
   const syncMateriel = (
     fieldName: "idMateriel" | "numParc" | "numSerie",
-    value: string,
+    selectedItem: Materiel | null | undefined,
   ) => {
-    // If "Aucun" (empty string) is selected, clear all fields
-    if (value === "") {
+    if (!selectedItem) {
       form.setFieldValue("idMateriel", "");
       form.setFieldValue("numParc", "");
       form.setFieldValue("numSerie", "");
       return;
     }
+    const newId = selectedItem.idMateriel ?? "";
+    const newParc = selectedItem.numParc ?? "";
+    const newSerie = selectedItem.numSerie ?? "";
 
-    let materiel;
-    switch (fieldName) {
-      case "idMateriel":
-        materiel = materiels.find((m) => m.idMateriel === value);
-        break;
-      case "numParc":
-        materiel = materiels.find((m) => m.numParc === value);
-        break;
-      case "numSerie":
-        materiel = materiels.find((m) => m.numSerie === value);
-        break;
-    }
+    // Update only if changed
+    const currentId = form.getFieldValue("idMateriel");
+    const currentParc = form.getFieldValue("numParc");
+    const currentSerie = form.getFieldValue("numSerie");
 
-    if (!materiel) return;
-
-    // Set all three fields with the found materiel's values (could be null, but that's fine)
-    form.setFieldValue("idMateriel", materiel.idMateriel ?? ""); // fallback to empty string if null
-    form.setFieldValue("numParc", materiel.numParc ?? "");
-    form.setFieldValue("numSerie", materiel.numSerie ?? "");
+    if (currentId !== newId) form.setFieldValue("idMateriel", newId);
+    if (currentParc !== newParc) form.setFieldValue("numParc", newParc);
+    if (currentSerie !== newSerie) form.setFieldValue("numSerie", newSerie);
   };
 
   // Syncronisation Client
-  const syncClient = (fieldName: "nomClient" | "numClient", value: string) => {
-    let client;
-
-    switch (fieldName) {
-      case "numClient":
-        client = clients.find((c) => c.numClient === value);
-        break;
-      case "nomClient":
-        client = clients.find((c) => c.nomClient === value);
-        break;
+  const syncClient = (
+    fieldName: "numClient" | "nomClient",
+    selectedItem: Client | null | undefined,
+  ) => {
+    // Si l'élément est null/undefined ou que c'est l'option "Aucun" (valeur vide)
+    if (!selectedItem) {
+      form.setFieldValue("numClient", "");
+      form.setFieldValue("nomClient", "");
+      form.setFieldValue("telephoneClient", "");
+      form.setFieldValue("emailClient", "");
+      return;
     }
 
-    if (!client) return;
+    // Extraire les nouvelles valeurs
+    const newNum = selectedItem.numClient ?? "";
+    const newNom = selectedItem.nomClient ?? "";
+    const newTel = selectedItem.telephoneClient ?? "";
+    const newEmail = selectedItem.emailClient ?? "";
 
-    form.setFieldValue("numClient", client.numClient);
-    form.setFieldValue("nomClient", client.nomClient);
-    form.setFieldValue("telephoneClient", client.telephoneClient ?? "");
-    form.setFieldValue("emailClient", client.emailClient ?? "");
+    // Lire les valeurs courantes
+    const currentNum = form.getFieldValue("numClient");
+    const currentNom = form.getFieldValue("nomClient");
+    const currentTel = form.getFieldValue("telephoneClient");
+    const currentEmail = form.getFieldValue("emailClient");
+
+    // Mettre à jour uniquement si changé (évite les boucles)
+    if (currentNum !== newNum) form.setFieldValue("numClient", newNum);
+    if (currentNom !== newNom) form.setFieldValue("nomClient", newNom);
+    if (currentTel !== newTel) form.setFieldValue("telephoneClient", newTel);
+    if (currentEmail !== newEmail) form.setFieldValue("emailClient", newEmail);
   };
 
   return (
@@ -447,16 +429,16 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                                               ? nomClientOptions
                                               : (config.options ?? []),
                                         value: field.state.value,
-                                        onChange: (value) => {
+                                        onChange: (item) => {
                                           if (
                                             config.name === "numClient" ||
                                             config.name === "nomClient"
                                           ) {
-                                            syncClient(config.name, value);
+                                            syncClient(config.name, item);
                                             return;
                                           }
 
-                                          field.handleChange(value);
+                                          field.handleChange(item);
                                         },
                                         disabled: shouldDisable,
                                       }}
@@ -515,17 +497,17 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                                                 : [],
                                         value: field.state.value,
 
-                                        onChange: (value) => {
+                                        onChange: (item) => {
                                           if (
                                             config.name === "idMateriel" ||
                                             config.name === "numParc" ||
                                             config.name === "numSerie"
                                           ) {
-                                            syncMateriel(config.name, value);
+                                            syncMateriel(config.name, item);
                                             return;
                                           }
 
-                                          field.handleChange(value);
+                                          field.handleChange(item);
                                         },
                                       }}
                                     />

@@ -5,11 +5,10 @@ import {
   reparationRealiseParOptions,
 } from "@/domains/reparation/api";
 import { getServicesDebiteur } from "@/domains/service/api";
-import {
-  fetchCategoriesDemande,
-  fetchTypesDocument,
-} from "../api/ditApi";
+import { fetchCategoriesDemande, fetchTypesDocument } from "../api/ditApi";
 import type { FieldTrait, SelectOption } from "@/schema/traitFields";
+import type { Materiel } from "@/domains/materiel/schema/materielSchema";
+import type { Client } from "@/domains/client/schema/clientSchema";
 
 const toSelectOptions = (
   items: { code: string; label: string }[],
@@ -146,12 +145,32 @@ export const infoClientFields: FieldTrait[] = [
   {
     name: "numClient",
     label: "Numéro du client (*EXTERNE)",
-    type: "select",
+    type: "dynamicSelect",
+    valueField: "numClient",
+    labelFields: ["numClient", "nomClient"],
+    labelSeparator: " - ",
+    clearable: true,
+    clearLabel: "Aucun",
+    placeholder: "Choisir un n° client",
+    // 👇 Dropdown display
+    renderOption: (item: Client) => `${item.numClient} - ${item.nomClient} `,
+    // 👇 Selected display (only the ID)
+    renderSelected: (item: Client) => item.numClient,
   },
   {
     name: "nomClient",
     label: "Nom du client (*EXTERNE)",
-    type: "select",
+    type: "dynamicSelect",
+    valueField: "nomClient",
+    labelFields: ["numClient", "nomClient"],
+    labelSeparator: " - ",
+    clearable: true,
+    clearLabel: "Aucun",
+    placeholder: "Choisir un nom client",
+    // 👇 Dropdown display
+    renderOption: (item: Client) => `${item.numClient} - ${item.nomClient} `,
+    // 👇 Selected display (only the ID)
+    renderSelected: (item: Client) => item.nomClient,
   },
   {
     name: "telephoneClient",
@@ -195,16 +214,49 @@ export const infoMaterielFields: FieldTrait[] = [
   {
     name: "idMateriel",
     label: "Id materiel",
-    type: "select",
+    type: "dynamicSelect",
+    valueField: "idMateriel",
+    labelFields: ["idMateriel", "numParc", "numSerie"],
+    labelSeparator: " - ",
+    clearable: true,
+    clearLabel: "Aucun",
+    placeholder: "Choisir un matériel",
+    // 👇 Dropdown display
+    renderOption: (item: Materiel) =>
+      `ID : ${item.idMateriel} - Parc : ${item.numParc} - S/N : ${item.numSerie}`,
+    // 👇 Selected display (only the ID)
+    renderSelected: (item: Materiel) => item.idMateriel,
   },
   {
     name: "numParc",
     label: "Numéro de parc",
-    type: "select",
+    type: "dynamicSelect",
+    valueField: "numParc",
+    labelFields: ["idMateriel", "numParc", "numSerie"],
+    labelSeparator: " - ",
+    clearable: true,
+    clearLabel: "Aucun",
+    // placeholder: "Choisir un n° parc",
+    // 👇 Dropdown display
+    renderOption: (item: Materiel) =>
+      `ID : ${item.idMateriel} - Parc : ${item.numParc} - S/N : ${item.numSerie}`,
+    // 👇 Selected display (only the ID)
+    renderSelected: (item: Materiel) => item.numParc,
   },
   {
     name: "numSerie",
     label: "Numéro de série",
-    type: "select",
+    type: "dynamicSelect",
+    valueField: "numSerie",
+    labelFields: ["idMateriel", "numParc", "numSerie"],
+    labelSeparator: " - ",
+    clearable: true,
+    clearLabel: "Aucun",
+    // placeholder: "Choisir un n° serie",
+    // 👇 Dropdown display
+    renderOption: (item: Materiel) =>
+      `ID : ${item.idMateriel} - Parc : ${item.numParc} - S/N : ${item.numSerie}`,
+    // 👇 Selected display (only the ID)
+    renderSelected: (item: Materiel) => item.numSerie,
   },
 ];

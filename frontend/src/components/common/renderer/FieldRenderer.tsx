@@ -23,6 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { DynamicSearchableSelect } from "../atom/DynamicSearchableSelect";
 
 export function FieldRenderer({ field }: any) {
   const isSelect = field.type === "select";
@@ -83,6 +84,32 @@ export function FieldRenderer({ field }: any) {
           options={options ?? []}
           placeholder={field.placeholder}
           disabled={field.disabled}
+        />
+      );
+    }
+    case "dynamicSelect": {
+      const options = getOptions(field, optionsQuery);
+      if (optionsQuery?.isLoading) {
+        return (
+          <div className="text-xs text-muted-foreground">Chargement...</div>
+        );
+      }
+
+      return (
+        <DynamicSearchableSelect
+          value={field.value}
+          onChange={field.onChange}
+          options={field.options ?? []}
+          valueField={field.valueField ?? "id"}
+          labelFields={field.labelFields ?? ["label"]}
+          searchFields={field.searchFields}
+          separator={field.labelSeparator ?? " – "}
+          placeholder={field.placeholder ?? "-- Choisir --"}
+          disabled={field.disabled}
+          clearable={field.clearable}
+          clearLabel={field.clearLabel}
+          renderOption={field.renderOption} // <-- Add
+          renderSelected={field.renderSelected} // <-- Add
         />
       );
     }

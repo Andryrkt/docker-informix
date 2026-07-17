@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 
 function HomePage() {
   const { openDialog, VignetteDialogComponent } = useVignetteDialog();
-  const { t } = useTranslation("vignette");
 
   return (
     <div className="w-full h-full flex-1 ">
@@ -15,8 +14,8 @@ function HomePage() {
 
           return (
             <VignetteCard
-              key={item.titleKey}
-              title={t(`${item.titleKey}.title`)}
+              key={item.title}
+              title={item.title}
               icon={
                 <Icon className="size-20 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" />
               }

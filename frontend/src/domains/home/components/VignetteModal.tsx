@@ -36,7 +36,6 @@ export type ModalData = {
 export function useVignetteDialog() {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState<ModalData | null>(null);
-  const { t } = useTranslation("vignette");
 
   const openDialog = (payload: ModalData) => {
     setData(payload);
@@ -52,10 +51,7 @@ export function useVignetteDialog() {
         <DialogHeader className="gap-2">
           <DialogTitle className="flex items-center gap-2 text-white">
             {data?.icon && <data.icon className="size-8" />}
-            {/* Use translated title, fall back to hardcoded title */}
-            {data
-              ? t(`${data.titleKey}.title`, { defaultValue: data.title })
-              : null}
+            {data ? data.title : null}
           </DialogTitle>
           {data?.description && (
             <DialogDescription>{data.description}</DialogDescription>
@@ -75,7 +71,7 @@ export function useVignetteDialog() {
                     className="flex items-center gap-2 px-3 py-3 text-brand-primary/75 hover:text-brand-primary"
                   >
                     {ItemIcon && <ItemIcon className="size-4" />}
-                    {t(item.labelKey, { defaultValue: item.label })}
+                    {item.label}
                   </Link>
                 );
               })}
@@ -99,9 +95,7 @@ export function useVignetteDialog() {
                 <div key={i} className="flex flex-col gap-3 py-2">
                   <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground uppercase">
                     <SectionIcon className="size-4" />
-                    {t(`${section.titleKey}.title`, {
-                      defaultValue: section.title ?? "",
-                    })}
+                    {section.title}
                   </div>
 
                   <div className="flex flex-col">
@@ -115,7 +109,7 @@ export function useVignetteDialog() {
                           className="flex items-center gap-2 px-2 py-2 text-brand-primary/75 hover:text-brand-primary"
                         >
                           {ItemIcon && <ItemIcon className="size-3" />}
-                          {t(item.labelKey, { defaultValue: item.label })}
+                          {item.label}
                         </Link>
                       );
                     })}

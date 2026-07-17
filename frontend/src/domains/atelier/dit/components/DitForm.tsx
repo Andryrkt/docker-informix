@@ -25,7 +25,6 @@ import { getAgences } from "@/domains/agence/api";
 import NiveauUrgenceModal from "./NiveauUrgenceModal";
 import type { Materiel } from "@/domains/materiel/schema/materielSchema";
 import type { Client } from "@/domains/client/schema/clientSchema";
-import { getAgences } from "@/domains/agence/api";
 
 type Props = {
   initialValues?: DitFormValues;
@@ -113,11 +112,11 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
       avisRecouvrement: "NON",
 
       // Agence / Service
-      agenceDebiteur: "",
-      serviceDebiteur: "",
+      agenceDebiteur: "AGENCE DEBITTEUR",
+      serviceDebiteur: "SERVICE DEBITTEUR",
 
-      agenceEmetteur: "",
-      serviceEmmetteur: "",
+      agenceEmetteur: "AGENCE EMMETTEUR",
+      serviceEmmetteur: "SERVICE EMETTEUR",
 
       // Intervention
       worNiveauUrgence: "",
@@ -150,6 +149,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
 
     onSubmit: async ({ value }) => {
       setErrors([]);
+      console.log(value);
       try {
         await onSubmitDit(value);
       } catch (error: any) {
@@ -185,15 +185,10 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
   const servicesDebiteurOptions = useMemo(() => {
     if (!agenceDebiteurValue) return [];
     return (
-      agencesDebiteur.find((a) => a.value === agenceDebiteurValue)
-        ?.services ?? []
+      agencesDebiteur.find((a) => a.value === agenceDebiteurValue)?.services ??
+      []
     );
   }, [agencesDebiteur, agenceDebiteurValue]);
-
-  const { data: materiels = [] } = useQuery({
-    queryKey: ["materiels"],
-    queryFn: getMateriels,
-  });
 
   const { data: clients = [] } = useQuery({
     queryKey: ["clients"],

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Bell, BellOff, CheckCheck, ChevronRight, History, MapPin, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -7,6 +8,13 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { useNotifications } from "@/domains/notifications/hooks/useNotifications";
 import type { NotificationItem } from "@/domains/notifications/api/notificationApi";
 
@@ -47,7 +55,7 @@ function NotificationRow({
     <button
       type="button"
       onClick={() => onOpen(notification)}
-      className={`w-full text-left flex items-start gap-2.5 px-3 py-2.5 transition-colors hover:bg-gray-50 ${
+      className={`w-full text-left flex items-start gap-2.5 px-3 py-2.5 cursor-pointer transition-colors hover:bg-gray-50 ${
         notification.isRead ? "" : "bg-red-50/40"
       }`}
     >
@@ -80,13 +88,21 @@ function NotificationRow({
 export default function NotificationBell() {
   const { notifications, unreadCount, markRead, markAllRead } = useNotifications();
   const navigate = useNavigate();
+  const [selected, setSelected] = useState<NotificationItem | null>(null);
 
   const handleOpen = (n: NotificationItem) => {
     if (!n.isRead) markRead(n.id);
-    if (isNavigablePage(n.pageUrl)) navigate(n.pageUrl);
+    if (isNavigablePage(n.pageUrl)) {
+      navigate(n.pageUrl);
+    } else {
+      setSelected(n);
+    }
   };
 
+  const selectedCfg = selected ? SOURCE_CONFIG[selected.source] ?? SOURCE_CONFIG.NAVIGATION : null;
+
   return (
+    <>
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
@@ -149,5 +165,27 @@ export default function NotificationBell() {
         </a>
       </DropdownMenuContent>
     </DropdownMenu>
+
+    <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            {selectedCfg && (
+              <span className={`flex items-center justify-center h-6 w-6 rounded-full shrink-0 ${selectedCfg.className}`}>
+                <selectedCfg.icon size={12} />
+              </span>
+            )}
+            {selected?.title}
+          </DialogTitle>
+          <DialogDescription>
+            {selected && `${selectedCfg?.label ?? ""} · ${timeAgo(selected.createdAt)}`}
+          </DialogDescription>
+        </DialogHeader>
+        <p className="whitespace-pre-wrap break-words text-sm text-gray-700">
+          {selected?.message ?? "Aucun détail disponible."}
+        </p>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }

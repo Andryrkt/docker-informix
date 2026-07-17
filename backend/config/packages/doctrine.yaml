@@ -27,6 +27,12 @@ doctrine:
                 dbname: '%env(SQLSERVER_DB)%'
                 user: '%env(SQLSERVER_USER)%'
                 password: '%env(SQLSERVER_PASSWORD)%'
+                # Force une reconnexion proactive au-delà de ce délai d'inactivité :
+                # une connexion TCP inactive vers 192.168.0.28 peut être coupée
+                # silencieusement par un pare-feu/NAT/VPN, ce qui fait sinon geler
+                # la requête suivante le temps des retransmissions TCP (observé
+                # jusqu'à 105s sur le login).
+                idle_connection_ttl: 30
     orm:
         default_entity_manager: ips
         entity_managers:

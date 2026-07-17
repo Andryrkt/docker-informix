@@ -11,7 +11,7 @@ import {
   reparationFields,
   traitFields,
 } from "../schema/ditSchemaField";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { formatErrorMessage } from "@/lib/utils";
 import { ditFormSchema, type DitFormValues } from "../schema/ditSchema";
@@ -23,6 +23,7 @@ import { getClients } from "@/domains/client/api/clientApi";
 import { useAuth } from "@/context/authContext";
 import type { Materiel } from "@/domains/materiel/schema/materielSchema";
 import type { Client } from "@/domains/client/schema/clientSchema";
+import { getAgences } from "@/domains/agence/api";
 
 type Props = {
   initialValues?: DitFormValues;
@@ -41,6 +42,60 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
   const emetteurFields = agenceAndServiceFields.filter((field) =>
     ["agenceEmetteur", "serviceEmmetteur"].includes(field.name),
   );
+
+  // Pour les filtres dynamique agent > debiteur[]
+  const { data: agents = [] } = useQuery({
+    queryKey: ["agentServices"],
+    queryFn: getAgences,
+  });
+  // const agents = [
+  //   {
+  //     label: "Agent 1",
+  //     value: "1",
+  //     services: [
+  //       { label: "Service A", value: "A" },
+  //       { label: "Service B", value: "B" },
+  //     ],
+  //   },
+  //   {
+  //     label: "Agent 2",
+  //     value: "2",
+  //     services: [{ label: "Service C", value: "C" }],
+  //   },
+  // ];
+
+  const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
+
+  // const dynamicFields = useMemo(() => {
+  //   return debiteurFields.map((column) =>
+  //     column.map((field) => {
+  //       if (field.name === "agent_debiteur") {
+  //         return {
+  //           ...field,
+
+  //           queryFn: async () =>
+  //             agents.map((a) => ({ label: a.label, value: a.value })),
+  //         };
+  //       }
+  //       if (field.name === "service_debiteur") {
+  //         return {
+  //           ...field,
+  //           placeholder: !selectedAgent
+  //             ? "Sélectionnez d'abord un agent débiteur"
+  //             : "",
+  //           selectAll: true,
+  //           dependsOn: ["agent_debiteur"], // ✅ clears services when agent changes
+  //           queryKey: `service_debiteur_${selectedAgent || "none"}`,
+  //           queryFn: async () => {
+  //             if (!selectedAgent) return [];
+  //             return getServicesForAgent(selectedAgent);
+  //           },
+  //         };
+  //       }
+  //       return field;
+  //     }),
+  //   );
+  // }, [selectedAgent]);
 
   const form = useForm({
     defaultValues: initialValues ?? {

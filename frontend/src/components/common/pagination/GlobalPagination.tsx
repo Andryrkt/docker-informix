@@ -66,7 +66,7 @@ function GlobalPagination({
               <PaginationLink
                 href="#"
                 className={cn(
-                  "px-3 py-2 border w-fit text-sm font-medium transition-all duration-200 rounded-none bg-brand-dark text-brand-primary", // base style
+                  "px-3 py-2 border w-fit text-sm font-medium transition-all duration-200 rounded-sm bg-brand-dark text-brand-primary", // base style
                   "hover:bg-brand-primary hover:text-gray-900", // hover effect
                   "focus:outline-none focus:ring-1 focus:ring-brand-primary ", // accessibility
                   currentPage === page

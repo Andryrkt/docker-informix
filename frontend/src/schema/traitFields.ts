@@ -53,6 +53,8 @@ export type FieldTrait =
       queryFn?: () => Promise<SelectOption[]>;
       options?: SelectOption[];
       enabled?: boolean;
+      dependsOn?: string[];
+      selectAll?: boolean;
     }
   | {
       name: string;

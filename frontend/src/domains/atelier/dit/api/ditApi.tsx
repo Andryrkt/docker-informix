@@ -20,6 +20,7 @@ export async function fetchDits(
     "/demande-intervention/liste",
     {
       params: {
+        limit: 5,
         page,
         ...cleanedParams,
       },
@@ -28,7 +29,6 @@ export async function fetchDits(
 
   return response.data;
 }
-
 
 export async function fetchDitDetails(id: number | string): Promise<Dit> {
   const response = await axiosInstance.get<Dit>(
@@ -43,12 +43,16 @@ export interface DitLookupOption {
 }
 
 export async function fetchTypesDocument(): Promise<DitLookupOption[]> {
-  const { data } = await axiosInstance.get<DitLookupOption[]>("/dit/types-document");
+  const { data } = await axiosInstance.get<DitLookupOption[]>(
+    "/dit/types-document",
+  );
   return data;
 }
 
 export async function fetchCategoriesDemande(): Promise<DitLookupOption[]> {
-  const { data } = await axiosInstance.get<DitLookupOption[]>("/dit/categories-demande");
+  const { data } = await axiosInstance.get<DitLookupOption[]>(
+    "/dit/categories-demande",
+  );
   return data;
 }
 

@@ -86,7 +86,7 @@ export const agenceAndServiceFields: FieldTrait[] = [
     label: "Agence débiteur",
     type: "select",
     queryKey: "agences",
-    queryFn: () => getAgences(),
+    queryFn: async () => [],
   },
   {
     name: "serviceDebiteur",
@@ -94,7 +94,7 @@ export const agenceAndServiceFields: FieldTrait[] = [
     type: "select",
     placeholder: "Sélectionner un service",
     queryKey: "services-debiteur",
-    queryFn: () => getServicesDebiteur(),
+    queryFn: async () => [],
   },
   {
     name: "agenceEmetteur",

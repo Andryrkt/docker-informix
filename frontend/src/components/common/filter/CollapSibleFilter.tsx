@@ -119,7 +119,7 @@ export default function CollapsibleFilter({
           className={gridClass}
         >
           {fields.map((row, rowIndex) => (
-            <div key={rowIndex} className="flex flex-col gap-1">
+            <div key={rowIndex} className="flex flex-col gap-4">
               {row.map((field) => (
                 <form.Field key={field.name} name={field.name as any}>
                   {(f) => {

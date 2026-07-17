@@ -35,6 +35,9 @@ export interface Dit {
 
   agenceEmetteur: string;
   serviceEmmetteur: string;
+  agenceServiceEmetteur : string;
+  agenceServiceDebiteur : string | null;
+  
   datePrevue?: string | null;
   typeReparation?: string | null;
   reparationPar?: string | null;
@@ -84,8 +87,17 @@ export interface Dit {
 }
 
 const baseSchema = {
-  objet: z.string().min(1, "Objet requis"),
-  details: z.string().min(1, "Détails requis"),
+  objet: z.string().min(1, "Objet requis").max(86, "86 caractères maximum"),
+  details: z
+    .string()
+    .min(1, "Détails requis")
+    .refine(
+      (value) => {
+        const lineBreaks = (value.match(/\n/g) || []).length;
+        return value.length + lineBreaks * 130 <= 1800;
+      },
+      { message: "1800 caractères maximum (un saut de ligne compte pour 130 caractères)" },
+    ),
 
   typeDocument: z.string().min(1, "Type de document requis"),
   categorieDemande: z.string().min(1, "Catégorie demande requise"),
@@ -126,7 +138,10 @@ export const externeSchema = z.object({
   demandeDevis: z.string().min(1, "Demande devis requise"),
 
   numClient: z.string().min(1, "Num client requis"),
-  telephoneClient: z.string().min(1, "Téléphone requis"),
+  telephoneClient: z
+    .string()
+    .min(1, "Téléphone requis")
+    .max(16, "16 caractères maximum"),
   nomClient: z.string().min(1, "Nom client requis"),
   emailClient: z.string().email("Email invalide"),
 

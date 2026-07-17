@@ -12,7 +12,11 @@ async function fetchServices(agenceId?: number): Promise<SelectOption[]> {
     "/dit/services",
     { params: agenceId ? { agenceId } : {} },
   );
-  return data.map((s) => ({ ...s, value: String(s.id) }));
+  return data.map((s) => ({
+    ...s,
+    label: `${s.code} ${s.label}`,
+    value: String(s.id),
+  }));
 }
 
 export const getServicesDebiteur = async (): Promise<SelectOption[]> => fetchServices();

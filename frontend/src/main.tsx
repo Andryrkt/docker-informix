@@ -2,24 +2,14 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
-import { QueryClient } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "./components/ui/tooltip.tsx";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { get, set, del } from "idb-keyval";
+import { queryClient } from "./lib/queryClient";
 import "./i18n";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      gcTime: 1000 * 60 * 60 * 24 * 7,
-      staleTime: 1000 * 60 * 10,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
 
 const indexedDBPersister = createAsyncStoragePersister({
   storage: {
@@ -36,6 +26,10 @@ createRoot(document.getElementById("root")!).render(
       persistOptions={{
         persister: indexedDBPersister,
         maxAge: 1000 * 60 * 60 * 24 * 7,
+        // Change cette valeur à chaque changement de forme des données mises en
+        // cache (ex: format des labels agence/service) pour invalider d'un coup
+        // le cache IndexedDB persisté de tous les utilisateurs.
+        buster: "2026-07-16-agence-service-code",
       }}
     >
       <TooltipProvider>

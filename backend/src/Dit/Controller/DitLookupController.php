@@ -7,8 +7,8 @@ use App\Dit\Repository\ClientRepository;
 use App\Dit\Repository\MaterielRepository;
 use App\Dit\Repository\WorNiveauUrgenceRepository;
 use App\Dit\Repository\WorTypeDocumentRepository;
-use App\Security\Entity\Service;
 use App\Security\Repository\AgencyRepository;
+use App\Security\Repository\ServiceRepository;
 use App\Security\Service\SecurityContextService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,6 +34,7 @@ class DitLookupController extends AbstractController
         private readonly MaterielRepository $materielRepo,
         private readonly ClientRepository $clientRepo,
         private readonly AgencyRepository $agencyRepo,
+        private readonly ServiceRepository $serviceRepo,
         private readonly SecurityContextService $securityContext
     ) {}
 
@@ -76,6 +77,13 @@ class DitLookupController extends AbstractController
         return $this->json(array_map(fn($code) => ['code' => $code, 'label' => $code], self::REPARATION_PAR));
     }
 
+    /**
+     * Inclut les services de chaque agence (pas de pagination/filtre séparé
+     * nécessaire côté frontend pour "service débiteur" : le formulaire DIT
+     * charge cette liste une fois et filtre par agence côté client — même
+     * principe que TikCreationForm, plus rapide qu'un aller-retour réseau à
+     * chaque changement d'agence).
+     */
     #[Route('/agences', methods: ['GET'])]
     public function agences(): JsonResponse
     {
@@ -86,6 +94,11 @@ class DitLookupController extends AbstractController
             'id' => $a->getId(),
             'code' => $a->getCode(),
             'label' => $a->getName(),
+            'services' => array_map(fn($s) => [
+                'id' => $s->getId(),
+                'code' => $s->getCode(),
+                'label' => $s->getName(),
+            ], $a->getServices()->toArray()),
         ], $agences));
     }
 

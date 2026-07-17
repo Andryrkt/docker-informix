@@ -21,6 +21,7 @@ import DitDuplication from "@/domains/atelier/dit/pages/DitDuplication";
 import DitDetails from "@/domains/atelier/dit/pages/DitDetails";
 import VerificationPrixSoumission from "@/domains/atelier/soumission/pages/VerificationPrixSoumission";
 import { verificationDitLoader } from "./guards/verificationDitLoader";
+import { ditDefaultsLoader } from "./guards/ditDefaultsLoader";
 import ValidationAtelierSoumission from "@/domains/atelier/soumission/pages/ValidationAtelierSoumission";
 import BonCommandeSoumission from "@/domains/atelier/soumission/pages/BonCommandeSoumission";
 import OrSoummission from "@/domains/atelier/soumission/pages/OrdreReparationSoummission";
@@ -126,6 +127,7 @@ function AppRoutes() {
         {
           path: "/atelier/demande-intervention/new",
           element: <DitCreation />,
+          loader: ditDefaultsLoader,
         },
         {
           path: "/atelier/demande-intervention/duplication/:numeroDemandeIntervention",

@@ -18,6 +18,9 @@ export type FieldTrait =
       placeholder?: string;
       validate?: (value: string) => boolean;
       readOnly?: boolean;
+      /** Longueur maximale (textarea) — un saut de ligne compte pour `newlinePenalty` caractères. Affiche le compteur de caractères restants. */
+      maxLength?: number;
+      newlinePenalty?: number;
     }
   | {
       name: string;

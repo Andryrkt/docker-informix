@@ -11,8 +11,8 @@ import {
   reparationFields,
   traitFields,
 } from "../schema/ditSchemaField";
-import { useMemo, useState } from "react";
-import { useForm } from "@tanstack/react-form";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useForm, useStore } from "@tanstack/react-form";
 import { formatErrorMessage } from "@/lib/utils";
 import { ditFormSchema, type DitFormValues } from "../schema/ditSchema";
 import { Save } from "lucide-react";
@@ -20,7 +20,9 @@ import { getMateriels } from "@/domains/materiel/api/materielApi";
 import { useQuery } from "@tanstack/react-query";
 import { MaterielInfoCard } from "@/domains/materiel/components/MaterielInfoCard";
 import { getClients } from "@/domains/client/api/clientApi";
-import { useAuth } from "@/context/authContext";
+import { fetchDitDefaults } from "../api/ditApi";
+import { getAgences } from "@/domains/agence/api";
+import NiveauUrgenceModal from "./NiveauUrgenceModal";
 import type { Materiel } from "@/domains/materiel/schema/materielSchema";
 import type { Client } from "@/domains/client/schema/clientSchema";
 import { getAgences } from "@/domains/agence/api";
@@ -33,7 +35,6 @@ type Props = {
 
 function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
   const [errors, setErrors] = useState<string[]>([]);
-  const { user } = useAuth();
 
   const debiteurFields = agenceAndServiceFields.filter((field) =>
     ["agenceDebiteur", "serviceDebiteur"].includes(field.name),
@@ -115,8 +116,8 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
       agenceDebiteur: "",
       serviceDebiteur: "",
 
-      agenceEmetteur: user?.agence,
-      serviceEmmetteur: user?.service,
+      agenceEmetteur: "",
+      serviceEmmetteur: "",
 
       // Intervention
       worNiveauUrgence: "",
@@ -161,10 +162,111 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
     },
   });
 
+  const agenceDebiteurValue = useStore(
+    form.store,
+    (state) => state.values.agenceDebiteur,
+  );
+  const interneExterneValue = useStore(
+    form.store,
+    (state) => state.values.interneExterne,
+  );
+
+  // Même clé/fonction que la query interne du champ "agenceDebiteur" (voir
+  // ditSchemaField.tsx : queryKey "agences") — un seul fetch réseau partagé,
+  // pour pouvoir filtrer le service débiteur par agence côté client, sans
+  // requête supplémentaire à chaque changement (même principe que
+  // TikCreationForm).
+  const { data: agencesDebiteur = [] } = useQuery({
+    queryKey: ["filter-options", "agences"],
+    queryFn: getAgences,
+    staleTime: 1000 * 60 * 10,
+  });
+
+  const servicesDebiteurOptions = useMemo(() => {
+    if (!agenceDebiteurValue) return [];
+    return (
+      agencesDebiteur.find((a) => a.value === agenceDebiteurValue)
+        ?.services ?? []
+    );
+  }, [agencesDebiteur, agenceDebiteurValue]);
+
+  const { data: materiels = [] } = useQuery({
+    queryKey: ["materiels"],
+    queryFn: getMateriels,
+  });
+
   const { data: clients = [] } = useQuery({
     queryKey: ["clients"],
     queryFn: getClients,
   });
+
+  // Agence/service émetteur par défaut de l'utilisateur (lecture seule sur le
+  // formulaire) — non applicable en duplication, où les valeurs viennent déjà
+  // de initialValues.
+  const { data: defaults } = useQuery({
+    queryKey: ["dit", "defaults"],
+    queryFn: fetchDitDefaults,
+    enabled: mode === "create",
+  });
+
+  useEffect(() => {
+    if (mode !== "create" || !defaults) return;
+
+    if (defaults.agenceEmetteur) {
+      form.setFieldValue(
+        "agenceEmetteur",
+        `${defaults.agenceEmetteur.code} ${defaults.agenceEmetteur.name}`,
+      );
+      // Agence débiteur par défaut = agence émetteur, tant que l'utilisateur
+      // n'a pas déjà choisi autre chose (champ éditable, contrairement à l'émetteur).
+      if (!form.getFieldValue("agenceDebiteur")) {
+        form.setFieldValue(
+          "agenceDebiteur",
+          String(defaults.agenceEmetteur.id),
+        );
+      }
+    }
+    if (defaults.serviceEmetteur) {
+      form.setFieldValue(
+        "serviceEmmetteur",
+        `${defaults.serviceEmetteur.code} ${defaults.serviceEmetteur.name}`,
+      );
+      if (!form.getFieldValue("serviceDebiteur")) {
+        form.setFieldValue(
+          "serviceDebiteur",
+          String(defaults.serviceEmetteur.id),
+        );
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaults, mode]);
+
+  // Reset des champs propres à l'autre mode (INTERNE <-> EXTERNE) quand
+  // interneExterne change réellement — un useEffect, pas un effet de bord
+  // dans le rendu de form.Subscribe (qui se ré-exécuterait à chaque re-render
+  // du composant, écrasant en boucle les valeurs par défaut agence/service).
+  // Comparaison à la valeur précédente (pas un simple flag "premier rendu") :
+  // au montage, `defaults` est déjà résolu grâce au loader de la route, et le
+  // double-appel des effets en StrictMode (dev) rejouerait un flag "premier
+  // rendu" une seconde fois avec la même valeur — ce qui déclencherait quand
+  // même le reset et effacerait le pré-remplissage.
+  const previousInterneExterneRef = useRef(interneExterneValue);
+  useEffect(() => {
+    const previous = previousInterneExterneRef.current;
+    previousInterneExterneRef.current = interneExterneValue;
+
+    if (mode !== "create" || previous === interneExterneValue) return;
+
+    if (interneExterneValue === "INTERNE") {
+      form.setFieldValue("agenceDebiteur", "");
+      form.setFieldValue("serviceDebiteur", "");
+      form.setFieldValue("numClient", "");
+      form.setFieldValue("telephoneClient", "");
+      form.setFieldValue("nomClient", "");
+      form.setFieldValue("emailClient", "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [interneExterneValue, mode]);
 
   // Clients options values
   const numeroClientOptions = clients;
@@ -251,14 +353,6 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
       <form.Subscribe selector={(state) => state.values.interneExterne}>
         {(interneExterneValue) => {
           const isInterne = interneExterneValue === "INTERNE";
-          if (isInterne && mode === "create") {
-            form.setFieldValue("agenceDebiteur", "");
-            form.setFieldValue("serviceDebiteur", "");
-            form.setFieldValue("numClient", "");
-            form.setFieldValue("telephoneClient", "");
-            form.setFieldValue("nomClient", "");
-            form.setFieldValue("emailClient", "");
-          }
           return (
             <form
               id="dit-form"
@@ -364,46 +458,68 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                       </div>
                       <div className="space-y-4 flex gap-x-4  ">
                         <div className="flex flex-col gap-4 w-full">
-                          {debiteurFields.map((config) => (
-                            <form.Field
-                              key={config.name}
-                              name={config.name as never}
-                              children={(field) => {
-                                const isInvalid =
-                                  field.state.meta.isTouched &&
-                                  !field.state.meta.isValid;
-                                const shouldDisable =
-                                  (config.name === "agenceDebiteur" ||
-                                    config.name === "serviceDebiteur") &&
-                                  !isInterne;
-                                return (
-                                  <Field data-invalid={isInvalid}>
-                                    <FieldLabel
-                                      htmlFor={field.name}
-                                      className="font-semibold"
-                                    >
-                                      {config.label}
-                                    </FieldLabel>
+                          {debiteurFields.map((config) => {
+                            const isAgenceDebiteur =
+                              config.name === "agenceDebiteur";
+                            const isServiceDebiteur =
+                              config.name === "serviceDebiteur";
 
-                                    <FieldRenderer
-                                      field={{
-                                        ...config,
-                                        value: field.state.value,
-                                        onChange: field.handleChange,
-                                        disabled: shouldDisable,
-                                      }}
-                                    />
+                            return (
+                              <form.Field
+                                key={config.name}
+                                name={config.name as never}
+                                children={(field) => {
+                                  const isInvalid =
+                                    field.state.meta.isTouched &&
+                                    !field.state.meta.isValid;
+                                  const shouldDisable =
+                                    (isAgenceDebiteur || isServiceDebiteur) &&
+                                    !isInterne;
+                                  return (
+                                    <Field data-invalid={isInvalid}>
+                                      <FieldLabel
+                                        htmlFor={field.name}
+                                        className="font-semibold"
+                                      >
+                                        {config.label}
+                                      </FieldLabel>
 
-                                    {isInvalid && (
-                                      <FieldError
-                                        errors={field.state.meta.errors}
+                                      <FieldRenderer
+                                        field={{
+                                          ...config,
+                                          // Service débiteur filtré par l'agence débiteur sélectionnée,
+                                          // à partir de la liste agences+services déjà chargée — pas de
+                                          // requête réseau à chaque changement (même principe que
+                                          // TikCreationForm).
+                                          ...(isServiceDebiteur && {
+                                            options: servicesDebiteurOptions,
+                                            enabled: false,
+                                          }),
+                                          value: field.state.value,
+                                          onChange: (value: string) => {
+                                            field.handleChange(value);
+                                            if (isAgenceDebiteur) {
+                                              form.setFieldValue(
+                                                "serviceDebiteur",
+                                                "",
+                                              );
+                                            }
+                                          },
+                                          disabled: shouldDisable,
+                                        }}
                                       />
-                                    )}
-                                  </Field>
-                                );
-                              }}
-                            ></form.Field>
-                          ))}
+
+                                      {isInvalid && (
+                                        <FieldError
+                                          errors={field.state.meta.errors}
+                                        />
+                                      )}
+                                    </Field>
+                                  );
+                                }}
+                              ></form.Field>
+                            );
+                          })}
                         </div>
 
                         {/* Emmetteur */}
@@ -618,9 +734,12 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                                   <Field data-invalid={isInvalid}>
                                     <FieldLabel
                                       htmlFor={field.name}
-                                      className=" font-semibold"
+                                      className=" font-semibold gap-1.5"
                                     >
                                       {config.label}
+                                      {config.name === "worNiveauUrgence" && (
+                                        <NiveauUrgenceModal />
+                                      )}
                                     </FieldLabel>
 
                                     <FieldRenderer

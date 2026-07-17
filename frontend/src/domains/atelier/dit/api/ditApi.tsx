@@ -37,6 +37,25 @@ export async function fetchDitDetails(id: number | string): Promise<Dit> {
   return response.data;
 }
 
+export interface AgenceServiceRef {
+  id: number;
+  code: string;
+  name: string;
+}
+
+export interface DitDefaults {
+  agenceEmetteur: AgenceServiceRef | null;
+  serviceEmetteur: AgenceServiceRef | null;
+  codeSociete: string | null;
+}
+
+export async function fetchDitDefaults(): Promise<DitDefaults> {
+  const { data } = await axiosInstance.get<DitDefaults>(
+    "/demande-intervention/defaults",
+  );
+  return data;
+}
+
 export interface DitLookupOption {
   code: string;
   label: string;

@@ -32,18 +32,4 @@ class TikRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-
-    /**
-     * Compte les tickets déjà créés pour le préfixe donné (ex: 'TIK2607') —
-     * sert à générer le numéro de séquence du mois.
-     */
-    public function countByNumeroPrefix(string $prefix): int
-    {
-        return (int) $this->createQueryBuilder('t')
-            ->select('COUNT(t.id)')
-            ->where('t.numeroTicket LIKE :prefix')
-            ->setParameter('prefix', $prefix . '%')
-            ->getQuery()
-            ->getSingleScalarResult();
-    }
 }

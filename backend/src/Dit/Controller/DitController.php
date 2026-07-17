@@ -6,22 +6,24 @@ use App\Dit\Entity\Irium\Dit;
 use App\Dit\Repository\CategorieAteAppRepository;
 use App\Dit\Repository\DitRepository;
 use App\Dit\Repository\MaterielRepository;
-use App\Dit\Repository\StatutDemandeRepository;
 use App\Dit\Repository\WorNiveauUrgenceRepository;
 use App\Dit\Repository\WorTypeDocumentRepository;
-use App\Dit\Service\DitNumeroService;
+use App\Audit\Entity\AuditOperation;
+use App\Dit\Service\DitFilterResolver;
+use App\Dit\Service\DitPayloadFactory;
 use App\Security\Entity\User;
 use App\Security\Repository\AgencyRepository;
 use App\Security\Repository\PersonnelRepository;
 use App\Security\Repository\ServiceRepository;
+use App\Shared\Service\FileUploadService;
+use App\Shared\Service\NumeroGeneratorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
@@ -34,19 +36,15 @@ use Symfony\Component\Routing\Attribute\Route;
  * GET /api/demande-intervention/liste, GET /api/demande-intervention/details/{numero},
  * POST /api/createDIT (sert à la fois la création ET la duplication — le
  * frontend pré-remplit juste le formulaire et re-poste comme une création).
+ *
+ * La résolution des filtres de recherche (DitFilterResolver) et la construction
+ * du JSON de réponse (DitPayloadFactory) sont déléguées à des services dédiés
+ * au module ; l'upload des pièces jointes (FileUploadService) est partagé
+ * avec les autres modules (TIK...) — ce contrôleur ne garde que
+ * l'orchestration HTTP et la validation propre à la création.
  */
 class DitController extends AbstractController
 {
-    private const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 Mo
-    private const ALLOWED_MIME_TYPES = [
-        'application/pdf',
-        'image/jpeg',
-        'image/png',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.ms-powerpoint',
-        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    ];
     private const TYPES_REPARATION = ['STANDARD', 'URGENTE', 'PREVENTIVE', 'CORRECTIVE'];
     private const REPARATION_PAR = ['ATE_TANA', 'ATE_POL_TANA', 'ATE_STAR', 'ATE_MAS', 'ATE_TMV', 'ATE_FTU'];
     private const DEFAULT_LIMIT = 20;
@@ -57,12 +55,13 @@ class DitController extends AbstractController
         private readonly WorTypeDocumentRepository $typeDocumentRepo,
         private readonly WorNiveauUrgenceRepository $niveauUrgenceRepo,
         private readonly CategorieAteAppRepository $categorieRepo,
-        private readonly StatutDemandeRepository $statutRepo,
         private readonly AgencyRepository $agencyRepo,
         private readonly ServiceRepository $serviceRepo,
         private readonly PersonnelRepository $personnelRepo,
-        private readonly DitNumeroService $numeroService,
-        private readonly KernelInterface $kernel
+        private readonly NumeroGeneratorService $numeroGenerator,
+        private readonly DitFilterResolver $filterResolver,
+        private readonly DitPayloadFactory $payloadFactory,
+        private readonly FileUploadService $fileUploadService,
     ) {}
 
     #[Route('/api/demande-intervention/liste', methods: ['GET'])]
@@ -70,14 +69,34 @@ class DitController extends AbstractController
     {
         $page = max(1, (int) $request->query->get('page', 1));
         $limit = max(1, (int) $request->query->get('limit', self::DEFAULT_LIMIT));
+        $filters = $this->filterResolver->resolve($request);
 
-        [$dits, $total] = $this->ditRepo->findPaginated($page, $limit);
+        [$dits, $total] = $this->ditRepo->findPaginated($page, $limit, $filters);
 
         return $this->json([
-            'data' => array_map(fn(Dit $d) => $this->serialize($d), $dits),
+            'data' => array_map(fn(Dit $d) => $this->payloadFactory->serialize($d), $dits),
             'current_page' => $page,
             'totalPages' => (int) ceil($total / $limit),
             'resultat' => $total,
+        ]);
+    }
+
+    /**
+     * Valeurs pré-remplies affichées (lecture seule) sur le formulaire de
+     * création : agence/service émetteur du demandeur, dérivés de sa fiche
+     * Personnel → Centre (même logique que TikController::defaults()).
+     */
+    #[Route('/api/demande-intervention/defaults', methods: ['GET'])]
+    public function defaults(): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        [$agenceEmetteur, $serviceEmetteur, $codeSociete] = $this->resolveDefaultAgenceService($user);
+
+        return $this->json([
+            'agenceEmetteur' => $agenceEmetteur ? ['id' => $agenceEmetteur->getId(), 'code' => $agenceEmetteur->getCode(), 'name' => $agenceEmetteur->getName()] : null,
+            'serviceEmetteur' => $serviceEmetteur ? ['id' => $serviceEmetteur->getId(), 'code' => $serviceEmetteur->getCode(), 'name' => $serviceEmetteur->getName()] : null,
+            'codeSociete' => $codeSociete,
         ]);
     }
 
@@ -89,7 +108,7 @@ class DitController extends AbstractController
             return $this->json(['error' => 'DIT introuvable.'], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->json($this->serialize($dit));
+        return $this->json($this->payloadFactory->serialize($dit));
     }
 
     #[Route('/api/createDIT', methods: ['POST'])]
@@ -194,7 +213,7 @@ class DitController extends AbstractController
             return $this->json(['error' => 'Agence/service émetteur introuvables pour cet utilisateur — vérifier sa fiche Personnel.'], Response::HTTP_CONFLICT);
         }
 
-        $numero = $this->numeroService->genererNumero();
+        $numero = $this->numeroGenerator->generer(AuditOperation::DOC_DIT, increment: false);
 
         $fileError = null;
         $storedFiles = ['pieceJoint' => null, 'pieceJoint1' => null, 'pieceJoint2' => null];
@@ -205,7 +224,7 @@ class DitController extends AbstractController
             if (!$file) {
                 continue;
             }
-            [$fileError, $storedName] = $this->validateAndStoreFile($file, $numero);
+            [$fileError, $storedName] = $this->fileUploadService->validateAndStore($file, 'dit', $numero);
             if ($fileError) {
                 break;
             }
@@ -260,7 +279,7 @@ class DitController extends AbstractController
         $em->persist($dit);
         $em->flush();
 
-        return $this->json($this->serialize($dit), Response::HTTP_CREATED);
+        return $this->json($this->payloadFactory->serialize($dit), Response::HTTP_CREATED);
     }
 
     #[Route('/api/demande-intervention/{numero}/fichiers/{slot}', methods: ['GET'])]
@@ -281,7 +300,7 @@ class DitController extends AbstractController
             return $this->json(['error' => 'Fichier introuvable.'], Response::HTTP_NOT_FOUND);
         }
 
-        $path = $this->uploadDir($numero) . '/' . $storedName;
+        $path = $this->fileUploadService->uploadDir('dit', $numero) . '/' . $storedName;
         if (!is_file($path)) {
             return $this->json(['error' => 'Fichier introuvable sur le serveur.'], Response::HTTP_NOT_FOUND);
         }
@@ -290,36 +309,6 @@ class DitController extends AbstractController
         $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $storedName);
 
         return $response;
-    }
-
-    // ── Aides privées ─────────────────────────────────────────────────────────
-
-    private function uploadDir(string $numero): string
-    {
-        $dir = $this->kernel->getProjectDir() . '/var/uploads/dit/' . $numero;
-        if (!is_dir($dir)) {
-            mkdir($dir, 0775, true);
-        }
-
-        return $dir;
-    }
-
-    private function validateAndStoreFile(UploadedFile $file, string $numero): array
-    {
-        if (!$file->isValid()) {
-            return ["Le fichier \"{$file->getClientOriginalName()}\" n'a pas pu être envoyé.", null];
-        }
-        if ($file->getSize() > self::MAX_FILE_SIZE) {
-            return ["Le fichier \"{$file->getClientOriginalName()}\" dépasse la taille maximale de 5 Mo.", null];
-        }
-        if (!in_array($file->getMimeType(), self::ALLOWED_MIME_TYPES, true)) {
-            return ["Le fichier \"{$file->getClientOriginalName()}\" n'est pas d'un type autorisé (PDF, image, Office).", null];
-        }
-
-        $storedName = uniqid('', true) . '_' . preg_replace('/[^A-Za-z0-9._-]/', '_', $file->getClientOriginalName());
-        $file->move($this->uploadDir($numero), $storedName);
-
-        return [null, $storedName];
     }
 
     /**
@@ -338,183 +327,5 @@ class DitController extends AbstractController
         $centre = $personnel?->getCentre();
 
         return [$centre?->getAgency(), $centre?->getService(), $centre?->getCompanyCode()];
-    }
-
-    /**
-     * Résout un libellé "code NOM" pour l'agence et le service à partir du
-     * champ dénormalisé "codeAgence-codeService" (ex: "80-INF").
-     *
-     * Les colonnes agence_emetteur_id/service_emetteur_id/agence_debiteur_id/
-     * service_debiteur_id de la table legacy référencent un schéma d'id
-     * différent de celui d'App\Security\Entity\Agency/Service dans ce backend
-     * (ex: agence_emetteur_id=8 alors qu'app_agency va de 25 à 36) — elles ne
-     * sont donc PAS utilisables pour résoudre l'agence/service en toute
-     * fiabilité sur les ~23k DIT déjà existantes. Le champ dénormalisé
-     * "codeAgence-codeService", lui, est cohérent aussi bien sur les données
-     * legacy que sur celles créées par ce module (voir createDit()).
-     *
-     * @return array{0: ?string, 1: ?string}
-     */
-    private function resolveAgenceServiceLabels(?string $codePair): array
-    {
-        if (!$codePair || !str_contains($codePair, '-')) {
-            return [null, null];
-        }
-
-        [$agenceCode, $serviceCode] = explode('-', $codePair, 2);
-        $agence = $this->agencyRepo->findOneBy(['code' => trim($agenceCode)]);
-        $service = $this->serviceRepo->findOneBy(['code' => trim($serviceCode)]);
-
-        return [
-            $agence ? $agence->getCode() . ' ' . $agence->getName() : $codePair,
-            $service ? $service->getCode() . ' ' . $service->getName() : null,
-        ];
-    }
-
-    /**
-     * demande_intervention.type_document stocke tantôt le code (3 lettres,
-     * ex: "MAC" — convention créée par ce module) tantôt l'id numérique brut
-     * de wor_type_document (ex: "1" — convention des DIT plus anciennes,
-     * jamais migrées). On tente les deux avant de retomber sur la valeur
-     * brute si rien ne correspond.
-     */
-    private function resolveTypeDocumentLabel(?string $raw): ?string
-    {
-        if (!$raw) {
-            return null;
-        }
-
-        $entity = $this->typeDocumentRepo->findOneBy(['codeDocument' => $raw]);
-        if (!$entity && ctype_digit($raw)) {
-            $entity = $this->typeDocumentRepo->find((int) $raw);
-        }
-
-        return $entity ? self::toUtf8($entity->getDescription()) : $raw;
-    }
-
-    /**
-     * Même situation que type_document : demande_intervention.categorie_demande
-     * stocke tantôt le libellé (ex: "REPARATION") tantôt l'id numérique brut
-     * de categorie_ate_app (ex: "1") sur les DIT les plus anciennes.
-     */
-    private function resolveCategorieDemandeLabel(?string $raw): ?string
-    {
-        if (!$raw) {
-            return null;
-        }
-
-        $entity = $this->categorieRepo->findOneBy(['libelle' => $raw]);
-        if (!$entity && ctype_digit($raw)) {
-            $entity = $this->categorieRepo->find((int) $raw);
-        }
-
-        return $entity ? self::toUtf8($entity->getLibelle()) : $raw;
-    }
-
-    private function serialize(Dit $dit): array
-    {
-        return self::sanitizeUtf8($this->buildDitPayload($dit));
-    }
-
-    private function buildDitPayload(Dit $dit): array
-    {
-        $materiel = $this->materielRepo->find($dit->getIdMateriel());
-        [$agenceEmetteurLabel, $serviceEmetteurLabel] = $this->resolveAgenceServiceLabels($dit->getAgenceServiceEmetteur());
-        [$agenceDebiteurLabel, $serviceDebiteurLabel] = $this->resolveAgenceServiceLabels($dit->getAgenceServiceDebiteur());
-        $statut = $dit->getIdStatutDemande() ? $this->statutRepo->find($dit->getIdStatutDemande()) : null;
-        $typeDocumentLabel = $this->resolveTypeDocumentLabel($dit->getTypeDocument());
-        $categorieDemandeLabel = $this->resolveCategorieDemandeLabel($dit->getCategorieDemande());
-        $niveauUrgence = $dit->getIdNiveauUrgence() ? $this->niveauUrgenceRepo->find($dit->getIdNiveauUrgence()) : null;
-
-        $nbrPj = count(array_filter([$dit->getPieceJoint(), $dit->getPieceJoint1(), $dit->getPieceJoint2()]));
-
-        $fichier = fn(?string $storedName, string $slot) => $storedName ? [
-            'nom' => $storedName,
-            'url' => "/api/demande-intervention/{$dit->getNumeroDemandeDit()}/fichiers/{$slot}",
-        ] : null;
-
-        return [
-            'id' => $dit->getId(),
-            'numeroDemandeIntervention' => $dit->getNumeroDemandeDit(),
-            'idStatutDemande' => $dit->getIdStatutDemande(),
-            'objet' => $dit->getObjetDemande(),
-            'details' => $dit->getDetailDemande(),
-            'statutDemande' => $statut?->getDescription(),
-            'demandeDevis' => $dit->getDemandeDevis(),
-            'livraisonPartielle' => $dit->getLivraisonPartiel(),
-            'avisRecouvrement' => $dit->getAvisRecouvrement(),
-            'typeDocument' => $typeDocumentLabel,
-            'categorieDemande' => $categorieDemandeLabel,
-            'interneExterne' => $dit->getInterneExterne(),
-            'reparationRealise' => $dit->getReparationRealise(),
-            'worNiveauUrgence' => $niveauUrgence?->getDescription(),
-            'idMateriel' => (string) $dit->getIdMateriel(),
-            'numSerie' => $materiel?->getNumSerie(),
-            'numParc' => $materiel?->getNumParc(),
-            'dateDemande' => $dit->getDateDemande()->format('Y-m-d'),
-            'agenceEmetteur' => $agenceEmetteurLabel,
-            'serviceEmmetteur' => $serviceEmetteurLabel,
-            'datePrevue' => $dit->getDatePrevueTravaux()?->format('Y-m-d'),
-            'typeReparation' => $dit->getTypeReparation(),
-            'reparationPar' => $dit->getReparationRealise(),
-            'agenceDebiteur' => $agenceDebiteurLabel,
-            'serviceDebiteur' => $serviceDebiteurLabel,
-            'sectionAffectee' => $dit->getSectionAffectee(),
-            'numeroDevisRattache' => $dit->getNumeroDevisRattache(),
-            'statutDevis' => $dit->getStatutDevis(),
-            'numeroOr' => $dit->getNumeroOr(),
-            'statutOr' => $dit->getStatutOr(),
-            'montantOr' => null,
-            'dateSoumissionOr' => null,
-            'etatFacturation' => $dit->getEtatFacturation(),
-            'ri' => $dit->getRi(),
-            'utilisateurDemandeur' => $dit->getUtilisateurDemandeur(),
-            'nbrPj' => $nbrPj,
-            'estAnnulable' => false,
-            'estOrASoumi' => false,
-            'quantiteDemanderOr' => 0,
-            'quantiteReserverOr' => 0,
-            'quantiteLivreeOr' => 0,
-            'quantiteReliquatOr' => 0,
-            'qteLivOr' => 0,
-            'etatLivraison' => 'Non livré',
-            'numClient' => $dit->getNumeroClient(),
-            'telephoneClient' => $dit->getNumeroTelephone(),
-            'nomClient' => $dit->getNomClient(),
-            'emailClient' => $dit->getMailClient(),
-            'clientSousContrat' => $dit->getClientSousContrat(),
-            'pieceJoint' => $fichier($dit->getPieceJoint(), 'pieceJoint'),
-            'pieceJoint1' => $fichier($dit->getPieceJoint1(), 'pieceJoint1'),
-            'pieceJoint2' => $fichier($dit->getPieceJoint2(), 'pieceJoint2'),
-        ];
-    }
-
-    /**
-     * Beaucoup de champs texte libres des ~23k DIT existantes (objet, détails,
-     * nom client, utilisateur...) ont été écrits en ISO-8859-1 par le legacy —
-     * à convertir avant tout json_encode, qui rejette les octets invalides en
-     * UTF-8. Appliqué récursivement sur tout le payload plutôt que champ par
-     * champ, pour ne pas avoir à traquer chaque colonne texte individuellement.
-     */
-    private static function toUtf8(?string $value): ?string
-    {
-        if ($value === null || mb_check_encoding($value, 'UTF-8')) {
-            return $value;
-        }
-
-        return mb_convert_encoding($value, 'UTF-8', 'ISO-8859-1');
-    }
-
-    private static function sanitizeUtf8(array $data): array
-    {
-        foreach ($data as $key => $value) {
-            if (is_string($value)) {
-                $data[$key] = self::toUtf8($value);
-            } elseif (is_array($value)) {
-                $data[$key] = self::sanitizeUtf8($value);
-            }
-        }
-
-        return $data;
     }
 }

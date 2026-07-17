@@ -58,16 +58,60 @@ export function FieldRenderer({ field }: any) {
         />
       );
 
-    case "textarea":
+    case "textarea": {
+      const { maxLength, newlinePenalty = 0 } = field;
+      const value: string = field.value ?? "";
+
+      const adjustedLength = (text: string) => {
+        const lineBreaks = (text.match(/\n/g) || []).length;
+        return text.length + lineBreaks * newlinePenalty;
+      };
+
+      const remaining =
+        maxLength !== undefined ? maxLength - adjustedLength(value) : null;
+
       return (
-        <Textarea
-          placeholder={field.placeholder}
-          value={field.value ?? ""}
-          onChange={(e) => field.onChange(e.target.value)}
-          disabled={field.disabled}
-          readOnly={field.readOnly}
-        />
+        <div className="space-y-1">
+          <Textarea
+            placeholder={field.placeholder}
+            value={value}
+            onChange={(e) => {
+              let text = e.target.value;
+
+              if (maxLength !== undefined) {
+                let excess = adjustedLength(text) - maxLength;
+                while (excess > 0 && text.length > 0) {
+                  const lastChar = text[text.length - 1];
+                  excess -=
+                    lastChar === "\n" && newlinePenalty > 0
+                      ? newlinePenalty
+                      : 1;
+                  text = text.slice(0, -1);
+                }
+              }
+
+              if (field.validate && !field.validate(text)) {
+                return;
+              }
+
+              field.onChange(text);
+            }}
+            disabled={field.disabled}
+            readOnly={field.readOnly}
+          />
+          {remaining !== null && (
+            <p
+              className={cn(
+                "text-xs",
+                remaining <= 0 ? "text-destructive" : "text-muted-foreground",
+              )}
+            >
+              Il vous reste {Math.max(remaining, 0)} caractères.
+            </p>
+          )}
+        </div>
       );
+    }
 
     case "select": {
       const options = getOptions(field, optionsQuery);

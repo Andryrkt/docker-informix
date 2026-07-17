@@ -16,9 +16,12 @@ use App\Tik\Entity\TikCategorie;
 use App\Tik\Entity\TikCommentaire;
 use App\Tik\Entity\TikHistorique;
 use App\Tik\Entity\TikSousCategorie;
+use App\Audit\Entity\AuditOperation;
 use App\Tik\Repository\TikCommentaireRepository;
 use App\Tik\Repository\TikHistoriqueRepository;
 use App\Tik\Repository\TikRepository;
+use App\Shared\Service\FileUploadService;
+use App\Shared\Service\NumeroGeneratorService;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,7 +31,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
@@ -43,21 +45,11 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/api/tik/tickets')]
 class TikController extends AbstractController
 {
-    private const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 Mo
     private const NIVEAUX_URGENCE = ['P1', 'P2', 'P3', 'P4', 'P5'];
     /** Créneaux horaires fixes du planning intervenant — mêmes horaires que le legacy. */
     private const PART_OF_DAY = [
         'AM' => [[8, 0], [12, 0]],
         'PM' => [[13, 30], [17, 30]],
-    ];
-    private const ALLOWED_MIME_TYPES = [
-        'application/pdf',
-        'image/jpeg',
-        'image/png',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // xlsx
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // docx
-        'application/vnd.ms-powerpoint', // ppt
-        'application/vnd.openxmlformats-officedocument.presentationml.presentation', // pptx
     ];
 
     public function __construct(
@@ -67,7 +59,8 @@ class TikController extends AbstractController
         private readonly TikHistoriqueRepository  $historiqueRepo,
         private readonly TikCommentaireRepository $commentaireRepo,
         private readonly SecurityContextService   $securityContext,
-        private readonly KernelInterface          $kernel,
+        private readonly FileUploadService        $fileUploadService,
+        private readonly NumeroGeneratorService   $numeroGenerator,
     ) {}
 
     #[Route('', methods: ['GET'])]
@@ -205,7 +198,7 @@ class TikController extends AbstractController
 
         /** @var UploadedFile[] $uploadedFiles */
         $uploadedFiles = $request->files->all('fichiers') ?: [];
-        [$fileError, $storedFiles] = $this->validateAndStoreFiles($uploadedFiles, $tik->getNumeroTicket());
+        [$fileError, $storedFiles] = $this->fileUploadService->validateAndStoreMany($uploadedFiles, 'tik', $tik->getNumeroTicket());
         if ($fileError) {
             return $this->json(['error' => $fileError], Response::HTTP_BAD_REQUEST);
         }
@@ -267,11 +260,11 @@ class TikController extends AbstractController
         // la création (comme le legacy) — renseignés plus tard lors du triage.
         [$agenceEmetteur, $serviceEmetteur] = $this->resolveDefaultAgenceService($user);
 
-        $numeroTicket = $this->generateNumeroTicket();
+        $numeroTicket = $this->numeroGenerator->generer(AuditOperation::DOC_TIK, increment: true);
 
         /** @var UploadedFile[] $uploadedFiles */
         $uploadedFiles = $request->files->all('fichiers') ?: [];
-        [$fileError, $storedFiles] = $this->validateAndStoreFiles($uploadedFiles, $numeroTicket);
+        [$fileError, $storedFiles] = $this->fileUploadService->validateAndStoreMany($uploadedFiles, 'tik', $numeroTicket);
         if ($fileError) {
             return $this->json(['error' => $fileError], Response::HTTP_BAD_REQUEST);
         }
@@ -350,7 +343,7 @@ class TikController extends AbstractController
             return $this->json(['error' => 'Fichier introuvable.'], Response::HTTP_NOT_FOUND);
         }
 
-        $path = $this->uploadDir($tik->getNumeroTicket()) . '/' . $storedName;
+        $path = $this->fileUploadService->uploadDir('tik', $tik->getNumeroTicket()) . '/' . $storedName;
         if (!is_file($path)) {
             return $this->json(['error' => 'Fichier introuvable sur le serveur.'], Response::HTTP_NOT_FOUND);
         }
@@ -770,60 +763,6 @@ class TikController extends AbstractController
     }
 
     /**
-     * Dossier de stockage des pièces jointes d'un ticket — volontairement HORS
-     * de public/ (DocumentRoot Apache, servi sans contrôle d'accès) : les
-     * fichiers ne sont accessibles qu'via downloadFile() (authentifié).
-     */
-    private function uploadDir(string $numeroTicket): string
-    {
-        $dir = $this->kernel->getProjectDir() . '/var/uploads/tik/' . $numeroTicket;
-        if (!is_dir($dir)) {
-            mkdir($dir, 0775, true);
-        }
-
-        return $dir;
-    }
-
-    /**
-     * Valide (taille, type MIME) et stocke les pièces jointes sur disque.
-     *
-     * @param UploadedFile[] $files
-     * @return array{0: string|null, 1: array<array{name:string,storedName:string,sizeKb:int}>}
-     */
-    private function validateAndStoreFiles(array $files, string $numeroTicket): array
-    {
-        $stored = [];
-
-        foreach ($files as $file) {
-            if (!$file instanceof UploadedFile || !$file->isValid()) {
-                return ["Le fichier \"{$file?->getClientOriginalName()}\" n'a pas pu être envoyé.", []];
-            }
-
-            if ($file->getSize() > self::MAX_FILE_SIZE) {
-                return ["Le fichier \"{$file->getClientOriginalName()}\" dépasse la taille maximale de 5 Mo.", []];
-            }
-
-            if (!in_array($file->getMimeType(), self::ALLOWED_MIME_TYPES, true)) {
-                return ["Le fichier \"{$file->getClientOriginalName()}\" n'est pas d'un type autorisé (PDF, image, Office).", []];
-            }
-
-            $originalName = $file->getClientOriginalName();
-            $sizeKb       = (int) round($file->getSize() / 1024); // avant move() : le fichier temporaire disparaît après
-
-            $storedName = uniqid('', true) . '_' . preg_replace('/[^A-Za-z0-9._-]/', '_', $originalName);
-            $file->move($this->uploadDir($numeroTicket), $storedName);
-
-            $stored[] = [
-                'name'       => $originalName,
-                'storedName' => $storedName,
-                'sizeKb'     => $sizeKb,
-            ];
-        }
-
-        return [null, $stored];
-    }
-
-    /**
      * Agence/service par défaut du demandeur, dérivés de Personnel → Centre
      * (rattaché par matricule) — même logique que AdminUserController.
      */
@@ -837,19 +776,6 @@ class TikController extends AbstractController
         $centre = $personnel?->getCentre();
 
         return [$centre?->getAgency(), $centre?->getService()];
-    }
-
-    /**
-     * Format TIK + AAMM + séquence 4 chiffres (ex: TIK26070001), remise à 1
-     * chaque mois. Basé sur un COUNT, suffisant pour un usage interne à faible
-     * concurrence (pas de séquence atomique dédiée).
-     */
-    private function generateNumeroTicket(): string
-    {
-        $prefix = 'TIK' . (new \DateTime())->format('ym');
-        $sequence = $this->tikRepo->countByNumeroPrefix($prefix) + 1;
-
-        return $prefix . str_pad((string) $sequence, 4, '0', STR_PAD_LEFT);
     }
 
     private function addBusinessDays(\DateTime $date, int $days): \DateTime

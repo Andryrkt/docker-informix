@@ -9,8 +9,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { DynamicSearchableSelect } from "@/components/common/atom/DynamicSearchableSelect";
 import * as api from "../api/adminApi";
-import type { AdminUser } from "../api/adminApi";
+import type { AdminUser, Personnel } from "../api/adminApi";
 
 interface Props {
   open: boolean;
@@ -25,6 +26,14 @@ export function UserAccessDialog({ open, onClose, user }: Props) {
     queryKey: ["admin", "users", user?.id, "detail"],
     queryFn: () => api.fetchAdminUserDetail(user!.id),
     enabled: open && !!user,
+  });
+
+  // Liste des fiches personnel — sert à choisir le matricule à rattacher
+  // (plutôt que de le saisir librement, sujet aux fautes de frappe).
+  const { data: personnelList = [] } = useQuery({
+    queryKey: ["admin", "personnel"],
+    queryFn: api.fetchPersonnel,
+    enabled: open,
   });
 
   const [isAdmin, setIsAdmin]     = useState(false);
@@ -80,11 +89,18 @@ export function UserAccessDialog({ open, onClose, user }: Props) {
 
           <Field>
             <FieldLabel>Matricule (rattachement à la fiche personnel)</FieldLabel>
-            <Input
+            <DynamicSearchableSelect<Personnel>
               value={matricule}
-              onChange={(e) => setMatricule(e.target.value)}
-              placeholder="Ex: 9998"
-              className="font-mono"
+              onChange={(item) => setMatricule(item.matricule)}
+              options={personnelList}
+              valueField="matricule"
+              labelFields={["matricule", "nom", "prenoms"]}
+              searchFields={["matricule", "nom", "prenoms"]}
+              clearable
+              clearLabel="Aucun (non lié à un personnel)"
+              placeholder="Choisir un matricule"
+              renderOption={(p) => `${p.matricule} — ${p.nom} ${p.prenoms}`}
+              renderSelected={(p) => `${p.matricule} — ${p.nom} ${p.prenoms}`}
             />
           </Field>
 

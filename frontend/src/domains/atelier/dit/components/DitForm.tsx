@@ -112,11 +112,11 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
       avisRecouvrement: "NON",
 
       // Agence / Service
-      agenceDebiteur: "",
-      serviceDebiteur: "",
+      agenceDebiteur: "AGENCE DEBITTEUR",
+      serviceDebiteur: "SERVICE DEBITTEUR",
 
-      agenceEmetteur: "",
-      serviceEmmetteur: "",
+      agenceEmetteur: "AGENCE EMMETTEUR",
+      serviceEmmetteur: "SERVICE EMETTEUR",
 
       // Intervention
       worNiveauUrgence: "",
@@ -149,6 +149,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
 
     onSubmit: async ({ value }) => {
       setErrors([]);
+      console.log(value);
       try {
         await onSubmitDit(value);
       } catch (error: any) {
@@ -184,8 +185,8 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
   const servicesDebiteurOptions = useMemo(() => {
     if (!agenceDebiteurValue) return [];
     return (
-      agencesDebiteur.find((a) => a.value === agenceDebiteurValue)
-        ?.services ?? []
+      agencesDebiteur.find((a) => a.value === agenceDebiteurValue)?.services ??
+      []
     );
   }, [agencesDebiteur, agenceDebiteurValue]);
 

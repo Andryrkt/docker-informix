@@ -1,7 +1,10 @@
+import { useConfirm } from "@/components/common/ConfirmDialog";
 import { createDit } from "../api/ditApi";
 import DitForm from "../components/DitForm";
 
 function DitCreation() {
+  const confirm = useConfirm();
+
   return (
     <div className="p-4 w-full min-h-screen ">
       <div className=" w-full h-full space-y-6 overflow-x-auto">
@@ -9,6 +12,13 @@ function DitCreation() {
           <DitForm
             mode="create"
             onSubmitDit={async (data) => {
+              const confirmed = await confirm({
+                title: "Confirmer la création de la DIT",
+                description: "Voulez-vous vraiment créer cette DIT ?",
+                confirmText: "Confirmer",
+                cancelText: "Annuler",
+              });
+              if (!confirmed) return;
               await createDit(data);
             }}
           ></DitForm>

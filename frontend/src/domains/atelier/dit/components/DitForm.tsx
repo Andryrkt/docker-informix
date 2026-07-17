@@ -25,7 +25,6 @@ import { getAgences } from "@/domains/agence/api";
 import NiveauUrgenceModal from "./NiveauUrgenceModal";
 import type { Materiel } from "@/domains/materiel/schema/materielSchema";
 import type { Client } from "@/domains/client/schema/clientSchema";
-import { getAgences } from "@/domains/agence/api";
 
 type Props = {
   initialValues?: DitFormValues;
@@ -273,11 +272,6 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
   const nomClientOptions = clients;
 
   // Materiels options values
-
-  const { data: materiels = [] } = useQuery({
-    queryKey: ["materiels"],
-    queryFn: getMateriels,
-  });
   const idMaterielOptions = materiels;
   const numParcOptions = materiels;
   const numSerieOptions = materiels;
@@ -487,6 +481,15 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                                       <FieldRenderer
                                         field={{
                                           ...config,
+                                          // Agence débiteur : le queryFn déclaré dans
+                                          // ditSchemaField (stub renvoyant toujours []) est
+                                          // remplacé par la liste déjà chargée ci-dessus, pour
+                                          // que la valeur pré-remplie par défaut (useEffect
+                                          // "defaults") ait une option à laquelle se raccrocher.
+                                          ...(isAgenceDebiteur && {
+                                            options: agencesDebiteur,
+                                            enabled: false,
+                                          }),
                                           // Service débiteur filtré par l'agence débiteur sélectionnée,
                                           // à partir de la liste agences+services déjà chargée — pas de
                                           // requête réseau à chaque changement (même principe que

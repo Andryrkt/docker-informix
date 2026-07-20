@@ -15,7 +15,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm, useStore } from "@tanstack/react-form";
 import { formatErrorMessage } from "@/lib/utils";
 import { ditFormSchema, type DitFormValues } from "../schema/ditSchema";
-import { Save } from "lucide-react";
+import { Loader2, Save } from "lucide-react";
 import { getMateriels } from "@/domains/materiel/api/materielApi";
 import { useQuery } from "@tanstack/react-query";
 import { MaterielInfoCard } from "@/domains/materiel/components/MaterielInfoCard";
@@ -112,11 +112,11 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
       avisRecouvrement: "NON",
 
       // Agence / Service
-      agenceDebiteur: "AGENCE DEBITTEUR",
-      serviceDebiteur: "SERVICE DEBITTEUR",
+      agenceDebiteur: "",
+      serviceDebiteur: "",
 
-      agenceEmetteur: "AGENCE EMMETTEUR",
-      serviceEmmetteur: "SERVICE EMETTEUR",
+      agenceEmetteur: "",
+      serviceEmmetteur: "",
 
       // Intervention
       worNiveauUrgence: "",
@@ -170,6 +170,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
     form.store,
     (state) => state.values.interneExterne,
   );
+  const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
 
   // Même clé/fonction que la query interne du champ "agenceDebiteur" (voir
   // ditSchemaField.tsx : queryKey "agences") — un seul fetch réseau partagé,
@@ -869,10 +870,20 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                 <Button
                   type="submit"
                   form="dit-form"
+                  disabled={isSubmitting}
                   className="bg-brand-primary/70 hover:bg-brand-primary text-brand-dark cursor-pointer lg:p-4"
                 >
-                  <Save></Save>
-                  Enregistrer
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="size-4 animate-spin" />
+                      Enregistrement...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="size-4" />
+                      Enregistrer
+                    </>
+                  )}
                 </Button>
               </Field>
             </form>

@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { duplicateDit, fetchDitDetails } from "../api/ditApi";
 import DitForm from "../components/DitForm";
 import type { DitFormValues } from "../schema/ditSchema";
@@ -9,6 +9,7 @@ import { toast } from "sonner";
 function DitDuplication() {
   const { numeroDemandeIntervention } = useParams();
   const confirm = useConfirm();
+  const navigate = useNavigate();
 
   const { data: initialValues, isPending, error } = useQuery({
     queryKey: ["dit-details", numeroDemandeIntervention],
@@ -64,8 +65,9 @@ function DitDuplication() {
     if (!confirmed) {
       return;
     }
-    await duplicateDit(values);
-    toast("La demande a été dupliquée.");
+    const dit = await duplicateDit(values);
+    toast.success(`DIT ${dit.numeroDemandeIntervention} créée.`);
+    navigate("/atelier/demande-intervention/dit-list");
   };
 
   if (isPending) {

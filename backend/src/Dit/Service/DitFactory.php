@@ -29,7 +29,7 @@ final class DitFactory
         $dit = new Dit();
         $dit->setNumeroDemandeDit($numero);
         $dit->setCodeSociete($codeSociete);
-        $dit->setTypeDocument($input->typeDocument->getCodeDocument());
+        $dit->setTypeDocument($input->typeDocument->getId());
         $dit->setTypeReparation($input->typeReparation);
         $dit->setReparationRealise($input->reparationPar);
         $dit->setCategorieDemande($input->categorieDemande);
@@ -51,7 +51,7 @@ final class DitFactory
         $dit->setPieceJoint($storedFiles['pieceJoint']);
         $dit->setPieceJoint1($storedFiles['pieceJoint1']);
         $dit->setPieceJoint2($storedFiles['pieceJoint2']);
-        $dit->setUtilisateurDemandeur($user->getDisplayName() ?? $user->getUsername());
+        $dit->setUtilisateurDemandeur($user->getUsername());
         $dit->setIdStatutDemande(Dit::STATUT_A_AFFECTER_ID);
 
         if ($input->agenceDebiteur && $input->serviceDebiteur) {

@@ -71,7 +71,7 @@ export function FieldRenderer({ field }: any) {
         maxLength !== undefined ? maxLength - adjustedLength(value) : null;
 
       return (
-        <div className="space-y-1">
+        <div className="space-y-1 w-full ">
           <Textarea
             placeholder={field.placeholder}
             value={value}
@@ -98,6 +98,8 @@ export function FieldRenderer({ field }: any) {
             }}
             disabled={field.disabled}
             readOnly={field.readOnly}
+            wrap="hard"
+            className="whitespace-pre-wrap lg:max-w-6xl md:max-w-4xl"
           />
           {remaining !== null && (
             <p

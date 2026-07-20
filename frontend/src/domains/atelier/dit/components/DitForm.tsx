@@ -48,54 +48,8 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
     queryKey: ["agentServices"],
     queryFn: getAgences,
   });
-  // const agents = [
-  //   {
-  //     label: "Agent 1",
-  //     value: "1",
-  //     services: [
-  //       { label: "Service A", value: "A" },
-  //       { label: "Service B", value: "B" },
-  //     ],
-  //   },
-  //   {
-  //     label: "Agent 2",
-  //     value: "2",
-  //     services: [{ label: "Service C", value: "C" }],
-  //   },
-  // ];
 
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
-
-  // const dynamicFields = useMemo(() => {
-  //   return debiteurFields.map((column) =>
-  //     column.map((field) => {
-  //       if (field.name === "agent_debiteur") {
-  //         return {
-  //           ...field,
-
-  //           queryFn: async () =>
-  //             agents.map((a) => ({ label: a.label, value: a.value })),
-  //         };
-  //       }
-  //       if (field.name === "service_debiteur") {
-  //         return {
-  //           ...field,
-  //           placeholder: !selectedAgent
-  //             ? "Sélectionnez d'abord un agent débiteur"
-  //             : "",
-  //           selectAll: true,
-  //           dependsOn: ["agent_debiteur"], // ✅ clears services when agent changes
-  //           queryKey: `service_debiteur_${selectedAgent || "none"}`,
-  //           queryFn: async () => {
-  //             if (!selectedAgent) return [];
-  //             return getServicesForAgent(selectedAgent);
-  //           },
-  //         };
-  //       }
-  //       return field;
-  //     }),
-  //   );
-  // }, [selectedAgent]);
 
   const form = useForm({
     defaultValues: initialValues ?? {
@@ -112,11 +66,11 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
       avisRecouvrement: "NON",
 
       // Agence / Service
-      agenceDebiteur: "AGENCE DEBITTEUR",
-      serviceDebiteur: "SERVICE DEBITTEUR",
+      agenceDebiteur: "",
+      serviceDebiteur: "",
 
-      agenceEmetteur: "AGENCE EMMETTEUR",
-      serviceEmmetteur: "SERVICE EMETTEUR",
+      agenceEmetteur: "",
+      serviceEmmetteur: "",
 
       // Intervention
       worNiveauUrgence: "",
@@ -149,7 +103,6 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
 
     onSubmit: async ({ value }) => {
       setErrors([]);
-      console.log(value);
       try {
         await onSubmitDit(value);
       } catch (error: any) {

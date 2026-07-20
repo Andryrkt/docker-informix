@@ -202,16 +202,28 @@ export const piecesJointFields: FieldTrait[] = [
     name: "pieceJoint",
     label: "Pièce jointe",
     type: "file",
+    multiple: false, // ✅ Added
+    pattern: ".*", // ✅ Added (matches any file)
+    maxSize: 5 * 1024 * 1024, // ✅ Added (5 MB)
+    accept: "*/*", // ✅ Added (all file types)
   },
   {
     name: "pieceJoint1",
     label: "Pièce jointe 1",
     type: "file",
+    multiple: false,
+    pattern: ".*",
+    maxSize: 5 * 1024 * 1024,
+    accept: "*/*",
   },
   {
     name: "pieceJoint2",
     label: "Pièce jointe 2",
     type: "file",
+    multiple: false,
+    pattern: ".*",
+    maxSize: 5 * 1024 * 1024,
+    accept: "*/*",
   },
 ];
 export const infoMaterielFields: FieldTrait[] = [

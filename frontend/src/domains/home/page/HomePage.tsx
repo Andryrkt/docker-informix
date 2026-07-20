@@ -1,5 +1,5 @@
 import { VignetteCard } from "../components/VignetteCard";
-import { vignetteMock } from "../schema/vignetteMock";
+import { vignetteItems, type VignetteCardData } from "../schema/vignetteItems";
 import { useVignetteDialog } from "../components/VignetteModal";
 import { useTranslation } from "react-i18next";
 
@@ -8,18 +8,16 @@ function HomePage() {
 
   return (
     <div className="w-full h-full flex-1 ">
-      <div className="grid lg:grid-cols-4 md:grid-cols-3 gap-10 px-40 py-20   ">
-        {vignetteMock.map((item) => {
+      <div className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-x-10 gap-y-10 px-10 w-fit py-20 mx-auto   ">
+        {vignetteItems.map((item: VignetteCardData) => {
           const Icon = item.icon;
 
           return (
             <VignetteCard
               key={item.title}
               title={item.title}
-              icon={
-                <Icon className="size-20 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" />
-              }
-              onClick={() => openDialog(item.modal)}
+              icon={Icon}
+              onClick={() => openDialog(item.modal as any)}
             />
           );
         })}

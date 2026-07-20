@@ -110,7 +110,7 @@ function Header({ logoSrc, userName }: HeaderProps) {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="relative lg:block hidden">
+          <div className="relative lg:block hidden ">
             <Button
               // onClick={() => setIsProfileOpen(!false)}
               className="flex items-center focus:outline gap-2 bg-transparent hover:bg-transparent text-neutral-200"

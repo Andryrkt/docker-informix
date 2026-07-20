@@ -9,18 +9,20 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 type Item = {
   labelKey: string;
   label: string; // fallback if key missing
   link?: string;
-  icon: React.ElementType;
+  icon: IconDefinition;
 };
 
 type Section = {
   titleKey: string;
   title?: string; // fallback
-  icon: React.ElementType;
+  icon: IconDefinition;
   items: Item[];
 };
 
@@ -28,7 +30,7 @@ export type ModalData = {
   titleKey: string;
   title: string; // fallback
   description?: string;
-  icon: React.ElementType;
+  icon: IconDefinition;
   sections?: Section[];
   items?: Item[];
 };
@@ -47,30 +49,32 @@ export function useVignetteDialog() {
 
   const VignetteDialogComponent = () => (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-h-[80vh] max-w-[75%] overflow-clip overflow-y-auto bg-brand-dark px-10 py-10">
+      <DialogContent className="max-h-[80vh] max-w-[75%] overflow-clip overflow-y-auto bg-brand-dark ">
         <DialogHeader className="gap-2">
-          <DialogTitle className="flex items-center gap-2 text-white">
-            {data?.icon && <data.icon className="size-8" />}
+          <DialogTitle className="flex gap-2 text-white text-lg">
+            {data?.icon && (
+              <FontAwesomeIcon icon={data?.icon} className="size-10" />
+            )}
             {data ? data.title : null}
           </DialogTitle>
           {data?.description && (
             <DialogDescription>{data.description}</DialogDescription>
           )}
+          <div className="h-px bg-gray-600 "></div>
         </DialogHeader>
 
-        <div>
+        <div className="px-4">
           {/* Top-level quick-access items (e.g. Documentation) */}
           {hasItems && (
             <div className="flex w-full justify-between gap-2">
               {data?.items!.map((item, j) => {
-                const ItemIcon = item.icon;
                 return (
                   <Link
                     key={j}
                     to={item.link ?? "#"}
-                    className="flex items-center gap-2 px-3 py-3 text-brand-primary/75 hover:text-brand-primary"
+                    className="flex  gap-2 px-3 py-3 text-brand-primary/75 hover:text-brand-primary"
                   >
-                    {ItemIcon && <ItemIcon className="size-4" />}
+                    <FontAwesomeIcon icon={item.icon} className="size-4" />
                     {item.label}
                   </Link>
                 );
@@ -89,26 +93,31 @@ export function useVignetteDialog() {
             })}
           >
             {data?.sections?.map((section, i) => {
-              const SectionIcon = section.icon;
-
               return (
                 <div key={i} className="flex flex-col gap-3 py-2">
-                  <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground uppercase">
-                    <SectionIcon className="size-4" />
-                    {section.title}
+                  <div className="flex flex-col gap-1">
+                    <div className="flex text-lg font-semibold text-muted-foreground uppercase gap-2">
+                      <FontAwesomeIcon
+                        icon={section.icon}
+                        className="size-3 "
+                      />
+                      {section.title}
+                    </div>
+                    <div className="h-0.5 bg-brand-primary "></div>
                   </div>
 
                   <div className="flex flex-col">
                     {section.items.map((item, j) => {
-                      const ItemIcon = item.icon;
-
                       return (
                         <Link
                           key={j}
                           to={item.link ?? "#"}
-                          className="flex items-center gap-2 px-2 py-2 text-brand-primary/75 hover:text-brand-primary"
+                          className="flex  gap-2 px-2 py-2 text-brand-primary/75 hover:text-brand-primary"
                         >
-                          {ItemIcon && <ItemIcon className="size-3" />}
+                          <FontAwesomeIcon
+                            icon={item.icon}
+                            className="size-3"
+                          ></FontAwesomeIcon>
                           {item.label}
                         </Link>
                       );

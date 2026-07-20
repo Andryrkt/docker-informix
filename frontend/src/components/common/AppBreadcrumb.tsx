@@ -15,7 +15,7 @@ import {
 } from "../ui/hover-card";
 import { useVignetteDialog } from "@/domains/home/components/VignetteModal";
 import { Button } from "../ui/button";
-import { vignetteMock } from "@/domains/home/schema/vignetteMock";
+import { vignetteItems } from "@/domains/home/schema/vignetteItems";
 import { formatLabel } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 
@@ -105,7 +105,7 @@ export function AppBreadcrumb() {
 
                     <HoverCardContent className="w-56 p-2 ml-6 mt-2">
                       <div className="flex flex-col gap-1">
-                        {vignetteMock.map((vignette) => (
+                        {vignetteItems.map((vignette) => (
                           <Button
                             key={vignette.titleKey}
                             onClick={() => openDialog(vignette.modal)}

@@ -90,14 +90,12 @@ axiosInstance.interceptors.request.use(
       config.headers["X-Active-Company-ID"] = activeCompanyId;
     }
 
-    // Détection automatique du FormData pour multipart
-    if (
-      config.data &&
-      typeof FormData !== "undefined" &&
-      config.data instanceof FormData
-    ) {
-      config.headers["Content-Type"] = "multipart/form-data";
-    }
+    // Pour un FormData, ne PAS fixer Content-Type ici : le navigateur doit le
+    // générer lui-même avec son "boundary" (ex: multipart/form-data;
+    // boundary=----WebKitFormBoundary...). Le fixer explicitement — même à
+    // la bonne valeur de base — empêche le navigateur d'y ajouter ce
+    // boundary, et le serveur ne peut alors plus parser le corps de la
+    // requête ($_POST/$_FILES vides côté PHP).
     return config;
   },
   (error: AxiosError) => Promise.reject(error),

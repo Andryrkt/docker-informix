@@ -8,6 +8,7 @@ type Props = {
   fetchAllData?: () => Promise<any[]>;
   filename?: string;
   label?: string;
+  disabled?: boolean;
 };
 
 export function ExcelDownloadButton({
@@ -15,6 +16,7 @@ export function ExcelDownloadButton({
   fetchAllData,
   filename = "export.xlsx",
   label = "Export Excel",
+  disabled = false,
 }: Props) {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0); // 0–100
@@ -65,11 +67,11 @@ export function ExcelDownloadButton({
       setProgress(0);
     }
   };
-
+  const isDisabled = loading || disabled;
   return (
     <Button
       onClick={handleDownload}
-      disabled={loading}
+      disabled={isDisabled}
       className="relative flex items-center gap-2 bg-green-600 text-white hover:bg-green-700 cursor-pointer overflow-hidden"
     >
       {/* Progress bar background */}

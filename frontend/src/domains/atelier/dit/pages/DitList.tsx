@@ -101,7 +101,12 @@ function DitList() {
                 selectedFilters,
                 ditFieldFilter,
               )}
-              label="Exporter tout (filtré)"
+              label={
+                totalResults === 0
+                  ? "Aucune donnée à exporter"
+                  : "Exporter tout (filtré)"
+              }
+              disabled={totalResults === 0 || isLoading || isFetching}
             ></ExcelDownloadButton>
             <div className="flex items-center gap-4 font-bold ">
               <span className="text-[0.7rem]">{totalResults} Résultats</span>

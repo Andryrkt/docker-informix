@@ -4,8 +4,6 @@ import DitForm from "../components/DitForm";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 function DitCreation() {
   const confirm = useConfirm();
@@ -45,7 +43,7 @@ function DitCreation() {
         confirmButtonText: "OK",
       });
     }
-  };  const navigate = useNavigate();
+  };
 
   return (
     <div className="p-4 w-full min-h-screen ">

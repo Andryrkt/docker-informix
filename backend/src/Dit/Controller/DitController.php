@@ -14,6 +14,7 @@ use App\Security\Repository\PersonnelRepository;
 use App\Shared\Service\FileUploadService;
 use App\Shared\Service\NumeroGeneratorService;
 use App\Dit\Service\DitPdfGenerator;
+use App\Dit\Service\DitPdfMerger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -125,7 +126,7 @@ class DitController extends AbstractController
     }
 
     #[Route('/api/createDIT', methods: ['POST'])]
-    public function createDit(Request $request, DitPdfGenerator $pdfGenerator): JsonResponse
+    public function createDit(Request $request, DitPdfGenerator $pdfGenerator, DitPdfMerger $pdfMerger): JsonResponse
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -160,9 +161,23 @@ class DitController extends AbstractController
             $uploadDir = $this->fileUploadService->uploadDir('dit', $numero);
             $pdfName = $numero . '_' . $agServ . '.pdf';
             $pdfPath = $uploadDir . '/' . $pdfName;
+            
+            // Enregistrer la page de garde
             file_put_contents($pdfPath, $pdfContent);
+
+            // Fusionner avec les pièces jointes si présentes
+            $filesToMerge = [$pdfPath];
+            foreach ($storedFiles as $storedName) {
+                if ($storedName) {
+                    $filesToMerge[] = $uploadDir . '/' . $storedName;
+                }
+            }
+
+            if (count($filesToMerge) > 1) {
+                $pdfMerger->merge($filesToMerge, $pdfPath);
+            }
         } catch (\Exception $e) {
-            error_log('Erreur lors de la génération automatique du PDF DIT: ' . $e->getMessage());
+            error_log('Erreur lors de la génération automatique ou de la fusion du PDF DIT: ' . $e->getMessage());
         }
 
         return $this->json($this->payloadFactory->serialize($dit), Response::HTTP_CREATED);

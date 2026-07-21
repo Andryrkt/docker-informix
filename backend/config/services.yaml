@@ -69,6 +69,11 @@ services:
     App\Dit\:
         resource: '../src/Dit/'
 
+    # MaterielRepository : injection du pool Redis dédié à la recherche
+    App\Dit\Repository\MaterielRepository:
+        arguments:
+            $materielSearchCache: '@cache.materiel_search'
+
     # NumeroGeneratorService (compteur SQL Server partagé DIT/TIK/...) a besoin
     # d'un EntityManagerInterface explicite, nommé pour ne pas entrer en
     # conflit avec le défaut (ips).

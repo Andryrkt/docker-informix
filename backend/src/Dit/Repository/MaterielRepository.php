@@ -5,6 +5,8 @@ namespace App\Dit\Repository;
 use App\Dit\Entity\Ips\Materiel;
 use App\Shared\Repository\AbstractInformixRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @extends AbstractInformixRepository<Materiel>
@@ -13,6 +15,7 @@ class MaterielRepository extends AbstractInformixRepository
 {
     public function __construct(
         ManagerRegistry $registry,
+        private readonly CacheInterface $materielSearchCache,
         string $dbIps = 'ips_test',
         string $dbIrium = 'irium_test'
     ) {
@@ -20,24 +23,64 @@ class MaterielRepository extends AbstractInformixRepository
     }
 
     /**
-     * Sans terme de recherche, renvoie une page par défaut (les plus récents
-     * par id) plutôt qu'une liste vide — le formulaire DIT charge cette liste
-     * une fois au montage, sans saisie préalable de l'utilisateur.
+     * Recherche full-text de matériels avec cache Redis (TTL 5 min).
+     * Sans terme, renvoie les 30 matériels les plus récents.
      */
-    public function search(string $term, int $limit = 20): array
+    public function search(string $term, int $limit = 30): array
     {
         $term = trim($term);
-        $qb = $this->createQueryBuilder('m')->setMaxResults($limit);
+        // Clé de cache : term + limit (sanitizée pour Redis)
+        $cacheKey = 'mat_search_' . md5($term . '_' . $limit);
+
+        return $this->materielSearchCache->get($cacheKey, function (ItemInterface $item) use ($term, $limit): array {
+            $item->expiresAfter(300); // 5 minutes
+            return $this->doSearch($term, $limit);
+        });
+    }
+
+    private function doSearch(string $term, int $limit): array
+    {
+        // LEFT JOIN sur la dernière entrée de mat_hir (au lieu de 2 sous-requêtes
+        // corrélées dans le SELECT, qui forcent N×2 accès sur mat_hir).
+        $joinHir = "LEFT OUTER JOIN mat_hir h
+                       ON  h.mhir_nummat  = m.mmat_nummat
+                       AND h.mhir_daterel = (
+                               SELECT MAX(b.mhir_daterel)
+                               FROM   mat_hir b
+                               WHERE  b.mhir_nummat = m.mmat_nummat
+                           )";
+
+        $selectCols = "m.mmat_nummat, m.mmat_numserie, m.mmat_numparc,
+                       m.mmat_recalph, m.mmat_desi, m.mmat_marqmat, m.mmat_typmat,
+                       h.mhir_compteur AS heure, h.mhir_cumcomp AS km";
+
+        $conn = $this->getEntityManager()->getConnection();
 
         if ($term === '') {
-            return $qb->orderBy('m.numMat', 'DESC')->getQuery()->getResult();
+            $sql = "SELECT FIRST {$limit} {$selectCols}
+                    FROM  mat_mat m {$joinHir}
+                    ORDER BY m.mmat_nummat DESC";
+            $result = $conn->executeQuery($sql);
+        } elseif (is_numeric($term)) {
+            $sql = "SELECT FIRST {$limit} {$selectCols}
+                    FROM  mat_mat m {$joinHir}
+                    WHERE m.mmat_nummat  = ?
+                       OR m.mmat_recalph LIKE ?
+                       OR m.mmat_numserie LIKE ?
+                       OR m.mmat_desi    LIKE ?";
+            $like = '%' . $term . '%';
+            $result = $conn->executeQuery($sql, [(int) $term, $like, $like, $like]);
+        } else {
+            $sql = "SELECT FIRST {$limit} {$selectCols}
+                    FROM  mat_mat m {$joinHir}
+                    WHERE m.mmat_recalph LIKE ?
+                       OR m.mmat_numserie LIKE ?
+                       OR m.mmat_desi    LIKE ?";
+            $like = '%' . $term . '%';
+            $result = $conn->executeQuery($sql, [$like, $like, $like]);
         }
 
-        return $qb
-            ->where('m.numParc LIKE :term OR m.numSerie LIKE :term OR m.designation LIKE :term')
-            ->setParameter('term', '%' . $term . '%')
-            ->getQuery()
-            ->getResult();
+        return $this->fetchAndDecode($result);
     }
 
     /**
@@ -86,14 +129,14 @@ class MaterielRepository extends AbstractInformixRepository
                     THEN slor_qterea 
                 END)
               ) AS somme
-            FROM {$this->dbIps}.sav_eor, 
-                 {$this->dbIps}.sav_lor, 
-                 {$this->dbIps}.sav_itv, 
-                 {$this->dbIps}.agr_succ, 
-                 {$this->dbIps}.agr_tab ser, 
-                 {$this->dbIps}.mat_mat, 
-                 {$this->dbIps}.agr_tab ope, 
-                 OUTER {$this->dbIps}.agr_tab sec
+            FROM sav_eor, 
+                 sav_lor, 
+                 sav_itv, 
+                 agr_succ, 
+                 agr_tab ser, 
+                 mat_mat, 
+                 agr_tab ope, 
+                 OUTER agr_tab sec
             WHERE seor_numor = slor_numor
               AND seor_serv <> 'DEV'
               AND sitv_numor = slor_numor

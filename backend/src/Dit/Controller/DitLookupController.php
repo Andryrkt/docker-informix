@@ -137,18 +137,19 @@ class DitLookupController extends AbstractController
     public function materiels(Request $request): JsonResponse
     {
         $search = (string) $request->query->get('search', '');
+        $results = $this->materielRepo->search($search);
 
         return $this->json(array_map(fn($m) => self::sanitizeUtf8([
-            'idMateriel' => $m->getNumMat(),
-            'constructeur' => $m->getConstructeur(),
-            'designation' => $m->getDesignation(),
-            'modele' => $m->getModele(),
-            'numParc' => $m->getNumParc(),
-            'numSerie' => $m->getNumSerie(),
-            'km' => null,
-            'heures' => null,
-            'casier' => null,
-        ]), $this->materielRepo->search($search)));
+            'idMateriel'  => $m['mmat_nummat'],
+            'constructeur'=> $m['mmat_marqmat'],
+            'designation' => $m['mmat_desi'],
+            'modele'      => $m['mmat_typmat'],
+            'numParc'     => $m['mmat_recalph'],  // mmat_recalph = N° parc affiché
+            'casier'      => $m['mmat_numparc'],  // mmat_numparc = casier
+            'numSerie'    => $m['mmat_numserie'],
+            'heures'      => isset($m['heure']) && $m['heure'] !== '' ? (float) $m['heure'] : null,
+            'km'          => isset($m['km'])    && $m['km']    !== '' ? (float) $m['km']    : null,
+        ]), $results));
     }
 
     #[Route('/clients', methods: ['GET'])]

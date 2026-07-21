@@ -19,6 +19,9 @@ services:
       - INFORMIXDIR=/opt/IBM/Informix_Client-SDK
       - INFORMIXSERVER=ol_iriumprod_net
       - LD_LIBRARY_PATH=/opt/IBM/Informix_Client-SDK/lib:/opt/IBM/Informix_Client-SDK/lib/cli:/opt/IBM/Informix_Client-SDK/lib/esql
+      - REDIS_URL=redis://hff_redis:6379
+    depends_on:
+      - redis
     restart: unless-stopped
 
   # --- FRONTEND (React / Vite) ---
@@ -59,6 +62,14 @@ services:
       - CHOKIDAR_USEPOLLING=true # Pour Windows
       - WATCHPACK_POLLING=true # Pour Vite
       - VITE_USE_POLLING=true # Alternative pour Vite
+    restart: unless-stopped
+
+  # --- CACHE (Redis) ---
+  redis:
+    image: redis:7-alpine
+    container_name: hff_redis
+    ports:
+      - "6379:6379"
     restart: unless-stopped
 
 volumes:

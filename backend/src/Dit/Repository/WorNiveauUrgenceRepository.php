@@ -19,6 +19,6 @@ class WorNiveauUrgenceRepository extends ServiceEntityRepository
     /** @return WorNiveauUrgence[] */
     public function findAllOrdered(): array
     {
-        return $this->findBy([], ['description' => 'DESC']);
+        return $this->findBy([], ['description' => 'ASC']);
     }
 }

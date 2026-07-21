@@ -1,7 +1,7 @@
 import { getAgences } from "@/domains/agence/api";
 import { getNiveauUrgence } from "@/domains/niveauUrgence/api";
 import {
-  getReparationTypes,
+  reparationTypesOptions,
   reparationRealiseParOptions,
 } from "@/domains/reparation/api";
 import { getServicesDebiteur } from "@/domains/service/api";
@@ -134,8 +134,7 @@ export const reparationFields: FieldTrait[] = [
     name: "typeReparation",
     label: "Type de reparation",
     type: "select",
-    queryKey: "typeReparation",
-    queryFn: () => getReparationTypes(),
+    options: reparationTypesOptions,
   },
   {
     name: "reparationPar",

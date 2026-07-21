@@ -13,6 +13,7 @@ use App\Security\Entity\User;
 use App\Security\Repository\PersonnelRepository;
 use App\Shared\Service\FileUploadService;
 use App\Shared\Service\NumeroGeneratorService;
+use App\Dit\Service\DitPdfGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,7 +25,7 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * DIT (Demande d'Intervention Technique) — portage "CRUD de base" du module
+ * DIT (Demande d'Intervention) — portage "CRUD de base" du module
  * Atelier legacy (scomat). Périmètre volontairement restreint : créer,
  * lister, consulter. Clôture, sous-workflows de soumission (OR/Devis/
  * Facture/RI/BC), Dossier DIT et DOCUWARE sont hors périmètre (voir le plan).
@@ -103,8 +104,28 @@ class DitController extends AbstractController
         return $this->json($this->payloadFactory->serialize($dit));
     }
 
+    #[Route('/api/demande-intervention/{numero}/pdf', methods: ['GET'])]
+    public function downloadPdf(string $numero, DitPdfGenerator $pdfGenerator): Response
+    {
+        $dit = $this->ditRepo->findByNumero($numero);
+        if (!$dit) {
+            return $this->json(['error' => 'DIT introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+
+        $pdfContent = $pdfGenerator->generate($dit);
+
+        $agServ = str_replace('-', '', $dit->getAgenceServiceEmetteur() ?? '');
+        $pdfName = $numero . '_' . $agServ . '.pdf';
+
+        $response = new Response($pdfContent);
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'inline; filename="' . $pdfName . '"');
+
+        return $response;
+    }
+
     #[Route('/api/createDIT', methods: ['POST'])]
-    public function createDit(Request $request): JsonResponse
+    public function createDit(Request $request, DitPdfGenerator $pdfGenerator): JsonResponse
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -122,7 +143,8 @@ class DitController extends AbstractController
 
         $numero = $this->numeroGenerator->generer(AuditOperation::DOC_DIT, increment: false);
 
-        [$fileError, $storedFiles] = $this->storeAttachments($request, $numero);
+        $agServ = $agenceEmetteur->getCode() . $serviceEmetteur->getCode();
+        [$fileError, $storedFiles] = $this->storeAttachments($request, $numero, $agServ);
         if ($fileError) {
             return $this->json(['error' => $fileError], Response::HTTP_BAD_REQUEST);
         }
@@ -133,15 +155,30 @@ class DitController extends AbstractController
         $em->persist($dit);
         $em->flush();
 
+        try {
+            $pdfContent = $pdfGenerator->generate($dit);
+            $uploadDir = $this->fileUploadService->uploadDir('dit', $numero);
+            $pdfName = $numero . '_' . $agServ . '.pdf';
+            $pdfPath = $uploadDir . '/' . $pdfName;
+            file_put_contents($pdfPath, $pdfContent);
+        } catch (\Exception $e) {
+            error_log('Erreur lors de la génération automatique du PDF DIT: ' . $e->getMessage());
+        }
+
         return $this->json($this->payloadFactory->serialize($dit), Response::HTTP_CREATED);
     }
 
     /**
      * @return array{0: ?string, 1: array{pieceJoint: ?string, pieceJoint1: ?string, pieceJoint2: ?string}}
      */
-    private function storeAttachments(Request $request, string $numero): array
+    private function storeAttachments(Request $request, string $numero, string $agServ): array
     {
         $storedFiles = ['pieceJoint' => null, 'pieceJoint1' => null, 'pieceJoint2' => null];
+        $slotsMapping = [
+            'pieceJoint' => '1',
+            'pieceJoint1' => '2',
+            'pieceJoint2' => '3'
+        ];
 
         foreach (array_keys($storedFiles) as $slot) {
             /** @var UploadedFile[] $files */
@@ -150,7 +187,12 @@ class DitController extends AbstractController
             if (!$file) {
                 continue;
             }
-            [$fileError, $storedName] = $this->fileUploadService->validateAndStore($file, 'dit', $numero);
+
+            $numPiece = $slotsMapping[$slot];
+            $extension = $file->getClientOriginalExtension() ?: $file->guessExtension() ?: 'bin';
+            $customName = $numero . '_' . $agServ . '_' . $numPiece . '.' . $extension;
+
+            [$fileError, $storedName] = $this->fileUploadService->validateAndStore($file, 'dit', $numero, $customName);
             if ($fileError) {
                 return [$fileError, $storedFiles];
             }

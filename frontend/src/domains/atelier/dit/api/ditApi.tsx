@@ -178,3 +178,10 @@ export const checkDitSubmission = async (
     }, 500);
   });
 };
+
+export const downloadDitPdf = async (numero: string): Promise<Blob> => {
+  const { data } = await axiosInstance.get(`/demande-intervention/${numero}/pdf`, {
+    responseType: "blob",
+  });
+  return data;
+};

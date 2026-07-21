@@ -12,8 +12,6 @@ import { cn } from "@/lib/utils";
 import type { FilterField, FilterOption } from "./schema/filterSchema";
 import { Checkbox } from "@/components/ui/checkbox";
 
-const STORAGE_KEY = "collapsible_filter_state";
-
 export default function CollapsibleFilter({
   fields,
   onSearch,
@@ -22,6 +20,7 @@ export default function CollapsibleFilter({
   title = "Formulaire de recherche",
   defaultOpen = false,
   className,
+  storageKey,
 }: {
   fields: FilterField[][];
   onSearch: (v: any) => void;
@@ -30,25 +29,63 @@ export default function CollapsibleFilter({
   title?: string;
   defaultOpen?: boolean;
   className?: string;
+  storageKey?: string;
 }) {
   const [open, setOpen] = useState(defaultOpen);
 
-  const getInitialValuesFromURL = () => {
+  // If no custom key is provided, use the current pathname as a namespace
+  const effectiveStorageKey = useMemo(() => {
+    if (storageKey) return storageKey;
+    // Use pathname + optional query param to differentiate sub-pages
+    // Example: "/users" -> "filter_users"
+    const path = window.location.pathname.replace(/\//g, "_") || "root";
+    return `filter_${path}`;
+  }, [storageKey]);
+
+  const getInitialValues = () => {
+    const allFields = fields.flat();
+
+    // 1️⃣ Read URL parameters
     const params = new URLSearchParams(window.location.search);
-    const initial: Record<string, any> = {};
-    // Assume you know all possible filter keys (from `fields`)
-    fields.flat().forEach((field) => {
+    const urlValues: Record<string, any> = {};
+    allFields.forEach((field) => {
       const value = params.get(field.name);
       if (value !== null) {
         try {
-          // Try to parse as JSON (arrays/objects)
-          initial[field.name] = JSON.parse(value);
+          urlValues[field.name] = JSON.parse(value);
         } catch {
-          // If it fails, treat as plain string
-          initial[field.name] = value;
+          urlValues[field.name] = value;
         }
       }
     });
+
+    // 2️⃣ Read localStorage
+    let storedValues: Record<string, any> = {};
+    const stored = localStorage.getItem(effectiveStorageKey);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        allFields.forEach((field) => {
+          if (field.name in parsed) {
+            storedValues[field.name] = parsed[field.name];
+          }
+        });
+      } catch {
+        // ignore malformed storage
+      }
+    }
+
+    // 3️⃣ Merge: URL overrides localStorage
+    const initial: Record<string, any> = {};
+    allFields.forEach((field) => {
+      if (field.name in urlValues) {
+        initial[field.name] = urlValues[field.name];
+      } else if (field.name in storedValues) {
+        initial[field.name] = storedValues[field.name];
+      }
+      // otherwise leave undefined (form will use its own default)
+    });
+
     return initial;
   };
   // State to store fetched options per field
@@ -97,6 +134,7 @@ export default function CollapsibleFilter({
   }, [fields]);
 
   const form = useForm({
+    defaultValues: getInitialValues(),
     onSubmit: async ({ value }) => {
       onSearch(value);
     },
@@ -105,10 +143,10 @@ export default function CollapsibleFilter({
   useEffect(() => {
     const subscription = form.store.subscribe(() => {
       const currentValues = form.state.values;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(currentValues));
+      localStorage.setItem(effectiveStorageKey, JSON.stringify(currentValues));
     });
     return () => subscription.unsubscribe();
-  }, [form]);
+  }, [form, effectiveStorageKey]);
 
   const gridClass = cn("grid gap-4 grid-cols-1", {
     "lg:grid-cols-1": fields.length === 1,

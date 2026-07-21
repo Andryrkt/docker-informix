@@ -14,6 +14,8 @@ import StatusBadgeGroup, {
 import { ditMock } from "../schema/ditMock";
 import { ditFieldFilter } from "../filter/DitFieldfilter";
 import { LimitSelector } from "@/components/common/pagination/LimitSelector";
+import { useCallback, useState } from "react";
+import { queryClient } from "@/lib/queryClient";
 
 function DitList() {
   const {
@@ -48,6 +50,14 @@ function DitList() {
   const lastPage = dit?.totalPages ?? 1;
   const totalResults = dit?.resultat ?? 0;
 
+  const fetchAllDitsForExport = useCallback(async () => {
+    const allData = await queryClient.fetchQuery({
+      queryKey: ["dit-export", JSON.stringify(selectedFilters), totalResults],
+      queryFn: () => fetchDits(selectedFilters, 1, totalResults),
+    });
+    return allData.data;
+  }, [selectedFilters, queryClient]);
+
   return (
     <div className="px-2 w-full ">
       <div className=" w-full  space-y-4 pb-4 overflow-auto">
@@ -55,10 +65,7 @@ function DitList() {
           <CollapsibleFilter
             fields={ditFieldFilter}
             onSearch={(values) => {
-              const strValues = Object.fromEntries(
-                Object.entries(values).map(([k, v]) => [k, String(v ?? "")]),
-              );
-              setFilters(strValues);
+              setFilters(values);
             }}
             onReset={() => {
               reset();
@@ -87,12 +94,14 @@ function DitList() {
 
           <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
             <ExcelDownloadButton
-              data={items}
+              // data={items}
+              fetchAllData={fetchAllDitsForExport}
               filename={buildExcelFilename(
                 "dit-list",
                 selectedFilters,
                 ditFieldFilter,
               )}
+              label="Exporter tout (filtré)"
             ></ExcelDownloadButton>
             <div className="flex items-center gap-4 font-bold ">
               <span className="text-[0.7rem]">{totalResults} Résultats</span>

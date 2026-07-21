@@ -77,10 +77,14 @@ export function usePageSearchParams(
   );
 
   const setFilters = useCallback(
-    (filters: Record<string, string>) => {
+    (values: Record<string, string>) => {
+      const strValues = Object.fromEntries(
+        Object.entries(values).map(([k, v]) => [k, String(v ?? "")]),
+      );
+
       setSearchParams((prev) => {
         const newParams = new URLSearchParams(prev);
-        Object.entries(filters).forEach(([key, value]) => {
+        Object.entries(strValues).forEach(([key, value]) => {
           if (value !== undefined && value !== null && value !== "") {
             newParams.set(key, value);
           } else {

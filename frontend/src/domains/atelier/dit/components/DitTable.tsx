@@ -113,7 +113,7 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
 
   return (
     <>
-      <div ref={parentRef} className="w-full overflow-auto  relative">
+      <div ref={parentRef} className="w-full overflow-auto  relative max-h-125">
         <Table className="min-w-max text-xs">
           <TableHeader className=" bg-brand-dark  [&_th]:text-white sticky top-0">
             <TableRow className="hover:bg-brand-dark border-b-0  ">
@@ -167,7 +167,9 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
               <TableHead className=" wrap-break-word  whitespace-normal text-center w-10">
                 Nbr PJ
               </TableHead>
-              <TableHead>Utilisateur</TableHead>
+              <TableHead className=" wrap-break-word  whitespace-normal text-center w-10">
+                Utilisateur
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -256,7 +258,7 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
                     {d.agenceDebiteur !== null && d.agenceServiceDebiteur}
                   </TableCell>
 
-                  <TableCell className=" px-2 text-start    wrap-break-word whitespace-normal max-w-30">
+                  <TableCell className=" px-1 text-start    wrap-break-word whitespace-normal max-w-20">
                     {d.objet}
                   </TableCell>
 
@@ -282,7 +284,7 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
                     </Button>
                   </TableCell>
 
-                  <TableCell className="font-bold max-w-0 py-2  wrap-break-word whitespace-normal">
+                  <TableCell className="font-bold max-w-10 py-2  wrap-break-word whitespace-normal">
                     {d.statutOr}
                   </TableCell>
 
@@ -290,8 +292,11 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
 
                   <TableCell>{formatDate(d.dateSoumissionOr)}</TableCell>
 
-                  <TableCell>
-                    <Button variant="link" className="text-blue-600  ">
+                  <TableCell className="w-fit wrap-break-word whitespace-normal ">
+                    <Button
+                      variant="link"
+                      className="text-blue-600 wrap-break-word whitespace-normal "
+                    >
                       {d.etatFacturation}
                     </Button>
                   </TableCell>
@@ -301,7 +306,9 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
                     </Button>
                   </TableCell>
                   <TableCell className="max-w-10">{d.nbrPj}</TableCell>
-                  <TableCell>{d.utilisateurDemandeur}</TableCell>
+                  <TableCell className="max-w-20 py-2  wrap-break-word whitespace-normal">
+                    {d.utilisateurDemandeur}
+                  </TableCell>
                 </TableRow>
               );
             })}

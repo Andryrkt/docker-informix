@@ -75,6 +75,7 @@ export const ditFieldFilter: FilterField[][] = [
       name: "dit_sans_or",
       label: "DIT sans OR",
       type: "boolean",
+      variant: "checkbox",
       hideLabel: true,
       placeholder: "DIT sans OR",
     },

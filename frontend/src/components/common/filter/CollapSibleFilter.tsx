@@ -12,6 +12,8 @@ import { cn } from "@/lib/utils";
 import type { FilterField, FilterOption } from "./schema/filterSchema";
 import { Checkbox } from "@/components/ui/checkbox";
 
+const STORAGE_KEY = "collapsible_filter_state";
+
 export default function CollapsibleFilter({
   fields,
   onSearch,
@@ -31,6 +33,24 @@ export default function CollapsibleFilter({
 }) {
   const [open, setOpen] = useState(defaultOpen);
 
+  const getInitialValuesFromURL = () => {
+    const params = new URLSearchParams(window.location.search);
+    const initial: Record<string, any> = {};
+    // Assume you know all possible filter keys (from `fields`)
+    fields.flat().forEach((field) => {
+      const value = params.get(field.name);
+      if (value !== null) {
+        try {
+          // Try to parse as JSON (arrays/objects)
+          initial[field.name] = JSON.parse(value);
+        } catch {
+          // If it fails, treat as plain string
+          initial[field.name] = value;
+        }
+      }
+    });
+    return initial;
+  };
   // State to store fetched options per field
   const [fieldOptions, setFieldOptions] = useState<
     Record<string, FilterOption[]>
@@ -77,11 +97,18 @@ export default function CollapsibleFilter({
   }, [fields]);
 
   const form = useForm({
-    defaultValues: {},
     onSubmit: async ({ value }) => {
       onSearch(value);
     },
   });
+
+  useEffect(() => {
+    const subscription = form.store.subscribe(() => {
+      const currentValues = form.state.values;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(currentValues));
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   const gridClass = cn("grid gap-4 grid-cols-1", {
     "lg:grid-cols-1": fields.length === 1,
@@ -100,10 +127,10 @@ export default function CollapsibleFilter({
     >
       {/* HEADER */}
       <CollapsibleTrigger asChild>
-        <div className="flex cursor-pointer items-center justify-between bg-amber-400 px-6 py-4 select-none rounded-t-sm">
-          <h3 className="font-medium">{title}</h3>
+        <div className="flex cursor-pointer items-center justify-between bg-amber-400 px-4 py-4 select-none rounded-t-sm">
+          <h3 className="text-sm">{title}</h3>
           <ChevronDownIcon
-            className={`h-4 w-4 transition-transform duration-200 ${
+            className={`h-6 w-6 transition-transform duration-200 ${
               open ? "rotate-180" : ""
             }`}
           />
@@ -173,7 +200,9 @@ export default function CollapsibleFilter({
                     return (
                       <div className="space-y-4">
                         {(field.type !== "boolean" || !field.hideLabel) && (
-                          <label className="text-xs ">{field.label}</label>
+                          <label className="text-xs font-semibold">
+                            {field.label}
+                          </label>
                         )}
 
                         {/* Select All checkbox – only for multichoice with selectAll flag */}

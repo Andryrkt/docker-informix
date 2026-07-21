@@ -183,7 +183,7 @@ export function FilterFieldRenderer({ field }: any) {
             onCheckedChange={(v) => field.onChange(Boolean(v))}
           />
           {field.placeholder && (
-            <span className="text-sm">{field.placeholder}</span>
+            <span className="text-xs font-semibold">{field.placeholder}</span>
           )}
         </div>
       );

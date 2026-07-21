@@ -107,8 +107,8 @@ export function AppBreadcrumb() {
                       <div className="flex flex-col gap-1">
                         {vignetteItems.map((vignette) => (
                           <Button
-                            key={vignette.titleKey}
-                            onClick={() => openDialog(vignette.modal)}
+                            key={vignette.title}
+                            onClick={() => openDialog(vignette.modal as any)}
                           >
                             {tv(`${vignette.titleKey}.title`)}
                           </Button>

@@ -12,6 +12,7 @@ export interface ditParams {
 export async function fetchDits(
   params: ditParams = {},
   page = 1,
+  limit: number = 20,
 ): Promise<PaginatedResponse<Dit>> {
   const cleanedParams = Object.fromEntries(
     Object.entries(params).filter(([_, val]) => val && val !== "all"),
@@ -20,8 +21,8 @@ export async function fetchDits(
     "/demande-intervention/liste",
     {
       params: {
-        limit: 5,
         page,
+        limit,
         ...cleanedParams,
       },
     },

@@ -13,19 +13,35 @@ import StatusBadgeGroup, {
 } from "@/components/common/StatusBadgeGroup";
 import { ditMock } from "../schema/ditMock";
 import { ditFieldFilter } from "../filter/DitFieldfilter";
+import { LimitSelector } from "@/components/common/pagination/LimitSelector";
+import { useCallback, useState } from "react";
+import { queryClient } from "@/lib/queryClient";
 
 function DitList() {
-  const { currentPage, setPage, selectedFilters, setFilter, reset } =
-    usePageSearchParams(1);
+  const {
+    currentPage,
+    setPage,
+    selectedFilters,
+    setFilter,
+    setFilters,
+    reset,
+    currentLimit,
+    setLimit,
+  } = usePageSearchParams(1, "", {}, 20);
 
   const {
     data: dit,
     isLoading,
     isFetching,
   } = useQuery({
-    queryKey: ["dit", JSON.stringify(selectedFilters), currentPage],
-    queryFn: () => fetchDits(selectedFilters, currentPage),
-    placeholderData: keepPreviousData, // <-- keeps old data during fetch
+    queryKey: [
+      "dit",
+      JSON.stringify(selectedFilters),
+      currentPage,
+      currentLimit,
+    ],
+    queryFn: () => fetchDits(selectedFilters, currentPage, currentLimit),
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
@@ -34,6 +50,14 @@ function DitList() {
   const lastPage = dit?.totalPages ?? 1;
   const totalResults = dit?.resultat ?? 0;
 
+  const fetchAllDitsForExport = useCallback(async () => {
+    const allData = await queryClient.fetchQuery({
+      queryKey: ["dit-export", JSON.stringify(selectedFilters), totalResults],
+      queryFn: () => fetchDits(selectedFilters, 1, totalResults),
+    });
+    return allData.data;
+  }, [selectedFilters, queryClient]);
+
   return (
     <div className="px-2 w-full ">
       <div className=" w-full  space-y-4 pb-4 overflow-auto">
@@ -41,9 +65,7 @@ function DitList() {
           <CollapsibleFilter
             fields={ditFieldFilter}
             onSearch={(values) => {
-              Object.entries(values).forEach(([key, value]) => {
-                setFilter(key, String(value ?? ""));
-              });
+              setFilters(values);
             }}
             onReset={() => {
               reset();
@@ -72,18 +94,28 @@ function DitList() {
 
           <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
             <ExcelDownloadButton
-              data={items}
+              // data={items}
+              fetchAllData={fetchAllDitsForExport}
               filename={buildExcelFilename(
                 "dit-list",
                 selectedFilters,
                 ditFieldFilter,
               )}
+              label={
+                totalResults === 0
+                  ? "Aucune donnée à exporter"
+                  : "Exporter tout (filtré)"
+              }
+              disabled={totalResults === 0 || isLoading || isFetching}
             ></ExcelDownloadButton>
-
-            <div className="flex items-center gap-2 font-bold text-[0.7rem]   ">
-              <span className="">{dit?.resultat ?? 0}</span>
-              <span className=" ">Résultats</span>
+            <div className="flex items-center gap-4 font-bold ">
+              <span className="text-[0.7rem]">{totalResults} Résultats</span>
+              <LimitSelector
+                currentLimit={currentLimit}
+                onLimitChange={setLimit}
+              />
             </div>
+
             <div className="">
               <SimpleNextPreviousPagination
                 currentPage={currentPage}

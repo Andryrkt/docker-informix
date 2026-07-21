@@ -31,7 +31,7 @@ function AppLayouts() {
         {user && (
           <>
             <Header logoSrc={LogoHff} userName={user.displayName} />
-            <div className="py-2 px-8">
+            <div className="py-2 px-8 mt-2">
               <AppBreadcrumb />
             </div>
           </>

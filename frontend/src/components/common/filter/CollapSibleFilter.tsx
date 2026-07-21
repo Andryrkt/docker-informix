@@ -20,6 +20,7 @@ export default function CollapsibleFilter({
   title = "Formulaire de recherche",
   defaultOpen = false,
   className,
+  storageKey,
 }: {
   fields: FilterField[][];
   onSearch: (v: any) => void;
@@ -28,9 +29,65 @@ export default function CollapsibleFilter({
   title?: string;
   defaultOpen?: boolean;
   className?: string;
+  storageKey?: string;
 }) {
   const [open, setOpen] = useState(defaultOpen);
 
+  // If no custom key is provided, use the current pathname as a namespace
+  const effectiveStorageKey = useMemo(() => {
+    if (storageKey) return storageKey;
+    // Use pathname + optional query param to differentiate sub-pages
+    // Example: "/users" -> "filter_users"
+    const path = window.location.pathname.replace(/\//g, "_") || "root";
+    return `filter_${path}`;
+  }, [storageKey]);
+
+  const getInitialValues = () => {
+    const allFields = fields.flat();
+
+    // 1️⃣ Read URL parameters
+    const params = new URLSearchParams(window.location.search);
+    const urlValues: Record<string, any> = {};
+    allFields.forEach((field) => {
+      const value = params.get(field.name);
+      if (value !== null) {
+        try {
+          urlValues[field.name] = JSON.parse(value);
+        } catch {
+          urlValues[field.name] = value;
+        }
+      }
+    });
+
+    // 2️⃣ Read localStorage
+    let storedValues: Record<string, any> = {};
+    const stored = localStorage.getItem(effectiveStorageKey);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        allFields.forEach((field) => {
+          if (field.name in parsed) {
+            storedValues[field.name] = parsed[field.name];
+          }
+        });
+      } catch {
+        // ignore malformed storage
+      }
+    }
+
+    // 3️⃣ Merge: URL overrides localStorage
+    const initial: Record<string, any> = {};
+    allFields.forEach((field) => {
+      if (field.name in urlValues) {
+        initial[field.name] = urlValues[field.name];
+      } else if (field.name in storedValues) {
+        initial[field.name] = storedValues[field.name];
+      }
+      // otherwise leave undefined (form will use its own default)
+    });
+
+    return initial;
+  };
   // State to store fetched options per field
   const [fieldOptions, setFieldOptions] = useState<
     Record<string, FilterOption[]>
@@ -77,11 +134,19 @@ export default function CollapsibleFilter({
   }, [fields]);
 
   const form = useForm({
-    defaultValues: {},
+    defaultValues: getInitialValues(),
     onSubmit: async ({ value }) => {
       onSearch(value);
     },
   });
+
+  useEffect(() => {
+    const subscription = form.store.subscribe(() => {
+      const currentValues = form.state.values;
+      localStorage.setItem(effectiveStorageKey, JSON.stringify(currentValues));
+    });
+    return () => subscription.unsubscribe();
+  }, [form, effectiveStorageKey]);
 
   const gridClass = cn("grid gap-4 grid-cols-1", {
     "lg:grid-cols-1": fields.length === 1,
@@ -100,10 +165,10 @@ export default function CollapsibleFilter({
     >
       {/* HEADER */}
       <CollapsibleTrigger asChild>
-        <div className="flex cursor-pointer items-center justify-between bg-amber-400 px-6 py-4 select-none rounded-t-sm">
-          <h3 className="font-medium">{title}</h3>
+        <div className="flex cursor-pointer items-center justify-between bg-amber-400 px-4 py-4 select-none rounded-t-sm">
+          <h3 className="text-sm">{title}</h3>
           <ChevronDownIcon
-            className={`h-4 w-4 transition-transform duration-200 ${
+            className={`h-6 w-6 transition-transform duration-200 ${
               open ? "rotate-180" : ""
             }`}
           />
@@ -173,7 +238,9 @@ export default function CollapsibleFilter({
                     return (
                       <div className="space-y-4">
                         {(field.type !== "boolean" || !field.hideLabel) && (
-                          <label className="text-xs ">{field.label}</label>
+                          <label className="text-xs font-semibold">
+                            {field.label}
+                          </label>
                         )}
 
                         {/* Select All checkbox – only for multichoice with selectAll flag */}

@@ -1,69 +1,93 @@
 import {
-  Plus,
-  Pencil,
-  Trash2,
-  FileText,
-  ShoppingCart,
-  Layers,
-  StoreIcon,
-  Calendar,
-  CloudUpload,
-  Warehouse,
-  ListChecks,
-  List,
-  FileSpreadsheet,
-  Computer,
-  HelpCircle,
-  HandHelping,
-  Book,
-  Search,
-  CirclePlus,
-  Contact,
-  FolderTree,
-  ListTree,
-  GanttChartSquare,
-  LayoutDashboard,
-  Wrench,
-  BriefcaseBusiness,
-  Folders,
-  Grid3x3,
-} from "lucide-react";
+  faBook,
+  faFile,
+  faCirclePlus,
+  faSearch,
+  faFolderTree,
+  faWarehouse,
+  faListCheck,
+  faCloudUpload,
+  faList,
+  faCalendar,
+  faFileExcel,
+  faComputer,
+  faQuestionCircle,
+  faHandsHelping,
+  faBriefcase,
+  faFolder,
+  faDolly,
+  faTools,
+  faAddressBook,
+  faGridHorizontal,
+  faChartGantt,
+  faDashboard,
+  faCalendarDay,
+  faTable,
+  type IconDefinition,
+  faCalendarDays,
+} from "@fortawesome/free-solid-svg-icons";
 
-export const vignetteMock = [
+export type VignetteItem = {
+  label: string;
+  icon: IconDefinition;
+  link?: string;
+};
+
+export type VignetteSection = {
+  title: string;
+  icon: IconDefinition;
+  items: VignetteItem[];
+};
+
+export type VignetteModal = {
+  title: string;
+  description?: string;
+  icon: IconDefinition;
+  sections?: VignetteSection[];
+  items?: VignetteItem[];
+};
+
+export type VignetteCardData = {
+  title: string;
+  icon: IconDefinition;
+  modal: VignetteModal;
+};
+
+export const vignetteItems: VignetteCardData[] = [
   {
     title: "Documentation",
-    icon: Book,
+    icon: faBook,
     modal: {
       title: "Documentation",
-      icon: Book,
+      icon: faBook,
       sections: [
         {
           title: "Contrat",
-          icon: FileText,
+          icon: faFile,
           items: [
             {
               label: "Nouveau contrat",
-              icon: CirclePlus,
+              icon: faCirclePlus,
               link: "/documentation/contrats/nouveau-contrat",
             },
             {
               label: "Consultation",
-              icon: Search,
+              icon: faSearch,
               link: "/documentation/contrats/liste",
             },
           ],
         },
       ],
       items: [
-        { label: "Annuaire", icon: Contact, link: "/sso/annuaire" },
+        { label: "Annuaire", icon: faAddressBook, link: "/sso/annuaire" },
         {
           label: "Planning analytique HFF",
-          icon: ListTree,
+          icon: faList,
           link: "/documentation/planning-analytique-HFF",
         },
         {
           label: "Document interne",
-          icon: FolderTree,
+          icon: faFolderTree,
           link: "/documentation/documentation-interne",
         },
       ],
@@ -71,59 +95,59 @@ export const vignetteMock = [
   },
   {
     title: "Magasin",
-    icon: StoreIcon,
+    icon: faDolly,
     modal: {
       title: "Magasin",
-      description:
-        "This is desctiption of Magasin that should give from backend",
-      icon: StoreIcon,
+      // description:
+      //   "This is desctiption of Magasin that should give from backend",
+      icon: faDolly,
       sections: [
         {
           title: "OR",
-          icon: Warehouse,
+          icon: faWarehouse,
           items: [
             {
               label: "Liste à traiter",
-              icon: ListChecks,
+              icon: faListCheck,
               link: "/magasin/ordre-reparation/traiter",
             },
             {
               label: "Liste à livrer",
-              icon: ListChecks,
+              icon: faListCheck,
               link: "/magasin/ordre-reparation/livrer",
             },
           ],
         },
         {
           title: "Dematerialisation",
-          icon: CloudUpload,
+          icon: faCloudUpload,
           items: [
             {
               label: "Devis",
               link: "/magasin/dematerialisation/liste-devis-neg",
-              icon: List,
+              icon: faList,
             },
             {
               label: "Planning de commande Magasin",
-              icon: Calendar,
+              icon: faCalendar,
               link: "/magasin/dematerialisation/planning-commande",
             },
           ],
         },
         {
           title: "CIS",
-          icon: FileText,
+          icon: faFile,
           items: [
-            { label: "Liste à traiter", icon: List },
-            { label: "Liste à traiter", icon: FileSpreadsheet },
+            { label: "Liste à traiter", icon: faList },
+            { label: "Liste à traiter", icon: faFileExcel },
           ],
         },
         {
           title: "Inventaire",
-          icon: List,
+          icon: faList,
           items: [
-            { label: "Liste des inventaires", icon: List },
-            { label: "Inventaire détaillé", icon: ListChecks },
+            { label: "Liste des inventaires", icon: faList },
+            { label: "Inventaire détaillé", icon: faList },
           ],
         },
       ],
@@ -131,96 +155,103 @@ export const vignetteMock = [
   },
   {
     title: "Atelier",
-    icon: Wrench,
+    icon: faTools,
     modal: {
       title: "Atelier",
       description:
         "This is desctiption of Atelier that should give from backend",
-      icon: Wrench,
+      icon: faTools,
       sections: [
         {
           title: "Demande d'intervention",
-          icon: BriefcaseBusiness,
+          icon: faBriefcase,
           items: [
             {
               label: "Nouvelle demande",
-              icon: CirclePlus,
+              icon: faCirclePlus,
               link: "/atelier/demande-intervention/new",
             },
             {
               label: "Consultation",
-              icon: Search,
+              icon: faSearch,
               link: "/atelier/demande-intervention/dit-list",
             },
             {
               label: "Dossier DIT",
-              icon: Folders,
+              icon: faFolder,
               link: "/atelier/demande-intervention/dossier-list",
             },
-            { label: "Matrice de responsabilité", icon: Grid3x3 },
+            { label: "Matrice de responsabilité", icon: faTable },
+          ],
+        },
+
+        {
+          title: "PLANNING",
+          icon: faCalendarDays,
+          items: [
+            {
+              label: "Planning detailé",
+              icon: faCalendarDay,
+              link: "/atelier/demande-intervention/planning-detaille",
+            },
+            {
+              label: "Planning interne Atelier",
+              icon: faListCheck,
+              link: "/atelier/demande-intervention/planning-interne-atelier",
+            },
+            {
+              label: "Planning",
+              icon: faCalendar,
+              link: "/atelier/demande-intervention/planning-list",
+            },
           ],
         },
       ],
       items: [
         {
           label: "Glossaire OR",
-          icon: ListChecks,
+          icon: faBook,
           link: "/atelier/demande-intervention/glossaire-or",
-        },
-        {
-          label: "Planning detailé",
-          icon: ListChecks,
-          link: "/atelier/demande-intervention/planning-detaille",
-        },
-        {
-          label: "Planning interne Atelier",
-          icon: ListChecks,
-          link: "/atelier/demande-intervention/planning-interne-atelier",
-        },
-        {
-          label: "Planning",
-          icon: ListChecks,
-          link: "/atelier/demande-intervention/planning-list",
         },
       ],
     },
   },
   {
     title: "IT",
-    icon: Computer,
+    icon: faComputer,
     modal: {
       title: "Support IT",
       description: "This is desctiption of IT that should give from backend",
-      icon: Computer,
+      icon: faComputer,
       sections: [
         {
           title: "Demande support informatique",
-          icon: HelpCircle,
+          icon: faQuestionCircle,
           items: [
             {
               label: "Formulaire de demande de support",
-              icon: HandHelping,
+              icon: faHandsHelping,
               link: "/it/demande-support-informatique",
             },
           ],
         },
         {
           title: "Tickets",
-          icon: ListChecks,
+          icon: faListCheck,
           items: [
             {
               label: "Suivi des tickets",
-              icon: ListTree,
+              icon: faListCheck,
               link: "/it/tickets",
             },
             {
               label: "Diagramme de Gantt",
-              icon: GanttChartSquare,
+              icon: faChartGantt,
               link: "/it/tickets/gantt",
             },
             {
               label: "Tableau de bord",
-              icon: LayoutDashboard,
+              icon: faDashboard,
               link: "/it/tickets/dashboard",
             },
           ],

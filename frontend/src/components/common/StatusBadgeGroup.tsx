@@ -66,7 +66,7 @@ export default function StatusBadgeGroup({
               key={item.value}
               onClick={() => onChange?.(item.value)}
               className={cn(
-                "flex items-center gap-2 px-3 rounded-md border text-[0.65rem] transition flex-1 font-semibold ",
+                "flex items-center gap-2 px-3 rounded-md border text-[0.65rem] transition flex-1 font-semibold cursor-pointer",
                 statusClass,
                 active
                   ? "ring-2 ring-offset-2 ring-black"

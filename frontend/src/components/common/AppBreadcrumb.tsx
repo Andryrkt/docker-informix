@@ -13,124 +13,88 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/hover-card";
-import { useVignetteDialog } from "@/domains/home/components/VignetteModal";
 import { Button } from "../ui/button";
 import { vignetteItems } from "@/domains/home/schema/vignetteItems";
-import { formatLabel } from "@/lib/utils";
-import { useTranslation } from "react-i18next";
+import { cn, formatLabel } from "@/lib/utils";
+import { useVignette } from "@/context/VignetteContext";
+import { customLabels } from "./CustomLabels/customLabels";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export function AppBreadcrumb() {
   const { pathname } = useLocation();
-  const { openDialog, VignetteDialogComponent } = useVignetteDialog();
-  const { t: tb } = useTranslation("breadcrumb");
-  const { t: tv } = useTranslation("vignette");
+  const { openDialog } = useVignette();
 
   const segments = pathname.split("/").filter(Boolean);
 
   if (pathname === "/") {
-    return;
+    return null;
   }
 
-  /**
-   * Resolves a URL segment to its human-readable label using nested dot-notation.
-   *
-   * Resolution order for segment "atelier" (ancestor = []):
-   *   1. "atelier.root"           ← root label of a nested group  ← checked FIRST
-   *   2. "atelier"                ← top-level scalar key
-   *   3. formatLabel("atelier")   ← auto-format fallback
-   *
-   * Resolution order for "dit-list" (ancestor = ["atelier","demande-intervention"]):
-   *   1. "atelier.demande-intervention.dit-list.root"  ← unlikely, but safe
-   *   2. "atelier.demande-intervention.dit-list"       ← exact leaf key
-   *   3. "dit-list.root"
-   *   4. "dit-list"
-   *   5. formatLabel("dit-list")
-   */
-  const resolveLabel = (segment: string, ancestorPath: string[]): string => {
-    const tryKey = (key: string): string | null => {
-      const val = tb(key, { defaultValue: "" });
-      // Guard: i18next may return the object itself if the key maps to a nested object
-      if (val && typeof val === "string") return val;
-      return null;
-    };
-
-    // 1. Full nested path + ".root" (e.g. "atelier.demande-intervention.root")
-    const nestedRoot = [...ancestorPath, segment, "root"].join(".");
-    const r1 = tryKey(nestedRoot);
-    if (r1) return r1;
-
-    // 2. Full nested path as leaf (e.g. "atelier.demande-intervention.dit-list")
-    const fullKey = [...ancestorPath, segment].join(".");
-    const r2 = tryKey(fullKey);
-    if (r2) return r2;
-
-    // 3. Bare segment + ".root" at top level (e.g. "atelier.root")
-    const r3 = tryKey(`${segment}.root`);
-    if (r3) return r3;
-
-    // 4. Bare segment as scalar top-level key (e.g. "select-company")
-    const r4 = tryKey(segment);
-    if (r4) return r4;
-
-    return formatLabel(segment);
+  // Simple label resolver – just format the segment
+  const resolveLabel = (segment: string): string => {
+    return customLabels[segment] ?? formatLabel(segment);
   };
 
   const breadcrumbs = [
     {
-      label: tb("home"),
+      label: "Acceuil", // static home label
       href: "/",
       current: segments.length === 0,
     },
     ...segments.map((segment, index) => ({
-      label: resolveLabel(segment, segments.slice(0, index)),
+      label: resolveLabel(segment),
       href: "/" + segments.slice(0, index + 1).join("/"),
       current: index === segments.length - 1,
     })),
   ];
 
   return (
-    <>
-      <Breadcrumb>
-        <BreadcrumbList>
-          {breadcrumbs.map((item, index) => (
-            <div key={item.href} className="flex items-center">
-              {index > 0 && <BreadcrumbSeparator />}
-
-              <BreadcrumbItem>
-                {index === 0 ? (
-                  <HoverCard openDelay={100} closeDelay={100}>
-                    <HoverCardTrigger asChild>
-                      <Link to={item.href}>{item.label}</Link>
-                    </HoverCardTrigger>
-
-                    <HoverCardContent className="w-56 p-2 ml-6 mt-2">
-                      <div className="flex flex-col gap-1">
-                        {vignetteItems.map((vignette) => (
-                          <Button
-                            key={vignette.title}
-                            onClick={() => openDialog(vignette.modal as any)}
-                          >
-                            {tv(`${vignette.titleKey}.title`)}
-                          </Button>
-                        ))}
-                      </div>
-                    </HoverCardContent>
-                  </HoverCard>
-                ) : item.current ? (
-                  <BreadcrumbPage className="font-semibold">
-                    {item.label}
-                  </BreadcrumbPage>
-                ) : (
-                  <BreadcrumbLink asChild>
+    <Breadcrumb>
+      <BreadcrumbList>
+        {breadcrumbs.map((item, index) => (
+          <div key={item.href} className="flex items-center">
+            {index > 0 && <BreadcrumbSeparator />}
+            <BreadcrumbItem>
+              {index === 0 ? (
+                <HoverCard openDelay={100} closeDelay={100}>
+                  <HoverCardTrigger asChild>
                     <Link to={item.href}>{item.label}</Link>
-                  </BreadcrumbLink>
-                )}
-              </BreadcrumbItem>
-            </div>
-          ))}
-        </BreadcrumbList>
-      </Breadcrumb>
-      <VignetteDialogComponent />
-    </>
+                  </HoverCardTrigger>
+                  <HoverCardContent
+                    className={cn(
+                      "w-fit py-2 ml-6 mt-2 bg-brand-dark  shadow-sm shadow-white/20",
+                      vignetteItems.length >= 6 ? " lg:h-72" : "h-fit",
+                    )}
+                  >
+                    <div className="flex flex-col flex-wrap gap-2 content-start items-start h-full">
+                      {vignetteItems.map((vignette) => (
+                        <Button
+                          key={vignette.title}
+                          onClick={() => openDialog(vignette.modal as any)}
+                          variant="brand_secondary"
+                          className="w-48 h-11 flex items-center justify-start gap-2 py-2 px-4 text-left text-zinc-500 font-semibold group "
+                        >
+                          <FontAwesomeIcon
+                            icon={vignette.icon}
+                            className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:translate-x-2   "
+                          />
+                          <span className="text-white group-hover:text-black transition-transform duration-300 group-hover:translate-x-2">
+                            {vignette.title}
+                          </span>
+                        </Button>
+                      ))}
+                    </div>
+                  </HoverCardContent>
+                </HoverCard>
+              ) : (
+                <BreadcrumbPage className={item.current ? "font-semibold" : ""}>
+                  {item.label}
+                </BreadcrumbPage>
+              )}
+            </BreadcrumbItem>
+          </div>
+        ))}
+      </BreadcrumbList>
+    </Breadcrumb>
   );
 }

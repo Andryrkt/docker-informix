@@ -1,5 +1,5 @@
 import Header from "@/components/common/navigation/Header";
-import { useEffect } from "react";
+import { lazy, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
 import LogoHff from "@/assets/logoHFF.jpg";
@@ -7,6 +7,8 @@ import Footer from "./components/Footer";
 import { useAuth } from "@/context/authContext";
 import { AppBreadcrumb } from "@/components/common/AppBreadcrumb";
 import { usePageTracker } from "@/hooks/usePageTracker";
+import { useVignette, VignetteProvider } from "@/context/VignetteContext";
+import { VignetteDialog } from "@/domains/home/components/VignetteDialog";
 
 function AppLayouts() {
   const { user } = useAuth();
@@ -23,27 +25,29 @@ function AppLayouts() {
 
   const location = useLocation();
   const routeKey = location.pathname;
-
   return (
-    <div className="flex max-w-screen">
-      {/* {user && <AuthSideBar />} */}
-      <div className="w-full  flex flex-col flex-1 sticky  top-0">
-        {user && (
-          <>
-            <Header logoSrc={LogoHff} userName={user.displayName} />
-            <div className="py-2 px-8 mt-2">
-              <AppBreadcrumb />
-            </div>
-          </>
-        )}
-        <main className="grow flex flex-col justify-center items-center  ">
-          <Outlet />
-          {/* <ScrollRestoration /> */}
-          <Toaster richColors />
-        </main>
-        {/* <Footer /> */}
+    <VignetteProvider>
+      <div className="flex max-w-screen">
+        {/* {user && <AuthSideBar />} */}
+        <div className="w-full  flex flex-col flex-1 sticky  top-0">
+          {user && (
+            <>
+              <Header logoSrc={LogoHff} userName={user.displayName} />
+              <div className="py-2 px-8 mt-2">
+                <AppBreadcrumb />
+              </div>
+            </>
+          )}
+          <main className="grow flex flex-col justify-center items-center  ">
+            <Outlet />
+            {/* <ScrollRestoration /> */}
+            <Toaster richColors />
+          </main>
+          {/* <Footer /> */}
+        </div>
       </div>
-    </div>
+      <VignetteDialog />
+    </VignetteProvider>
   );
 }
 

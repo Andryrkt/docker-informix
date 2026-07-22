@@ -47,14 +47,6 @@ function DevisList() {
             reset();
           }}
         />
-        <ExcelDownloadButton
-          data={items}
-          filename={buildExcelFilename(
-            "devis",
-            selectedFilters,
-            devisFieldfilter,
-          )}
-        ></ExcelDownloadButton>
 
         {/* Simple pagination */}
         <div className="p-4 flex items-center justify-between mx-auto max-w-7xl">

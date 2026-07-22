@@ -41,7 +41,7 @@ final class FileUploadService
     /**
      * @return array{0: ?string, 1: ?string} [message d'erreur, nom de fichier stocké]
      */
-    public function validateAndStore(UploadedFile $file, string $type, string $numero): array
+    public function validateAndStore(UploadedFile $file, string $type, string $numero, ?string $customName = null): array
     {
         if (!$file->isValid()) {
             return ["Le fichier \"{$file->getClientOriginalName()}\" n'a pas pu être envoyé.", null];
@@ -52,7 +52,7 @@ final class FileUploadService
             return [$error, null];
         }
 
-        $storedName = self::storedName($file);
+        $storedName = $customName ?: self::storedName($file);
         $file->move($this->uploadDir($type, $numero), $storedName);
 
         return [null, $storedName];

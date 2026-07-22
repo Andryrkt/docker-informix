@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { fetchDitDetails } from "../api/ditApi";
 import { useQuery } from "@tanstack/react-query";
 import DitView from "../components/DitView";
-import { getMateriels } from "@/domains/materiel/api/materielApi";
+import { searchMateriels } from "@/domains/materiel/api/materielApi";
 
 function DitDetails() {
   const { numeroDemandeIntervention } = useParams();
@@ -17,16 +17,23 @@ function DitDetails() {
     enabled: !!numeroDemandeIntervention,
   });
 
-  const { data: materiels = [] } = useQuery({
-    queryKey: ["materiels"],
-    queryFn: () => getMateriels(),
-    enabled: !!dit,
+  // Récupère uniquement le matériel lié à la DIT (par son ID), sans charger toute la liste.
+  const { data: materielResults = [] } = useQuery({
+    queryKey: ["materiel-by-id", dit?.idMateriel],
+    queryFn: () => searchMateriels(String(dit!.idMateriel)),
+    enabled: !!dit?.idMateriel,
   });
 
-  const materiel = materiels.find((m) => m.idMateriel === dit?.idMateriel) ?? null;
+  const materiel =
+    materielResults.find((m) => m.idMateriel === String(dit?.idMateriel)) ??
+    null;
 
   if (isPending) {
-    return <div className="p-4 text-center text-muted-foreground">Chargement...</div>;
+    return (
+      <div className="p-4 text-center text-muted-foreground">
+        Chargement...
+      </div>
+    );
   }
 
   if (error || !dit) {

@@ -17,16 +17,13 @@ use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Listes de référence pour le formulaire DIT. Les valeurs "type de réparation"
- * et "réparation réalisé par" reprennent les codes déjà choisis côté frontend
- * (ditSchemaField.tsx) — il n'existe pas de table Informix équivalente,
- * contrairement à type de document / catégorie / niveau d'urgence.
+ * et "réparation réalisé par" n'ont pas de table Informix équivalente
+ * (contrairement à type de document / catégorie / niveau d'urgence) — elles
+ * sont gérées en dur côté frontend (reparation/api.ts), pas exposées ici.
  */
 #[Route('/api/dit')]
 class DitLookupController extends AbstractController
 {
-    private const TYPES_REPARATION = ['STANDARD', 'URGENTE', 'PREVENTIVE', 'CORRECTIVE'];
-    private const REPARATION_PAR = ['ATE_TANA', 'ATE_POL_TANA', 'ATE_STAR', 'ATE_MAS', 'ATE_TMV', 'ATE_FTU'];
-
     public function __construct(
         private readonly WorTypeDocumentRepository $typeDocumentRepo,
         private readonly WorNiveauUrgenceRepository $niveauUrgenceRepo,
@@ -63,18 +60,6 @@ class DitLookupController extends AbstractController
             'code' => self::toUtf8($c->getLibelle()),
             'label' => self::toUtf8($c->getLibelle()),
         ], $this->categorieRepo->findAllOrdered()));
-    }
-
-    #[Route('/types-reparation', methods: ['GET'])]
-    public function typesReparation(): JsonResponse
-    {
-        return $this->json(array_map(fn($code) => ['code' => $code, 'label' => $code], self::TYPES_REPARATION));
-    }
-
-    #[Route('/reparation-par', methods: ['GET'])]
-    public function reparationPar(): JsonResponse
-    {
-        return $this->json(array_map(fn($code) => ['code' => $code, 'label' => $code], self::REPARATION_PAR));
     }
 
     /**
@@ -137,18 +122,19 @@ class DitLookupController extends AbstractController
     public function materiels(Request $request): JsonResponse
     {
         $search = (string) $request->query->get('search', '');
+        $results = $this->materielRepo->search($search);
 
         return $this->json(array_map(fn($m) => self::sanitizeUtf8([
-            'idMateriel' => $m->getNumMat(),
-            'constructeur' => $m->getConstructeur(),
-            'designation' => $m->getDesignation(),
-            'modele' => $m->getModele(),
-            'numParc' => $m->getNumParc(),
-            'numSerie' => $m->getNumSerie(),
-            'km' => null,
-            'heures' => null,
-            'casier' => null,
-        ]), $this->materielRepo->search($search)));
+            'idMateriel'  => $m['mmat_nummat'],
+            'constructeur'=> $m['mmat_marqmat'],
+            'designation' => $m['mmat_desi'],
+            'modele'      => $m['mmat_typmat'],
+            'numParc'     => $m['mmat_recalph'],  // mmat_recalph = N° parc affiché
+            'casier'      => $m['mmat_numparc'],  // mmat_numparc = casier
+            'numSerie'    => $m['mmat_numserie'],
+            'heures'      => isset($m['heure']) && $m['heure'] !== '' ? (float) $m['heure'] : null,
+            'km'          => isset($m['km'])    && $m['km']    !== '' ? (float) $m['km']    : null,
+        ]), $results));
     }
 
     #[Route('/clients', methods: ['GET'])]

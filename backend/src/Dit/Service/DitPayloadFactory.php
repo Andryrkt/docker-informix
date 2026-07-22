@@ -34,7 +34,7 @@ final class DitPayloadFactory
         return self::sanitizeUtf8($this->create($dit)->toArray());
     }
 
-    private function create(Dit $dit): DitPayload
+    public function create(Dit $dit): DitPayload
     {
         $materiel = $this->materielRepo->find($dit->getIdMateriel());
         [$agenceEmetteurLabel, $serviceEmetteurLabel] = $this->resolveAgenceServiceLabels($dit->getAgenceServiceEmetteur());

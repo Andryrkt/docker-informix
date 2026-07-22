@@ -12,9 +12,15 @@ import type { AdminUser } from "../api/adminApi";
 import { UserAccessDialog } from "../components/UserAccessDialog";
 
 export default function UtilisateursPage() {
+  // Page admin peu visitée : mieux vaut resservir l'état à jour à chaque
+  // arrivée sur la page que profiter du cache de 10 min par défaut (voir
+  // queryClient.ts) — sinon un rattachement matricule/centre fait ailleurs
+  // (autre session, edit direct en base) reste invisible ici sans F5.
   const { data: users = [], isLoading } = useQuery({
     queryKey: ["admin", "users"],
     queryFn: api.fetchAdminUsers,
+    staleTime: 0,
+    refetchOnMount: "always",
   });
 
   const [accessUser, setAccessUser] = useState<AdminUser | null>(null);
@@ -37,7 +43,7 @@ export default function UtilisateursPage() {
               <TableHead>Nom complet</TableHead>
               <TableHead>Identifiant</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead>Département</TableHead>
+              <TableHead>Matricule</TableHead>
               <TableHead>Rôles</TableHead>
               <TableHead>Agence / Service par défaut</TableHead>
               <TableHead>Dernière connexion</TableHead>
@@ -65,7 +71,7 @@ export default function UtilisateursPage() {
                 </TableCell>
                 <TableCell className="font-mono text-xs text-gray-600">{u.username}</TableCell>
                 <TableCell className="text-sm text-gray-600">{u.email ?? "—"}</TableCell>
-                <TableCell className="text-sm text-gray-600">{u.department ?? "—"}</TableCell>
+                <TableCell className="font-mono text-xs text-gray-600">{u.matricule ?? "—"}</TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
                     {u.roles.filter((r) => r !== "ROLE_USER").map((r) => (

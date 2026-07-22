@@ -5,7 +5,6 @@ import {
   agenceAndServiceFields,
   demandeFields,
   infoClientFields,
-  infoMaterielFields,
   interventionFields,
   piecesJointFields,
   reparationFields,
@@ -15,14 +14,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm, useStore } from "@tanstack/react-form";
 import { formatErrorMessage } from "@/lib/utils";
 import { ditFormSchema, type DitFormValues } from "../schema/ditSchema";
-import { Save } from "lucide-react";
-import { getMateriels } from "@/domains/materiel/api/materielApi";
+import { Loader2, Save } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { MaterielInfoCard } from "@/domains/materiel/components/MaterielInfoCard";
 import { getClients } from "@/domains/client/api/clientApi";
 import { fetchDitDefaults } from "../api/ditApi";
 import { getAgences } from "@/domains/agence/api";
 import NiveauUrgenceModal from "./NiveauUrgenceModal";
+import { MaterielSearchableSelect } from "./atom/MaterielSearchableSelect";
 import type { Materiel } from "@/domains/materiel/schema/materielSchema";
 import type { Client } from "@/domains/client/schema/clientSchema";
 
@@ -123,6 +122,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
     form.store,
     (state) => state.values.interneExterne,
   );
+  const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
 
   // Même clé/fonction que la query interne du champ "agenceDebiteur" (voir
   // ditSchemaField.tsx : queryKey "agences") — un seul fetch réseau partagé,
@@ -142,6 +142,9 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
       []
     );
   }, [agencesDebiteur, agenceDebiteurValue]);
+
+
+  // La recherche de matériels est désormais serveur-side dans MaterielSearchableSelect.
 
   const { data: clients = [] } = useQuery({
     queryKey: ["clients"],
@@ -220,15 +223,9 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
   const numeroClientOptions = clients;
   const nomClientOptions = clients;
 
-  // Materiels options values
 
-  const { data: materiels = [] } = useQuery({
-    queryKey: ["materiels"],
-    queryFn: getMateriels,
-  });
-  const idMaterielOptions = materiels;
-  const numParcOptions = materiels;
-  const numSerieOptions = materiels;
+  // (pas de pré-chargement materiel — recherche serveur-side via MaterielSearchableSelect)
+  const [selectedMateriel, setSelectedMateriel] = useState<Materiel | null>(null);
 
   // Synchronisation Materiel
   const syncMateriel = (
@@ -239,6 +236,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
       form.setFieldValue("idMateriel", "");
       form.setFieldValue("numParc", "");
       form.setFieldValue("numSerie", "");
+      setSelectedMateriel(null);
       return;
     }
     const newId = selectedItem.idMateriel ?? "";
@@ -253,6 +251,8 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
     if (currentId !== newId) form.setFieldValue("idMateriel", newId);
     if (currentParc !== newParc) form.setFieldValue("numParc", newParc);
     if (currentSerie !== newSerie) form.setFieldValue("numSerie", newSerie);
+    // Stocker l'objet complet pour l'affichage dans MaterielInfoCard
+    setSelectedMateriel(selectedItem);
   };
 
   // Syncronisation Client
@@ -297,6 +297,14 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
             : "Duplication de la demande d'intervention"}
         </h1>
       </div>
+
+      {errors.length > 0 && (
+        <div className="p-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-sm max-w-6xl mx-auto mt-4 mb-2">
+          {errors.map((err, index) => (
+            <p key={index}>{String(err)}</p>
+          ))}
+        </div>
+      )}
 
       <form.Subscribe selector={(state) => state.values.interneExterne}>
         {(interneExterneValue) => {
@@ -435,6 +443,15 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                                       <FieldRenderer
                                         field={{
                                           ...config,
+                                          // Agence débiteur : le queryFn déclaré dans
+                                          // ditSchemaField (stub renvoyant toujours []) est
+                                          // remplacé par la liste déjà chargée ci-dessus, pour
+                                          // que la valeur pré-remplie par défaut (useEffect
+                                          // "defaults") ait une option à laquelle se raccrocher.
+                                          ...(isAgenceDebiteur && {
+                                            options: agencesDebiteur,
+                                            enabled: false,
+                                          }),
                                           // Service débiteur filtré par l'agence débiteur sélectionnée,
                                           // à partir de la liste agences+services déjà chargée — pas de
                                           // requête réseau à chaque changement (même principe que
@@ -586,76 +603,33 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                       </div>
                       <div className="space-y-4 flex flex-col ">
                         <div className="flex gap-4 w-full">
-                          {infoMaterielFields.map((config) => (
-                            <form.Field
-                              key={config.name}
-                              name={config.name as never}
-                              children={(field) => {
-                                const isInvalid =
-                                  field.state.meta.isTouched &&
-                                  !field.state.meta.isValid;
-                                return (
-                                  <Field data-invalid={isInvalid}>
-                                    <FieldLabel
-                                      htmlFor={field.name}
-                                      className="font-semibold"
-                                    >
-                                      {config.label}
-                                    </FieldLabel>
-
-                                    <FieldRenderer
-                                      field={{
-                                        ...config,
-                                        options:
-                                          config.name === "idMateriel"
-                                            ? idMaterielOptions
-                                            : config.name === "numParc"
-                                              ? numParcOptions
-                                              : config.name === "numSerie"
-                                                ? numSerieOptions
-                                                : [],
-                                        value: field.state.value,
-
-                                        onChange: (item) => {
-                                          if (
-                                            config.name === "idMateriel" ||
-                                            config.name === "numParc" ||
-                                            config.name === "numSerie"
-                                          ) {
-                                            syncMateriel(config.name, item);
-                                            return;
-                                          }
-
-                                          field.handleChange(item);
-                                        },
-                                      }}
-                                    />
-
-                                    {isInvalid && (
-                                      <FieldError
-                                        errors={field.state.meta.errors}
-                                      />
-                                    )}
-                                  </Field>
-                                );
-                              }}
-                            ></form.Field>
-                          ))}
-                        </div>
-                        <div className=" ">
-                          <form.Subscribe
-                            selector={(state) => state.values.idMateriel}
-                          >
-                            {(idMateriel) => {
-                              const selectedMateriel =
-                                materiels.find(
-                                  (m) => m.idMateriel === idMateriel,
-                                ) ?? null;
+                          {/* ID Matériel — recherche serveur à la demande */}
+                          <form.Field
+                            name="idMateriel"
+                            children={(field) => {
+                              const isInvalid =
+                                field.state.meta.isTouched &&
+                                !field.state.meta.isValid;
                               return (
-                                <MaterielInfoCard materiel={selectedMateriel} />
+                                <Field data-invalid={isInvalid} className="flex-1">
+                                  <FieldLabel htmlFor="idMateriel" className="font-semibold">
+                                    Trouver un matériel par n° parc ou n° série ou Id matériel
+                                  </FieldLabel>
+                                  <MaterielSearchableSelect
+                                    value={field.state.value}
+                                    disabled={false}
+                                    onChange={(item) => syncMateriel("idMateriel", item)}
+                                  />
+                                  {isInvalid && (
+                                    <FieldError errors={field.state.meta.errors} />
+                                  )}
+                                </Field>
                               );
                             }}
-                          </form.Subscribe>
+                          />
+                        </div>
+                        <div className=" ">
+                          <MaterielInfoCard materiel={selectedMateriel} />
                         </div>
                       </div>
                     </div>
@@ -813,10 +787,20 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                 <Button
                   type="submit"
                   form="dit-form"
+                  disabled={isSubmitting}
                   className="bg-brand-primary/70 hover:bg-brand-primary text-brand-dark cursor-pointer lg:p-4"
                 >
-                  <Save></Save>
-                  Enregistrer
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="size-4 animate-spin" />
+                      Enregistrement...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="size-4" />
+                      Enregistrer
+                    </>
+                  )}
                 </Button>
               </Field>
             </form>

@@ -37,10 +37,18 @@ class Materiel
     #[ORM\Column(name: 'mmat_typmat', type: 'string', length: 30, nullable: true)]
     private ?string $modele;
 
+    #[ORM\Column(name: 'mmat_reffou', type: 'string', length: 15, nullable: true)]
+    private ?string $refFou;
+
+    #[ORM\Column(name: 'mmat_recalph', type: 'string', length: 15, nullable: true)]
+    private ?string $recAlph;
+
     public function getNumMat(): int { return $this->numMat; }
     public function getNumSerie(): ?string { return $this->numSerie; }
     public function getNumParc(): ?string { return $this->numParc; }
     public function getDesignation(): ?string { return $this->designation; }
     public function getConstructeur(): ?string { return $this->constructeur; }
     public function getModele(): ?string { return $this->modele; }
+    public function getRefFou(): ?string { return $this->refFou; }
+    public function getRecAlph(): ?string { return $this->recAlph; }
 }

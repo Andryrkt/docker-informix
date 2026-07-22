@@ -1,5 +1,3 @@
-import axiosInstance from "@/conf/axios";
-
 export type SelectOption = {
   id: number;
   code?: string;
@@ -7,19 +5,27 @@ export type SelectOption = {
   value: string;
 };
 
-export const getReparationTypes = async (): Promise<SelectOption[]> => {
-  const { data } = await axiosInstance.get<{ code: string; label: string }[]>(
-    "/dit/types-reparation",
-  );
-  return data.map((t, i) => ({ id: i + 1, code: t.code, label: t.label, value: t.code }));
-};
-
-export const getReparationTypeByCode = async (
-  code: string,
-): Promise<SelectOption | undefined> => {
-  const types = await getReparationTypes();
-  return types.find((t) => t.code === code);
-};
+// Type de réparation
+export const reparationTypesOptions: SelectOption[] = [
+  {
+    id: 1,
+    code: "EN COURS",
+    label: "EN COURS",
+    value: "EN COURS",
+  },
+  {
+    id: 2,
+    code: "DEJA EFFECTUEE",
+    label: "DEJA EFFECTUEE",
+    value: "DEJA EFFECTUEE",
+  },
+  {
+    id: 3,
+    code: "A REALISER",
+    label: "A REALISER",
+    value: "A REALISER",
+  },
+];
 
 // Reparation realisé par
 export const reparationRealiseParOptions: SelectOption[] = [

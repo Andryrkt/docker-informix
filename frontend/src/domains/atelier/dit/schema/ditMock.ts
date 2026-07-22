@@ -39,6 +39,8 @@ export const ditMock: Dit[] = [
     quantiteReliquatOr: 0,
     qteLivOr: 0,
     etatLivraison: "Non livré",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -78,6 +80,8 @@ export const ditMock: Dit[] = [
     quantiteReliquatOr: 0,
     qteLivOr: 0,
     etatLivraison: "Non livré",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -117,6 +121,8 @@ export const ditMock: Dit[] = [
     quantiteReliquatOr: 0,
     qteLivOr: 0,
     etatLivraison: "Non livré",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -156,6 +162,8 @@ export const ditMock: Dit[] = [
     quantiteReliquatOr: 0,
     qteLivOr: 0,
     etatLivraison: "Non livré",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -195,6 +203,8 @@ export const ditMock: Dit[] = [
     quantiteReliquatOr: 0,
     qteLivOr: 0,
     etatLivraison: "Non livré",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -234,6 +244,8 @@ export const ditMock: Dit[] = [
     quantiteReliquatOr: 0,
     qteLivOr: 0,
     etatLivraison: "Non livré",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -273,6 +285,8 @@ export const ditMock: Dit[] = [
     quantiteReliquatOr: 0,
     qteLivOr: 0,
     etatLivraison: "Non livré",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -312,6 +326,8 @@ export const ditMock: Dit[] = [
     quantiteReliquatOr: 0,
     qteLivOr: 0,
     etatLivraison: "Non livré",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -351,6 +367,8 @@ export const ditMock: Dit[] = [
     quantiteReliquatOr: 0,
     qteLivOr: 0,
     etatLivraison: "Non livré",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -390,6 +408,8 @@ export const ditMock: Dit[] = [
     quantiteReliquatOr: 0,
     qteLivOr: 0,
     etatLivraison: "Non livré",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -429,6 +449,8 @@ export const ditMock: Dit[] = [
     quantiteReliquatOr: 0,
     qteLivOr: 0,
     etatLivraison: "Non livré",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -468,6 +490,8 @@ export const ditMock: Dit[] = [
     quantiteReliquatOr: 0,
     qteLivOr: 0,
     etatLivraison: "Non livré",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -507,6 +531,8 @@ export const ditMock: Dit[] = [
     quantiteReliquatOr: 0,
     qteLivOr: 0,
     etatLivraison: "Non livré",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -546,6 +572,8 @@ export const ditMock: Dit[] = [
     quantiteReliquatOr: 0,
     qteLivOr: 0,
     etatLivraison: "Non livré",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -585,6 +613,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -624,6 +654,8 @@ export const ditMock: Dit[] = [
     quantiteReliquatOr: 0,
     qteLivOr: 0,
     etatLivraison: "Non livré",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -663,6 +695,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -702,6 +736,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -741,6 +777,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -780,6 +818,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -819,6 +859,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -858,6 +900,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -897,6 +941,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -936,6 +982,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -975,6 +1023,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1014,6 +1064,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1053,6 +1105,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1092,6 +1146,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1131,6 +1187,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1170,6 +1228,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1209,6 +1269,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1248,6 +1310,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1287,6 +1351,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1326,6 +1392,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1365,6 +1433,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1404,6 +1474,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1443,6 +1515,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1482,6 +1556,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1521,6 +1597,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1560,6 +1638,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1599,6 +1679,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1638,6 +1720,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1677,6 +1761,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1716,6 +1802,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1755,6 +1843,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1794,6 +1884,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1833,6 +1925,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1872,6 +1966,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1911,6 +2007,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1950,6 +2048,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -1989,6 +2089,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2028,6 +2130,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2067,6 +2171,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2106,6 +2212,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2145,6 +2253,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2184,6 +2294,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2223,6 +2335,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2262,6 +2376,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2301,6 +2417,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2340,6 +2458,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2379,6 +2499,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2418,6 +2540,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2457,6 +2581,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2496,6 +2622,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2535,6 +2663,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2574,6 +2704,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2613,6 +2745,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2652,6 +2786,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2691,6 +2827,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2730,6 +2868,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2769,6 +2909,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2808,6 +2950,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2847,6 +2991,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2886,6 +3032,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2925,6 +3073,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -2964,6 +3114,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3003,6 +3155,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3042,6 +3196,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3081,6 +3237,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3120,6 +3278,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3159,6 +3319,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3198,6 +3360,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3237,6 +3401,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3276,6 +3442,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3315,6 +3483,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3354,6 +3524,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3393,6 +3565,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3432,6 +3606,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3471,6 +3647,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3510,6 +3688,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3549,6 +3729,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3588,6 +3770,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3627,6 +3811,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3666,6 +3852,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3705,6 +3893,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3744,6 +3934,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3783,6 +3975,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3822,6 +4016,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3861,6 +4057,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3900,6 +4098,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3939,6 +4139,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -3978,6 +4180,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4017,6 +4221,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4056,6 +4262,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4095,6 +4303,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4134,6 +4344,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4173,6 +4385,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4212,6 +4426,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4251,6 +4467,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4290,6 +4508,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4329,6 +4549,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4368,6 +4590,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4407,6 +4631,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4446,6 +4672,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4485,6 +4713,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4524,6 +4754,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4563,6 +4795,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4602,6 +4836,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4641,6 +4877,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4680,6 +4918,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4719,6 +4959,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4758,6 +5000,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4797,6 +5041,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4836,6 +5082,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4875,6 +5123,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4914,6 +5164,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4953,6 +5205,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -4992,6 +5246,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5031,6 +5287,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5070,6 +5328,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5109,6 +5369,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5148,6 +5410,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5187,6 +5451,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5226,6 +5492,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5265,6 +5533,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5304,6 +5574,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5343,6 +5615,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5382,6 +5656,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5421,6 +5697,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5460,6 +5738,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5499,6 +5779,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5538,6 +5820,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5577,6 +5861,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5616,6 +5902,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5655,6 +5943,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5694,6 +5984,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5733,6 +6025,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5772,6 +6066,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5811,6 +6107,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5850,6 +6148,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5889,6 +6189,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5928,6 +6230,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -5967,6 +6271,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6006,6 +6312,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6045,6 +6353,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6084,6 +6394,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6123,6 +6435,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6162,6 +6476,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6201,6 +6517,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6240,6 +6558,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6279,6 +6599,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6318,6 +6640,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6357,6 +6681,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6396,6 +6722,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6435,6 +6763,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6474,6 +6804,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6513,6 +6845,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6552,6 +6886,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6591,6 +6927,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6630,6 +6968,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6669,6 +7009,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6708,6 +7050,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6747,6 +7091,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6786,6 +7132,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6825,6 +7173,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6864,6 +7214,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6903,6 +7255,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6942,6 +7296,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -6981,6 +7337,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7020,6 +7378,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7059,6 +7419,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7098,6 +7460,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7137,6 +7501,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7176,6 +7542,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7215,6 +7583,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7254,6 +7624,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7293,6 +7665,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7332,6 +7706,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7371,6 +7747,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7410,6 +7788,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7449,6 +7829,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7488,6 +7870,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7527,6 +7911,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7566,6 +7952,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7605,6 +7993,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7644,6 +8034,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7683,6 +8075,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7722,6 +8116,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7761,6 +8157,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7800,6 +8198,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7839,6 +8239,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7878,6 +8280,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7917,6 +8321,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7956,6 +8362,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -7995,6 +8403,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8034,6 +8444,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8073,6 +8485,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8112,6 +8526,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8151,6 +8567,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8190,6 +8608,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8229,6 +8649,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8268,6 +8690,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8307,6 +8731,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8346,6 +8772,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8385,6 +8813,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8424,6 +8854,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8463,6 +8895,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8502,6 +8936,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8541,6 +8977,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8580,6 +9018,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8619,6 +9059,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8658,6 +9100,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8697,6 +9141,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8736,6 +9182,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8775,6 +9223,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8814,6 +9264,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8853,6 +9305,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8892,6 +9346,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8931,6 +9387,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -8970,6 +9428,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9009,6 +9469,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9048,6 +9510,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9087,6 +9551,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9126,6 +9592,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9165,6 +9633,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9204,6 +9674,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9243,6 +9715,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9282,6 +9756,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9321,6 +9797,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9360,6 +9838,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9399,6 +9879,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9438,6 +9920,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9477,6 +9961,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9516,6 +10002,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9555,6 +10043,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9594,6 +10084,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9633,6 +10125,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9672,6 +10166,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9711,6 +10207,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9750,6 +10248,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9789,6 +10289,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9828,6 +10330,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9867,6 +10371,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9906,6 +10412,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9945,6 +10453,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -9984,6 +10494,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -10023,6 +10535,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -10062,6 +10576,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -10101,6 +10617,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -10140,6 +10658,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -10179,6 +10699,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -10218,6 +10740,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -10257,6 +10781,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -10296,6 +10822,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -10335,6 +10863,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -10374,6 +10904,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -10413,6 +10945,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -10452,6 +10986,8 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
   {
     id: 1,
@@ -10491,5 +11027,7 @@ export const ditMock: Dit[] = [
     qteLivOr: 0,
     etatLivraison: "Non livré",
     details: "Voici les details de la demande ",
+    agenceServiceEmetteur: "",
+    agenceServiceDebiteur: ""
   },
 ];

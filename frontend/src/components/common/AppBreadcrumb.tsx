@@ -17,8 +17,14 @@ import { Button } from "../ui/button";
 import { vignetteItems } from "@/domains/home/schema/vignetteItems";
 import { cn, formatLabel } from "@/lib/utils";
 import { useVignette } from "@/context/VignetteContext";
-import { customLabels } from "./CustomLabels/customLabels";
+import { customLabels } from "./Custom/customLabels";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faFolder,
+  faHome,
+  type IconDefinition,
+} from "@fortawesome/free-solid-svg-icons";
+import { customIcons } from "./Custom/customIcons";
 
 export function AppBreadcrumb() {
   const { pathname } = useLocation();
@@ -30,27 +36,76 @@ export function AppBreadcrumb() {
     return null;
   }
 
+  const vignetteIconMap = vignetteItems.reduce(
+    (acc, item) => {
+      acc[item.title.toLowerCase()] = item.icon;
+      return acc;
+    },
+    {} as Record<string, IconDefinition>,
+  );
+
   // Simple label resolver – just format the segment
   const resolveLabel = (segment: string): string => {
     return customLabels[segment] ?? formatLabel(segment);
   };
+  // Build a map from item labels to their icons (including nested)
+  const labelIconMap = vignetteItems.reduce(
+    (acc, card) => {
+      // Top-level card title
+      acc[card.title] = card.icon;
+
+      card.modal.sections?.forEach((section) => {
+        // ✅ Add section title
+        acc[section.title] = section.icon;
+
+        section.items.forEach((item) => {
+          acc[item.label] = item.icon;
+        });
+      });
+
+      // Direct modal.items
+      card.modal.items?.forEach((item) => {
+        acc[item.label] = item.icon;
+      });
+
+      return acc;
+    },
+    {} as Record<string, IconDefinition>,
+  );
+
+  // 2. Fix resolveIcon – return a valid IconDefinition
+  function resolveIcon(segment: string, name: string): IconDefinition {
+    const lower = segment.toLowerCase();
+    // 1. Custom overrides (by URL segment)
+    if (customIcons[lower]) return customIcons[lower];
+    // 2. Top-level vignette titles (by URL segment)
+    if (vignetteIconMap[lower]) return vignetteIconMap[lower];
+    // 3. Match by resolved label (name)
+    if (labelIconMap[name]) return labelIconMap[name];
+    // 4. Fallback: use raw segment as a key (if you added segment-to-icon entries)
+    if (labelIconMap[segment]) return labelIconMap[segment];
+    // 5. Default fallback
+    return faFolder; // ✅ must return a value
+  }
 
   const breadcrumbs = [
     {
       label: "Acceuil", // static home label
       href: "/",
       current: segments.length === 0,
+      icon: faHome,
     },
     ...segments.map((segment, index) => ({
       label: resolveLabel(segment),
       href: "/" + segments.slice(0, index + 1).join("/"),
       current: index === segments.length - 1,
+      icon: resolveIcon(segment, resolveLabel(segment)),
     })),
   ];
 
   return (
     <Breadcrumb>
-      <BreadcrumbList>
+      <BreadcrumbList className="gap-0">
         {breadcrumbs.map((item, index) => (
           <div key={item.href} className="flex items-center">
             {index > 0 && <BreadcrumbSeparator />}
@@ -58,7 +113,13 @@ export function AppBreadcrumb() {
               {index === 0 ? (
                 <HoverCard openDelay={100} closeDelay={100}>
                   <HoverCardTrigger asChild>
-                    <Link to={item.href}>{item.label}</Link>
+                    <Link
+                      to={item.href}
+                      className="justify-center  text-center  flex items-center gap-1  py-1 px-4 rounded-md"
+                    >
+                      <FontAwesomeIcon icon={item.icon} className="h-4 w-4" />
+                      <span>{item.label}</span>
+                    </Link>
                   </HoverCardTrigger>
                   <HoverCardContent
                     className={cn(
@@ -87,8 +148,14 @@ export function AppBreadcrumb() {
                   </HoverCardContent>
                 </HoverCard>
               ) : (
-                <BreadcrumbPage className={item.current ? "font-semibold" : ""}>
-                  {item.label}
+                <BreadcrumbPage
+                  className={cn(
+                    "flex items-center gap-1  px-4 rounded-md",
+                    item.current ? "text-brand-primary font-semibold" : "",
+                  )}
+                >
+                  <FontAwesomeIcon icon={item.icon} />
+                  <span>{item.label}</span>
                 </BreadcrumbPage>
               )}
             </BreadcrumbItem>

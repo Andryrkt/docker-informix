@@ -25,6 +25,9 @@ import {
   faTable,
   type IconDefinition,
   faCalendarDays,
+  faDollyFlatbed,
+  faTruckLoading,
+  faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 
 export type VignetteItem = {
@@ -34,23 +37,23 @@ export type VignetteItem = {
 };
 
 export type VignetteSection = {
-  title: string;
-  icon: IconDefinition;
-  items: VignetteItem[];
+  title?: string;
+  icon?: IconDefinition;
+  items?: VignetteItem[];
 };
 
 export type VignetteModal = {
-  title: string;
+  title?: string;
   description?: string;
-  icon: IconDefinition;
+  icon?: IconDefinition;
   sections?: VignetteSection[];
   items?: VignetteItem[];
 };
 
 export type VignetteCardData = {
-  title: string;
-  icon: IconDefinition;
-  modal: VignetteModal;
+  title?: string;
+  icon?: IconDefinition;
+  modal?: VignetteModal;
 };
 
 export const vignetteItems: VignetteCardData[] = [
@@ -113,24 +116,8 @@ export const vignetteItems: VignetteCardData[] = [
             },
             {
               label: "Liste à livrer",
-              icon: faListCheck,
+              icon: faTruckLoading,
               link: "/magasin/ordre-reparation/livrer",
-            },
-          ],
-        },
-        {
-          title: "Dematerialisation",
-          icon: faCloudUpload,
-          items: [
-            {
-              label: "Devis",
-              link: "/magasin/dematerialisation/liste-devis-neg",
-              icon: faList,
-            },
-            {
-              label: "Planning de commande Magasin",
-              icon: faCalendar,
-              link: "/magasin/dematerialisation/planning-commande",
             },
           ],
         },
@@ -148,6 +135,41 @@ export const vignetteItems: VignetteCardData[] = [
           items: [
             { label: "Liste des inventaires", icon: faList },
             { label: "Inventaire détaillé", icon: faList },
+          ],
+        },
+        {
+          title: "Sortie de pieces",
+          icon: faArrowLeft,
+          items: [{ label: "Nouvelle demande", icon: faCirclePlus }],
+        },
+        {
+          title: "Dematerialisation",
+          icon: faCloudUpload,
+          items: [
+            {
+              label: "Devis",
+              link: "/magasin/dematerialisation/liste-devis-neg",
+              icon: faList,
+            },
+            {
+              label: "Planning de commande Magasin",
+              icon: faCalendar,
+              link: "/magasin/dematerialisation/planning-commande-magasin",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              label: "Soumission commandes fournisseur",
+              icon: faList,
+              link: "/magasin/cmde-fournisseur",
+            },
+            {
+              label: "Liste des cmds non placées",
+              icon: faList,
+              link: "/magasin/liste-cmde-fournisseur-non-placer",
+            },
           ],
         },
       ],

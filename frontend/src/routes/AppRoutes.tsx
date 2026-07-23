@@ -103,13 +103,14 @@ function AppRoutes() {
           path: "/",
           element: <HomePage />,
         },
+
         // Magazin -> Dematerialisation
         {
           path: "/magasin/dematerialisation/liste-devis-neg",
           element: <DevisList />,
         },
         {
-          path: "/magasin/dematerialisation/planning-commande",
+          path: "/magasin/dematerialisation/planning-commande-magasin",
           element: <PlanningMagasinList />,
         },
 

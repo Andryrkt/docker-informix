@@ -67,13 +67,15 @@ export function VignetteDialog() {
           >
             {data.sections?.map((section, i) => (
               <div key={i} className="flex flex-col gap-3 py-2">
-                <div className="flex flex-col gap-1">
-                  <div className="flex text-lg font-semibold text-muted-foreground uppercase gap-2">
-                    <FontAwesomeIcon icon={section.icon} className="size-3" />
-                    {section.title}
+                {section.title && section.icon && (
+                  <div className="flex flex-col gap-1">
+                    <div className="flex text-lg font-semibold text-muted-foreground uppercase gap-2">
+                      <FontAwesomeIcon icon={section.icon} className="size-3" />
+                      {section.title}
+                    </div>
+                    <div className="h-0.5 bg-brand-primary" />
                   </div>
-                  <div className="h-0.5 bg-brand-primary" />
-                </div>
+                )}
                 <div className="flex flex-col">
                   {section.items.map((item, j) => (
                     <Link

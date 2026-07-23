@@ -74,7 +74,7 @@ export function useVignetteDialog() {
                     to={item.link ?? "#"}
                     className="flex  gap-2 px-3 py-3 text-brand-primary/75 hover:text-brand-primary"
                   >
-                    <FontAwesomeIcon icon={item.icon} className="size-4" />
+                    <FontAwesomeIcon icon={item.icon} className="size-4 " />
                     {item.label}
                   </Link>
                 );
@@ -96,7 +96,7 @@ export function useVignetteDialog() {
               return (
                 <div key={i} className="flex flex-col gap-3 py-2">
                   <div className="flex flex-col gap-1">
-                    <div className="flex text-lg font-semibold text-muted-foreground uppercase gap-2">
+                    <div className="flex text-lg font-semibold text-zinc-500  uppercase gap-2">
                       <FontAwesomeIcon
                         icon={section.icon}
                         className="size-3 "
@@ -112,13 +112,15 @@ export function useVignetteDialog() {
                         <Link
                           key={j}
                           to={item.link ?? "#"}
-                          className="flex  gap-2 px-2 py-2 text-brand-primary/75 hover:text-brand-primary"
+                          className="flex  gap-2 px-2 py-2 text-brand-primary/75 hover:text-brand-primary group hover:bg-brand-primary/10 rounded-md"
                         >
                           <FontAwesomeIcon
                             icon={item.icon}
-                            className="size-3"
+                            className="size-3 transition-transform duration-300 group-hover:translate-x-2 text-zinc-500   "
                           ></FontAwesomeIcon>
-                          {item.label}
+                          <span className="transition-transform duration-300 group-hover:translate-x-2">
+                            {item.label}
+                          </span>
                         </Link>
                       );
                     })}

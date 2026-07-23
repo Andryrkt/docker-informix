@@ -6,21 +6,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"; // ✅ import shadcn tooltip
+import { InfoIcon } from "lucide-react"; // or any icon you prefer
 import { ToolCase } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn, formatDate } from "@/lib/utils";
-// import DotsMenu, { type MenuAction } from "./Dots.Menu";
 import { useCallback, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useConfirm } from "@/components/common/ConfirmDialog";
-// import DialogSoumissionDocForm from "./DialogSoumissionDocForm";
 import { toast } from "sonner";
-import type { OrdreReparationALivrer } from "../schema/ordreReparationLivrerSchema";
-import OrdreReparationLivrerSkeleton from "./OrdreReparationLivrerSkeleton";
+import type { OrdreReparationATraiter } from "../schema/ordreReparationATraiterSchema"; // ✅ use correct type
+import OrdreReparationLivrerSkeleton from "./OrdreReparationALivrerSkeleton";
 import type { MenuAction } from "@/domains/atelier/dit/components/Dots.Menu";
+import { MaterielInfoCard } from "@/domains/materiel/components/MaterielInfoCard"; // adjust import path
 
-// Helper to style urgency levels
+// Helper to style urgency levels (unchanged)
 const getUrgenceClass = (niveau: string | null) => {
   switch (niveau) {
     case "P4":
@@ -36,11 +41,11 @@ const getUrgenceClass = (niveau: string | null) => {
   }
 };
 
-function OrdreReparationLivrerTable({
+function OrdreReparationATraiterTable({
   ordres,
   loading,
 }: {
-  ordres: OrdreReparationALivrer[];
+  ordres: OrdreReparationATraiter[]; // ✅ use the correct type
   loading: boolean;
 }) {
   const confirm = useConfirm();
@@ -48,7 +53,7 @@ function OrdreReparationLivrerTable({
   const parentRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] =
-    useState<OrdreReparationALivrer | null>(null);
+    useState<OrdreReparationATraiter | null>(null);
 
   const rowVirtualizer = useVirtualizer({
     count: ordres?.length ?? 0,
@@ -65,9 +70,9 @@ function OrdreReparationLivrerTable({
       ? totalSize - virtualRows[virtualRows.length - 1].end
       : 0;
 
-  // Actions for each row
+  // Actions (unchanged)
   const getActions = useCallback(
-    (order: OrdreReparationALivrer) => {
+    (order: OrdreReparationATraiter) => {
       return [
         {
           label: "Dupliquer",
@@ -98,7 +103,6 @@ function OrdreReparationLivrerTable({
               variant: "destructive",
             });
             if (!confirmed) return;
-            // Call API to close order
             toast.success("Ordre clôturé avec succès");
           },
         },
@@ -111,8 +115,9 @@ function OrdreReparationLivrerTable({
     return <OrdreReparationLivrerSkeleton />;
   }
 
+  // ✅ Wrap entire table in TooltipProvider (or put it at a higher level)
   return (
-    <>
+    <TooltipProvider>
       <div
         ref={parentRef}
         className="w-full overflow-auto relative h-[calc(100vh-160px)]"
@@ -135,17 +140,17 @@ function OrdreReparationLivrerTable({
               <TableHead className="text-center">Réf</TableHead>
               <TableHead className="text-start">Désignation</TableHead>
               <TableHead className="text-center">Qté Demandée</TableHead>
-              <TableHead className="text-center">Qté à Livrer</TableHead>
-              <TableHead className="text-center">Qté Déjà Livrée</TableHead>
 
               <TableHead>Utilisateur</TableHead>
+              {/* ✅ New column for Materiel tooltip */}
+              <TableHead className="text-center">Matériel</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paddingTop > 0 && (
               <TableRow className="border-none hover:bg-transparent">
                 <TableCell
-                  colSpan={22}
+                  colSpan={19} // ✅ increased from 22 to 19 (number of columns)
                   style={{ height: `${paddingTop}px` }}
                   className="p-0 border-none pointer-events-none"
                 />
@@ -202,29 +207,46 @@ function OrdreReparationLivrerTable({
                   <TableCell>{order.serviceDebiteur ?? "-"}</TableCell>
 
                   <TableCell>{order.numeroItv ?? "-"}</TableCell>
-                  <TableCell>{order.numeroLigne ?? "-"}</TableCell>
+                  <TableCell>{order.lignes[0].numeroLigne ?? "-"}</TableCell>
                   <TableCell className="text-start">
-                    {order.constructeur ?? "-"}
+                    {order.lignes[0].constructeur ?? "-"}
                   </TableCell>
                   <TableCell className="text-start">
-                    {order.reference ?? "-"}
+                    {order.lignes[0].reference ?? "-"}
                   </TableCell>
 
                   <TableCell className="text-start w-30 wrap-break-word whitespace-normal">
-                    {order.designation ?? "-"}
+                    {order.lignes[0].designation ?? "-"}
                   </TableCell>
 
-                  <TableCell className=" w-20 wrap-break-word whitespace-normal">
-                    {order.quantiteDemandee.toFixed(2)}
-                  </TableCell>
-                  <TableCell className=" w-20 wrap-break-word whitespace-normal">
-                    {order.quantiteALivrer.toFixed(2)}
-                  </TableCell>
-                  <TableCell className=" w-20 wrap-break-word whitespace-normal">
-                    {order.quantiteDejaLivree.toFixed(2)}
+                  <TableCell className="w-20 wrap-break-word whitespace-normal">
+                    {order.lignes[0].quantiteDemander.toFixed(2)}
                   </TableCell>
 
-                  <TableCell>{order.utilisateur ?? "-"}</TableCell>
+                  <TableCell>{order.lignes[0].utilisateur ?? "-"}</TableCell>
+
+                  {/* ✅ Tooltip column */}
+                  <TableCell className="text-center">
+                    {order.materiel && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button className="text-muted-foreground hover:text-foreground transition-colors">
+                            <InfoIcon className="h-4 w-4" />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent
+                          side="left"
+                          className="p-4 border-0  bg-brand-primary shadow-md "
+                        >
+                          <MaterielInfoCard
+                            materiel={order.materiel}
+                            className="bg-brand-primary text-brand-dark"
+                            itemClassName="bg-transparent"
+                          />
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                  </TableCell>
                 </TableRow>
               );
             })}
@@ -232,7 +254,7 @@ function OrdreReparationLivrerTable({
             {paddingBottom > 0 && (
               <TableRow className="border-none hover:bg-transparent">
                 <TableCell
-                  colSpan={22}
+                  colSpan={19} // ✅ updated to 19
                   style={{ height: `${paddingBottom}px` }}
                   className="p-0 border-none pointer-events-none"
                 />
@@ -242,7 +264,7 @@ function OrdreReparationLivrerTable({
             {ordres?.length === 0 && (
               <TableRow>
                 <TableCell
-                  colSpan={22}
+                  colSpan={19} // ✅ updated to 19
                   className="text-center py-6 text-gray-500 font-medium"
                 >
                   Aucun ordre de réparation trouvé.
@@ -252,8 +274,8 @@ function OrdreReparationLivrerTable({
           </TableBody>
         </Table>
       </div>
-    </>
+    </TooltipProvider>
   );
 }
 
-export default OrdreReparationLivrerTable;
+export default OrdreReparationATraiterTable;

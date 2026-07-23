@@ -112,12 +112,12 @@ export const vignetteItems: VignetteCardData[] = [
             {
               label: "Liste à traiter",
               icon: faListCheck,
-              link: "/magasin/ordre-reparation/traiter",
+              link: "/magasin/ordre-reparation/a-traiter",
             },
             {
               label: "Liste à livrer",
               icon: faTruckLoading,
-              link: "/magasin/ordre-reparation/livrer",
+              link: "/magasin/ordre-reparation/a-livrer",
             },
           ],
         },

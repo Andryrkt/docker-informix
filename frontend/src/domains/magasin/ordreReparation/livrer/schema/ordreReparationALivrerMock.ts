@@ -3,7 +3,7 @@ import type { PaginatedResponse } from "@/conf/api/Response";
 import type {
   OrdreReparationALivrer,
   NiveauUrgence,
-} from "../schema/ordreReparationLivrerSchema";
+} from "./ordreReparationALivrerSchema";
 
 const urgencyLevels: NiveauUrgence[] = ["P1", "P2", "P3", "P4", "P5"];
 const etatOrOptions = ["COMPLETS", "EN_COURS", "SOUMIS", "VALIDE", "REJETE"];
@@ -14,6 +14,7 @@ const constructeurs = [
   "Constructeur C",
   "Constructeur D",
 ];
+
 const agences = ["Agence A", "Agence B", "Agence C", "Agence D", "Agence E"];
 const services = [
   "Service 1",
@@ -62,7 +63,7 @@ export const generateAllMockOrders = (
 };
 
 // Get a paginated slice
-export const getPaginatedMockOrders = (
+export const getPaginateMockOrdresALivrer = (
   page: number,
   limit: number,
   total: number = 500,

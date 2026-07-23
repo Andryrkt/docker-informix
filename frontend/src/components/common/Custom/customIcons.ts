@@ -11,6 +11,6 @@ export const customIcons: Record<string, IconDefinition> = {
   "liste-devis-neg": faList,
   "nouveau-contrat": faCirclePlus,
   "ordre-reparation": faWarehouse,
-  livrer: faTruckLoading,
+  "a-livrer": faTruckLoading,
   "demande-support-informatique": faQuestionCircle,
 };

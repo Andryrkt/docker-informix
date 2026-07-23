@@ -4,15 +4,15 @@ import GlobalPagination from "@/components/common/pagination/GlobalPagination";
 import SimpleNextPreviousPagination from "@/components/common/pagination/SimpleNextPreviousPagination";
 import { usePageSearchParams } from "@/hooks/usePageSearchParams";
 import { useQuery } from "@tanstack/react-query";
-import OrdreReparationLivrerTable from "../components/OrdreReparationLivrerTable";
+import OrdreReparationALivrerTable from "../components/OrdreReparationALivrerTable";
 import { buildExcelFilename } from "@/lib/utils";
-import { ordreReparationFieldsFilters } from "../filter/OrdreReparationLivrerFieldFilter";
-import { fetchOrdresReparationLivrer } from "../api/ordreReparationLivrerApi";
+import { fetchOrdresReparationALivrer } from "../api/ordreReparationALivrerApi";
 import { LimitSelector } from "@/components/common/pagination/LimitSelector";
 import { queryClient } from "@/lib/queryClient";
 import { useCallback } from "react";
+import { ordreReparationALivrerFieldsFilters } from "../filter/OrdreReparationALivrerFieldFilter";
 
-function OrdreReparationLivrerList() {
+function OrdreReparationALivrerList() {
   const {
     currentPage,
     setPage,
@@ -29,7 +29,7 @@ function OrdreReparationLivrerList() {
     isFetching,
   } = useQuery({
     queryKey: ["or-a-livrer", selectedFilters, currentPage],
-    queryFn: () => fetchOrdresReparationLivrer(selectedFilters, currentPage),
+    queryFn: () => fetchOrdresReparationALivrer(selectedFilters, currentPage),
     staleTime: 0 * 60 * 1000,
     gcTime: 0 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -48,7 +48,7 @@ function OrdreReparationLivrerList() {
         totalResults,
       ],
       queryFn: () =>
-        fetchOrdresReparationLivrer(selectedFilters, 1, totalResults),
+        fetchOrdresReparationALivrer(selectedFilters, 1, totalResults),
     });
     return allData.data;
   }, [selectedFilters, queryClient]);
@@ -58,7 +58,7 @@ function OrdreReparationLivrerList() {
       <div className=" w-full  space-y-4 pb-4 overflow-auto">
         <div className="sticky top-0 space-y-6 ">
           <CollapsibleFilter
-            fields={ordreReparationFieldsFilters}
+            fields={ordreReparationALivrerFieldsFilters}
             onSearch={(values) => {
               Object.entries(values).forEach(([key, value]) => {
                 setFilter(key, String(value ?? ""));
@@ -74,9 +74,9 @@ function OrdreReparationLivrerList() {
               // data={items}
               fetchAllData={fetchAllOrLivrerForExport}
               filename={buildExcelFilename(
-                "dit-list",
+                "or-a-livrer-list",
                 selectedFilters,
-                ordreReparationFieldsFilters,
+                ordreReparationALivrerFieldsFilters,
               )}
               label={
                 totalResults === 0
@@ -104,7 +104,7 @@ function OrdreReparationLivrerList() {
           </div>
         </div>
 
-        <OrdreReparationLivrerTable
+        <OrdreReparationALivrerTable
           ordres={items}
           loading={isLoading || isFetching}
         />
@@ -123,4 +123,4 @@ function OrdreReparationLivrerList() {
   );
 }
 
-export default OrdreReparationLivrerList;
+export default OrdreReparationALivrerList;

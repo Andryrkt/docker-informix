@@ -1,6 +1,6 @@
 import { type PaginatedResponse } from "@/conf/api/Response";
-import type { OrdreReparationALivrer } from "../schema/ordreReparationLivrerSchema";
-import { getPaginatedMockOrders } from "../schema/ordreReparationLivrerMock";
+import type { OrdreReparationALivrer } from "../schema/ordreReparationALivrerSchema";
+import { getPaginateMockOrdresALivrer } from "../schema/ordreReparationALivrerMock";
 import axiosInstance from "@/conf/axios";
 
 // Use environment variable to toggle real API vs mock
@@ -11,14 +11,14 @@ interface OrdreReparationALivrerParams {
   skip?: number;
   limit?: number;
 }
-export const fetchOrdresReparationLivrer = async (
+export const fetchOrdresReparationALivrer = async (
   params: OrdreReparationALivrerParams = {},
   page: number = 1,
   limit: number = 50,
 ): Promise<PaginatedResponse<OrdreReparationALivrer>> => {
   if (USE_MOCK) {
     await new Promise((resolve) => setTimeout(resolve, 500)); // simulate network
-    const paginated = getPaginatedMockOrders(page, limit);
+    const paginated = getPaginateMockOrdresALivrer(page, limit);
     return paginated;
   }
 
@@ -37,5 +37,3 @@ export const fetchOrdresReparationLivrer = async (
   });
   return response.data;
 };
-
-// You could also add other API methods (create, update, delete)

@@ -181,8 +181,11 @@ export const checkDitSubmission = async (
 };
 
 export const downloadDitPdf = async (numero: string): Promise<Blob> => {
-  const { data } = await axiosInstance.get(`/demande-intervention/${numero}/pdf`, {
-    responseType: "blob",
-  });
+  const { data } = await axiosInstance.get(
+    `/demande-intervention/${numero}/pdf`,
+    {
+      responseType: "blob",
+    },
+  );
   return data;
 };

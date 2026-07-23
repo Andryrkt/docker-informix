@@ -7,11 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { Dit } from "../schema/ditSchema";
-import {
-  formatMontant,
-  getStatusDevisClass,
-  getStatusDitClass,
-} from "@/helper/helper";
+import { formatMontant, getStatusDitClass } from "@/helper/helper";
 import { MoreVerticalIcon, ToolCase } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn, formatDate } from "@/lib/utils";
@@ -288,7 +284,7 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
                     {d.statutOr}
                   </TableCell>
 
-                  <TableCell>{d.montantOr}</TableCell>
+                  <TableCell>{formatMontant(d.montantOr, "Ar")}</TableCell>
 
                   <TableCell>{formatDate(d.dateSoumissionOr)}</TableCell>
 
@@ -327,7 +323,7 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
               <TableRow>
                 <TableCell className="  "></TableCell>
                 <TableCell
-                  colSpan={18}
+                  colSpan={25}
                   className="text-center py-6 text-gray-500 font-medium"
                 >
                   Aucun demande d'intervention trouvé.

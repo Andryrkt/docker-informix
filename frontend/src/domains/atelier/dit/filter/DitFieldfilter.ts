@@ -1,6 +1,6 @@
 import type { FilterField } from "@/components/common/filter/schema/filterSchema";
 
-export const ditFieldFilter: FilterField[][] = [
+export const ditFieldFilters: FilterField[][] = [
   [
     {
       name: "statut",

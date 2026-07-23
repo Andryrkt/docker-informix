@@ -12,7 +12,7 @@ import StatusBadgeGroup, {
   ditStatusMock,
 } from "@/components/common/StatusBadgeGroup";
 import { ditMock } from "../schema/ditMock";
-import { ditFieldFilter } from "../filter/DitFieldfilter";
+import { ditFieldFilters } from "../filter/DitFieldfilter";
 import { LimitSelector } from "@/components/common/pagination/LimitSelector";
 import { useCallback, useState } from "react";
 import { queryClient } from "@/lib/queryClient";
@@ -63,7 +63,7 @@ function DitList() {
       <div className=" w-full  space-y-4 pb-4 overflow-auto">
         <div className="sticky top-0 space-y-6 ">
           <CollapsibleFilter
-            fields={ditFieldFilter}
+            fields={ditFieldFilters}
             onSearch={(values) => {
               setFilters(values);
             }}
@@ -99,7 +99,7 @@ function DitList() {
               filename={buildExcelFilename(
                 "dit-list",
                 selectedFilters,
-                ditFieldFilter,
+                ditFieldFilters,
               )}
               label={
                 totalResults === 0

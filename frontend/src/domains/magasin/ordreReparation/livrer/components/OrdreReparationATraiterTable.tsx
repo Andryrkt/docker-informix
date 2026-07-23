@@ -1,3 +1,10 @@
+import { useCallback, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { InfoIcon, MoreVerticalIcon, ToolCase } from "lucide-react";
+import { toast } from "sonner";
+
+import { useConfirm } from "@/components/common/ConfirmDialog";
 import {
   Table,
   TableBody,
@@ -11,21 +18,16 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"; // ✅ import shadcn tooltip
-import { InfoIcon } from "lucide-react"; // or any icon you prefer
-import { ToolCase } from "lucide-react";
-import { Link } from "react-router-dom";
+} from "@/components/ui/tooltip";
+import { MaterielInfoCard } from "@/domains/materiel/components/MaterielInfoCard";
 import { cn, formatDate } from "@/lib/utils";
-import { useCallback, useRef, useState } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { useConfirm } from "@/components/common/ConfirmDialog";
-import { toast } from "sonner";
-import type { OrdreReparationATraiter } from "../schema/ordreReparationATraiterSchema"; // ✅ use correct type
-import OrdreReparationLivrerSkeleton from "./OrdreReparationALivrerSkeleton";
-import type { MenuAction } from "@/domains/atelier/dit/components/Dots.Menu";
-import { MaterielInfoCard } from "@/domains/materiel/components/MaterielInfoCard"; // adjust import path
 
-// Helper to style urgency levels (unchanged)
+import type { MenuAction } from "@/domains/atelier/dit/components/Dots.Menu";
+import type { OrdreReparationATraiter } from "../schema/ordreReparationATraiterSchema";
+import OrdreReparationLivrerSkeleton from "./OrdreReparationALivrerSkeleton";
+import DotsMenu from "@/domains/atelier/dit/components/Dots.Menu";
+
+// Helper pour le style d'urgence
 const getUrgenceClass = (niveau: string | null) => {
   switch (niveau) {
     case "P4":
@@ -41,26 +43,28 @@ const getUrgenceClass = (niveau: string | null) => {
   }
 };
 
-function OrdreReparationATraiterTable({
+interface Props {
+  ordres: OrdreReparationATraiter[];
+  loading: boolean;
+}
+
+export default function OrdreReparationATraiterTable({
   ordres,
   loading,
-}: {
-  ordres: OrdreReparationATraiter[]; // ✅ use the correct type
-  loading: boolean;
-}) {
+}: Props) {
   const confirm = useConfirm();
-
   const parentRef = useRef<HTMLDivElement>(null);
-  const [open, setOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] =
-    useState<OrdreReparationATraiter | null>(null);
+
+  const [, setOpen] = useState(false);
+  const [, setSelectedOrder] = useState<OrdreReparationATraiter | null>(null);
 
   const rowVirtualizer = useVirtualizer({
     count: ordres?.length ?? 0,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 40,
-    overscan: 10,
+    overscan: 5,
   });
+
   const virtualRows = rowVirtualizer.getVirtualItems();
   const totalSize = rowVirtualizer.getTotalSize();
 
@@ -70,41 +74,13 @@ function OrdreReparationATraiterTable({
       ? totalSize - virtualRows[virtualRows.length - 1].end
       : 0;
 
-  // Actions (unchanged)
+  // Actions
   const getActions = useCallback(
     (order: OrdreReparationATraiter) => {
       return [
         {
-          label: "Dupliquer",
-          to: `/atelier/ordre-reparation/duplication/${order.numeroOr}`,
-        },
-        {
-          label: "Soumission document à valider",
-          onClick: () => {
-            setSelectedOrder(order);
-            setOpen(true);
-          },
-        },
-        {
-          label: "Dossier OR",
-          to: `/atelier/ordre-reparation/dossier/${order.numeroOr}`,
-        },
-        {
-          label: "Clôturer",
-          className:
-            "text-destructive focus:text-destructive focus:bg-destructive/10",
-          onClick: async () => {
-            const confirmed = await confirm({
-              title: "Clôturer l'ordre de réparation ?",
-              description: "Êtes-vous sûr de vouloir clôturer cet ordre ?",
-              confirmText: "Clôturer",
-              icon: <ToolCase />,
-              cancelText: "Annuler",
-              variant: "destructive",
-            });
-            if (!confirmed) return;
-            toast.success("Ordre clôturé avec succès");
-          },
+          label: "Dossier DIT",
+          to: `/atelier/demande-intervention/dossier/${order.numeroDit}`,
         },
       ].filter(Boolean) as MenuAction[];
     },
@@ -115,16 +91,20 @@ function OrdreReparationATraiterTable({
     return <OrdreReparationLivrerSkeleton />;
   }
 
-  // ✅ Wrap entire table in TooltipProvider (or put it at a higher level)
+  const TOTAL_COLUMNS = 17;
+
   return (
     <TooltipProvider>
       <div
         ref={parentRef}
         className="w-full overflow-auto relative h-[calc(100vh-160px)]"
       >
-        <Table className="min-w-max text-xs">
-          <TableHeader className="bg-brand-dark [&_th]:text-white sticky top-0">
-            <TableRow className="hover:bg-brand-dark border-b-0 ">
+        <Table className="min-w-max border-collapse">
+          <TableHeader className="bg-brand-dark [&_th]:text-white sticky top-0 z-10">
+            <TableRow className="hover:bg-brand-dark border-b-0">
+              <TableHead className="max-w-2 w-fit">
+                <MoreVerticalIcon className="h-4 w-4" />
+              </TableHead>
               <TableHead>N° DIT</TableHead>
               <TableHead className="text-center">N° OR</TableHead>
               <TableHead className="text-center">Date Planning</TableHead>
@@ -135,22 +115,21 @@ function OrdreReparationATraiterTable({
               <TableHead>Agence Débiteur</TableHead>
               <TableHead>Service Débiteur</TableHead>
               <TableHead>N° ITV</TableHead>
-              <TableHead>N° Ligne</TableHead>
+              {/* Colonnes associées aux lignes de l'OR */}
+              <TableHead className="text-center">N° Ligne</TableHead>
               <TableHead>Constructeur</TableHead>
               <TableHead className="text-center">Réf</TableHead>
               <TableHead className="text-start">Désignation</TableHead>
               <TableHead className="text-center">Qté Demandée</TableHead>
-
               <TableHead>Utilisateur</TableHead>
-              {/* ✅ New column for Materiel tooltip */}
-              <TableHead className="text-center">Matériel</TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {paddingTop > 0 && (
               <TableRow className="border-none hover:bg-transparent">
                 <TableCell
-                  colSpan={19} // ✅ increased from 22 to 19 (number of columns)
+                  colSpan={TOTAL_COLUMNS}
                   style={{ height: `${paddingTop}px` }}
                   className="p-0 border-none pointer-events-none"
                 />
@@ -158,103 +137,145 @@ function OrdreReparationATraiterTable({
             )}
 
             {virtualRows.map((virtualRow) => {
-              const order = ordres[virtualRow.index];
-              if (!order) return null;
+              const or = ordres[virtualRow.index];
+              if (!or) return null;
 
-              return (
-                <TableRow
-                  className="wrap-break-word whitespace-normal text-center text-[0.7rem]"
-                  key={virtualRow.index}
-                  data-index={virtualRow.index}
-                  ref={rowVirtualizer.measureElement}
-                >
-                  <TableCell>
-                    <Link
-                      to={`/atelier/demande-intervention/details/${order.numeroDit}`}
-                      target="_blank"
-                      className="text-blue-600 hover:underline"
-                    >
-                      {order.numeroDit}
-                    </Link>
-                  </TableCell>
+              const lignes = or.lignes?.length > 0 ? or.lignes : [null];
+              const rowSpan = lignes.length;
 
-                  <TableCell className="font-medium">
-                    <Link
-                      to={`/atelier/ordre-reparation/details/${order.numeroOr}`}
-                      target="_blank"
-                      className="text-blue-600 hover:underline"
-                    >
-                      {order.numeroOr}
-                    </Link>
-                  </TableCell>
+              return lignes.map((ligne, lineIndex) => {
+                const isFirstLine = lineIndex === 0;
 
-                  <TableCell>{formatDate(order.datePlanning)}</TableCell>
-
-                  <TableCell
-                    className={cn(
-                      "w-20 text-center",
-                      getUrgenceClass(order.niveauUrgence),
-                    )}
+                return (
+                  <TableRow
+                    key={`${virtualRow.index}-${lineIndex}`}
+                    data-index={virtualRow.index}
+                    ref={
+                      isFirstLine ? rowVirtualizer.measureElement : undefined
+                    }
+                    className=" text-[0.7rem] hover:bg-muted/50 border-b"
                   >
-                    {order.niveauUrgence ?? "-"}
-                  </TableCell>
-
-                  <TableCell>{formatDate(order.dateOr)}</TableCell>
-
-                  <TableCell>{order.agenceEmetteur}</TableCell>
-                  <TableCell>{order.serviceEmetteur ?? "-"}</TableCell>
-                  <TableCell>{order.agenceDebiteur}</TableCell>
-                  <TableCell>{order.serviceDebiteur ?? "-"}</TableCell>
-
-                  <TableCell>{order.numeroItv ?? "-"}</TableCell>
-                  <TableCell>{order.lignes[0].numeroLigne ?? "-"}</TableCell>
-                  <TableCell className="text-start">
-                    {order.lignes[0].constructeur ?? "-"}
-                  </TableCell>
-                  <TableCell className="text-start">
-                    {order.lignes[0].reference ?? "-"}
-                  </TableCell>
-
-                  <TableCell className="text-start w-30 wrap-break-word whitespace-normal">
-                    {order.lignes[0].designation ?? "-"}
-                  </TableCell>
-
-                  <TableCell className="w-20 wrap-break-word whitespace-normal">
-                    {order.lignes[0].quantiteDemander.toFixed(2)}
-                  </TableCell>
-
-                  <TableCell>{order.lignes[0].utilisateur ?? "-"}</TableCell>
-
-                  {/* ✅ Tooltip column */}
-                  <TableCell className="text-center">
-                    {order.materiel && (
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button className="text-muted-foreground hover:text-foreground transition-colors">
-                            <InfoIcon className="h-4 w-4" />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent
-                          side="left"
-                          className="p-4 border-0  bg-brand-primary shadow-md "
+                    {/* Cellules principales groupées avec rowSpan */}
+                    {isFirstLine && (
+                      <>
+                        <TableCell
+                          rowSpan={rowSpan}
+                          className="  w-fit cursor-pointer "
                         >
-                          <MaterielInfoCard
-                            materiel={order.materiel}
-                            className="bg-brand-primary text-brand-dark"
-                            itemClassName="bg-transparent"
+                          <DotsMenu
+                            contentClassName="ml-4 mt-2"
+                            actions={getActions(or)}
                           />
-                        </TooltipContent>
-                      </Tooltip>
+                        </TableCell>
+
+                        <TableCell rowSpan={rowSpan} className="align-middle">
+                          <div className="flex gap-2 items-center">
+                            <Link
+                              to={`/atelier/demande-intervention/details/${or.numeroDit}`}
+                              target="_blank"
+                              className="text-blue-600 hover:underline"
+                            >
+                              {or.numeroDit}
+                            </Link>
+                            {or.materiel && (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <button className="text-muted-foreground hover:text-foreground transition-colors p-1">
+                                    <InfoIcon className="h-4 w-4 inline" />
+                                  </button>
+                                </TooltipTrigger>
+                                <TooltipContent
+                                  side="left"
+                                  className="p-4 border-0 bg-brand-primary shadow-md"
+                                >
+                                  <MaterielInfoCard
+                                    materiel={or.materiel}
+                                    className="bg-brand-primary text-brand-dark"
+                                    itemClassName="bg-transparent"
+                                  />
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
+                          </div>
+                        </TableCell>
+
+                        <TableCell
+                          rowSpan={rowSpan}
+                          className="font-medium align-middle"
+                        >
+                          <Link
+                            to={`/atelier/ordre-reparation/details/${or.numeroOr}`}
+                            target="_blank"
+                            className="text-blue-600 hover:underline"
+                          >
+                            {or.numeroOr}
+                          </Link>
+                        </TableCell>
+
+                        <TableCell rowSpan={rowSpan} className="align-middle">
+                          {formatDate(or.datePlanning)}
+                        </TableCell>
+
+                        <TableCell
+                          rowSpan={rowSpan}
+                          className={cn(
+                            "w-20 text-center align-middle",
+                            getUrgenceClass(or.niveauUrgence),
+                          )}
+                        >
+                          {or.niveauUrgence ?? "-"}
+                        </TableCell>
+
+                        <TableCell rowSpan={rowSpan} className="align-middle">
+                          {formatDate(or.dateOr)}
+                        </TableCell>
+
+                        <TableCell rowSpan={rowSpan} className="align-middle">
+                          {or.agenceEmetteur}
+                        </TableCell>
+                        <TableCell rowSpan={rowSpan} className="align-middle">
+                          {or.serviceEmetteur ?? "-"}
+                        </TableCell>
+                        <TableCell rowSpan={rowSpan} className="align-middle">
+                          {or.agenceDebiteur}
+                        </TableCell>
+                        <TableCell rowSpan={rowSpan} className="align-middle">
+                          {or.serviceDebiteur ?? "-"}
+                        </TableCell>
+                        <TableCell rowSpan={rowSpan} className="align-middle">
+                          {or.numeroItv ?? "-"}
+                        </TableCell>
+                      </>
                     )}
-                  </TableCell>
-                </TableRow>
-              );
+
+                    {/* Cellules spécifiques à chaque ligne d'intervention */}
+                    <TableCell className="align-middle">
+                      {ligne?.numeroLigne ?? "-"}
+                    </TableCell>
+                    <TableCell className="text-start align-middle">
+                      {ligne?.constructeur ?? "-"}
+                    </TableCell>
+                    <TableCell className="text-center align-middle">
+                      {ligne?.reference ?? "-"}
+                    </TableCell>
+                    <TableCell className="text-start max-w-50 wrap-break-word align-middle">
+                      {ligne?.designation ?? "-"}
+                    </TableCell>
+                    <TableCell className="text-center align-middle">
+                      {ligne ? ligne.quantiteDemander.toFixed(2) : "-"}
+                    </TableCell>
+                    <TableCell className="text-start align-middle">
+                      {ligne?.utilisateur ?? "-"}
+                    </TableCell>
+                  </TableRow>
+                );
+              });
             })}
 
             {paddingBottom > 0 && (
               <TableRow className="border-none hover:bg-transparent">
                 <TableCell
-                  colSpan={19} // ✅ updated to 19
+                  colSpan={TOTAL_COLUMNS}
                   style={{ height: `${paddingBottom}px` }}
                   className="p-0 border-none pointer-events-none"
                 />
@@ -264,7 +285,7 @@ function OrdreReparationATraiterTable({
             {ordres?.length === 0 && (
               <TableRow>
                 <TableCell
-                  colSpan={19} // ✅ updated to 19
+                  colSpan={TOTAL_COLUMNS}
                   className="text-center py-6 text-gray-500 font-medium"
                 >
                   Aucun ordre de réparation trouvé.
@@ -277,5 +298,3 @@ function OrdreReparationATraiterTable({
     </TooltipProvider>
   );
 }
-
-export default OrdreReparationATraiterTable;

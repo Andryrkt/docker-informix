@@ -36,7 +36,7 @@ function DotsMenu({ actions, triggerClassName, contentClassName }: Props) {
   >(null);
 
   return (
-    <DropdownMenu >
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
@@ -47,7 +47,13 @@ function DotsMenu({ actions, triggerClassName, contentClassName }: Props) {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className={cn("w-40", contentClassName)}>
+      <DropdownMenuContent
+        align="end"
+        className={cn(
+          "w-40 px-2 py-2 bg-brand-dark  text-white",
+          contentClassName,
+        )}
+      >
         {actions.map((action, index) => {
           const Icon = action.icon;
 

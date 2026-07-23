@@ -7,12 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import {
-  formatMontant,
-  getStatusDevisClass, // reuse if applicable, or create a new helper
-  getStatusDitClass, // reuse if you want for status styling
-} from "@/helper/helper";
-import { MoreVerticalIcon, ToolCase } from "lucide-react";
+import { ToolCase } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn, formatDate } from "@/lib/utils";
 // import DotsMenu, { type MenuAction } from "./Dots.Menu";
@@ -20,12 +15,10 @@ import { useCallback, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useConfirm } from "@/components/common/ConfirmDialog";
 // import DialogSoumissionDocForm from "./DialogSoumissionDocForm";
-import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import type { OrdreReparationALivrer } from "../schema/ordreReparationLivrerSchema";
-// import { OrdreReparationSkeleton } from "./OrdreReparationSkeleton"; // you can create this later
+import OrdreReparationLivrerSkeleton from "./OrdreReparationLivrerSkeleton";
+import type { MenuAction } from "@/domains/atelier/dit/components/Dots.Menu";
 
 // Helper to style urgency levels
 const getUrgenceClass = (niveau: string | null) => {
@@ -115,8 +108,7 @@ function OrdreReparationLivrerTable({
   );
 
   if (loading) {
-    // return <OrdreReparationSkeleton />; // you can create a skeleton later
-    return <div className="p-4 text-center">Chargement...</div>;
+    return <OrdreReparationLivrerSkeleton />;
   }
 
   return (

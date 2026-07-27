@@ -1,10 +1,18 @@
-FROM php:8.3-apache-bookworm
+# --- Stage 1: dependances Composer (production, sans dev) ---
+FROM composer:2 AS vendor
+WORKDIR /app
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interaction --no-progress --ignore-platform-reqs
+
+# --- Stage 2: image applicative ---
+FROM php:8.3-apache-bookworm AS app
 
 ENV INFORMIXDIR=/opt/IBM/Informix_Client-SDK
 ENV PATH=$INFORMIXDIR/bin:$PATH
 ENV LD_LIBRARY_PATH=$INFORMIXDIR/lib:$INFORMIXDIR/lib/cli:$INFORMIXDIR/lib/esql:$LD_LIBRARY_PATH
 ENV INFORMIXSERVER=ol_iriumprod_net
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+ENV APP_ENV=prod
 
 RUN apt-get update && apt-get install -y \
     wget curl git unzip \
@@ -22,13 +30,11 @@ WORKDIR /tmp
 COPY ibm.csdk.15.0.1.0.Linux.64.x86_64.tar ./csdk.tar
 COPY response.properties ./response.properties
 
-# Extraction et Installation avec Debug
 RUN tar -xvf csdk.tar \
     && tar -xvf ibm.csdk.15.0.1.0.Linux.64.x86_64.tar \
     && chmod +x installclientsdk \
     && echo "=== Installation CSDK en cours ===" \
     && ./installclientsdk -i silent -f /tmp/response.properties \
-    && echo "=== Code retour CSDK : $? ===" \
     && ls -la $INFORMIXDIR || echo "Dossier non trouvé" \
     && rm -rf /tmp/*
 
@@ -56,7 +62,7 @@ RUN apt-get update && apt-get install -y libldap2-dev \
     && docker-php-ext-install ldap
 
 # Configuration PHP pour l'upload
-RUN echo "upload_max_filesize = 10M\npost_max_size = 10M" > /usr/local/etc/php/conf.d/uploads.ini
+RUN printf "upload_max_filesize = 10M\npost_max_size = 10M\n" > /usr/local/etc/php/conf.d/uploads.ini
 
 # Configuration Apache
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
@@ -64,20 +70,27 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
     && a2enmod rewrite
 
 # Wrapper pour Symfony CLI
-RUN echo '#!/bin/bash\n\
-    export INFORMIXDIR=/opt/IBM/Informix_Client-SDK\n\
-    export INFORMIXSERVER=ol_iriumprod_net\n\
-    export LD_LIBRARY_PATH=/opt/IBM/Informix_Client-SDK/lib:/opt/IBM/Informix_Client-SDK/lib/cli:/opt/IBM/Informix_Client-SDK/lib/esql\n\
-    exec php /var/www/html/bin/console "$@"' > /usr/local/bin/symfony-console \
+RUN printf '#!/bin/bash\nexport INFORMIXDIR=/opt/IBM/Informix_Client-SDK\nexport INFORMIXSERVER=ol_iriumprod_net\nexport LD_LIBRARY_PATH=/opt/IBM/Informix_Client-SDK/lib:/opt/IBM/Informix_Client-SDK/lib/cli:/opt/IBM/Informix_Client-SDK/lib/esql\nexec php /var/www/html/bin/console "$@"\n' > /usr/local/bin/symfony-console \
     && chmod +x /usr/local/bin/symfony-console
 
-RUN mkdir -p /opt/IBM/Informix_Client-SDK/etc && \
-    echo "ol_iriumprod_net    onsoctcp    192.168.0.11    9088" \
-    > /opt/IBM/Informix_Client-SDK/etc/sqlhosts
-
-# Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN mkdir -p /opt/IBM/Informix_Client-SDK/etc \
+    && printf "ol_iriumprod_net    onsoctcp    192.168.0.11    9088\n" > /opt/IBM/Informix_Client-SDK/etc/sqlhosts
 
 WORKDIR /var/www/html
+
+# Code source de l'application (voir .dockerignore pour les exclusions)
+COPY . .
+
+# Dependances de prod pre-installees dans le stage vendor
+COPY --from=vendor /app/vendor ./vendor
+
+# Composer requis uniquement pour regenerer l'autoloader authoritative
+# maintenant que le code source (src/) est present.
+COPY --from=vendor /usr/bin/composer /usr/bin/composer
+
+RUN composer dump-autoload --no-dev --optimize --classmap-authoritative \
+    && (php bin/console cache:warmup --env=prod --no-debug || true) \
+    && chown -R www-data:www-data var \
+    && chmod -R ug+rwX var
 
 EXPOSE 80

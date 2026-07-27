@@ -1,7 +1,7 @@
 import type { ApiResponse } from "@/conf/api/Response";
 
 import axiosInstance from "@/conf/axios";
-import type { BonCommandePayload } from "../schema/BonCommandeSchema";
+import type { BonCommandePayload } from "../schema/bonCommandeSchema";
 import { appendFiles } from "@/lib/utils";
 
 export const soumettreBonCommande = async (

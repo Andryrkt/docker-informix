@@ -1,0 +1,39 @@
+services:
+  backend:
+    image: ghcr.io/andryrkt/docker-informix-backend:latest
+    container_name: hff_backend
+    extra_hosts:
+      - "ol_iriumprod_net:192.168.0.11"
+    env_file:
+      - .env.prod
+    environment:
+      - REDIS_URL=redis://hff_redis:6379
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  frontend:
+    image: ghcr.io/andryrkt/docker-informix-frontend:latest
+    container_name: hff_frontend
+    restart: unless-stopped
+
+  docs:
+    image: ghcr.io/andryrkt/docker-informix-docs:latest
+    container_name: hff_docs
+    restart: unless-stopped
+
+  proxy:
+    image: ghcr.io/andryrkt/docker-informix-proxy:latest
+    container_name: hff_proxy
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
+      - docs
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: hff_redis
+    restart: unless-stopped

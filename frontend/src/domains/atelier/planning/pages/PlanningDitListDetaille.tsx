@@ -5,11 +5,18 @@ import { useQuery } from "@tanstack/react-query";
 import { planningDitFieldfilter } from "../filter/planningDitFieldfilter";
 import { getMockPlanningDitDetail } from "../schema/mock/planningDitDetailleMock";
 import PlanningDitDetailleTable from "../components/PlanningDitDetailleTable";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getAgencesWithServices } from "@/domains/agenceService/agenceServiceApi";
 
 function PlanningDitListDetaille() {
-  const { currentPage, setPage, selectedFilters, setFilter, reset } =
-    usePageSearchParams(1);
+  const {
+    currentPage,
+    setPage,
+    selectedFilters,
+    setFilter,
+    setFilters,
+    reset,
+  } = usePageSearchParams(1);
 
   const {
     data: planningDit,
@@ -23,31 +30,35 @@ function PlanningDitListDetaille() {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
+  const { data: agenceServices = [], isLoading: isLoadingAgences } = useQuery({
+    queryKey: ["dit-agences-and-services"],
+    queryFn: getAgencesWithServices,
+    staleTime: 50 * 60 * 1000,
+    gcTime: 50 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
   const items = planningDit?.data ?? [];
   const lastPage = planningDit?.totalPages ?? 1;
-  const agents = [
-    {
-      label: "Agent 1",
-      value: "1",
-      services: [
-        { label: "Service A", value: "A" },
-        { label: "Service B", value: "B" },
-      ],
-    },
-    {
-      label: "Agent 2",
-      value: "2",
-      services: [{ label: "Service C", value: "C" }],
-    },
-  ];
 
   const getServicesForAgent = (agentValue: string) => {
-    const agent = agents.find((a) => a.value === agentValue);
+    const agent = agenceServices.find((a) => a.value === agentValue);
     return agent ? agent.services : [];
   };
 
-  const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
+  // ---- State for the currently selected agent (sync with URL) ----
+  const [selectedAgent, setSelectedAgent] = useState<string | null>(
+    selectedFilters.agent_debiteur || null,
+  );
+
+  // ---- Keep state in sync when URL changes (e.g., after search or reset) ----
+  useEffect(() => {
+    setSelectedAgent(selectedFilters.agent_debiteur || null);
+  }, [selectedFilters.agent_debiteur]);
+
+  const all = { label: "Tous", value: "all" };
+  console.log([all, ...agenceServices]);
 
   const dynamicFields = useMemo(() => {
     return planningDitFieldfilter.map((column) =>
@@ -55,9 +66,9 @@ function PlanningDitListDetaille() {
         if (field.name === "agent_debiteur") {
           return {
             ...field,
-
-            queryFn: async () =>
-              agents.map((a) => ({ label: a.label, value: a.value })),
+            queryFn: async () => {
+              return [all, ...agenceServices];
+            },
           };
         }
         if (field.name === "service_debiteur") {
@@ -68,11 +79,7 @@ function PlanningDitListDetaille() {
               : "",
             selectAll: true,
             dependsOn: ["agent_debiteur"], // ✅ clears services when agent changes
-            queryKey: `service_debiteur_${selectedAgent || "none"}`,
-            queryFn: async () => {
-              if (!selectedAgent) return [];
-              return getServicesForAgent(selectedAgent);
-            },
+            options: selectedAgent ? getServicesForAgent(selectedAgent) : [],
           };
         }
         return field;
@@ -81,18 +88,14 @@ function PlanningDitListDetaille() {
   }, [selectedAgent]);
 
   const handleSearch = (values: Record<string, any>) => {
-    if (values.agent_debiteur !== undefined) {
-      setSelectedAgent(values.agent_debiteur || null);
-    }
-    Object.entries(values).forEach(([key, value]) => {
-      setFilter(key, String(value ?? ""));
-    });
+    console.log("Search values ", values);
+    setFilters(values);
   };
 
   const handleReset = () => {
-    setSelectedAgent(null);
     reset();
-  };
+};
+
   return (
     <div className="p-0 w-full  h-full">
       <div className="w-full  gap-6 overflow-x-auto ">

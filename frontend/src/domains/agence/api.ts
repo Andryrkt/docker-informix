@@ -17,6 +17,10 @@ export type AgenceOption = SelectOption & {
  * débiteur" du formulaire DIT, filtré par agence débiteur côté client sans
  * requête réseau supplémentaire à chaque changement — voir DitForm.tsx).
  */
+
+
+
+
 export const getAgences = async (): Promise<AgenceOption[]> => {
   const { data } = await axiosInstance.get<
     {

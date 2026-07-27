@@ -78,14 +78,18 @@ export default function CollapsibleFilter({
     // 3️⃣ Merge: URL overrides localStorage
     const initial: Record<string, any> = {};
     allFields.forEach((field) => {
-      if (field.name in urlValues) {
-        initial[field.name] = urlValues[field.name];
-      } else if (field.name in storedValues) {
-        initial[field.name] = storedValues[field.name];
+      let val = urlValues[field.name] ?? storedValues[field.name];
+      // ✅ Convert multichoice URL strings (e.g., "3,4") to arrays
+      if (field.type === "multichoice" && typeof val === "string") {
+        val = val
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
       }
-      // otherwise leave undefined (form will use its own default)
+      if (val !== undefined) {
+        initial[field.name] = val;
+      }
     });
-
     return initial;
   };
   // State to store fetched options per field
@@ -189,7 +193,7 @@ export default function CollapsibleFilter({
                 <form.Field key={field.name} name={field.name as any}>
                   {(f) => {
                     // Get options from fetched or static source
-                    const options =
+                    const baseOptions =
                       fieldOptions[field.name] ||
                       (field.type === "multichoice" ||
                       field.type === "select" ||
@@ -197,25 +201,58 @@ export default function CollapsibleFilter({
                         ? (field as any).options
                         : []) ||
                       [];
+
+                    const hasTous = baseOptions.some(
+                      (opt) => opt.value === "all",
+                    );
+                    const options = hasTous ? baseOptions : [...baseOptions];
+
+                    // Exclude "all" for "Select all" logic
+                    const nonTousOptions = options.filter(
+                      (opt) => opt.value !== "all",
+                    );
+
                     let currentValue = f.state.value;
 
                     if (field.type === "multichoice") {
-                      currentValue = currentValue || [];
+                      if (typeof currentValue === "number") {
+                        currentValue = String(currentValue);
+                      }
+
+                      // Convert string like "3,4" to array ["3","4"]
+                      if (typeof currentValue === "string") {
+                        currentValue = (currentValue as any)
+                          .split(",")
+                          .map((s: any) => s.trim())
+                          .filter(Boolean);
+                      }
+                      // Ensure it's always an array
+                      if (!Array.isArray(currentValue)) {
+                        currentValue = [];
+                      }
                     } else if (field.type === "boolean") {
-                      currentValue = currentValue ?? false;
+                      currentValue = String(currentValue) ?? false;
                     } else if (
                       field.type === "text" ||
                       field.type === "number"
                     ) {
-                      currentValue = currentValue ?? "";
+                      currentValue = String(currentValue) ?? "";
                     } else if (field.type === "select") {
-                      currentValue = currentValue ?? "";
+                      console.log(
+                        "f.state.value select",
+                        field.name + " value:" + f.state.value,
+                      );
+
+                      console.log(currentValue, typeof currentValue);
+                      currentValue = String(currentValue) ?? "";
                     }
+
+                    // allSelected checks only nonTousOptions
                     const allSelected =
-                      options.length > 0 &&
-                      Array.isArray(options) &&
-                      options.every((opt: any) =>
-                        (currentValue as any).includes(opt.value),
+                      nonTousOptions.length > 0 &&
+                      Array.isArray(currentValue) &&
+                      nonTousOptions.every((opt) =>
+                        currentValue.includes(opt.value),
                       );
 
                     // Build field with merged options
@@ -227,14 +264,12 @@ export default function CollapsibleFilter({
                       onChange: (value: any) => {
                         f.handleChange(value);
                         onFieldChange?.(field.name, value);
-                        // Clear dependents only if this field is a dependency source
                         const dependents = reverseDeps[field.name] || [];
                         dependents.forEach((depName) => {
                           form.setFieldValue(depName, []);
                         });
                       },
                     };
-
                     return (
                       <div className="space-y-4">
                         {(field.type !== "boolean" || !field.hideLabel) && (
@@ -273,6 +308,7 @@ export default function CollapsibleFilter({
                               </label>
                             </div>
                           )}
+                        {field.type === "select" && options.length > 0 && <></>}
 
                         <FilterFieldRenderer field={fieldWithOptions} />
                       </div>
@@ -289,7 +325,6 @@ export default function CollapsibleFilter({
               variant="outline"
               onClick={() => {
                 form.reset();
-                setFieldOptions({}); // clear fetched options
                 onReset?.();
               }}
               className="flex items-center gap-2"

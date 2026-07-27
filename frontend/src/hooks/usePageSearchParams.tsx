@@ -98,8 +98,7 @@ export function usePageSearchParams(
     [setSearchParams],
   );
 
-  const reset = () => {
-    localStorage.removeItem("collapsible_filter_state");
+  const reset = (collapseKeys: string[] = []) => {
     setSearchParams(() => {
       const newParams = new URLSearchParams();
       if (defaultPage && defaultPage !== 1) {
@@ -116,6 +115,19 @@ export function usePageSearchParams(
           newParams.set(key, defaultFilters[key]);
         }
       }
+      const current = new URLSearchParams(searchParams);
+      collapseKeys.forEach((key) => {
+        const value = current.get(key);
+        if (value) {
+          // If it's comma‑separated, take the first part
+          const first = value.split(",")[0].trim();
+          if (first) {
+            newParams.set(key, first);
+          }
+        }
+      });
+      localStorage.removeItem("collapsible_filter_state");
+
       return newParams;
     });
   };

@@ -1,4 +1,4 @@
-import CollapsibleFilter from "@/components/common/filter/CollapSibleFilter";
+import CollapsibleFilterForm from "@/components/common/filter/CollapSibleFilterForm";
 import { usePageSearchParams } from "@/hooks/usePageSearchParams";
 import { useQuery } from "@tanstack/react-query";
 import PlanningMagasinTable from "../components/PlanningMagasinTable";
@@ -31,7 +31,7 @@ function PlanningMagasinList() {
           title="Liste des devis"
           description="Voici la liste des devis."
         /> */}
-        <CollapsibleFilter
+        <CollapsibleFilterForm
           fields={planningFieldsFilter}
           onSearch={(values) => {
             Object.entries(values).forEach(([key, value]) => {

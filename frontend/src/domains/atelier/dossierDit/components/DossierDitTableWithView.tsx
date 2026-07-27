@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import CollapsibleFilter from "@/components/common/filter/CollapSibleFilter";
+import CollapsibleFilterForm from "@/components/common/filter/CollapSibleFilterForm";
 import {
   dossierDitMock,
   dossierDitListItemMock,
@@ -91,7 +91,7 @@ function DossierDitTableWithView() {
     <>
       <div className="flex-col gap-4 space-y-4   ">
         {/* Filtre (inchangé) */}
-        <CollapsibleFilter
+        <CollapsibleFilterForm
           fields={dossierDitFieldFilter}
           onSearch={(values) => {
             Object.entries(values).forEach(([key, value]) => {

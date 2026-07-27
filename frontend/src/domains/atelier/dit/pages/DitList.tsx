@@ -1,5 +1,5 @@
 import { ExcelDownloadButton } from "@/components/common/excel/ExcelDownloadButton";
-import CollapsibleFilter from "@/components/common/filter/CollapSibleFilter";
+import CollapsibleFilterForm from "@/components/common/filter/CollapSibleFilterForm";
 import SimpleNextPreviousPagination from "@/components/common/pagination/SimpleNextPreviousPagination";
 import { usePageSearchParams } from "@/hooks/usePageSearchParams";
 import { buildExcelFilename } from "@/lib/utils";
@@ -62,7 +62,7 @@ function DitList() {
     <div className="px-2 w-full ">
       <div className=" w-full  space-y-4 pb-4 overflow-auto">
         <div className="sticky top-0 space-y-6 ">
-          <CollapsibleFilter
+          <CollapsibleFilterForm
             fields={ditFieldFilters}
             onSearch={(values) => {
               setFilters(values);

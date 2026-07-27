@@ -1,4 +1,4 @@
-import CollapsibleFilter from "@/components/common/filter/CollapSibleFilter";
+import CollapsibleFilterForm from "@/components/common/filter/CollapSibleFilterForm";
 import { usePageSearchParams } from "@/hooks/usePageSearchParams";
 import { getMockPlanningDitInterneAtelier } from "../schema/mock/planningDitInterneAtelier";
 import { useQuery } from "@tanstack/react-query";
@@ -99,7 +99,7 @@ function PlanningDitInterneAtelierList() {
   return (
     <div className="p-4 w-full  h-full">
       <div className="w-full  gap-6 overflow-x-auto ">
-        <CollapsibleFilter
+        <CollapsibleFilterForm
           fields={dynamicFields}
           onSearch={handleSearch}
           onReset={handleReset}
@@ -108,7 +108,7 @@ function PlanningDitInterneAtelierList() {
               setSelectedAgent(value || null);
             }
           }}
-        ></CollapsibleFilter>
+        ></CollapsibleFilterForm>
         {/* <div className="max-w-7xl mx-auto md:flex justify-between">
           <div>
             <LivraisonStatutsList

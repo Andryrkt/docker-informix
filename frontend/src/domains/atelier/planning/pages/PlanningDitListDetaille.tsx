@@ -1,4 +1,4 @@
-import CollapsibleFilter from "@/components/common/filter/CollapSibleFilter";
+import CollapsibleFilterForm from "@/components/common/filter/CollapSibleFilterForm";
 import LivraisonStatutsList from "@/components/common/LivraisonStatusBadge";
 import { usePageSearchParams } from "@/hooks/usePageSearchParams";
 import { useQuery } from "@tanstack/react-query";
@@ -94,12 +94,12 @@ function PlanningDitListDetaille() {
 
   const handleReset = () => {
     reset();
-};
+  };
 
   return (
     <div className="p-0 w-full  h-full">
       <div className="w-full  gap-6 overflow-x-auto ">
-        <CollapsibleFilter
+        <CollapsibleFilterForm
           fields={dynamicFields}
           onSearch={handleSearch}
           onReset={handleReset}
@@ -108,7 +108,7 @@ function PlanningDitListDetaille() {
               setSelectedAgent(value || null);
             }
           }}
-        ></CollapsibleFilter>
+        ></CollapsibleFilterForm>
         <div className="max-w-7xl mx-auto md:flex justify-between">
           <div>
             <LivraisonStatutsList

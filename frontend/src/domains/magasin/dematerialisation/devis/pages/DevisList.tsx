@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import DevisTable from "../components/DevisTable";
-import CollapsibleFilter from "@/components/common/filter/CollapSibleFilter";
+import CollapsibleFilterForm from "@/components/common/filter/CollapSibleFilterForm";
 import { toast } from "sonner";
 import { ExcelDownloadButton } from "@/components/common/excel/ExcelDownloadButton";
 import { fetchDevis } from "../api/devisApi";
@@ -36,7 +36,7 @@ function DevisList() {
   return (
     <div className="px-2 w-full  ">
       <div className=" w-full h-full space-y-6 overflow-x-auto">
-        <CollapsibleFilter
+        <CollapsibleFilterForm
           fields={devisFieldfilter}
           onSearch={(values) => {
             Object.entries(values).forEach(([key, value]) => {

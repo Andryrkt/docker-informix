@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import type { FilterField, FilterOption } from "./schema/filterSchema";
 import { Checkbox } from "@/components/ui/checkbox";
 
-export default function CollapsibleFilter({
+export default function CollapsibleFilterForm({
   fields,
   onSearch,
   onReset,
@@ -212,7 +212,7 @@ export default function CollapsibleFilter({
                       (opt) => opt.value !== "all",
                     );
 
-                    let currentValue = f.state.value;
+                    let currentValue: any = f.state.value;
 
                     if (field.type === "multichoice") {
                       if (typeof currentValue === "number") {
@@ -231,20 +231,35 @@ export default function CollapsibleFilter({
                         currentValue = [];
                       }
                     } else if (field.type === "boolean") {
-                      currentValue = String(currentValue) ?? false;
+                      currentValue = currentValue ?? false;
                     } else if (
                       field.type === "text" ||
-                      field.type === "number"
+                      field.type === "number" ||
+                      field.type === "select"
                     ) {
-                      currentValue = String(currentValue) ?? "";
-                    } else if (field.type === "select") {
-                      console.log(
-                        "f.state.value select",
-                        field.name + " value:" + f.state.value,
-                      );
-
-                      console.log(currentValue, typeof currentValue);
-                      currentValue = String(currentValue) ?? "";
+                      currentValue =
+                        currentValue !== undefined && currentValue !== null
+                          ? String(currentValue)
+                          : "";
+                    } else if (field.type === "date") {
+                      if (
+                        currentValue instanceof Date &&
+                        !isNaN(currentValue.getTime())
+                      ) {
+                        currentValue = currentValue.toISOString().split("T")[0];
+                      } else {
+                        currentValue =
+                          currentValue != null ? String(currentValue) : "";
+                      }
+                    } else if (field.type === "date-range") {
+                      if (currentValue && typeof currentValue === "object") {
+                        const start =
+                          currentValue.start ?? currentValue[0] ?? "";
+                        const end = currentValue.end ?? currentValue[1] ?? "";
+                        currentValue = start && end ? `${start},${end}` : "";
+                      } else {
+                        currentValue = "";
+                      }
                     }
 
                     // allSelected checks only nonTousOptions

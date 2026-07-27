@@ -1,5 +1,5 @@
 import { ExcelDownloadButton } from "@/components/common/excel/ExcelDownloadButton";
-import CollapsibleFilter from "@/components/common/filter/CollapSibleFilter";
+import CollapsibleFilterForm from "@/components/common/filter/CollapSibleFilterForm";
 import GlobalPagination from "@/components/common/pagination/GlobalPagination";
 import SimpleNextPreviousPagination from "@/components/common/pagination/SimpleNextPreviousPagination";
 import { usePageSearchParams } from "@/hooks/usePageSearchParams";
@@ -58,7 +58,7 @@ function OrdreReparationATraiterList() {
     <div className="px-2 w-full ">
       <div className=" w-full  space-y-4 pb-4 overflow-auto">
         <div className="sticky top-0 space-y-6 ">
-          <CollapsibleFilter
+          <CollapsibleFilterForm
             fields={ordreReparationATraiterFieldsFilters}
             onSearch={(values) => {
               Object.entries(values).forEach(([key, value]) => {

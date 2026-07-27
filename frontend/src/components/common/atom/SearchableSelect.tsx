@@ -26,6 +26,10 @@ export function SearchableSelect({
   disabled,
 }: any) {
   const [open, setOpen] = useState(false);
+  const hasTous = options.some((opt: any) => opt.value === "all");
+  const allOptions = hasTous
+    ? options
+    : [{ label: "Tous", value: "all" }, ...options];
 
   const selected = options.find((o: any) => o.value === value);
 
@@ -52,7 +56,7 @@ export function SearchableSelect({
             <CommandEmpty>Pas de resultats.</CommandEmpty>
 
             <CommandGroup>
-              {options.map((opt: any) => (
+              {allOptions.map((opt: any) => (
                 <CommandItem
                   key={opt.value}
                   value={opt.label}

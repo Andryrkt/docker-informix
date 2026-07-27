@@ -1,0 +1,175 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+env:
+  IMAGE_PREFIX: ghcr.io/andryrkt/docker-informix
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        if: github.event_name != 'pull_request'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: |
+            ${{ env.IMAGE_PREFIX }}-backend:latest
+            ${{ env.IMAGE_PREFIX }}-backend:${{ github.sha }}
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        if: github.event_name != 'pull_request'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: ${{ github.event_name != 'pull_request' }}
+          build-args: |
+            VITE_API_BASE_URL=/api
+          tags: |
+            ${{ env.IMAGE_PREFIX }}-frontend:latest
+            ${{ env.IMAGE_PREFIX }}-frontend:${{ github.sha }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+
+  build-docs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        if: github.event_name != 'pull_request'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./docs-hff
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: |
+            ${{ env.IMAGE_PREFIX }}-docs:latest
+            ${{ env.IMAGE_PREFIX }}-docs:${{ github.sha }}
+          cache-from: type=gha,scope=docs
+          cache-to: type=gha,mode=max,scope=docs
+
+  build-proxy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        if: github.event_name != 'pull_request'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./proxy
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: |
+            ${{ env.IMAGE_PREFIX }}-proxy:latest
+            ${{ env.IMAGE_PREFIX }}-proxy:${{ github.sha }}
+          cache-from: type=gha,scope=proxy
+          cache-to: type=gha,mode=max,scope=proxy
+
+  # Ce job ne demarrera que lorsqu'un runner self-hosted portant les labels
+  # [self-hosted, prod] sera enregistre. Le serveur cible est un Windows
+  # Server (pas d'acces SSH), mais Docker + le runner GitHub Actions
+  # tournent a l'interieur d'une distro WSL2 (Ubuntu-24.04) sur ce serveur,
+  # donc le runner est de type Linux et ces etapes restent en bash. D'ici
+  # la mise en place du runner, ce job reste "queued" indefiniment sans
+  # faire echouer le pipeline.
+  deploy:
+    needs: [build-backend, build-frontend, build-docs, build-proxy]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: [self-hosted, prod]
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ecrire .env.prod depuis les secrets GitHub
+        run: |
+          cat > .env.prod << EOF
+          APP_ENV=prod
+          APP_SECRET=${{ secrets.APP_SECRET }}
+          APP_SHARE_DIR=var/share
+          ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}
+          DEFAULT_URI=${{ secrets.DEFAULT_URI }}
+          CORS_ALLOW_ORIGIN=${{ secrets.CORS_ALLOW_ORIGIN }}
+          INFORMIXSERVER=ol_iriumprod_net
+          INFORMIX_HOST=192.168.0.11
+          INFORMIX_PORT=${{ secrets.INFORMIX_PORT }}
+          INFORMIX_DB=${{ secrets.INFORMIX_DB }}
+          INFORMIX_DB_IRIUM=${{ secrets.INFORMIX_DB_IRIUM }}
+          INFORMIX_USER=${{ secrets.INFORMIX_USER }}
+          INFORMIX_PASSWORD=${{ secrets.INFORMIX_PASSWORD }}
+          SQLSERVER_HOST=${{ secrets.SQLSERVER_HOST }}
+          SQLSERVER_PORT=${{ secrets.SQLSERVER_PORT }}
+          SQLSERVER_DB=${{ secrets.SQLSERVER_DB }}
+          SQLSERVER_USER=${{ secrets.SQLSERVER_USER }}
+          SQLSERVER_PASSWORD=${{ secrets.SQLSERVER_PASSWORD }}
+          LDAP_URL=${{ secrets.LDAP_URL }}
+          LDAP_DOMAIN=${{ secrets.LDAP_DOMAIN }}
+          LDAP_BASE_DN=${{ secrets.LDAP_BASE_DN }}
+          LDAP_SEARCH_DN=${{ secrets.LDAP_SEARCH_DN }}
+          LDAP_SEARCH_PASSWORD=${{ secrets.LDAP_SEARCH_PASSWORD }}
+          JWT_PASSPHRASE=${{ secrets.JWT_PASSPHRASE }}
+          JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
+          JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
+          MAILER_DSN=${{ secrets.MAILER_DSN }}
+          MAILER_FROM=${{ secrets.MAILER_FROM }}
+          EOF
+
+      - name: Deployer
+        run: |
+          docker compose -f docker-compose.prod.yml pull
+          docker compose -f docker-compose.prod.yml up -d

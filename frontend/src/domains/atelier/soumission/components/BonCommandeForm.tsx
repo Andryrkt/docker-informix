@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Save } from "lucide-react";
 import { DocumentViewer } from "@/components/common/DocumentViewer";
 import { useParams } from "react-router-dom";
-import { bonCommandeSchema } from "../schema/BonCommandeSchema";
+import { bonCommandeSchema } from "../schema/bonCommandeSchema";
 import type { UseMutationResult } from "@tanstack/react-query";
 import {
   bonCommandeFields,

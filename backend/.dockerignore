@@ -1,0 +1,12 @@
+.git
+.gitignore
+vendor
+var/cache
+var/log
+node_modules
+.env.local
+.env.*.local
+Dockerfile-dev
+Dockerfile
+docker-compose.yml
+tests

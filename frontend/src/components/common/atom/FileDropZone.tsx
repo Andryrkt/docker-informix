@@ -316,7 +316,12 @@ export function FileDropzone({ field }: any) {
 
   // ---------- Rendu ----------
   return (
-    <div className={cn("space-y-3 my-2 z-50", isProcessing && "cursor-wait")}>
+    <div
+      className={cn(
+        "space-y-3 my-2 z-50 cursor-pointer",
+        isProcessing && "cursor-wait",
+      )}
+    >
       <div
         onDragOver={(e) => {
           e.preventDefault();

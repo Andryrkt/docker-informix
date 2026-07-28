@@ -24,7 +24,7 @@ export const planningDitInterneAtelierFieldfilter: FilterField[][] = [
     {
       name: "num_semaine",
       label: "Numéro de semaine de l'anneé actuel",
-      type: "number",
+      type: "select",
     },
     {
       name: "service_debiteur",

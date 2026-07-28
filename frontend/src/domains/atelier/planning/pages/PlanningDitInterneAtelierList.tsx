@@ -6,6 +6,12 @@ import { useMemo, useState } from "react";
 import { planningDitFieldfilter } from "../filter/planningDitFieldfilter";
 import PlanningDitInterneAtelierTable from "../components/PlanningDitInterneAtelierTable";
 import { planningDitInterneAtelierFieldfilter } from "../filter/planningDitInterneAtelierFieldfilter";
+import LivraisonStatutsList from "@/components/common/LivraisonStatusBadge";
+import { getAgencesWithServices } from "@/domains/agenceService/agenceServiceApi";
+import { getAgencesTravaux } from "@/domains/agenceTravaux/agenceTravauxApi";
+import { getWeeksOfYear } from "@/lib/dateUtils";
+import { getRessources } from "@/domains/ressource/ressourceApi";
+import { getSections } from "@/domains/section/sectionApi";
 
 function PlanningDitInterneAtelierList() {
   const { currentPage, setPage, selectedFilters, setFilter, reset } =
@@ -27,25 +33,27 @@ function PlanningDitInterneAtelierList() {
 
   const items = planningDitInterneAtelier?.data ?? [];
 
-  // Pour les filtres dynamique agent > debiteur[]
-  const agents = [
-    {
-      label: "Agent 1",
-      value: "1",
-      services: [
-        { label: "Service A", value: "A" },
-        { label: "Service B", value: "B" },
-      ],
-    },
-    {
-      label: "Agent 2",
-      value: "2",
-      services: [{ label: "Service C", value: "C" }],
-    },
-  ];
+  const { data: agenceServices = [], isLoading: isLoadingAgences } = useQuery({
+    queryKey: ["dit-agences-and-services"],
+    queryFn: getAgencesWithServices,
+    staleTime: 50 * 60 * 1000,
+    gcTime: 50 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  const { data: agenceTravaux = [], isLoading: isLoadingAgencesTravaux } =
+    useQuery({
+      queryKey: ["dit-agences-travaux"],
+      queryFn: getAgencesTravaux,
+      staleTime: 50 * 60 * 1000,
+      gcTime: 50 * 60 * 1000,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    });
 
   const getServicesForAgent = (agentValue: string) => {
-    const agent = agents.find((a) => a.value === agentValue);
+    const agent = agenceServices.find((a) => a.value === agentValue);
     return agent ? agent.services : [];
   };
 
@@ -59,7 +67,7 @@ function PlanningDitInterneAtelierList() {
             ...field,
 
             queryFn: async () =>
-              agents.map((a) => ({ label: a.label, value: a.value })),
+              agenceServices.map((a) => ({ label: a.label, value: a.value })),
           };
         }
         if (field.name === "service_debiteur") {
@@ -75,6 +83,32 @@ function PlanningDitInterneAtelierList() {
               if (!selectedAgent) return [];
               return getServicesForAgent(selectedAgent);
             },
+          };
+        }
+        if (field.name === "agent_travaux") {
+          return {
+            ...field,
+
+            queryFn: async () =>
+              agenceTravaux.map((a) => ({ label: a.label, value: a.value })),
+          };
+        }
+        if (field.name === "num_semaine") {
+          return {
+            ...field,
+            options: getWeeksOfYear(),
+          };
+        }
+        if (field.name === "ressource") {
+          return {
+            ...field,
+            queryFn: getRessources,
+          };
+        }
+        if (field.name === "section_affectee") {
+          return {
+            ...field,
+            queryFn: getSections,
           };
         }
         return field;
@@ -109,7 +143,7 @@ function PlanningDitInterneAtelierList() {
             }
           }}
         ></CollapsibleFilterForm>
-        {/* <div className="max-w-7xl mx-auto md:flex justify-between">
+        <div className="max-w-7xl mx-auto md:flex justify-between">
           <div>
             <LivraisonStatutsList
               value={selectedFilters.etat_livraison}
@@ -118,7 +152,7 @@ function PlanningDitInterneAtelierList() {
               }}
             ></LivraisonStatutsList>
           </div>
-        </div> */}
+        </div>
         <PlanningDitInterneAtelierTable
           data={items}
           loading={isLoading || isFetching}

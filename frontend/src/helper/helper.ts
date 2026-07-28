@@ -58,23 +58,24 @@ export const getStatusDitClass = (status?: string) => {
   }
 };
 
-export const getEtatPlanningColorMark = (etat?: string | null) => {
+export const getEtatPlanningCmdeMagasinColorMark = (etat?: string | null) => {
   if (!etat) return "text-gray-600";
 
   switch (etat) {
     case "Valide":
-      return "text-green-600 bg-green-100";
+      return "text-green-600 ";
 
     case "En attente":
-      return "text-yellow-600 bg-yellow-100";
+      return "text-yellow-600";
 
     case "Rejeté":
-      return "text-red-600 bg-red-100";
+      return "text-red-600";
 
     default:
-      return "text-gray-500 bg-gray-100";
+      return "text-gray-500";
   }
 };
+
 export function getCommandeStatusStyle(statut: CommandeStatut) {
   switch (statut) {
     case "VALIDEE":
@@ -99,7 +100,7 @@ export const formatMontant = (
   montant: string | number,
   devise: string,
 ): string => {
-  const num = parseFloat(montant);
+  const num = typeof montant === 'number' ? montant : parseFloat(montant);
   return (
     new Intl.NumberFormat("fr-FR", {
       minimumFractionDigits: 2,

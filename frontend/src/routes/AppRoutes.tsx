@@ -44,7 +44,7 @@ import DossierDitList from "@/domains/atelier/dossierDit/pages/DossierDitList";
 import PlanningDitInterneAtelierList from "@/domains/atelier/planning/pages/PlanningDitInterneAtelierList";
 import PlanningDitList from "@/domains/atelier/planning/pages/PlanningDitList";
 import PlanningDitListDetaille from "@/domains/atelier/planning/pages/PlanningDitListDetaille";
-import PlanningMagasinList from "@/domains/magasin/dematerialisation/planning/pages/PlanningMagasinList";
+import PlanningMagasinList from "@/domains/magasin/dematerialisation/planning/pages/PlanningCmdeMagasinList";
 import OrdreReparationALivrerList from "@/domains/magasin/ordreReparation/livrer/pages/OrdreReparationALivrerList";
 import OrdreReparationATraiterList from "@/domains/magasin/ordreReparation/livrer/pages/OrdreReparationATraiterList";
 

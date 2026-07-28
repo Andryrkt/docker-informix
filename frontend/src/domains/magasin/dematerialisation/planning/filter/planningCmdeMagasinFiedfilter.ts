@@ -1,6 +1,6 @@
 import type { FilterField } from "@/components/common/filter/schema/filterSchema";
 
-export const planningFieldsFilter: FilterField[][] = [
+export const planningCmdeMagasinFieldsFilter: FilterField[][] = [
   [
     {
       name: "agence",
@@ -8,23 +8,21 @@ export const planningFieldsFilter: FilterField[][] = [
       type: "select",
       placeholder: "-- Choisir une agence --",
       queryKey: "agences",
-      queryFn: async () => [
-        { label: "Antananarivo", value: "ANT" },
-        { label: "Toamasina", value: "TMS" },
-        { label: "Fianarantsoa", value: "FIAN" },
-      ],
-    },
-    {
-      name: "services",
-      label: "Services",
-      type: "multichoice",
-      options: [{ label: "Tous sélectionner", value: "Tous sélectionner" }],
+      queryFn: async () => [],
     },
   ],
   [
     {
-      name: "numero_commande",
-      label: "N° Commande",
+      name: "services",
+      label: "Services",
+      type: "multichoice",
+      options: [],
+    },
+  ],
+  [
+    {
+      name: "numero_commande_frn",
+      label: "N° Commande FRN",
       type: "text",
     },
     {
@@ -44,30 +42,26 @@ export const planningFieldsFilter: FilterField[][] = [
       hideLabel: true,
       placeholder: "BC non valider DW",
     },
-
+  ],
+  [
     {
-      name: "numero_devis",
-      label: "N° Devis",
+      name: "numero_bc_negoce",
+      label: "N° BC Négoce",
       type: "text",
     },
+
     {
       name: "client",
       label: "Client",
-      type: "text", // upgrade possible en autocomplete
+      type: "text",
     },
+  ],
+  [
     {
       name: "commercial",
       label: "Commercial",
       type: "text", // upgrade possible en select/autocomplete
     },
-
-    {
-      name: "po_client",
-      label: "PO Client",
-      type: "text",
-    },
-  ],
-  [
     {
       name: "periode",
       label: "Période",
@@ -78,6 +72,13 @@ export const planningFieldsFilter: FilterField[][] = [
         { label: "6 mois suivant", value: "6_months" },
         { label: "12 mois suivant", value: "12_months" },
       ],
+    },
+  ],
+  [
+    {
+      name: "po_client",
+      label: "PO Client",
+      type: "text",
     },
   ],
 ];

@@ -8,7 +8,7 @@ export interface ValeurMensuelle {
   entries: ValeurMensuelleEntry[];
 }
 
-export interface Planning {
+export interface PlanningCmdeMagasin {
   COMMERCIAUX: string;
   AGENCE: string;
   SERVICE: string;

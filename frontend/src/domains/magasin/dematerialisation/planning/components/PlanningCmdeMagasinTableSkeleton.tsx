@@ -11,7 +11,7 @@ type Props = {
   rows?: number;
 };
 
-function PlanningTableSkeleton({ rows = 25 }: Props) {
+function PlanningCmdeMagasinTableSkeleton({ rows = 25 }: Props) {
   return (
     <div className="w-full py-4 overflow-clip ">
       <Table className="">
@@ -103,4 +103,4 @@ function PlanningTableSkeleton({ rows = 25 }: Props) {
   );
 }
 
-export default PlanningTableSkeleton;
+export default PlanningCmdeMagasinTableSkeleton;

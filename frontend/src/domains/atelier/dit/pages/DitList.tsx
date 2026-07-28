@@ -11,7 +11,7 @@ import LivraisonStatutsList from "@/components/common/LivraisonStatusBadge";
 import StatusBadgeGroup, {
   ditStatusMock,
 } from "@/components/common/StatusBadgeGroup";
-import { ditMock } from "../schema/ditMock";
+
 import { ditFieldFilters } from "../filter/DitFieldfilter";
 import { LimitSelector } from "@/components/common/pagination/LimitSelector";
 import { useCallback, useState } from "react";

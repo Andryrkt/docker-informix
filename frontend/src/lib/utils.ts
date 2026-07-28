@@ -1,4 +1,5 @@
 import type { FilterField } from "@/components/common/filter/schema/filterSchema";
+import type { StatutLigne } from "@/domains/magasin/dematerialisation/planning/schema/CmdeMagasinSchema";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -138,4 +139,30 @@ export const formatMonthDisplay = (
   const [year, month] = monthStr.split("-").map(Number);
   const date = new Date(year, month - 1, 1);
   return date.toLocaleString(locale, { month: "short", year: "numeric" });
+};
+
+export const STATUS_CONFIG: Record<
+  StatutLigne,
+  { label: string; color: string; bg: string }
+> = {
+  "DISPO STOCK": {
+    label: "DISPO STOCK",
+    color: "text-green-700",
+    bg: "bg-green-100",
+  },
+  "Back Order / Error": {
+    label: "Back Order / Error",
+    color: "text-red-700",
+    bg: "bg-red-100",
+  },
+  "Commande envoyée fournisseur": {
+    label: "Commande envoyée fournisseur",
+    color: "text-blue-700",
+    bg: "bg-blue-100",
+  },
+  "Réception Partielle": {
+    label: "Réception Partielle",
+    color: "text-amber-700",
+    bg: "bg-amber-100",
+  },
 };

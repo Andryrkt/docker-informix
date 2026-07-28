@@ -339,7 +339,9 @@ export default function CollapsibleFilterForm({
               type="button"
               variant="outline"
               onClick={() => {
+                // TODO: Reset mutlichoice options that have an dependsOn
                 form.reset();
+                localStorage.removeItem(effectiveStorageKey);
                 onReset?.();
               }}
               className="flex items-center gap-2"

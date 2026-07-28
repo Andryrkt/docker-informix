@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getEtatPlanningColorMark } from "@/helper/helper";
+import { getEtatPlanningCmdeMagasinColorMark } from "@/helper/helper";
 import { cn, formatMonthDisplay } from "@/lib/utils";
 import type { PlanningDit } from "../schema/planningDitSchema";
 
@@ -86,7 +86,7 @@ function PlanningDitTable({
                               key={i}
                               className={cn(
                                 "text-xs",
-                                getEtatPlanningColorMark(e.etat),
+                                getEtatPlanningCmdeMagasinColorMark(e.etat),
                               )}
                             >
                               {e.value != null && e.value != 0

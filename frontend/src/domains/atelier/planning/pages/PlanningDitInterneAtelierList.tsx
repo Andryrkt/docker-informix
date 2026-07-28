@@ -12,6 +12,7 @@ import { getAgencesTravaux } from "@/domains/agenceTravaux/agenceTravauxApi";
 import { getWeeksOfYear } from "@/lib/dateUtils";
 import { getRessources } from "@/domains/ressource/ressourceApi";
 import { getSections } from "@/domains/section/sectionApi";
+import PlanningStatusBadge from "@/components/common/PlannigStatusBadge";
 
 function PlanningDitInterneAtelierList() {
   const { currentPage, setPage, selectedFilters, setFilter, reset } =
@@ -145,12 +146,7 @@ function PlanningDitInterneAtelierList() {
         ></CollapsibleFilterForm>
         <div className="max-w-7xl mx-auto md:flex justify-between">
           <div>
-            <LivraisonStatutsList
-              value={selectedFilters.etat_livraison}
-              onChange={(etat_livraison) => {
-                setFilter("etat_livraison", etat_livraison);
-              }}
-            ></LivraisonStatutsList>
+            <PlanningStatusBadge></PlanningStatusBadge>
           </div>
         </div>
         <PlanningDitInterneAtelierTable

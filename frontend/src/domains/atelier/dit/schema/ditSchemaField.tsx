@@ -1,5 +1,5 @@
 import { getAgences } from "@/domains/agence/api";
-import { getNiveauUrgence } from "@/domains/niveauUrgence/api";
+import { getNiveauUrgences } from "@/domains/niveauUrgence/niveauUrgenceApi";
 import {
   reparationTypesOptions,
   reparationRealiseParOptions,
@@ -121,7 +121,7 @@ export const interventionFields: FieldTrait[] = [
     label: "Niveau d'urgence",
     type: "select",
     queryKey: "worNiveauUrgence",
-    queryFn: () => getNiveauUrgence(),
+    queryFn: () => getNiveauUrgences(),
   },
   {
     name: "datePrevue",

@@ -1,48 +1,37 @@
 import { cn } from "@/lib/utils";
 import { getStatusDevisClass, getStatusDitClass } from "@/helper/helper";
-
-type StatusItem = {
-  label: string;
-  value: string;
-  count: number;
-};
+import type { StatusCount } from "@/domains/atelier/dit/api/ditApi";
 
 type Props = {
   title?: string;
-  items: StatusItem[];
+  items: StatusCount[];
   value?: string;
   onChange?: (value: string) => void;
 };
 
-export const ditStatusMock: StatusItem[] = [
+export const ditStatusMock: StatusCount[] = [
   {
-    label: "A AFFECTER",
-    value: "A AFFECTER",
-    count: 764,
+    description: "A AFFECTER",
+    count: 0,
   },
   {
-    label: "AFFECTEE SECTION",
-    value: "AFFECTEE SECTION",
-    count: 2103,
+    description: "AFFECTEE SECTION",
+    count: 0,
   },
   {
-    label: "CLOTUREE ANNULEE",
-    value: "CLOTUREE ANNULEE",
-    count: 1829,
+    description: "CLOTUREE ANNULEE",
+    count: 0,
   },
   {
-    label: "CLOTUREE HORS DELAI",
-    value: "CLOTUREE HORS DELAI",
-    count: 9777,
+    description: "CLOTUREE HORS DELAI",
+    count: 0,
   },
   {
-    label: "CLOTUREE VALIDEE",
-    value: "CLOTUREE VALIDEE",
-    count: 10520,
+    description: "CLOTUREE VALIDEE",
+    count: 0,
   },
   {
-    label: "TERMINEE",
-    value: "TERMINEE",
+    description: "TERMINEE",
     count: 0,
   },
 ] as const;
@@ -58,13 +47,13 @@ export default function StatusBadgeGroup({
       <div className="text-[0.6rem] text-gray-700 pb-1">{title}</div>
       <div className="grid grid-cols-3 gap-2 ">
         {items.map((item) => {
-          const active = value === item.value;
-          const statusClass = getStatusDitClass(item.value);
+          const active = value === item.description;
+          const statusClass = getStatusDitClass(item.description);
 
           return (
             <button
-              key={item.value}
-              onClick={() => onChange?.(item.value)}
+              key={item.description}
+              onClick={() => onChange?.(item.description)}
               className={cn(
                 "flex items-center gap-2 px-3 rounded-md border text-[0.65rem] transition flex-1 font-semibold cursor-pointer",
                 statusClass,
@@ -74,7 +63,7 @@ export default function StatusBadgeGroup({
               )}
             >
               <span className="px-2 py-0.5 rounded-full">{item.count}</span>
-              <span className="whitespace-nowrap">{item.label}</span>
+              <span className="whitespace-nowrap">{item.description}</span>
             </button>
           );
         })}

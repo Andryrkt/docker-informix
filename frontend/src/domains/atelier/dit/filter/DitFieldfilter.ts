@@ -27,7 +27,6 @@ export const ditFieldFilters: FilterField[][] = [
       name: "realise_par",
       label: "Réalisé par",
       type: "select",
-      queryKey: "realise_par",
       queryFn: async () => [],
     },
     {
@@ -41,9 +40,8 @@ export const ditFieldFilters: FilterField[][] = [
     {
       name: "niveau_urgence",
       label: "Niveau d'urgence",
+      queryKey: "worNiveauUrgence",
       type: "select",
-      queryKey: "niveau_urgence",
-      queryFn: async () => [],
     },
     // 🌐 INTERNE / EXTERNE
     {
@@ -68,7 +66,6 @@ export const ditFieldFilters: FilterField[][] = [
       label: "Section affectée",
       type: "select",
       queryKey: "section_affectee",
-      queryFn: async () => [],
     },
     // ✅ DIT SANS OR
     {
@@ -99,7 +96,6 @@ export const ditFieldFilters: FilterField[][] = [
       label: "Statut OR",
       type: "select",
       queryKey: "statut_or",
-      queryFn: async () => [],
     },
     // 🏢 SECTION support
     {
@@ -107,7 +103,6 @@ export const ditFieldFilters: FilterField[][] = [
       label: "Section support1",
       type: "select",
       queryKey: "section_support1",
-      queryFn: async () => [],
     },
   ],
 
@@ -118,21 +113,18 @@ export const ditFieldFilters: FilterField[][] = [
       label: "Agence émetteur",
       type: "select",
       queryKey: "agences",
-      queryFn: async () => [],
     },
     {
       name: "service_emetteur",
       label: "Service émetteur",
       type: "select",
       queryKey: "services_emetteur",
-      queryFn: async () => [],
     },
     {
       name: "categorie_demande",
       label: "Catégorie de demande",
       type: "select",
       queryKey: "categories_demande",
-      queryFn: async () => [],
     },
 
     {
@@ -140,7 +132,6 @@ export const ditFieldFilters: FilterField[][] = [
       label: "Section support2",
       type: "select",
       queryKey: "section_support2",
-      queryFn: async () => [],
     },
   ],
 
@@ -151,28 +142,23 @@ export const ditFieldFilters: FilterField[][] = [
       label: "Agence débiteur",
       type: "select",
       queryKey: "agences_debiteur",
-      queryFn: async () => [],
     },
     {
       name: "service_debiteur",
       label: "Service débiteur",
       type: "select",
       queryKey: "services_debiteur",
-      queryFn: async () => [],
     },
     {
       name: "utilisateur",
       label: "Utilisateur",
-      type: "select",
-      queryKey: "utilisateur",
-      queryFn: async () => [],
+      type: "text",
     },
     {
       name: "section_support3",
       label: "Section support3",
       type: "select",
       queryKey: "section_support3",
-      queryFn: async () => [],
     },
   ],
   [

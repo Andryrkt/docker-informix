@@ -13,7 +13,7 @@ function PlanningMagasinList() {
     usePageSearchParams(1);
 
   const {
-    data: planning,
+    data: planningCmdeMagasin,
     isLoading,
     isFetching,
   } = useQuery({
@@ -37,7 +37,7 @@ function PlanningMagasinList() {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
-  
+
   const getServicesForAgent = (agentValue: string) => {
     const agent = agenceServices.find((a) => a.value === agentValue);
     return agent ? agent.services : [];
@@ -87,7 +87,7 @@ function PlanningMagasinList() {
     reset();
   };
 
-  const items = planning?.data ?? [];
+  const items = planningCmdeMagasin?.data ?? [];
 
   return (
     <div className="px-2 w-full  ">

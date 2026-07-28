@@ -100,7 +100,7 @@ export const formatMontant = (
   montant: string | number,
   devise: string,
 ): string => {
-  const num = typeof montant === 'number' ? montant : parseFloat(montant);
+  const num = typeof montant === "number" ? montant : parseFloat(montant);
   return (
     new Intl.NumberFormat("fr-FR", {
       minimumFractionDigits: 2,
@@ -113,4 +113,12 @@ export const formatMontant = (
 
 export const getOptions = (field: any, optionsQuery: any) => {
   return field.options ?? optionsQuery?.data ?? [];
+};
+
+export const displayValue = (value: string | number | null | undefined) => {
+  if (value === null || value === undefined || value === "") {
+    return "-";
+  }
+
+  return value;
 };

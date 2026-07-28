@@ -7,12 +7,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import PlanningCmdeMagasinTableSkeleton from "./PlanningCmdeMagasinTableSkeleton";
-import type { PlanningCmdeMagasin } from "../schema/planningCmdeMagasinSchema";
+import type {
+  PlanningCmdeMagasin,
+  ValeurMensuelleEntry,
+} from "../schema/planningCmdeMagasinSchema";
 import { cn } from "@/lib/utils";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useRef, useState, useCallback } from "react";
 import { getEtatPlanningCmdeMagasinColorMark } from "@/helper/helper";
-import { CommandesListModal } from "./CommandesListModal";
+import { CmdeMagasinTableModal } from "./CmdeMagasinTableModal";
 // import { MonthEntriesDialog } from "./MonthEntriesDialog"; // 👈 import
 
 function PlanningCmdeMagasinTable({
@@ -48,12 +51,12 @@ function PlanningCmdeMagasinTable({
   const [modalData, setModalData] = useState<{
     clientName: string;
     month: string;
-    entries: any[];
+    entry: ValeurMensuelleEntry;
   } | null>(null);
 
   const openModal = useCallback(
-    (clientName: string, month: string, entries: any[]) => {
-      setModalData({ clientName, month, entries });
+    (clientName: string, month: string, entry: ValeurMensuelleEntry) => {
+      setModalData({ clientName, month, entry });
       setModalOpen(true);
     },
     [],
@@ -120,11 +123,6 @@ function PlanningCmdeMagasinTable({
                             ? "text-foreground"
                             : "text-muted-foreground",
                         )}
-                        onClick={() => {
-                          if (hasEntries) {
-                            openModal(d.NOM_CLIENT, month, entries);
-                          }
-                        }}
                       >
                         {hasEntries ? (
                           <div className="space-y-0.5">
@@ -132,9 +130,14 @@ function PlanningCmdeMagasinTable({
                               <div
                                 key={i}
                                 className={cn(
-                                  "text-xs underline hover:text-brand-dark transition-colors duration-300",
+                                  "text-xs underline hover:text-brand-dark transition-colors duration-300 cursor-pointer",
                                   getEtatPlanningCmdeMagasinColorMark(e.etat),
                                 )}
+                                onClick={() => {
+                                  if (hasEntries) {
+                                    openModal(d.NOM_CLIENT, month, e);
+                                  }
+                                }}
                               >
                                 {e.value != null && e.value !== 0
                                   ? e.value.toLocaleString()
@@ -177,12 +180,12 @@ function PlanningCmdeMagasinTable({
       </div>
 
       {/* Reusable dialog */}
-      <CommandesListModal
+      <CmdeMagasinTableModal
         open={modalOpen}
         onOpenChange={setModalOpen}
         clientName={modalData?.clientName ?? ""}
         month={modalData?.month ?? ""}
-        entries={modalData?.entries ?? []}
+        entry={modalData?.entry}
       />
     </>
   );

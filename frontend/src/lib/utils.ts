@@ -141,28 +141,38 @@ export const formatMonthDisplay = (
   return date.toLocaleString(locale, { month: "short", year: "numeric" });
 };
 
-export const STATUS_CONFIG: Record<
-  StatutLigne,
-  { label: string; color: string; bg: string }
-> = {
-  "DISPO STOCK": {
+export const CMDE_MAGASIN_STATUS_CONFIG: {
+  value: StatutLigne;
+  label: string;
+  className: string;
+}[] = [
+  {
+    value: "DISPO STOCK",
     label: "DISPO STOCK",
-    color: "text-green-700",
-    bg: "bg-green-100",
+    className: "text-yellow-700 hover:text-yellow-800",
   },
-  "Back Order / Error": {
+  {
+    value: "Back Order / Error",
     label: "Back Order / Error",
-    color: "text-red-700",
-    bg: "bg-red-100",
+    className: "text-red-700 hover:text-red-800",
   },
-  "Commande envoyée fournisseur": {
+  {
+    value: "Commande envoyée fournisseur",
     label: "Commande envoyée fournisseur",
-    color: "text-blue-700",
-    bg: "bg-blue-100",
+    className: "text-green-500 hover:text-green-600",
   },
-  "Réception Partielle": {
+  {
+    value: "Réception Partielle",
     label: "Réception Partielle",
-    color: "text-amber-700",
-    bg: "bg-amber-100",
+    className: "text-yellow-400 hover:text-yellow-500",
   },
-};
+];
+
+export function getCmdeMagasinStatusClass(status?: StatutLigne | null): string {
+  if (!status) return "text-gray-500";
+
+  return (
+    CMDE_MAGASIN_STATUS_CONFIG.find((item) => item.value === status)
+      ?.className ?? "text-gray-500"
+  );
+}

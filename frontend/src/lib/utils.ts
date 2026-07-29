@@ -132,15 +132,6 @@ export const normalizeFiles = (val: any): File[] => {
   return [];
 };
 
-export const formatMonthDisplay = (
-  monthStr: string,
-  locale: string,
-): string => {
-  const [year, month] = monthStr.split("-").map(Number);
-  const date = new Date(year, month - 1, 1);
-  return date.toLocaleString(locale, { month: "short", year: "numeric" });
-};
-
 export const CMDE_MAGASIN_STATUS_CONFIG: {
   value: StatutLigne;
   label: string;

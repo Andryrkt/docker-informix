@@ -108,3 +108,15 @@ export const getStatutsDevis = async (): Promise<StatutDevisOption[]> => {
   const { data } = await axiosInstance.get<StatutDevis[]>("/devis/statuts");
   return data.map(mapStatutDevisToOption);
 };
+
+export const submitRelanceDevis = async (params: {
+  numeroDevis: string;
+  dateRelance: string;
+}) => {
+  if (USE_MOCK) {
+    await new Promise((resolve) => setTimeout(resolve, 8000)); // simulate network
+    return { success: true, message: "Relance enregistrée (mock)" };
+  }
+  const { data } = await axiosInstance.post("/devis/relance", params);
+  return data;
+};

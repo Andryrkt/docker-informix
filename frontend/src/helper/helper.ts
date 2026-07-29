@@ -2,59 +2,79 @@ import type { CommandeStatut } from "@/domains/commande/commandeMocks";
 
 export const getStatutDevisClass = (status?: string) => {
   if (!status) return "text-gray-800";
-
-  if (isDateLike(status)) {
-    return "bg-yellow-400 text-black";
-  }
+  if (isDateLike(status)) return "bg-yellow-400 text-black font-semibold";
 
   switch (status) {
-    case "A traiter":
-      return "bg-red-500 text-white";
-
+    // ---- Devis statuses (from your CSS) ----
     case "Prix à confirmer":
-      return "bg-yellow-400 text-black";
+      return "bg-yellow-400 text-black"; // #ffc107
 
     case "Prix validé - devis à envoyer au client":
-      return "bg-green-500 text-black";
-
     case "Prix validé - devis à soumettre":
-      return "bg-emerald-600 text-white";
+      return "bg-green-500 text-black"; // #28a745
 
     case "Prix modifié - devis à envoyer au client":
-      return "bg-amber-400 text-black";
-
+      return "bg-red-500 text-white"; // #dc3545
     case "Prix modifié - devis à soumettre":
-      return "bg-amber-600 text-white";
+      return "bg-red-500 text-black"; // #dc3545
 
     case "Demande refusée par le PM":
-      return "bg-rose-600 text-white";
+      return "bg-gray-500 text-white"; // #6c757d
 
     case "A valider chef d'agence":
-      return "bg-purple-500 text-white";
+      return "bg-yellow-400 text-black"; // #ffc107
 
     case "Validé - à envoyer au client":
-      return "bg-teal-500 text-black";
+      return "bg-green-500 text-black"; // #28a745
 
     case "Envoyé au client":
-      return "bg-blue-400 text-black";
+      return "bg-blue-600 text-black"; // #007bff
 
     case "Cloturé - A modifier":
-      return "bg-gray-500 text-white";
+      return "bg-gray-500 text-white"; // #6c757d
 
-    // BC statuses (if also used here)
-    case "En attente bc":
-      return "bg-lime-600 text-black";
-    case "Validé":
-      return "bg-green-800 text-white";
+    case "A traiter":
+      return "bg-rose-500 text-white"; // #fb335b
+
+    // ---- BC statuses (from your CSS) ----
     case "Soumis à validation":
-      return "bg-amber-400 text-black";
+      return "bg-yellow-400 text-black"; // #ffc107
+
+    case "En attente bc":
+      return "bg-emerald-300 text-black"; // #00ff9d (close to lime-400)
+
+    case "Validé":
+      return "bg-green-600 text-white"; // #198754
+
     case "A valider PM":
-      return "bg-indigo-600 text-white";
+      return "bg-indigo-500 text-white"; // custom, not in CSS but used earlier
 
     default:
       return "text-gray-600";
   }
 };
+
+export const getStatutRelanceClass = (status?: string) => {
+  if (!status) return "text-gray-800";
+  if (isDateLike(status))
+    return "bg-yellow-400 text-black font-semibold border";
+
+  switch (status) {
+    case "A relancé":
+      return "bg-green-500 text-white";
+    case "En cours":
+      return "bg-blue-400 text-black";
+    case "Terminé":
+      return "bg-green-600 text-white";
+    case "Stop":
+      return "bg-red-500 text-white";
+    case "Stoppé":
+      return "bg-gray-500 text-white";
+    default:
+      return "text-gray-600";
+  }
+};
+
 export const getStatusDitClass = (status?: string) => {
   if (!status) return "text-gray-600";
 
@@ -119,8 +139,12 @@ export function getCommandeStatusStyle(statut: CommandeStatut) {
 
 const isDateLike = (value?: string) => {
   if (!value) return false;
-  // matches DD/MM/YYYY
-  return /^\d{2}\/\d{2}\/\d{4}$/.test(value);
+  // ISO: YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss
+  if (/^\d{4}-\d{2}-\d{2}/.test(value)) return true;
+  // DD/MM/YYYY
+  if (/^\d{2}\/\d{2}\/\d{4}/.test(value)) return true;
+  // DD-MM-YYYY
+  if (/^\d{2}-\d{2}-\d{4}/.test(value)) return true;
 };
 export const formatMontant = (
   montantOrOptions:

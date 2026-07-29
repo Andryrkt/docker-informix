@@ -38,6 +38,7 @@ export const generateMockDevis = (count: number = 20): Devis[] => {
   ];
 
   const positions = ["AC", "DE", "RE", "TR"];
+
   const clients = [
     "Dupont SAS",
     "Martin SARL",
@@ -80,9 +81,10 @@ export const generateMockDevis = (count: number = 20): Devis[] => {
     ),
     stopProgressionGlobal: maybe("STOP", 0.15),
     motifStopGlobal: maybe("Délai dépassé", 0.1),
-    statutRelance1: maybe(randomItem(["En cours", "Terminé"]), 0.6),
-    statutRelance2: maybe(randomItem(["En cours", "Terminé"]), 0.4),
-    statutRelance3: maybe(randomItem(["En cours", "Terminé"]), 0.2),
+    statutRelance1: maybe(randomItem([ "21-10-2026"]), 0.2),
+    statutRelance2: maybe(randomItem([ "21-10-2026"]), 0.2),
+    statutRelance3: maybe(randomItem([ "21-10-2026"]), 0.2),
+
     positionIps: randomItem(positions),
     utilisateurCreateurDevis: `Utilisateur ${String.fromCharCode(65 + (i % 26))}${Math.floor(Math.random() * 100)}`,
     soumisPar: maybe(

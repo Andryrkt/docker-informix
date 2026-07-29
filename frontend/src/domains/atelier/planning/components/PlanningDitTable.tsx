@@ -7,8 +7,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getEtatPlanningCmdeMagasinColorMark } from "@/helper/helper";
-import { cn, formatMonthDisplay } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import type { PlanningDit } from "../schema/planningDitSchema";
+import { formatMonthDisplay } from "@/lib/dateUtils";
 
 function PlanningDitTable({
   data,

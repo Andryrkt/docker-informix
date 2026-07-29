@@ -17,7 +17,7 @@ import {
 } from "./atom/BilanFinanciereCard";
 import { mockCommandes } from "@/domains/commande/commandeMocks";
 import { Paperclip } from "lucide-react";
-import { formatDate } from "@/lib/utils";
+import { formatApprorpiateDate } from "@/lib/dateUtils";
 
 type Props = {
   dit: Dit;
@@ -32,7 +32,7 @@ function DitView({ dit, bilanFinancier, materiel }: Props) {
     },
     {
       label: "Date prévue",
-      value: formatDate(dit?.datePrevue),
+      value: formatApprorpiateDate(dit?.datePrevue),
     },
     {
       label: "Statut",
@@ -124,7 +124,7 @@ function DitView({ dit, bilanFinancier, materiel }: Props) {
                 ></FieldReadOnly>
                 <FieldReadOnly
                   label="Date Demande"
-                  value={formatDate(dit?.dateDemande)}
+                  value={formatApprorpiateDate(dit?.dateDemande)}
                 ></FieldReadOnly>
                 <FieldReadOnly
                   label="Statut DIT"
@@ -196,7 +196,7 @@ function DitView({ dit, bilanFinancier, materiel }: Props) {
                         className="font-mono text-gray-600  wrap-break-word whitespace-normal text-center"
                       >
                         <TableCell>{cmd.numero}</TableCell>
-                        <TableCell>{formatDate(cmd.date)}</TableCell>
+                        <TableCell>{formatApprorpiateDate(cmd.date)}</TableCell>
                         <TableCell>
                           <span className={""}>{cmd.statut}</span>
                         </TableCell>

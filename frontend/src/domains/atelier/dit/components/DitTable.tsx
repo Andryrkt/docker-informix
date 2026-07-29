@@ -10,7 +10,7 @@ import type { Dit } from "../schema/ditSchema";
 import { formatMontant, getStatusDitClass } from "@/helper/helper";
 import { MoreVerticalIcon, ToolCase } from "lucide-react";
 import { Link } from "react-router-dom";
-import { cn, formatDate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import DotsMenu, { type MenuAction } from "./Dots.Menu";
 import { useCallback, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { checkDitSubmission } from "../api/ditApi";
 import { Button } from "@/components/ui/button";
 import { DitTableSkeleton } from "./DitTableSkeleton";
+import { formatApprorpiateDate } from "@/lib/dateUtils";
 
 function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
   const navigate = useNavigate();
@@ -243,7 +244,7 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
                   </TableCell>
 
                   <TableCell className="   wrap-break-word whitespace-normal max-w-20 text-[0.6rem]">
-                    {formatDate(d.dateDemande)}
+                    {formatApprorpiateDate(d.dateDemande)}
                   </TableCell>
 
                   <TableCell>{d.interneExterne}</TableCell>
@@ -286,7 +287,9 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
 
                   <TableCell>{formatMontant(d.montantOr, "Ar")}</TableCell>
 
-                  <TableCell>{formatDate(d.dateSoumissionOr)}</TableCell>
+                  <TableCell>
+                    {formatApprorpiateDate(d.dateSoumissionOr)}
+                  </TableCell>
 
                   <TableCell className="w-fit wrap-break-word whitespace-normal ">
                     <Button

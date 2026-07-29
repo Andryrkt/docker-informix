@@ -80,7 +80,7 @@ export type AgenceOption = {
 
 export const getAgencesWithServices = async (): Promise<AgenceOption[]> => {
   if (USE_MOCK) {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // await new Promise((resolve) => setTimeout(resolve, 000));
     return agenciesMock.map((agency) => ({
       label: agency.name,
       value: String(agency.id),

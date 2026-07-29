@@ -117,7 +117,7 @@ export async function fetchPlanningCmdeMagasinMock(
   return {
     data,
     current_page: page,
-    totalPages,
+    total_pages: totalPages,
     resultat: total,
   };
 }

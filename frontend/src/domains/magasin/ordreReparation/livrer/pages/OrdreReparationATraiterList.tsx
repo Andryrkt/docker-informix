@@ -38,7 +38,7 @@ function OrdreReparationATraiterList() {
   });
 
   const items = ordreRepartionALivrers?.data ?? [];
-  const lastPage = ordreRepartionALivrers?.totalPages;
+  const lastPage = ordreRepartionALivrers?.total_pages;
   const totalResults = ordreRepartionALivrers?.resultat;
 
   const fetchAllOrLivrerForExport = useCallback(async () => {

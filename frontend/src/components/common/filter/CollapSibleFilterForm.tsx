@@ -114,23 +114,29 @@ export default function CollapsibleFilterForm({
   // Fetch options for fields that have queryFn
   useEffect(() => {
     const fetchAll = async () => {
-      const newOptions: Record<string, FilterOption[]> = {};
       const allFields = fields.flat();
-      for (const field of allFields) {
-        // Only fetch if queryFn exists (select, multichoice, radio may have it)
-        if (
-          (field as any).queryFn &&
-          typeof (field as any).queryFn === "function"
-        ) {
+      const fetchPromises = allFields
+        .filter(
+          (field) =>
+            (field as any).queryFn &&
+            typeof (field as any).queryFn === "function",
+        )
+        .map(async (field) => {
           try {
             const opts = await (field as any).queryFn();
-            newOptions[field.name] = opts;
+            return { name: field.name, opts };
           } catch (err) {
             console.error(`Failed to fetch options for ${field.name}`, err);
-            newOptions[field.name] = [];
+            return { name: field.name, opts: [] };
           }
-        }
-      }
+        });
+
+      const results = await Promise.all(fetchPromises);
+      const newOptions: Record<string, FilterOption[]> = {};
+      results.forEach(({ name, opts }) => {
+        newOptions[name] = opts;
+      });
+      
       setFieldOptions(newOptions);
     };
 

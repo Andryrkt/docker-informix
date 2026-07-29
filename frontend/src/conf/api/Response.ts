@@ -1,7 +1,7 @@
 export interface PaginatedResponse<T> {
   data: T[];
   current_page: number;
-  totalPages: number;
+  total_pages: number;
   resultat: number;
 }
 export interface ApiResponse<T> {

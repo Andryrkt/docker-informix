@@ -46,7 +46,7 @@ function DossierDitTableWithView() {
   });
 
   const items = dossierDitListItem?.data ?? [];
-  const lastPage = dossierDitListItem?.totalPages ?? 1;
+  const lastPage = dossierDitListItem?.total_pages ?? 1;
 
   // État du DIT sélectionné
   const [selectedDit, setSelectedDit] = useState<DossierDitListItem | null>(

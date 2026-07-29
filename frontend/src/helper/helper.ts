@@ -1,9 +1,8 @@
 import type { CommandeStatut } from "@/domains/commande/commandeMocks";
 
-export const getStatusDevisClass = (status?: string) => {
+export const getStatutDevisClass = (status?: string) => {
   if (!status) return "text-gray-800";
 
-  // DATE CASE
   if (isDateLike(status)) {
     return "bg-yellow-400 text-black";
   }
@@ -11,20 +10,47 @@ export const getStatusDevisClass = (status?: string) => {
   switch (status) {
     case "A traiter":
       return "bg-red-500 text-white";
-    case "A relancer":
-      return "bg-red-500 text-white";
-    case "Prix validé - devis à envoyer au client":
-      return "bg-green-500 text-black";
-
-    case "Envoyé au client":
-      return "bg-blue-400 text-white";
 
     case "Prix à confirmer":
       return "bg-yellow-400 text-black";
+
+    case "Prix validé - devis à envoyer au client":
+      return "bg-green-500 text-black";
+
+    case "Prix validé - devis à soumettre":
+      return "bg-emerald-600 text-white";
+
+    case "Prix modifié - devis à envoyer au client":
+      return "bg-amber-400 text-black";
+
+    case "Prix modifié - devis à soumettre":
+      return "bg-amber-600 text-white";
+
+    case "Demande refusée par le PM":
+      return "bg-rose-600 text-white";
+
+    case "A valider chef d'agence":
+      return "bg-purple-500 text-white";
+
+    case "Validé - à envoyer au client":
+      return "bg-teal-500 text-black";
+
+    case "Envoyé au client":
+      return "bg-blue-400 text-black";
+
+    case "Cloturé - A modifier":
+      return "bg-gray-500 text-white";
+
+    // BC statuses (if also used here)
     case "En attente bc":
       return "bg-lime-600 text-black";
     case "Validé":
       return "bg-green-800 text-white";
+    case "Soumis à validation":
+      return "bg-amber-400 text-black";
+    case "A valider PM":
+      return "bg-indigo-600 text-white";
+
     default:
       return "text-gray-600";
   }
@@ -97,18 +123,32 @@ const isDateLike = (value?: string) => {
   return /^\d{2}\/\d{2}\/\d{4}$/.test(value);
 };
 export const formatMontant = (
-  montant: string | number,
-  devise: string,
+  montantOrOptions:
+    | string
+    | number
+    | { montant: string | number; devise?: string },
+  deviseParam?: string,
 ): string => {
+  let montant: string | number;
+  let devise: string | undefined;
+
+  // Detect if called with an object
+  if (typeof montantOrOptions === "object" && montantOrOptions !== null) {
+    ({ montant, devise } = montantOrOptions);
+  } else {
+    montant = montantOrOptions as string | number;
+    devise = deviseParam;
+  }
+
   const num = typeof montant === "number" ? montant : parseFloat(montant);
-  return (
-    new Intl.NumberFormat("fr-FR", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(num) +
-    " " +
-    devise
-  );
+  if (isNaN(num)) return "-";
+
+  const formatted = new Intl.NumberFormat("fr-FR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(num);
+
+  return devise ? `${formatted} ${devise}` : formatted;
 };
 
 export const getOptions = (field: any, optionsQuery: any) => {

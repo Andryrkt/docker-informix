@@ -209,7 +209,7 @@ function DitList() {
   };
 
   const items = dits?.data ?? [];
-  const lastPage = dits?.totalPages ?? 1;
+  const lastPage = dits?.total_pages ?? 1;
   const totalResults = dits?.resultat ?? 0;
   const statusCounts = dits?.statusCounts ?? [];
 

@@ -1,29 +1,24 @@
 export interface Devis {
-  DATE_CDE_BRUTE: string;
-  STATUT_DW: string | null;
-  STATUT_BC: string | null;
-  NUMERO_DEVIS: string;
-  DATE_CREATION: string;
-  EMETTEUR: string;
-  CLIENT: string;
-  REFERENCE_CLIENT: string;
-  MONTANT_DEVIS: string;
-  DATE_ENVOYE_DEVIS_AU_CLIENT: string | null;
-  STOP_PROGRESSION_GLOBAL: string | null;
-  MOTIF_STOP_GLOBAL: string | null;
-  STATUT_RELANCE_1: string | null;
-  STATUT_RELANCE_2: string | null;
-  STATUT_RELANCE_3: string | null;
-  POSITION_IPS: string;
-  UTILISATEUR_CREATEUR_DEVIS: string;
-  SOUMIS_PAR: string | null;
+  date_cde_brute: string;
+  statutDw: string | null;
+  statutBc: string | null;
+  numeroDevis: string;
+  dateCreation: string;
+  emetteur: string;
+  client: string;
+  referenceClient: string;
+  montantDevis: string;
+  dateEnvoiDevisAuClient: string | null;
+  stopProgressionGlobal: string | null;
+  motifStopGlobal: string | null;
+  statutRelance1: string | null;
+  statutRelance2: string | null;
+  statutRelance3: string | null;
+  positionIps: string;
+  utilisateurCreateurDevis: string;
+  soumisPar: string | null;
   DEVISE: string;
   CONSTRUCTEUR: string;
-}
-
-export interface DevisParams {
-  codeSociete?: string;
-  sucNeg?: string;
-  skip?: number;
-  limit?: number;
+  numeroPo?: string;
+  urlPo?: string;
 }

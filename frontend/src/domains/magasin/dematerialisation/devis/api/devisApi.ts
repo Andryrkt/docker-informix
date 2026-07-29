@@ -1,47 +1,33 @@
 import type { PaginatedResponse } from "@/conf/api/Response";
 import axiosInstance from "@/conf/axios";
+import type { Devis } from "../schema/devisSchema";
+import { generateMockDevis } from "../schema/devisMock";
 
-export interface Devis {
-  DATE_CDE_BRUTE: string;
-  STATUT_DW: string | null;
-  STATUT_BC: string | null;
-  NUMERO_DEVIS: string;
-  DATE_CREATION: string;
-  EMETTEUR: string;
-  CLIENT: string;
-  REFERENCE_CLIENT: string;
-  MONTANT_DEVIS: string;
-  DATE_ENVOYE_DEVIS_AU_CLIENT: string | null;
-  STOP_PROGRESSION_GLOBAL: string | null;
-  MOTIF_STOP_GLOBAL: string | null;
-  STATUT_RELANCE_1: string | null;
-  STATUT_RELANCE_2: string | null;
-  STATUT_RELANCE_3: string | null;
-  POSITION_IPS: string;
-  UTILISATEUR_CREATEUR_DEVIS: string;
-  SOUMIS_PAR: string | null;
-  DEVISE: string;
-  CONSTRUCTEUR: string;
-}
-
-export interface DevisParams {
+interface DevisParams {
   codeSociete?: string;
   sucNeg?: string;
   skip?: number;
   limit?: number;
+  [key: string]: any;
 }
-
-export const fetchDevis1 = async (
-  params: DevisParams = {},
-): Promise<Devis[]> => {
-  const response = await axiosInstance.get<Devis[]>("/devis", { params });
-  return response.data;
-};
+const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true";
 
 export async function fetchDevis(
   params: DevisParams = {},
   page = 1,
 ): Promise<PaginatedResponse<Devis>> {
+  if (USE_MOCK) {
+    await new Promise((resolve) => setTimeout(resolve, 400));
+
+    const mockData = generateMockDevis(50);
+    return {
+      data: mockData,
+      total_pages: 1,
+      current_page: 1,
+      resultat: mockData.length,
+    };
+  }
+
   const cleanedParams = Object.fromEntries(
     Object.entries(params).filter(([_, val]) => val && val !== "all"),
   );
@@ -54,3 +40,71 @@ export async function fetchDevis(
 
   return response.data;
 }
+
+// STATUT_DEVIS
+
+// Types
+export interface StatutDevis {
+  libelle: string; // no id – just a label
+}
+
+export type StatutDevisOption = {
+  label: string;
+  value: string;
+};
+
+// ------------------------------------------------------------------
+// Mock data – typical quote life‑cycle statuses
+// ------------------------------------------------------------------
+const statutsDevisMock: StatutDevis[] = [
+  // ---- Initial / draft ----
+  { libelle: "Brouillon" },
+  { libelle: "En cours de rédaction" },
+
+  // ---- Sent to client ----
+  { libelle: "Envoyé" },
+  { libelle: "En attente de signature" },
+
+  // ---- Client feedback ----
+  { libelle: "En négociation" },
+  { libelle: "Accepté" },
+  { libelle: "Refusé" },
+  { libelle: "Contre-proposition" },
+
+  // ---- Internal validation ----
+  { libelle: "À valider" },
+  { libelle: "En validation" },
+  { libelle: "Validé" },
+  { libelle: "Rejeté" },
+
+  // ---- Converted to order ----
+  { libelle: "Transformé en commande" },
+  { libelle: "Commande en cours" },
+
+  // ---- Final / archive ----
+  { libelle: "Clôturé" },
+  { libelle: "Annulé" },
+  { libelle: "Archivé" },
+];
+
+// ------------------------------------------------------------------
+// Mapper – label and value both use libelle
+// ------------------------------------------------------------------
+const mapStatutDevisToOption = (statut: StatutDevis): StatutDevisOption => ({
+  label: statut.libelle,
+  value: statut.libelle,
+});
+
+// ------------------------------------------------------------------
+// Fetch function – returns SelectOption[]
+// ------------------------------------------------------------------
+export const getStatutsDevis = async (): Promise<StatutDevisOption[]> => {
+  if (USE_MOCK) {
+    await new Promise((resolve) => setTimeout(resolve, 200)); // simulate network
+    return statutsDevisMock.map(mapStatutDevisToOption);
+  }
+
+  // Real API call – adjust endpoint to your backend
+  const { data } = await axiosInstance.get<StatutDevis[]>("/devis/statuts");
+  return data.map(mapStatutDevisToOption);
+};

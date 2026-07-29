@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { getStatusDevisClass, getStatusDitClass } from "@/helper/helper";
+import { getStatutDevisClass, getStatusDitClass } from "@/helper/helper";
 import type { StatusCount } from "@/domains/atelier/dit/api/ditApi";
 
 type Props = {

@@ -75,7 +75,7 @@ export const getPaginateMockOrdresALivrer = (
   return {
     data,
     current_page: page,
-    totalPages: Math.ceil(total / limit),
+    total_pages: Math.ceil(total / limit),
     resultat: data.length,
   };
 };

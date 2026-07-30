@@ -15,6 +15,7 @@ export const ditFields: FieldTrait[] = [
     readOnly: true,
   },
 ];
+
 export const verificationFields: FieldTrait[] = [
   {
     name: "tachePartsManager",
@@ -32,6 +33,7 @@ export const verificationFields: FieldTrait[] = [
     accept: ".pdf,.doc,.docx,image/*",
   },
 ] as const;
+
 export const validationFields: FieldTrait[] = [
   {
     name: "pieceJointe",

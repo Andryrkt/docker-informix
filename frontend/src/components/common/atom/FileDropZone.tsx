@@ -318,7 +318,7 @@ export function FileDropzone({ field }: any) {
   return (
     <div
       className={cn(
-        "space-y-3 my-2 z-50 cursor-pointer",
+        "space-y-3 my-2 cursor-pointer",
         isProcessing && "cursor-wait",
       )}
     >
@@ -334,7 +334,7 @@ export function FileDropzone({ field }: any) {
           addFiles(e.dataTransfer.files);
         }}
         className={cn(
-          "relative flex flex-col items-center justify-center rounded-md border-2 border-dashed px-6 py-10 text-center duration-150 transition-all hover:border-brand-primary",
+          "relative flex flex-col items-center justify-center cursor-pointer rounded-md border-2 border-dashed px-6 py-10 text-center duration-150 transition-all hover:border-brand-primary",
           isDragging || isProcessing
             ? "border-brand-primary"
             : "border-muted-foreground/30 bg-muted/30",
@@ -345,7 +345,7 @@ export function FileDropzone({ field }: any) {
           type="file"
           multiple={field.multiple}
           disabled={field.disabled || isProcessing}
-          className="absolute inset-0 opacity-0 z-40"
+          className="absolute inset-0 opacity-0 z-40 cursor-pointer"
           onChange={(e) => addFiles(e.target.files)}
           pattern={field.pattern}
           accept={field.accept}

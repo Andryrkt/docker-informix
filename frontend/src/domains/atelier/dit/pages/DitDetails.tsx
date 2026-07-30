@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
-import { fetchDitDetails } from "../api/ditApi";
 import { useQuery } from "@tanstack/react-query";
 import DitView from "../components/DitView";
 import { searchMateriels } from "@/domains/materiel/api/materielApi";
+import { fetchDitDetails } from "../api/ditApi";
 
 function DitDetails() {
   const { numeroDemandeIntervention } = useParams();
@@ -30,9 +30,7 @@ function DitDetails() {
 
   if (isPending) {
     return (
-      <div className="p-4 text-center text-muted-foreground">
-        Chargement...
-      </div>
+      <div className="p-4 text-center text-muted-foreground">Chargement...</div>
     );
   }
 

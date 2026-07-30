@@ -47,6 +47,11 @@ import PlanningDitListDetaille from "@/domains/atelier/planning/pages/PlanningDi
 import PlanningMagasinList from "@/domains/magasin/dematerialisation/planning/pages/PlanningCmdeMagasinList";
 import OrdreReparationALivrerList from "@/domains/magasin/ordreReparation/livrer/pages/OrdreReparationALivrerList";
 import OrdreReparationATraiterList from "@/domains/magasin/ordreReparation/livrer/pages/OrdreReparationATraiterList";
+import VerificationPrixDevisForm from "@/domains/magasin/dematerialisation/devis/soumission/components/VerificationPrixDevisForm";
+import VerificationPrixDevisSoumission from "@/domains/magasin/dematerialisation/devis/soumission/pages/VerificationPrixDevisSoumission";
+import ValidationDevisSoumission from "@/domains/magasin/dematerialisation/devis/soumission/pages/ValidationDevisSoumission";
+import { verificationDevisLoader } from "./guards/verificationDevisLoader";
+import BonCommandeDevisSoumission from "@/domains/magasin/dematerialisation/devis/soumission/pages/BonCommandeDevisSoumission";
 
 function AppRoutes() {
   const publicRoutes = [
@@ -113,6 +118,20 @@ function AppRoutes() {
         {
           path: "/magasin/dematerialisation/planning-commande-magasin",
           element: <PlanningMagasinList />,
+        },
+        {
+          path: "/magasin/dematerialisation/soumission-devis-neg-verification-de-prix/VP/:numeroDevis",
+          element: <VerificationPrixDevisSoumission />,
+        },
+        {
+          path: "/magasin/dematerialisation/soumission-devis-neg-validation-devis/VD/:numeroDevis",
+          element: <ValidationDevisSoumission />,
+          loader: verificationDevisLoader("validation-devis"),
+        },
+        {
+          path: "/magasin/dematerialisation/soumission-bc-neg/:numeroDevis",
+          element: <BonCommandeDevisSoumission />,
+          loader: verificationDevisLoader("validation-devis"),
         },
 
         // Magazin -> ordre de reparation

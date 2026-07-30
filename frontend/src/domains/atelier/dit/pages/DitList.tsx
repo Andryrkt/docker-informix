@@ -6,7 +6,6 @@ import { buildExcelFilename } from "@/lib/utils";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import DitTable from "../components/DitTable";
 import GlobalPagination from "@/components/common/pagination/GlobalPagination";
-import { fetchCategoriesDemande, fetchDits } from "../api/ditApi";
 import LivraisonStatutsList from "@/components/common/LivraisonStatusBadge";
 import StatusBadgeGroup, {
   ditStatusMock,
@@ -23,6 +22,7 @@ import { getSections } from "@/domains/section/sectionApi";
 import { getStatutsFacture } from "@/domains/facture/factureApi";
 import { getStatutsOR } from "@/domains/or/statutOrApi";
 import { getCategories } from "../api/categorieApi";
+import { fetchDits } from "../api/ditApi";
 
 function DitList() {
   const {
@@ -261,7 +261,7 @@ function DitList() {
 
           <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
             <ExcelDownloadButton
-              // data={items}
+              data={items}
               fetchAllData={fetchAllDitsForExport}
               filename={buildExcelFilename(
                 "dit-list",

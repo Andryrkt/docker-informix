@@ -229,7 +229,7 @@ export function FieldRenderer({ field }: any) {
     // MULTICHOICE (checkbox group)
     case "multichoice": {
       if (optionsQuery?.isLoading) {
-        return <div className="text-xs text-gray-400">Loading...</div>;
+        return <div className="text-xs text-gray-400">Chargement...</div>;
       }
 
       const options = getOptions(field, optionsQuery);
@@ -241,7 +241,7 @@ export function FieldRenderer({ field }: any) {
             const checked = value.includes(opt.value);
 
             return (
-              <div key={opt.value} className="flex items-center gap-2">
+              <div key={opt.value} className="flex items-center gap-2 ">
                 <Checkbox
                   checked={checked}
                   disabled={field.disabled}
@@ -253,7 +253,14 @@ export function FieldRenderer({ field }: any) {
                     );
                   }}
                 />
-                <span className="text-sm">{opt.label}</span>
+                <span
+                  className={cn(
+                    "text-sm",
+                    field.disabled ? "text-brand-dark/50" : " ",
+                  )}
+                >
+                  {opt.label}
+                </span>
               </div>
             );
           })}
@@ -263,7 +270,7 @@ export function FieldRenderer({ field }: any) {
     // RADIO
     case "radio": {
       if (optionsQuery?.isLoading) {
-        return <div className="text-xs text-gray-400">Loading...</div>;
+        return <div className="text-xs text-gray-400">Chargement...</div>;
       }
 
       const options = getOptions(field, optionsQuery);

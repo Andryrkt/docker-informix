@@ -24,10 +24,11 @@ import type { MenuAction } from "@/domains/atelier/dit/components/Dots.Menu";
 import DotsMenu from "@/domains/atelier/dit/components/Dots.Menu";
 import { formatApprorpiateDate } from "@/lib/dateUtils";
 import DialogRelanceDevisForm from "./DialogRelanceDevisForm";
-import { submitRelanceDevis } from "../api/devisApi";
+import { submitRelanceDevis, updateStopProgression } from "../api/devisApi";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { useConfirm } from "@/components/common/ConfirmDialog";
+import { Switch } from "@/components/ui/switch";
 
 function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
   const navigate = useNavigate();
@@ -91,7 +92,16 @@ function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
     },
   });
 
-  
+  const stopMutation = useMutation({
+    mutationFn: updateStopProgression,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["devis"] });
+      toast.success("Statut de progression mis à jour");
+    },
+    onError: (error) => {
+      toast.error(error?.message || "Erreur lors de la mise à jour");
+    },
+  });
 
   if (loading) return <DevisTableSkeleton />;
 
@@ -99,7 +109,7 @@ function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
     <>
       <div ref={parentRef} className="w-full overflow-auto relative max-h-125">
         <Table className="min-w-max text-xs">
-          <TableHeader className="bg-brand-dark [&_th]:text-white sticky top-0">
+          <TableHeader className="bg-brand-dark [&_th]:text-white sticky top-0 z-9999">
             <TableRow className="hover:bg-brand-dark border-b-0">
               <TableHead>
                 <MoreVerticalIcon className="h-4 w-4" />
@@ -222,8 +232,18 @@ function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
                   >
                     {displayValue(d.statutRelance3)}
                   </TableCell>
-                  <TableCell className="font-mono ">
-                    {displayValue(d.stopProgressionGlobal)}
+                  <TableCell className="font-mono py-2">
+                    <Switch
+                      checked={d.stopProgressionGlobal === "STOP"}
+                      onCheckedChange={(checked) => {
+                        stopMutation.mutate({
+                          numeroDevis: d.numeroDevis,
+                          stop: checked,
+                        });
+                      }}
+                      disabled={stopMutation.isPending}
+                      className="z-0"
+                    />
                   </TableCell>
                   <TableCell className="font-mono ">
                     {displayValue(d.positionIps)}

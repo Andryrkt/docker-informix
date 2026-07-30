@@ -1,17 +1,21 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { duplicateDit, fetchDitDetails } from "../api/ditApi";
 import DitForm from "../components/DitForm";
 import type { DitFormValues } from "../schema/ditSchema";
 import { useQuery } from "@tanstack/react-query";
 import { useConfirm } from "@/components/common/ConfirmDialog";
 import { toast } from "sonner";
+import { fetchDitDetails, duplicateDit } from "../api/ditApi";
 
 function DitDuplication() {
   const { numeroDemandeIntervention } = useParams();
   const confirm = useConfirm();
   const navigate = useNavigate();
 
-  const { data: initialValues, isPending, error } = useQuery({
+  const {
+    data: initialValues,
+    isPending,
+    error,
+  } = useQuery({
     queryKey: ["dit-details", numeroDemandeIntervention],
     queryFn: () => fetchDitDetails(numeroDemandeIntervention!),
     enabled: !!numeroDemandeIntervention,
@@ -71,7 +75,9 @@ function DitDuplication() {
   };
 
   if (isPending) {
-    return <div className="p-4 text-center text-muted-foreground">Chargement...</div>;
+    return (
+      <div className="p-4 text-center text-muted-foreground">Chargement...</div>
+    );
   }
 
   if (error || !initialValues) {

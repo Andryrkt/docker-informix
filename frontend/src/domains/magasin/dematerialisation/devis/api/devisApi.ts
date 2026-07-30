@@ -1,4 +1,4 @@
-import type { PaginatedResponse } from "@/conf/api/Response";
+import type { ApiResponse, PaginatedResponse } from "@/conf/api/Response";
 import axiosInstance from "@/conf/axios";
 import type { Devis } from "../schema/devisSchema";
 import { generateMockDevis } from "../schema/devisMock";
@@ -15,6 +15,7 @@ const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true";
 export async function fetchDevis(
   params: DevisParams = {},
   page = 1,
+  limit: number = 20,
 ): Promise<PaginatedResponse<Devis>> {
   if (USE_MOCK) {
     await new Promise((resolve) => setTimeout(resolve, 400));
@@ -34,6 +35,7 @@ export async function fetchDevis(
   const response = await axiosInstance.get<PaginatedResponse<Devis>>("/devis", {
     params: {
       page,
+      limit,
       ...cleanedParams,
     },
   });
@@ -118,5 +120,63 @@ export const submitRelanceDevis = async (params: {
     return { success: true, message: "Relance enregistrée (mock)" };
   }
   const { data } = await axiosInstance.post("/devis/relance", params);
+  return data;
+};
+
+export const updateStopProgression = async (params: {
+  numeroDevis: string;
+  stop: boolean;
+}) => {
+  if (USE_MOCK) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return {
+      success: true,
+      data: {
+        numeroDevis: params.numeroDevis,
+        stopProgressionGlobal: params.stop ? "STOP" : null,
+      },
+    };
+  }
+  const { data } = await axiosInstance.put(
+    `/devis-stop-progression/${params.numeroDevis}/stop`,
+    { stop: params.stop },
+  );
+  return data;
+};
+
+export interface CheckDevisPayload {
+  document: string;
+  numeroDevis?: string;
+}
+
+export interface CheckDevisResponse {
+  allowed: boolean;
+  message?: string;
+  data?: any;
+}
+
+export const checkDevisSubmission = async (
+  payload: CheckDevisPayload,
+): Promise<ApiResponse<CheckDevisResponse>> => {
+  if (USE_MOCK) {
+    // Use the mock you provided
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          data: {
+            allowed: true,
+            message: "Mock: submission allowed",
+            data: null,
+          },
+          status: 200,
+          success: true,
+        });
+      }, 500);
+    });
+  }
+  const { data } = await axiosInstance.post<ApiResponse<CheckDevisResponse>>(
+    "/devis/check-submission",
+    payload,
+  );
   return data;
 };

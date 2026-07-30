@@ -19,7 +19,7 @@ export const interneExterneOptions: SelectOption[] = [
   { label: "EXTERNE", value: "EXTERNE" },
 ];
 
-export const yesNoOptions: SelectOption[] = [
+ const yesNoOptions: SelectOption[] = [
   { label: "Oui", value: "OUI" },
   { label: "Non", value: "NON" },
 ];

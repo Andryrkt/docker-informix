@@ -21,6 +21,7 @@ import { Card, CardContent } from "@/components/ui/card";
 interface DocumentViewerProps {
   files: File[];
   analysisResults?: Map<string, AnalysisResult>;
+  title?: string;
 }
 
 const PREVIEWABLE_TYPES = [
@@ -36,6 +37,7 @@ const PREVIEWABLE_TYPES = [
 export function DocumentViewer({
   files,
   analysisResults,
+  title,
 }: DocumentViewerProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -93,23 +95,24 @@ export function DocumentViewer({
       </span>
     );
   };
-
+  const defaultTitle =
+    files.length <= 1
+      ? "Prévisualisation du document"
+      : "Prévisualisation des documents";
   return (
     <div className="flex flex-col min-h-150 w-full overflow-hidden text-sm text-white transition-all duration-200 rounded-xs border border-white/10 bg-black/40 ">
       {/* Header */}
       <div className="border-b border-white/10 bg-brand-dark/80 shrink-0">
         <div className="flex items-center justify-between px-4 py-2 font-semibold">
           <h2>
-            {files.length <= 1
-              ? "Prévisualisation du document"
-              : "Prévisualisation des documents"}
+            <h2>{title ?? defaultTitle}</h2>
           </h2>
           <span className="rounded bg-white/10 px-2 py-0.5 text-xs">
             {files.length} document{files.length > 1 ? "s" : ""}
           </span>
         </div>
         {files.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto px-3 pb-2 scrollbar-none">
+          <div className="flex gap-2 overflow-x-auto px-3 pb-2 ">
             {files.map((file, index) => {
               const analysis = getAnalysis(file);
               return (

@@ -1,6 +1,6 @@
 // import PageHeaderWithAction from "@/layouts/PageHeaderWithAction";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import DevisTable from "../components/DevisTable";
 import CollapsibleFilterForm from "@/components/common/filter/CollapSibleFilterForm";
 import { ExcelDownloadButton } from "@/components/common/excel/ExcelDownloadButton";
@@ -15,6 +15,8 @@ import { getAgencesWithServices } from "@/domains/agenceService/agenceServiceApi
 import { getPositionsIPS } from "@/domains/positionIPS/positionIpsApi";
 import { getStatutsBC } from "@/domains/bc/BCApi";
 import { getClientOptions } from "@/domains/client/api/clientApi";
+import { queryClient } from "@/lib/queryClient";
+import { LimitSelector } from "@/components/common/pagination/LimitSelector";
 
 function DevisList() {
   const {
@@ -33,8 +35,8 @@ function DevisList() {
     isLoading,
     isFetching,
   } = useQuery({
-    queryKey: ["devis-neg", selectedFilters, currentPage],
-    queryFn: () => fetchDevis(selectedFilters, currentPage),
+    queryKey: ["devis-neg", selectedFilters, currentPage, currentLimit],
+    queryFn: () => fetchDevis(selectedFilters, currentPage, currentLimit),
     staleTime: 50 * 60 * 1000,
     gcTime: 50 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -145,10 +147,19 @@ function DevisList() {
 
   const items = devis?.data ?? [];
   const lastPage = devis?.total_pages ?? 1;
+  const totalResults = devis?.resultat ?? 0;
+
+  const fetchAllDevisNegForExport = useCallback(async () => {
+    const allData = await queryClient.fetchQuery({
+      queryKey: ["devis-export", JSON.stringify(selectedFilters), totalResults],
+      queryFn: () => fetchDevis(selectedFilters, 1, totalResults),
+    });
+    return allData.data;
+  }, [selectedFilters, queryClient]);
 
   return (
     <div className="px-2 w-full  ">
-      <div className=" w-full h-full space-y-6 overflow-x-auto">
+      <div className=" w-full h-full space-y-4 overflow-x-auto">
         <CollapsibleFilterForm
           fields={dynamicFields}
           onSearch={handleSearch}
@@ -163,17 +174,28 @@ function DevisList() {
           }}
         />
 
-        {/* Simple pagination */}
-        <div className="p-4 flex items-center justify-between mx-auto max-w-7xl">
-          <div>
-            <ExcelDownloadButton
-              data={items}
-              filename={buildExcelFilename(
-                "devis-list",
-                selectedFilters,
-                devisFieldfilter,
-              )}
-            ></ExcelDownloadButton>
+        <div className="max-w-7xl mx-auto w-full flex items-center justify-between mt-2">
+          <ExcelDownloadButton
+            data={items}
+            fetchAllData={fetchAllDevisNegForExport}
+            filename={buildExcelFilename(
+              "devis-list",
+              selectedFilters,
+              devisFieldfilter,
+            )}
+            label={
+              totalResults === 0
+                ? "Aucune donnée à exporter"
+                : "Exporter tout (filtré)"
+            }
+            disabled={totalResults === 0 || isLoading || isFetching}
+          ></ExcelDownloadButton>
+          <div className="flex items-center gap-4 font-bold ">
+            <span className="text-[0.7rem]">{totalResults} Résultats</span>
+            <LimitSelector
+              currentLimit={currentLimit}
+              onLimitChange={setLimit}
+            />
           </div>
           <div>
             <SimpleNextPreviousPagination
@@ -183,7 +205,6 @@ function DevisList() {
             />
           </div>
         </div>
-
         <DevisTable devis={items} loading={isLoading || isFetching} />
         <div className="p-4 flex">
           <div className="m-auto">

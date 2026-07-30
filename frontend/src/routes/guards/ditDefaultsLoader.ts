@@ -1,5 +1,5 @@
-import { fetchDitDefaults } from "@/domains/atelier/dit/api/ditApi";
 import { getAgences } from "@/domains/agence/api";
+import { fetchDitDefaults } from "@/domains/atelier/dit/api/ditApi";
 import { queryClient } from "@/lib/queryClient";
 
 /**

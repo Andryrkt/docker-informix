@@ -24,5 +24,16 @@
   "commerciaux": "Commerciaux",
   "agence-service": "Agence - Service",
   "code-client": "Code Client",
-  "nom-client": "Nom client"
+  "nom-client": "Nom client",
+  "date-planning": "Date Planning",
+  "niv-urgence": "Niv. Urgence",
+  "agence-emetteur": "Agence Émetteur",
+  "service-emetteur": "Service Émetteur",
+  "agence-debiteur": "Agence Débiteur",
+  "service-debiteur": "Service Débiteur",
+  "n-ligne": "N° Ligne",
+  "constructeur": "Constructeur",
+  "designation": "Désignation",
+  "qte-demandee": "Qté Demandée",
+  "utilisateur": "Utilisateur"
 }

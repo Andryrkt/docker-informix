@@ -12,8 +12,10 @@ import { useCallback } from "react";
 import OrdreReparationATraiterTable from "../components/OrdreReparationATraiterTable";
 import { fetchOrdresReparationATraiter } from "../api/ordreReparationATraiterApi";
 import { ordreReparationATraiterFieldsFilters } from "../filter/ordreReparationATraiterFieldFilter";
+import { useTranslation } from "react-i18next";
 
 function OrdreReparationATraiterList() {
+  const { t } = useTranslation("common");
   const {
     currentPage,
     setPage,
@@ -81,13 +83,15 @@ function OrdreReparationATraiterList() {
               )}
               label={
                 totalResults === 0
-                  ? "Aucune donnée à exporter"
-                  : "Exporter tout (filtré)"
+                  ? t("aucune-donnee-a-exporter")
+                  : t("exporter-tout-filtre")
               }
               disabled={totalResults === 0 || isLoading || isFetching}
             ></ExcelDownloadButton>
             <div className="flex items-center gap-4 font-bold ">
-              <span className="text-[0.7rem]">{totalResults} Résultats</span>
+              <span className="text-[0.7rem]">
+                {totalResults} {t("resultats")}
+              </span>
               <LimitSelector
                 currentLimit={currentLimit}
                 onLimitChange={setLimit}

@@ -24,5 +24,16 @@
   "agence-service": "Agency - Service",
   "code-client": "Customer Code",
   "commerciaux": "Commercial",
-  "nom-client": "Customer name"
+  "nom-client": "Customer name",
+  "agence-debiteur": "Debtor Agency",
+  "agence-emetteur": "Issuing Agency",
+  "constructeur": "Builder",
+  "date-planning": "Date Schedule",
+  "designation": "Designation",
+  "n-ligne": "Line No.",
+  "niv-urgence": "Lv. \nEmergency",
+  "qte-demandee": "Requested Qty",
+  "service-debiteur": "Debtor Service",
+  "service-emetteur": "Issuer Service",
+  "utilisateur": "User"
 }

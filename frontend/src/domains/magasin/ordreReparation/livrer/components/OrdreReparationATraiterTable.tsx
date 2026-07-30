@@ -26,6 +26,7 @@ import type { MenuAction } from "@/domains/atelier/dit/components/Dots.Menu";
 import type { OrdreReparationATraiter } from "../schema/ordreReparationATraiterSchema";
 import OrdreReparationLivrerSkeleton from "./OrdreReparationALivrerSkeleton";
 import DotsMenu from "@/domains/atelier/dit/components/Dots.Menu";
+import { useTranslation } from "react-i18next";
 
 // Helper pour le style d'urgence
 const getUrgenceClass = (niveau: string | null) => {
@@ -52,11 +53,14 @@ export default function OrdreReparationATraiterTable({
   ordres,
   loading,
 }: Props) {
+  const { t } = useTranslation("common");
+
   const confirm = useConfirm();
   const parentRef = useRef<HTMLDivElement>(null);
 
-  const [, setOpen] = useState(false);
-  const [, setSelectedOrder] = useState<OrdreReparationATraiter | null>(null);
+  const [open, setOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] =
+    useState<OrdreReparationATraiter | null>(null);
 
   const rowVirtualizer = useVirtualizer({
     count: ordres?.length ?? 0,
@@ -106,22 +110,22 @@ export default function OrdreReparationATraiterTable({
                 <MoreVerticalIcon className="h-4 w-4" />
               </TableHead>
               <TableHead>N° DIT</TableHead>
-              <TableHead className="text-center">N° OR</TableHead>
-              <TableHead className="text-center">Date Planning</TableHead>
-              <TableHead className="text-center">Niv. Urgence</TableHead>
-              <TableHead className="text-center">Date OR</TableHead>
-              <TableHead>Agence Émetteur</TableHead>
-              <TableHead>Service Émetteur</TableHead>
-              <TableHead>Agence Débiteur</TableHead>
-              <TableHead>Service Débiteur</TableHead>
+              <TableHead>N° OR</TableHead>
+              <TableHead>{t("date-planning")}</TableHead>
+              <TableHead className="text-center">{t("niv-urgence")}</TableHead>
+              <TableHead>Date OR</TableHead>
+              <TableHead>{t("agence-emetteur")}</TableHead>
+              <TableHead>{t("service-emetteur")}</TableHead>
+              <TableHead>{t("agence-debiteur")}</TableHead>
+              <TableHead>{t("service-debiteur")}</TableHead>
               <TableHead>N° ITV</TableHead>
               {/* Colonnes associées aux lignes de l'OR */}
-              <TableHead className="text-center">N° Ligne</TableHead>
-              <TableHead>Constructeur</TableHead>
+              <TableHead className="text-center">{t("n-ligne")}</TableHead>
+              <TableHead>{t("constructeur")}</TableHead>
               <TableHead className="text-center">Réf</TableHead>
-              <TableHead className="text-start">Désignation</TableHead>
-              <TableHead className="text-center">Qté Demandée</TableHead>
-              <TableHead>Utilisateur</TableHead>
+              <TableHead className="text-start">{t("designation")}</TableHead>
+              <TableHead className="text-center">{t("qte-demandee")}</TableHead>
+              <TableHead>{t("utilisateur")}</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -288,7 +292,7 @@ export default function OrdreReparationATraiterTable({
                   colSpan={TOTAL_COLUMNS}
                   className="text-center py-6 text-gray-500 font-medium"
                 >
-                  Aucun ordre de réparation trouvé.
+                  {t("or:aucun-ordre-de-reparation-trouve")}
                 </TableCell>
               </TableRow>
             )}

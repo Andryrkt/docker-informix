@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -59,6 +60,7 @@ type FormErrors = Partial<
 >;
 
 export default function TikCreationForm() {
+  const { t } = useTranslation("ticket");
   const qc = useQueryClient();
   const navigate = useNavigate();
 
@@ -106,13 +108,12 @@ export default function TikCreationForm() {
     const accepted: File[] = [];
     for (const file of Array.from(incoming)) {
       if (file.size > MAX_FILE_SIZE) {
-        toast.error(`"${file.name}" dépasse la taille maximale de 5 Mo.`);
         continue;
       }
       if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-        toast.error(
-          `"${file.name}" n'est pas d'un type autorisé (PDF, image, Office).`,
-        );
+        // toast.error(
+        //   `"${file.name}" n'est pas d'un type autorisé (PDF, image, Office).`,
+        // );
         continue;
       }
       accepted.push(file);
@@ -158,10 +159,10 @@ export default function TikCreationForm() {
   };
   const isPending = createMutation.isPending;
   return (
-    <div className="max-w-5xl mx-auto p-4 md:p-6 space-y-4">
-      <div className="flex flex-col space-y-2">
-        <h1 className="text-2xl font-bold text-brand-dark tracking-tight">
-          Formulaire Demande de support informatique
+    <div className="max-w-5xl mx-auto p-4 md:p-6 ">
+      <div className="flex flex-col space-y-2  text-center p-2">
+        <h1 className="text-2xl font-bold text-brand-dark tracking-tight ">
+          {t("creationForm.title")}
         </h1>
       </div>
 
@@ -176,12 +177,12 @@ export default function TikCreationForm() {
             <div>
               <div className=" pb-3">
                 <h3 className="text-base font-semibold border-brand-primary border-b-4">
-                  Demande
+                  {t("creationForm.sectionRequest")}
                 </h3>
               </div>
               <div className="space-y-4">
                 <Field data-invalid={!!errors.objetDemande}>
-                  <FieldLabel>Objet de la demande *</FieldLabel>
+                  <FieldLabel>{t("creationForm.subject")}</FieldLabel>
                   <Input
                     value={form.objetDemande}
                     onChange={(e) => set("objetDemande", e.target.value)}
@@ -193,11 +194,11 @@ export default function TikCreationForm() {
                 </Field>
 
                 <Field data-invalid={!!errors.detailDemande}>
-                  <FieldLabel>Détail de la demande *</FieldLabel>
+                  <FieldLabel>{t("creationForm.details")}</FieldLabel>
                   <WysiwygEditor
                     value={form.detailDemande}
                     onChange={(html) => set("detailDemande", html)}
-                    placeholder="Veuillez décrire les détails de votre demande ici..."
+                    placeholder={t("creationForm.detailsPlaceholder")}
                   />
                   {errors.detailDemande && (
                     <FieldError errors={[{ message: errors.detailDemande }]} />
@@ -207,13 +208,13 @@ export default function TikCreationForm() {
                 <div className="pt-1">
                   <div className=" pb-3">
                     <h3 className="text-base font-semibold border-brand-primary border-b-4">
-                      Autres informations
+                      {t("autres-informations")}
                     </h3>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Field data-invalid={!!errors.categorieId}>
-                      <FieldLabel>Catégorie *</FieldLabel>
+                      <FieldLabel>{t("categorie")} *</FieldLabel>
                       <Select
                         value={form.categorieId?.toString() ?? ""}
                         onValueChange={(value) => {
@@ -228,11 +229,11 @@ export default function TikCreationForm() {
                               "border-red-500 ring-1 ring-red-500",
                           )}
                         >
-                          <SelectValue placeholder="-- Choisir une catégorie --" />
+                          <SelectValue placeholder="-- {t('choisir-une-categorie')} --" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="">
-                            -- Choisir une catégorie --
+                            -- {t("choisir-une-categorie")} --
                           </SelectItem>
                           {categories.map((c) => (
                             <SelectItem key={c.id} value={String(c.id)}>
@@ -250,7 +251,7 @@ export default function TikCreationForm() {
                     </Field>
 
                     <Field>
-                      <FieldLabel>Date fin souhaitée *</FieldLabel>
+                      <FieldLabel>{t("date-fin-souhaitee")} *</FieldLabel>
                       <Input
                         type="date"
                         value={form.dateFinSouhaitee}
@@ -261,7 +262,7 @@ export default function TikCreationForm() {
                     </Field>
 
                     <Field>
-                      <FieldLabel>Parc informatique</FieldLabel>
+                      <FieldLabel>{t("parc-informatique")}</FieldLabel>
                       <Input
                         value={form.parcInformatique ?? ""}
                         onChange={(e) =>
@@ -271,7 +272,7 @@ export default function TikCreationForm() {
                     </Field>
 
                     <Field>
-                      <FieldLabel>Code société</FieldLabel>
+                      <FieldLabel>{t("code-societe")}</FieldLabel>
                       <Input
                         value={defaults?.codeSociete ?? ""}
                         disabled
@@ -287,14 +288,14 @@ export default function TikCreationForm() {
             <div>
               <div className=" pb-3">
                 <h3 className="text-base font-semibold border-brand-primary border-b-4">
-                  Agence et service
+                  {t("agence-et-service")}
                 </h3>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-4">
                   <Field data-invalid={!!errors.agenceDebiteurId}>
-                    <FieldLabel>Agence débiteur *</FieldLabel>
+                    <FieldLabel>{t("agence-debiteur")} *</FieldLabel>
                     <Select
                       value={form.agenceDebiteurId?.toString() ?? ""}
                       onValueChange={(value) => {
@@ -335,7 +336,7 @@ export default function TikCreationForm() {
                   </Field>
 
                   <Field data-invalid={!!errors.serviceDebiteurId}>
-                    <FieldLabel>Service débiteur *</FieldLabel>
+                    <FieldLabel>{t("service-debiteur")} *</FieldLabel>
                     <Select
                       value={form.serviceDebiteurId?.toString() ?? ""}
                       onValueChange={(value) => {
@@ -375,7 +376,7 @@ export default function TikCreationForm() {
 
                 <div className="space-y-4">
                   <Field>
-                    <FieldLabel>Agence émetteur</FieldLabel>
+                    <FieldLabel>{t("agence-emetteur")}</FieldLabel>
                     <Input
                       value={
                         defaults?.agenceEmetteur
@@ -388,7 +389,7 @@ export default function TikCreationForm() {
                   </Field>
 
                   <Field>
-                    <FieldLabel>Service émetteur</FieldLabel>
+                    <FieldLabel>{t("service-emetteur")}</FieldLabel>
                     <Input
                       value={
                         defaults?.serviceEmetteur
@@ -403,9 +404,9 @@ export default function TikCreationForm() {
               </div>
 
               <div className="pt-4">
-                <div className=" pb-3">
+                <div className=" pb-4">
                   <h3 className="text-base font-semibold border-brand-primary border-b-4">
-                    Pièces jointes
+                    {t("pieces-jointes")}
                   </h3>
                 </div>
 
@@ -441,9 +442,11 @@ export default function TikCreationForm() {
                   />
                   <UploadCloud className="text-gray-300 group-hover:text-brand-primary transition-colors duration-300" />
                   <p className="text-xs text-gray-300 group-hover:text-brand-primary transition-colors duration-300">
-                    Glissez-déposez vos fichiers ici, ou cliquez pour parcourir.
+                    {t(
+                      "glissez-deposez-vos-fichiers-ici-ou-cliquez-pour-parcourir",
+                    )}
                     <br />
-                    PDF, images, Office — 5 Mo max par fichier.
+                    {t("pdf-images-office-5-mo-max-par-fichier")}.
                   </p>
                 </div>
 
@@ -461,7 +464,7 @@ export default function TikCreationForm() {
                               {file.name}
                             </p>
                             <p className="text-[0.6rem] text-muted-foreground">
-                              Taille : {formatKb(file.size)}
+                              {t("taille")} {formatKb(file.size)}
                             </p>
                           </div>
                         </div>
@@ -493,7 +496,7 @@ export default function TikCreationForm() {
                 setFiles([]);
               }}
             >
-              Réinitialiser
+              {t("reinitialiser")}
             </Button>
             <Button
               variant="brand"
@@ -502,7 +505,9 @@ export default function TikCreationForm() {
               className="flex items-center justify-center gap-2"
             >
               <Save className="size-4" />
-              {createMutation.isPending ? "Envoi en cours..." : "Enregistrer"}
+              {createMutation.isPending
+                ? t("envoi-en-cours")
+                : t("enregistrer")}
             </Button>
           </Field>
         </fieldset>

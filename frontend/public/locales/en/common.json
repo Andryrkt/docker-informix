@@ -1,0 +1,24 @@
+{
+  "exporter-tout-filtre": "Export all (filtered)",
+  "aucune-donnee-a-exporter": "No data to export",
+  "resultats": "Results",
+  "selectionnez-dabord-un-agence-debiteur": "First select a debtor agency",
+  "lignes": "Lines",
+  "page": "Page",
+  "client": "Customer",
+  "creer-par": "Create by",
+  "date-de-creation": "Creation date",
+  "date-envoi-au-client": "Date sent to customer",
+  "devisNeg": {
+    "client": "Customer"
+  },
+  "libelle": "Wording",
+  "montant": "Amount",
+  "po-bc-client": "Customer PO/PO",
+  "position-ips": "IPS position",
+  "relance-1": "Raise 1",
+  "relance-2": "Raise 2",
+  "relance-3": "Raise 3",
+  "soumis-par": "Submitted by",
+  "stop-relance": "Stop restart"
+}

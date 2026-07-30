@@ -17,8 +17,10 @@ import { getStatutsBC } from "@/domains/bc/BCApi";
 import { getClientOptions } from "@/domains/client/api/clientApi";
 import { queryClient } from "@/lib/queryClient";
 import { LimitSelector } from "@/components/common/pagination/LimitSelector";
+import { useTranslation } from "react-i18next";
 
-function DevisList() {
+function DevisNegList() {
+  const { t } = useTranslation("common");
   const {
     currentPage,
     setPage,
@@ -84,7 +86,7 @@ function DevisList() {
           return {
             ...field,
             placeholder: !selectedAgenceEmetteur
-              ? "Sélectionnez d'abord un agence débiteur"
+              ? t("selectionnez-dabord-un-agence-debiteur")
               : "",
             selectAll: false,
             dependsOn: ["agence_emetteur"],
@@ -185,13 +187,15 @@ function DevisList() {
             )}
             label={
               totalResults === 0
-                ? "Aucune donnée à exporter"
-                : "Exporter tout (filtré)"
+                ? t('aucune-donnee-a-exporter')
+                : t('exporter-tout-filtre')
             }
             disabled={totalResults === 0 || isLoading || isFetching}
           ></ExcelDownloadButton>
           <div className="flex items-center gap-4 font-bold ">
-            <span className="text-[0.7rem]">{totalResults} Résultats</span>
+            <span className="text-[0.7rem]">
+              {totalResults} {t("resultats")}
+            </span>
             <LimitSelector
               currentLimit={currentLimit}
               onLimitChange={setLimit}
@@ -220,4 +224,4 @@ function DevisList() {
   );
 }
 
-export default DevisList;
+export default DevisNegList;

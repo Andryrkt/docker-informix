@@ -1,0 +1,27 @@
+{
+  "creationForm": {
+    "title": "IT Support Request Form",
+    "sectionRequest": "Request",
+    "subject": "Request Subject *",
+    "details": "Request Details *",
+    "detailsPlaceholder": "Please describe the details of your request here..."
+  },
+  "autres-informations": "Other Informations",
+  "categorie": "Category",
+  "date-fin-souhaitee": "Desired end date",
+  "parc-informatique": "IT park",
+  "code-societe": "Company code",
+  "agence-et-service": "Agency and service",
+  "agence-debiteur": "Debtor agency",
+  "agence-emetteur": "Issuing agency",
+  "enregistrer": "Save",
+  "envoi-en-cours": "Sending in progress...",
+  "glissez-deposez-vos-fichiers-ici-ou-cliquez-pour-parcourir": "Drag and drop your files here, or click to browse.",
+  "pdf-images-office-5-mo-max-par-fichier": "PDF, images, Office — 5 MB max per file",
+  "pieces-jointes": "Attachments",
+  "reinitialiser": "Reset",
+  "service-debiteur": "Debtor service",
+  "service-emetteur": "Issuer service",
+  "taille": "Size :",
+  "file-name-nest-pas-dun-type-autorise-pdf-image-office": "\"{0}\" is not of an allowed type (PDF, image, Office)."
+}

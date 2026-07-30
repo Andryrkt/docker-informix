@@ -1,0 +1,24 @@
+{
+  "resultats": "Résultats",
+  "selectionnez-dabord-un-agence-debiteur": "Sélectionnez d'abord un agence débiteur",
+  "aucune-donnee-a-exporter": "Aucune donnée à exporter",
+  "exporter-tout-filtre": "Exporter tout (filtré)",
+  "lignes": "Lignes",
+  "page": "Page",
+  "date-de-creation": "Date de création",
+  "client": "Client",
+  "devisNeg": {
+    "client": "Client"
+  },
+  "libelle": "Libellé",
+  "montant": "Montant",
+  "date-envoi-au-client": "Date envoi au client",
+  "relance-1": "Relance 1",
+  "relance-2": "Relance 2",
+  "relance-3": "Relance 3",
+  "stop-relance": "Stop relance",
+  "position-ips": "Position IPS",
+  "po-bc-client": "PO/BC client",
+  "creer-par": "Créer par",
+  "soumis-par": "Soumis par"
+}

@@ -26,10 +26,11 @@
     "statusBar.debuggingForeground": "#e7e7e7"
   },
   "peacock.color": "#007fff",
-  "i18n-ally.localesPaths": ["public/locales"],
+  "i18n-ally.localesPaths": ["frontend/public/locales"],
   "i18n-ally.enabledFrameworks": ["react-i18next"],
   "i18n-ally.namespace": true,
   "i18n-ally.pathMatcher": "{locale}/{namespace}.json",
   "i18n-ally.keystyle": "nested",
+  "i18n-ally.extract.autoDetect": true,
   "php.version": "8.2"
 }

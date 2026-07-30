@@ -14,7 +14,7 @@ import TikGanttPage from "@/domains/it/page/TikGanttPage";
 import TikDashboardPage from "@/domains/it/page/TikDashboardPage";
 import { RequireAuth } from "./guards/RequireAuth";
 import { RequireCompany } from "./guards/RequireCompany";
-import DevisList from "@/domains/magasin/dematerialisation/devis/pages/DevisList";
+import DevisNegList from "@/domains/magasin/dematerialisation/devis/pages/DevisNegList";
 import DitList from "@/domains/atelier/dit/pages/DitList";
 import DitCreation from "@/domains/atelier/dit/pages/DitCreation";
 import DitDuplication from "@/domains/atelier/dit/pages/DitDuplication";
@@ -113,7 +113,7 @@ function AppRoutes() {
         // Magazin -> Dematerialisation
         {
           path: "/magasin/dematerialisation/liste-devis-neg",
-          element: <DevisList />,
+          element: <DevisNegList />,
         },
         {
           path: "/magasin/dematerialisation/planning-commande-magasin",

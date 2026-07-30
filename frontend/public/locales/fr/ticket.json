@@ -1,0 +1,27 @@
+{
+  "creationForm": {
+    "title": "Formulaire Demande de support informatique",
+    "sectionRequest": "Demande",
+    "subject": "Objet de la demande *",
+    "details": "Détail de la demande *",
+    "detailsPlaceholder": "Veuillez décrire les détails de votre demande ici..."
+  },
+  "autres-informations": "Autre Infromation",
+  "categorie": "Catégorie",
+  "date-fin-souhaitee": "Date fin souhaitée",
+  "parc-informatique": "Parc informatique",
+  "code-societe": "Code société",
+  "agence-et-service": "Agence et service",
+  "agence-debiteur": "Agence débiteur",
+  "service-debiteur": "Service débiteur",
+  "agence-emetteur": "Agence émetteur",
+  "service-emetteur": "Service émetteur",
+  "pieces-jointes": "Pièces jointes",
+  "glissez-deposez-vos-fichiers-ici-ou-cliquez-pour-parcourir": "Glissez-déposez vos fichiers ici, ou cliquez pour parcourir.",
+  "pdf-images-office-5-mo-max-par-fichier": "PDF, images, Office — 5 Mo max par fichier",
+  "taille": "Taille :",
+  "reinitialiser": "Réinitialiser",
+  "envoi-en-cours": "Envoi en cours...",
+  "enregistrer": "Enregistrer",
+  "file-name-nest-pas-dun-type-autorise-pdf-image-office": "\"{0}\" n'est pas d'un type autorisé (PDF, image, Office)."
+}

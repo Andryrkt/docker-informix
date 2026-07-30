@@ -6,6 +6,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface LimitSelectorProps {
   currentLimit: number;
@@ -20,6 +21,7 @@ export function LimitSelector({
   options = [10, 20, 50],
   className,
 }: LimitSelectorProps) {
+  const { t } = useTranslation("common");
   return (
     <div
       className={cn(
@@ -28,7 +30,7 @@ export function LimitSelector({
       )}
     >
       <div className="flex items-center gap-1  font-normal">
-        <span>Lignes :</span>
+        <span>{t("lignes")} :</span>
         <Select
           value={String(currentLimit)}
           onValueChange={(val) => onLimitChange(Number(val))}

@@ -13,6 +13,7 @@ export const namespaces = [
   "table",
   "filters",
   "messages",
+  "ticket",
 ] as const;
 export type Namespace = (typeof namespaces)[number];
 
@@ -21,7 +22,7 @@ i18n
   .use(LanguageDetector) // Detect user language
   .use(initReactI18next)
   .init({
-    fallbackLng: "en",
+    fallbackLng: "fr",
     debug: process.env.NODE_ENV === "development",
     ns: namespaces,
     defaultNS: "common",

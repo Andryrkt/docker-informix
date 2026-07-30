@@ -1,6 +1,6 @@
 export type FilterOption = {
   label: string;
-  value: string;
+  value: string | number | boolean;
 };
 
 export type FilterField =

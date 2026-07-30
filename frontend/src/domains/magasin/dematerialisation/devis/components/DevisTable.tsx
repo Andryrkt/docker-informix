@@ -27,11 +27,13 @@ import DialogRelanceDevisForm from "./DialogRelanceDevisForm";
 import { submitRelanceDevis, updateStopProgression } from "../api/devisApi";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
-import { useConfirm } from "@/components/common/ConfirmDialog";
 import { Switch } from "@/components/ui/switch";
+import { useTranslation } from "react-i18next";
 
 function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
   const navigate = useNavigate();
+  const { t } = useTranslation(["devisNeg", "common"]);
+
   const parentRef = useRef<HTMLDivElement>(null);
   const [selectedDevisForRelance, setSelectedDevisForRelance] =
     useState<Devis | null>(null);
@@ -117,26 +119,30 @@ function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
               <TableHead>Statut devis</TableHead>
               <TableHead>Statut BC</TableHead>
               <TableHead>Numéro devis</TableHead>
-              <TableHead className="text-center">Date de création</TableHead>
+              <TableHead className="text-center">
+                {t("common:date-de-creation")}
+              </TableHead>
               <TableHead>Emetteur</TableHead>
-              <TableHead>Client</TableHead>
-              <TableHead>Libellé</TableHead>
-              <TableHead className="text-right">Montant</TableHead>
+              <TableHead>{t("common:client")}</TableHead>
+              <TableHead>{t("common:libelle")}</TableHead>
+              <TableHead className="text-right">
+                {t("common:montant")}
+              </TableHead>
               <TableHead className="wrap-break-word whitespace-normal max-w-30 text-center">
-                Date envoi au client
+                {t("common:date-envoi-au-client")}
               </TableHead>
-              <TableHead>Relance 1</TableHead>
-              <TableHead>Relance 2</TableHead>
-              <TableHead>Relance 3</TableHead>
-              <TableHead>Stop relance</TableHead>
+              <TableHead>{t("common:relance-1")}</TableHead>
+              <TableHead>{t("common:relance-2")}</TableHead>
+              <TableHead>{t("common:relance-3")}</TableHead>
+              <TableHead>{t("common:stop-relance")}</TableHead>
               <TableHead className="wrap-break-word text-center">
-                Position IPS
+                {t("common:position-ips")}
               </TableHead>
               <TableHead className="wrap-break-word text-center">
-                PO/BC client
+                {t("common:po-bc-client")}
               </TableHead>
-              <TableHead>Créer par</TableHead>
-              <TableHead>Soumis par</TableHead>
+              <TableHead>{t("common:creer-par")}</TableHead>
+              <TableHead>{t("common:soumis-par")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -287,7 +293,7 @@ function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
                   colSpan={18}
                   className="text-center py-6 text-gray-500 font-medium"
                 >
-                  Aucun devis trouvé.
+                  {t("aucun-devis-trouve")}
                 </TableCell>
               </TableRow>
             )}

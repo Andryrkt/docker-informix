@@ -4,8 +4,6 @@ import {
   PaginationContent,
   PaginationItem,
   PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 import {
@@ -14,6 +12,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface SimplePaginationProps {
   currentPage: number;
@@ -26,6 +25,8 @@ function SimpleNextPreviousPagination({
   lastPage,
   onPageChange,
 }: SimplePaginationProps) {
+  const { t } = useTranslation("common");
+
   const goToFirst = () => {
     if (currentPage !== 1) onPageChange(1);
   };
@@ -83,7 +84,7 @@ function SimpleNextPreviousPagination({
         {/* Page indicator (optional but useful) */}
         <PaginationItem>
           <span className="px-3 py-2 text-xs text-gray-600">
-            Page {currentPage} / {lastPage}
+            {t("page")} {currentPage} / {lastPage}
           </span>
         </PaginationItem>
 

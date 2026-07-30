@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Paperclip, X } from "lucide-react";
+import { FileText, Paperclip, Save, UploadCloud, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,15 @@ import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { fetchAgencies } from "@/domains/admin/api/adminApi";
 import * as api from "../api/tikApi";
 import type { TikPayload } from "../api/tikApi";
+import { SearchableSelect } from "@/components/common/atom/SearchableSelect";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 Mo
 const ALLOWED_MIME_TYPES = [
@@ -38,7 +47,16 @@ const emptyForm: TikPayload = {
   parcInformatique: "",
 };
 
-type FormErrors = Partial<Record<"objetDemande" | "detailDemande" | "categorieId" | "agenceDebiteurId" | "serviceDebiteurId", string>>;
+type FormErrors = Partial<
+  Record<
+    | "objetDemande"
+    | "detailDemande"
+    | "categorieId"
+    | "agenceDebiteurId"
+    | "serviceDebiteurId",
+    string
+  >
+>;
 
 export default function TikCreationForm() {
   const qc = useQueryClient();
@@ -68,7 +86,10 @@ export default function TikCreationForm() {
   // Pré-remplit la date de fin souhaitée dès que le backend l'a calculée.
   useEffect(() => {
     if (defaults && !form.dateFinSouhaitee) {
-      setForm((f) => ({ ...f, dateFinSouhaitee: defaults.dateFinSouhaiteeDefaut }));
+      setForm((f) => ({
+        ...f,
+        dateFinSouhaitee: defaults.dateFinSouhaiteeDefaut,
+      }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaults]);
@@ -89,7 +110,9 @@ export default function TikCreationForm() {
         continue;
       }
       if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-        toast.error(`"${file.name}" n'est pas d'un type autorisé (PDF, image, Office).`);
+        toast.error(
+          `"${file.name}" n'est pas d'un type autorisé (PDF, image, Office).`,
+        );
         continue;
       }
       accepted.push(file);
@@ -97,16 +120,19 @@ export default function TikCreationForm() {
     if (accepted.length) setFiles((f) => [...f, ...accepted]);
   };
 
-  const removeFile = (index: number) => setFiles((f) => f.filter((_, i) => i !== index));
+  const removeFile = (index: number) =>
+    setFiles((f) => f.filter((_, i) => i !== index));
 
   const validate = (): boolean => {
     const e: FormErrors = {};
     const detailText = form.detailDemande.replace(/<[^>]*>/g, "").trim();
-    if (!form.objetDemande.trim())   e.objetDemande      = "L'objet est obligatoire.";
-    if (!detailText)                 e.detailDemande     = "Le détail est obligatoire.";
-    if (!form.categorieId)           e.categorieId       = "La catégorie est obligatoire.";
-    if (!form.agenceDebiteurId)      e.agenceDebiteurId  = "L'agence débiteur est obligatoire.";
-    if (!form.serviceDebiteurId)     e.serviceDebiteurId = "Le service débiteur est obligatoire.";
+    if (!form.objetDemande.trim()) e.objetDemande = "L'objet est obligatoire.";
+    if (!detailText) e.detailDemande = "Le détail est obligatoire.";
+    if (!form.categorieId) e.categorieId = "La catégorie est obligatoire.";
+    if (!form.agenceDebiteurId)
+      e.agenceDebiteurId = "L'agence débiteur est obligatoire.";
+    if (!form.serviceDebiteurId)
+      e.serviceDebiteurId = "Le service débiteur est obligatoire.";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -120,7 +146,9 @@ export default function TikCreationForm() {
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (err: any) => {
-      toast.error(err?.response?.data?.error ?? "Impossible de créer le ticket.");
+      toast.error(
+        err?.response?.data?.error ?? "Impossible de créer le ticket.",
+      );
     },
   });
 
@@ -128,213 +156,356 @@ export default function TikCreationForm() {
     e.preventDefault();
     if (validate()) createMutation.mutate();
   };
-
+  const isPending = createMutation.isPending;
   return (
-    <div className="max-w-5xl mx-auto p-4 md:p-6 space-y-6">
+    <div className="max-w-5xl mx-auto p-4 md:p-6 space-y-4">
       <div className="flex flex-col space-y-2">
         <h1 className="text-2xl font-bold text-brand-dark tracking-tight">
           Formulaire Demande de support informatique
         </h1>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 border p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Demande */}
-          <div>
-            <h3 className="text-base font-semibold pb-3">Demande</h3>
-            <div className="space-y-4">
-              <Field data-invalid={!!errors.objetDemande}>
-                <FieldLabel>Objet de la demande *</FieldLabel>
-                <Input
-                  value={form.objetDemande}
-                  onChange={(e) => set("objetDemande", e.target.value)}
-                  maxLength={255}
-                />
-                {errors.objetDemande && <FieldError errors={[{ message: errors.objetDemande }]} />}
-              </Field>
+      <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-md">
+        <fieldset
+          disabled={createMutation.isPending}
+          className={cn(
+            createMutation.isPending && "opacity-60 pointer-events-none",
+          )}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <div className=" pb-3">
+                <h3 className="text-base font-semibold border-brand-primary border-b-4">
+                  Demande
+                </h3>
+              </div>
+              <div className="space-y-4">
+                <Field data-invalid={!!errors.objetDemande}>
+                  <FieldLabel>Objet de la demande *</FieldLabel>
+                  <Input
+                    value={form.objetDemande}
+                    onChange={(e) => set("objetDemande", e.target.value)}
+                    maxLength={255}
+                  />
+                  {errors.objetDemande && (
+                    <FieldError errors={[{ message: errors.objetDemande }]} />
+                  )}
+                </Field>
 
-              <Field data-invalid={!!errors.detailDemande}>
-                <FieldLabel>Détail de la demande *</FieldLabel>
-                <WysiwygEditor
-                  value={form.detailDemande}
-                  onChange={(html) => set("detailDemande", html)}
-                  placeholder="Veuillez décrire les détails de votre demande ici..."
-                />
-                {errors.detailDemande && <FieldError errors={[{ message: errors.detailDemande }]} />}
-              </Field>
+                <Field data-invalid={!!errors.detailDemande}>
+                  <FieldLabel>Détail de la demande *</FieldLabel>
+                  <WysiwygEditor
+                    value={form.detailDemande}
+                    onChange={(html) => set("detailDemande", html)}
+                    placeholder="Veuillez décrire les détails de votre demande ici..."
+                  />
+                  {errors.detailDemande && (
+                    <FieldError errors={[{ message: errors.detailDemande }]} />
+                  )}
+                </Field>
 
-              <div className="pt-1">
-                <h3 className="text-sm font-semibold text-gray-600 pb-2">Autres informations</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Field data-invalid={!!errors.categorieId}>
-                    <FieldLabel>Catégorie *</FieldLabel>
-                    <select
-                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
-                      value={form.categorieId ?? ""}
-                      onChange={(e) => set("categorieId", e.target.value ? Number(e.target.value) : undefined)}
-                    >
-                      <option value="">-- Choisir une catégorie --</option>
-                      {categories.map((c) => (
-                        <option key={c.id} value={c.id}>{c.description}</option>
-                      ))}
-                    </select>
-                    {errors.categorieId && <FieldError errors={[{ message: errors.categorieId }]} />}
-                  </Field>
+                <div className="pt-1">
+                  <div className=" pb-3">
+                    <h3 className="text-base font-semibold border-brand-primary border-b-4">
+                      Autres informations
+                    </h3>
+                  </div>
 
-                  <Field>
-                    <FieldLabel>Date fin souhaitée *</FieldLabel>
-                    <Input
-                      type="date"
-                      value={form.dateFinSouhaitee}
-                      onChange={(e) => set("dateFinSouhaitee", e.target.value)}
-                    />
-                  </Field>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Field data-invalid={!!errors.categorieId}>
+                      <FieldLabel>Catégorie *</FieldLabel>
+                      <Select
+                        value={form.categorieId?.toString() ?? ""}
+                        onValueChange={(value) => {
+                          const id = value ? Number(value) : undefined;
+                          setForm((f) => ({ ...f, categorieId: id }));
+                        }}
+                      >
+                        <SelectTrigger
+                          className={cn(
+                            "w-full",
+                            errors.categorieId &&
+                              "border-red-500 ring-1 ring-red-500",
+                          )}
+                        >
+                          <SelectValue placeholder="-- Choisir une catégorie --" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">
+                            -- Choisir une catégorie --
+                          </SelectItem>
+                          {categories.map((c) => (
+                            <SelectItem key={c.id} value={String(c.id)}>
+                              {c.description}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
 
-                  <Field>
-                    <FieldLabel>Parc informatique</FieldLabel>
-                    <Input
-                      value={form.parcInformatique ?? ""}
-                      onChange={(e) => set("parcInformatique", e.target.value)}
-                    />
-                  </Field>
+                      {errors.categorieId && (
+                        <FieldError
+                          errors={[{ message: errors.categorieId }]}
+                        />
+                      )}
+                    </Field>
 
-                  <Field>
-                    <FieldLabel>Code société</FieldLabel>
-                    <Input value={defaults?.codeSociete ?? ""} disabled readOnly />
-                  </Field>
+                    <Field>
+                      <FieldLabel>Date fin souhaitée *</FieldLabel>
+                      <Input
+                        type="date"
+                        value={form.dateFinSouhaitee}
+                        onChange={(e) =>
+                          set("dateFinSouhaitee", e.target.value)
+                        }
+                      />
+                    </Field>
+
+                    <Field>
+                      <FieldLabel>Parc informatique</FieldLabel>
+                      <Input
+                        value={form.parcInformatique ?? ""}
+                        onChange={(e) =>
+                          set("parcInformatique", e.target.value)
+                        }
+                      />
+                    </Field>
+
+                    <Field>
+                      <FieldLabel>Code société</FieldLabel>
+                      <Input
+                        value={defaults?.codeSociete ?? ""}
+                        disabled
+                        readOnly
+                      />
+                    </Field>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Agence et Service */}
-          <div>
-            <h3 className="text-base font-semibold pb-3">Agence et service</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-4">
-                <Field data-invalid={!!errors.agenceDebiteurId}>
-                  <FieldLabel>Agence débiteur *</FieldLabel>
-                  <select
-                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
-                    value={form.agenceDebiteurId ?? ""}
-                    onChange={(e) => {
-                      const id = e.target.value ? Number(e.target.value) : undefined;
-                      setForm((f) => ({ ...f, agenceDebiteurId: id, serviceDebiteurId: undefined }));
-                    }}
-                  >
-                    <option value="">-- Choisir une agence débiteur --</option>
-                    {agencies.map((a) => (
-                      <option key={a.id} value={a.id}>{a.code} {a.name}</option>
-                    ))}
-                  </select>
-                  {errors.agenceDebiteurId && <FieldError errors={[{ message: errors.agenceDebiteurId }]} />}
-                </Field>
-
-                <Field data-invalid={!!errors.serviceDebiteurId}>
-                  <FieldLabel>Service débiteur *</FieldLabel>
-                  <select
-                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring disabled:opacity-50"
-                    value={form.serviceDebiteurId ?? ""}
-                    disabled={!form.agenceDebiteurId}
-                    onChange={(e) => set("serviceDebiteurId", e.target.value ? Number(e.target.value) : undefined)}
-                  >
-                    <option value="">-- Choisir un service débiteur --</option>
-                    {servicesDebiteur.map((s) => (
-                      <option key={s.id} value={s.id}>{s.code} {s.name}</option>
-                    ))}
-                  </select>
-                  {errors.serviceDebiteurId && <FieldError errors={[{ message: errors.serviceDebiteurId }]} />}
-                </Field>
+            {/* Agence et Service */}
+            <div>
+              <div className=" pb-3">
+                <h3 className="text-base font-semibold border-brand-primary border-b-4">
+                  Agence et service
+                </h3>
               </div>
 
-              <div className="space-y-4">
-                <Field>
-                  <FieldLabel>Agence émetteur</FieldLabel>
-                  <Input
-                    value={defaults?.agenceEmetteur ? `${defaults.agenceEmetteur.code} ${defaults.agenceEmetteur.name}` : ""}
-                    disabled
-                    readOnly
-                  />
-                </Field>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  <Field data-invalid={!!errors.agenceDebiteurId}>
+                    <FieldLabel>Agence débiteur *</FieldLabel>
+                    <Select
+                      value={form.agenceDebiteurId?.toString() ?? ""}
+                      onValueChange={(value) => {
+                        const id = value ? Number(value) : undefined;
+                        setForm((f) => ({
+                          ...f,
+                          agenceDebiteurId: id,
+                          serviceDebiteurId: undefined,
+                        }));
+                      }}
+                    >
+                      <SelectTrigger
+                        className={cn(
+                          "w-full",
+                          errors.agenceDebiteurId &&
+                            "border-red-500 ring-1 ring-red-500",
+                        )}
+                      >
+                        <SelectValue placeholder="-- Choisir une agence débiteur --" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">
+                          -- Choisir une agence débiteur --
+                        </SelectItem>
+                        {agencies.map((a) => (
+                          <SelectItem key={a.id} value={String(a.id)}>
+                            {a.code} {a.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
 
-                <Field>
-                  <FieldLabel>Service émetteur</FieldLabel>
-                  <Input
-                    value={defaults?.serviceEmetteur ? `${defaults.serviceEmetteur.code} ${defaults.serviceEmetteur.name}` : ""}
-                    disabled
-                    readOnly
-                  />
-                </Field>
+                    {errors.agenceDebiteurId && (
+                      <FieldError
+                        errors={[{ message: errors.agenceDebiteurId }]}
+                      />
+                    )}
+                  </Field>
+
+                  <Field data-invalid={!!errors.serviceDebiteurId}>
+                    <FieldLabel>Service débiteur *</FieldLabel>
+                    <Select
+                      value={form.serviceDebiteurId?.toString() ?? ""}
+                      onValueChange={(value) => {
+                        const id = value ? Number(value) : undefined;
+                        setForm((f) => ({ ...f, serviceDebiteurId: id }));
+                      }}
+                      disabled={!form.agenceDebiteurId}
+                    >
+                      <SelectTrigger
+                        className={cn(
+                          "w-full",
+                          errors.serviceDebiteurId &&
+                            "border-red-500 ring-1 ring-red-500",
+                        )}
+                      >
+                        <SelectValue placeholder="-- Choisir un service débiteur --" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">
+                          -- Choisir un service débiteur --
+                        </SelectItem>
+                        {servicesDebiteur.map((s) => (
+                          <SelectItem key={s.id} value={String(s.id)}>
+                            {s.code} {s.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {errors.serviceDebiteurId && (
+                      <FieldError
+                        errors={[{ message: errors.serviceDebiteurId }]}
+                      />
+                    )}
+                  </Field>
+                </div>
+
+                <div className="space-y-4">
+                  <Field>
+                    <FieldLabel>Agence émetteur</FieldLabel>
+                    <Input
+                      value={
+                        defaults?.agenceEmetteur
+                          ? `${defaults.agenceEmetteur.code} ${defaults.agenceEmetteur.name}`
+                          : ""
+                      }
+                      disabled
+                      readOnly
+                    />
+                  </Field>
+
+                  <Field>
+                    <FieldLabel>Service émetteur</FieldLabel>
+                    <Input
+                      value={
+                        defaults?.serviceEmetteur
+                          ? `${defaults.serviceEmetteur.code} ${defaults.serviceEmetteur.name}`
+                          : ""
+                      }
+                      disabled
+                      readOnly
+                    />
+                  </Field>
+                </div>
               </div>
-            </div>
 
-            <div className="pt-4">
-              <h3 className="text-sm font-semibold text-gray-600 pb-2 flex items-center gap-1.5">
-                <Paperclip size={14} /> Pièces jointes
-              </h3>
-              <div
-                className={`rounded-md border-2 border-dashed p-4 text-center cursor-pointer transition-colors ${
-                  dragOver ? "border-brand-dark bg-gray-50" : "border-gray-300"
-                }`}
-                onClick={() => fileInputRef.current?.click()}
-                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-                onDragLeave={() => setDragOver(false)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setDragOver(false);
-                  if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
-                }}
-              >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  multiple
-                  className="hidden"
-                  onChange={(e) => {
-                    if (e.target.files?.length) addFiles(e.target.files);
-                    e.target.value = "";
+              <div className="pt-4">
+                <div className=" pb-3">
+                  <h3 className="text-base font-semibold border-brand-primary border-b-4">
+                    Pièces jointes
+                  </h3>
+                </div>
+
+                <div
+                  className={cn(
+                    "group  rounded-md border-2 border-dashed p-4 text-center cursor-pointer transition-colors duration-300 hover:border-brand-primary gap-2 flex flex-col items-center justify-center focus:border-brand-primary",
+                    dragOver
+                      ? "border-brand-primary bg-gray-50"
+                      : "border-gray-300",
+                  )}
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setDragOver(true);
                   }}
-                />
-                <p className="text-xs text-gray-500">
-                  Glissez-déposez vos fichiers ici, ou cliquez pour parcourir.
-                  <br />
-                  PDF, images, Office — 5 Mo max par fichier.
-                </p>
-              </div>
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setDragOver(false);
+                    if (e.dataTransfer.files.length)
+                      addFiles(e.dataTransfer.files);
+                  }}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    className="hidden group  items-baseline "
+                    onChange={(e) => {
+                      if (e.target.files?.length) addFiles(e.target.files);
+                      e.target.value = "";
+                    }}
+                  />
+                  <UploadCloud className="text-gray-300 group-hover:text-brand-primary transition-colors duration-300" />
+                  <p className="text-xs text-gray-300 group-hover:text-brand-primary transition-colors duration-300">
+                    Glissez-déposez vos fichiers ici, ou cliquez pour parcourir.
+                    <br />
+                    PDF, images, Office — 5 Mo max par fichier.
+                  </p>
+                </div>
 
-              {files.length > 0 && (
-                <ul className="mt-2 space-y-1">
-                  {files.map((file, i) => (
-                    <li key={i} className="flex items-center justify-between text-xs bg-gray-50 border rounded px-2 py-1">
-                      <span className="truncate">{file.name} <span className="text-gray-400">({formatKb(file.size)})</span></span>
-                      <button type="button" onClick={() => removeFile(i)} className="text-gray-400 hover:text-red-600">
-                        <X size={13} />
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
+                {/* Liste des fichiers */}
+                {files.length > 0 && (
+                  <div className="space-y-2 my-4">
+                    {files.map((file, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between bg-background rounded-md  "
+                      >
+                        <div className="flex items-center gap-2 max-w-[80%]">
+                          <div className="flex-1 min-w-0">
+                            <p className="truncate text-xs font-medium">
+                              {file.name}
+                            </p>
+                            <p className="text-[0.6rem] text-muted-foreground">
+                              Taille : {formatKb(file.size)}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeFile(index)}
+                          className="text-muted-foreground hover:text-red-500 transition-colors"
+                          disabled={isPending}
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        <Separator />
-
-        <Field orientation="horizontal" className="justify-end">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => {
-              setForm({ ...emptyForm, dateFinSouhaitee: defaults?.dateFinSouhaiteeDefaut ?? "" });
-              setFiles([]);
-            }}
-          >
-            Réinitialiser
-          </Button>
-          <Button type="submit" disabled={createMutation.isPending}>
-            {createMutation.isPending ? "Envoi..." : "Enregistrer"}
-          </Button>
-        </Field>
+          <Field orientation="horizontal" className="justify-end mt-4 ">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setForm({
+                  ...emptyForm,
+                  dateFinSouhaitee: defaults?.dateFinSouhaiteeDefaut ?? "",
+                });
+                setFiles([]);
+              }}
+            >
+              Réinitialiser
+            </Button>
+            <Button
+              variant="brand"
+              type="submit"
+              disabled={createMutation.isPending}
+              className="flex items-center justify-center gap-2"
+            >
+              <Save className="size-4" />
+              {createMutation.isPending ? "Envoi en cours..." : "Enregistrer"}
+            </Button>
+          </Field>
+        </fieldset>
       </form>
     </div>
   );

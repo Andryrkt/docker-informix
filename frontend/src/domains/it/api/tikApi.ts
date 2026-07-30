@@ -105,6 +105,8 @@ export interface TikDefaults {
 }
 
 export interface TikPayload {
+  Field: any;
+  state: any;
   objetDemande: string;
   detailDemande: string;
   categorieId: number | undefined;

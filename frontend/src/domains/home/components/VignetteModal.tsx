@@ -103,7 +103,9 @@ export function useVignetteDialog() {
                       />
                       {section.title}
                     </div>
-                    <div className="h-0.5 bg-brand-primary "></div>
+                    {section.title && (
+                      <div className="h-0.5 bg-brand-primary "></div>
+                    )}
                   </div>
 
                   <div className="flex flex-col">

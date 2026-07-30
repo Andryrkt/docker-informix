@@ -121,27 +121,27 @@ export const vignetteItems: VignetteCardData[] = [
             },
           ],
         },
-        {
-          title: "CIS",
-          icon: faFile,
-          items: [
-            { label: "Liste à traiter", icon: faList },
-            { label: "Liste à traiter", icon: faFileExcel },
-          ],
-        },
-        {
-          title: "Inventaire",
-          icon: faList,
-          items: [
-            { label: "Liste des inventaires", icon: faList },
-            { label: "Inventaire détaillé", icon: faList },
-          ],
-        },
-        {
-          title: "Sortie de pieces",
-          icon: faArrowLeft,
-          items: [{ label: "Nouvelle demande", icon: faCirclePlus }],
-        },
+        // {
+        //   title: "CIS",
+        //   icon: faFile,
+        //   items: [
+        //     { label: "Liste à traiter", icon: faList },
+        //     { label: "Liste à traiter", icon: faFileExcel },
+        //   ],
+        // },
+        // {
+        //   title: "Inventaire",
+        //   icon: faList,
+        //   items: [
+        //     { label: "Liste des inventaires", icon: faList },
+        //     { label: "Inventaire détaillé", icon: faList },
+        //   ],
+        // },
+        // {
+        //   title: "Sortie de pieces",
+        //   icon: faArrowLeft,
+        //   items: [{ label: "Nouvelle demande", icon: faCirclePlus }],
+        // },
         {
           title: "Dematerialisation",
           icon: faCloudUpload,
@@ -165,11 +165,11 @@ export const vignetteItems: VignetteCardData[] = [
               icon: faList,
               link: "/magasin/cmde-fournisseur",
             },
-            {
-              label: "Liste des cmds non placées",
-              icon: faList,
-              link: "/magasin/liste-cmde-fournisseur-non-placer",
-            },
+            // {
+            //   label: "Liste des cmds non placées",
+            //   icon: faList,
+            //   link: "/magasin/liste-cmde-fournisseur-non-placer",
+            // },
           ],
         },
       ],

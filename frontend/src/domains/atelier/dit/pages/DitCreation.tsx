@@ -4,8 +4,10 @@ import { toast } from "sonner";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { createDit } from "../api/ditApi";
+import { useTranslation } from "react-i18next";
 
 function DitCreation() {
+  const { t } = useTranslation(["common", "confirmation"]);
   const confirm = useConfirm();
   const navigate = useNavigate();
 
@@ -13,8 +15,8 @@ function DitCreation() {
     const confirmed = await confirm({
       title: "Confirmer la création",
       description: "Voulez-vous vraiment créer cette DIT ?",
-      confirmText: "Oui, créer",
-      cancelText: "Annuler",
+      confirmText: t("confirmation:oui-creer"),
+      cancelText: t("confirmation:annuler"),
       variant: "default",
     });
     if (!confirmed) return;
@@ -27,7 +29,7 @@ function DitCreation() {
         icon: "success",
         confirmButtonColor: "#22c55e",
         confirmButtonText: "OK",
-        timer: 3000, // Optionnel : se ferme automatiquement après 3s
+        timer: 3000,
         timerProgressBar: true,
       });
 

@@ -85,7 +85,9 @@ export async function fetchCategoriesDemande(): Promise<DitLookupOption[]> {
   return data;
 }
 
-export const createDit = async (payload: DitFormValues): Promise<Dit> => {
+export const createDit = async (
+  payload: DitFormValues,
+): Promise<ApiResponse<Dit>> => {
   const formData = new FormData();
 
   // champs simples

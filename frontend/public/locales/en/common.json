@@ -35,5 +35,11 @@
   "qte-demandee": "Requested Qty",
   "service-debiteur": "Debtor Service",
   "service-emetteur": "Issuer Service",
-  "utilisateur": "User"
+  "utilisateur": "User",
+  "agence-et-service": "Agency and service",
+  "enregistrement": "Registration...",
+  "enregistrer": "Save",
+  "info-client": "Customer Info",
+  "information-materiel": "Material Information",
+  "pieces-jointes": "Attachments"
 }

@@ -24,6 +24,8 @@ import NiveauUrgenceModal from "./NiveauUrgenceModal";
 import { MaterielSearchableSelect } from "./atom/MaterielSearchableSelect";
 import type { Materiel } from "@/domains/materiel/schema/materielSchema";
 import type { Client } from "@/domains/client/schema/clientSchema";
+import { useScrollToFirstError } from "@/hooks/useScrollToFirstError";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   initialValues?: DitFormValues;
@@ -32,6 +34,8 @@ type Props = {
 };
 
 function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
+  const { t } = useTranslation(["common", "dit"]);
+
   const [errors, setErrors] = useState<string[]>([]);
 
   const debiteurFields = agenceAndServiceFields.filter((field) =>
@@ -97,6 +101,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
       numSerie: "",
     },
     validators: {
+      onChange: ditFormSchema,
       onSubmit: ditFormSchema,
     },
 
@@ -114,9 +119,14 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
     },
   });
 
+  const formRef = useRef<HTMLFormElement>(null);
+  const errorContainerRef = useRef<HTMLDivElement>(null);
+  useScrollToFirstError({ form, formRef, errorContainerRef });
+
   const agenceDebiteurValue = useStore(
     form.store,
-    (state) => state.values.agenceDebiteur,
+    (state) =>
+      "agenceDebiteur" in state.values ? state.values.agenceDebiteur : undefined,
   );
   const interneExterneValue = useStore(
     form.store,
@@ -142,7 +152,6 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
       []
     );
   }, [agencesDebiteur, agenceDebiteurValue]);
-
 
   // La recherche de matériels est désormais serveur-side dans MaterielSearchableSelect.
 
@@ -223,9 +232,10 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
   const numeroClientOptions = clients;
   const nomClientOptions = clients;
 
-
   // (pas de pré-chargement materiel — recherche serveur-side via MaterielSearchableSelect)
-  const [selectedMateriel, setSelectedMateriel] = useState<Materiel | null>(null);
+  const [selectedMateriel, setSelectedMateriel] = useState<Materiel | null>(
+    null,
+  );
 
   // Synchronisation Materiel
   const syncMateriel = (
@@ -293,13 +303,17 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
       <div className="flex flex-col space-y-2 max-w-6xl  mx-auto">
         <h1 className="text-2xl font-bold text-white tracking-tight border text-center py-2 bg-brand-dark">
           {mode === "create"
-            ? "Formulaire Demande d'intervention"
-            : "Duplication de la demande d'intervention"}
+            ? t("dit:formulaire-demande-dintervention")
+            : t("dit:duplication-de-la-demande-dintervention")}
         </h1>
       </div>
 
       {errors.length > 0 && (
-        <div className="p-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-sm max-w-6xl mx-auto mt-4 mb-2">
+        <div
+          ref={errorContainerRef}
+          id="dit-general-errors"
+          className="p-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-sm max-w-6xl mx-auto mt-4 mb-2"
+        >
           {errors.map((err, index) => (
             <p key={index}>{String(err)}</p>
           ))}
@@ -311,6 +325,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
           const isInterne = interneExterneValue === "INTERNE";
           return (
             <form
+              ref={formRef}
               id="dit-form"
               onSubmit={(e) => {
                 e.preventDefault();
@@ -408,7 +423,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                     <div className="pb-3 ">
                       <div className="pb-3 space-y-1 ">
                         <h3 className="text-base font-bold">
-                          Agence et service
+                          {t("agence-et-service")}{" "}
                         </h3>
                         <div className="h-1 bg-brand-primary "></div>
                       </div>
@@ -462,7 +477,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                                           }),
                                           value: field.state.value,
                                           onChange: (value: string) => {
-                                            field.handleChange(value);
+                                            field.handleChange(value as any);
                                             if (isAgenceDebiteur) {
                                               form.setFieldValue(
                                                 "serviceDebiteur",
@@ -531,7 +546,9 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                     {/* Section Info client*/}
                     <div className=" w-full">
                       <div className="pb-3 space-y-1  ">
-                        <h3 className="text-base font-bold">Info Client</h3>
+                        <h3 className="text-base font-bold">
+                          {t("info-client")}
+                        </h3>
                         <div className="h-1 bg-brand-primary "></div>
                       </div>
                       <div className="space-y-4 flex gap-4  ">
@@ -563,7 +580,9 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                                             ? numeroClientOptions
                                             : config.name === "nomClient"
                                               ? nomClientOptions
-                                              : (config.options ?? []),
+                                              : "options" in config
+                                                ? config.options
+                                                : [],
                                         value: field.state.value,
                                         onChange: (item) => {
                                           if (
@@ -597,7 +616,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                     <div className=" w-full ">
                       <div className="py-3  space-y-1 ">
                         <h3 className="text-base font-bold">
-                          Information Matériel
+                          {t("information-materiel")}{" "}
                         </h3>
                         <div className="h-1 bg-brand-primary "></div>
                       </div>
@@ -611,17 +630,21 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                                 field.state.meta.isTouched &&
                                 !field.state.meta.isValid;
                               return (
-                                <Field data-invalid={isInvalid} className="flex-1">
-                                  <FieldLabel htmlFor="idMateriel" className="font-semibold">
-                                    Trouver un matériel par n° parc ou n° série ou Id matériel
-                                  </FieldLabel>
+                                <Field
+                                  data-invalid={isInvalid}
+                                  className="flex-1"
+                                >
                                   <MaterielSearchableSelect
                                     value={field.state.value}
                                     disabled={false}
-                                    onChange={(item) => syncMateriel("idMateriel", item)}
+                                    onChange={(item) =>
+                                      syncMateriel("idMateriel", item)
+                                    }
                                   />
                                   {isInvalid && (
-                                    <FieldError errors={field.state.meta.errors} />
+                                    <FieldError
+                                      errors={field.state.meta.errors}
+                                    />
                                   )}
                                 </Field>
                               );
@@ -638,7 +661,9 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                     {/* Section intervention*/}
                     <div className=" w-full  ">
                       <div className=" pb-3  space-y-1">
-                        <h3 className="text-base font-bold">Intervention</h3>
+                        <h3 className="text-base font-bold">
+                          {t("dit:intervention")}
+                        </h3>
                         <div className="h-1 bg-brand-primary "></div>
                       </div>
                       <div className="space-y-4 flex gap-4  ">
@@ -688,7 +713,9 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                     {/* Section réparation*/}
                     <div className=" w-full ">
                       <div className="pb-3  space-y-1 ">
-                        <h3 className="text-base font-bold">Reparation</h3>
+                        <h3 className="text-base font-bold">
+                          {t("dit:reparation")}
+                        </h3>
                         <div className="h-1 bg-brand-primary "></div>
                       </div>
                       <div className="space-y-4 flex gap-4  ">
@@ -735,7 +762,9 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                     {/* Section pieces Jointes*/}
                     <div className=" w-full  ">
                       <div className="pb-3  space-y-1 ">
-                        <h3 className="text-base font-bold">Pièces Jointes</h3>
+                        <h3 className="text-base font-bold">
+                          {t("pieces-jointes")}
+                        </h3>
                         <div className="h-1 bg-brand-primary "></div>
                       </div>
                       <div className="space-y-4 flex gap-4  ">
@@ -793,12 +822,12 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                   {isSubmitting ? (
                     <>
                       <Loader2 className="size-4 animate-spin" />
-                      Enregistrement...
+                      {t("enregistrement")}
                     </>
                   ) : (
                     <>
                       <Save className="size-4" />
-                      Enregistrer
+                      {t("enregistrer")}
                     </>
                   )}
                 </Button>

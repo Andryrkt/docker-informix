@@ -35,5 +35,11 @@
   "constructeur": "Constructeur",
   "designation": "Désignation",
   "qte-demandee": "Qté Demandée",
-  "utilisateur": "Utilisateur"
+  "utilisateur": "Utilisateur",
+  "agence-et-service": "Agence et service",
+  "info-client": "Info Client",
+  "information-materiel": "Information Matériel",
+  "pieces-jointes": "Pièces Jointes",
+  "enregistrement": "Enregistrement...",
+  "enregistrer": "Enregistrer"
 }

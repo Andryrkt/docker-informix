@@ -22,3 +22,19 @@ export interface Devis {
   numeroPo?: string;
   urlPo?: string;
 }
+
+export type LineItem = {
+  numeroLigne: number;
+  constructeur: string;
+  ref: string;
+  designation: string;
+  qte: number;
+  prixHt: number;
+  montantNet: number;
+  remise1: number;
+  remise2: number;
+  ras: boolean;
+  qteModifier: boolean;
+  nouvelleQte?: number;
+  supprimer: boolean;
+};

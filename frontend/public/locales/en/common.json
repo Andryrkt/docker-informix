@@ -20,5 +20,9 @@
   "relance-2": "Raise 2",
   "relance-3": "Raise 3",
   "soumis-par": "Submitted by",
-  "stop-relance": "Stop restart"
+  "stop-relance": "Stop restart",
+  "agence-service": "Agency - Service",
+  "code-client": "Customer Code",
+  "commerciaux": "Commercial",
+  "nom-client": "Customer name"
 }

@@ -20,5 +20,9 @@
   "position-ips": "Position IPS",
   "po-bc-client": "PO/BC client",
   "creer-par": "Créer par",
-  "soumis-par": "Soumis par"
+  "soumis-par": "Soumis par",
+  "commerciaux": "Commerciaux",
+  "agence-service": "Agence - Service",
+  "code-client": "Code Client",
+  "nom-client": "Nom client"
 }

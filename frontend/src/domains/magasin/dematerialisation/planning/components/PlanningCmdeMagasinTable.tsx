@@ -16,6 +16,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { useRef, useState, useCallback } from "react";
 import { getEtatPlanningCmdeMagasinColorMark } from "@/helper/helper";
 import { CmdeMagasinTableModal } from "./CmdeMagasinTableModal";
+import { useTranslation } from "react-i18next";
 // import { MonthEntriesDialog } from "./MonthEntriesDialog"; // 👈 import
 
 function PlanningCmdeMagasinTable({
@@ -25,6 +26,8 @@ function PlanningCmdeMagasinTable({
   planningMagasin: PlanningCmdeMagasin[];
   loading: boolean;
 }) {
+  const { t } = useTranslation("common");
+
   const parentRef = useRef<HTMLDivElement>(null);
 
   const months = Array.from(
@@ -70,10 +73,10 @@ function PlanningCmdeMagasinTable({
         <Table className="min-w-max text-xs">
           <TableHeader className="sticky top-0 z-20 bg-brand-dark [&_th]:text-white">
             <TableRow className="hover:bg-transparent border-none">
-              <TableHead>Commerciaux</TableHead>
-              <TableHead>Agence - Service</TableHead>
-              <TableHead>Code Client</TableHead>
-              <TableHead>Nom client</TableHead>
+              <TableHead>{t("commerciaux")}</TableHead>
+              <TableHead>{t("agence-service")}</TableHead>
+              <TableHead>{t("code-client")}</TableHead>
+              <TableHead>{t("nom-client")}</TableHead>
               {months.map((month) => (
                 <TableHead key={month} className="text-center">
                   {month}

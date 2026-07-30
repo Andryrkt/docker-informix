@@ -9,22 +9,22 @@ import { AppBreadcrumb } from "@/components/common/AppBreadcrumb";
 import { usePageTracker } from "@/hooks/usePageTracker";
 import { useVignette, VignetteProvider } from "@/context/VignetteContext";
 import { VignetteDialog } from "@/domains/home/components/VignetteDialog";
+import { useMatches } from "react-router-dom";
 
 function AppLayouts() {
   const { user } = useAuth();
 
-  // Tracking automatique de navigation — actif uniquement pour les utilisateurs connectés
   usePageTracker({ enabled: !!user });
 
+  const matches = useMatches();
+
   const appName = import.meta.env.VITE_APP_NAME;
-  const title = import.meta.env.VITE_APP_TITLE;
+  const pageTitle = (matches[matches.length - 1]?.handle as any)?.title;
 
   useEffect(() => {
-    document.title = `${appName} | ${title}`;
-  }, [appName, title]);
+    document.title = pageTitle ? `${appName} | ${pageTitle}` : appName;
+  }, [pageTitle, appName]);
 
-  const location = useLocation();
-  const routeKey = location.pathname;
   return (
     <VignetteProvider>
       <div className="flex max-w-screen">

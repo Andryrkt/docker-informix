@@ -68,6 +68,7 @@ function AppRoutes() {
         {
           path: "/login",
           element: <Login />,
+          handle: { title: "Connexion" },
         },
       ],
     },
@@ -86,6 +87,7 @@ function AppRoutes() {
         {
           path: "/select-company",
           element: <SelectCompany />,
+          handle: { title: "Sélection de société" },
         },
       ],
     },
@@ -108,59 +110,71 @@ function AppRoutes() {
         {
           path: "/",
           element: <HomePage />,
+          handle: { title: "Accueil" },
         },
 
         // Magazin -> Dematerialisation
         {
           path: "/magasin/dematerialisation/liste-devis-neg",
           element: <DevisNegList />,
+          handle: { title: "Liste devis négociés" },
         },
         {
           path: "/magasin/dematerialisation/planning-commande-magasin",
           element: <PlanningMagasinList />,
+          handle: { title: "Planning commande magasin" },
         },
         {
           path: "/magasin/dematerialisation/soumission-devis-neg-verification-de-prix/VP/:numeroDevis",
           element: <VerificationPrixDevisSoumission />,
+          handle: { title: "Vérification prix devis" },
         },
         {
           path: "/magasin/dematerialisation/soumission-devis-neg-validation-devis/VD/:numeroDevis",
           element: <ValidationDevisSoumission />,
           loader: verificationDevisLoader("validation-devis"),
+          handle: { title: "Validation devis" },
         },
         {
           path: "/magasin/dematerialisation/soumission-bc-neg/:numeroDevis",
           element: <BonCommandeDevisSoumission />,
           loader: verificationDevisLoader("validation-devis"),
+          handle: { title: "Bon de commande devis" },
         },
 
         // Magazin -> ordre de reparation
         {
           path: "/magasin/ordre-reparation/a-livrer",
           element: <OrdreReparationALivrerList />,
+          handle: { title: "OR à livrer" },
         },
         {
           path: "/magasin/ordre-reparation/a-traiter",
           element: <OrdreReparationATraiterList />,
+          handle: { title: "OR à traiter" },
         },
 
         // Atelier -> Demande d'intervention
         {
           path: "/atelier/demande-intervention/dit-list",
           element: <DitList />,
+          handle: { title: "Liste DIT" },
         },
         {
           path: "/atelier/demande-intervention/new",
           element: <DitCreation />,
-          loader: ditDefaultsLoader,
+          // loader: ditDefaultsLoader,
+          handle: { title: "Nouvelle DIT" },
         },
         {
           path: "/atelier/demande-intervention/duplication/:numeroDemandeIntervention",
           element: <DitDuplication />,
+          handle: { title: "Duplication DIT" },
         },
         {
           path: "/atelier/demande-intervention/details/:numeroDemandeIntervention",
           element: <DitDetails />,
+          handle: { title: "Détails DIT" },
         },
 
         // atelier => soummission
@@ -168,78 +182,94 @@ function AppRoutes() {
           path: "/atelier/demande-intervention/verification-prix/:numeroDemandeIntervention",
           element: <VerificationPrixSoumission />,
           loader: verificationDitLoader("verification-prix"),
+          handle: { title: "Vérification prix" },
         },
         {
           path: "/atelier/demande-intervention/validation-atelier/:numeroDemandeIntervention",
           element: <ValidationAtelierSoumission />,
           loader: verificationDitLoader("validation-atelier"),
+          handle: { title: "Validation atelier" },
         },
         {
           path: "/atelier/demande-intervention/bon-commande/:numeroDemandeIntervention",
           element: <BonCommandeSoumission />,
           loader: verificationDitLoader("bon-commande"),
+          handle: { title: "Bon de commande" },
         },
 
         {
           path: "/atelier/demande-intervention/ordre-reparation/:numeroDemandeIntervention",
           element: <OrSoummission />,
           loader: verificationDitLoader("ordre-reparation"),
+          handle: { title: "Ordre de réparation" },
         },
         {
           path: "/atelier/demande-intervention/rapport-intervention/:numeroDemandeIntervention",
           element: <RapportInterventionSoumission />,
           loader: verificationDitLoader("rapport-intervention"),
+          handle: { title: "Rapport d'intervention" },
         },
         {
           path: "/atelier/demande-intervention/facture/:numeroDemandeIntervention",
           element: <FactureSoummission />,
           loader: verificationDitLoader("facture"),
+          handle: { title: "Facture" },
         },
 
         // atelier => dossier
         {
           path: "/atelier/demande-intervention/dossier/:numeroDemandeIntervention",
           element: <DossierDitDetails />,
+          handle: { title: "Dossier DIT" },
         },
         {
           path: "/atelier/demande-intervention/dossier-list",
           element: <DossierDitList />,
+          handle: { title: "Liste dossiers DIT" },
         },
         // atelier => planning
         {
           path: "/atelier/demande-intervention/planning-list",
           element: <PlanningDitList />,
+          handle: { title: "Planning DIT" },
         },
 
         {
           path: "/atelier/demande-intervention/planning-detaille",
           element: <PlanningDitListDetaille />,
+          handle: { title: "Planning détaillé" },
         },
         {
           path: "/atelier/demande-intervention/planning-interne-atelier",
           element: <PlanningDitInterneAtelierList />,
+          handle: { title: "Planning interne atelier" },
         },
 
         // IT
         {
           path: "/it/demande-support-informatique",
           element: <DemandeSupportIT />,
+          handle: { title: "Demande support IT" },
         },
         {
           path: "/it/tickets",
           element: <TikListPage />,
+          handle: { title: "Liste tickets" },
         },
         {
           path: "/it/tickets/gantt",
           element: <TikGanttPage />,
+          handle: { title: "Gantt tickets" },
         },
         {
           path: "/it/tickets/dashboard",
           element: <TikDashboardPage />,
+          handle: { title: "Dashboard tickets" },
         },
         {
           path: "/it/tickets/:id",
           element: <TikDetailPage />,
+          handle: { title: "Détail ticket" },
         },
       ],
     },
@@ -261,20 +291,61 @@ function AppRoutes() {
           path: "/admin",
           element: <AdminLayout />,
           children: [
-            { path: "societes", element: <SocietesPage /> },
-            { path: "agences", element: <AgencesPage /> },
-            { path: "services", element: <ServicesPage /> },
-            { path: "centres", element: <CentresPage /> },
-            { path: "personnel", element: <PersonnelPage /> },
-            { path: "utilisateurs", element: <UtilisateursPage /> },
+            {
+              path: "societes",
+              element: <SocietesPage />,
+              handle: { title: "Sociétés" },
+            },
+            {
+              path: "agences",
+              element: <AgencesPage />,
+              handle: { title: "Agences" },
+            },
+            {
+              path: "services",
+              element: <ServicesPage />,
+              handle: { title: "Services" },
+            },
+            {
+              path: "centres",
+              element: <CentresPage />,
+              handle: { title: "Centres" },
+            },
+            {
+              path: "personnel",
+              element: <PersonnelPage />,
+              handle: { title: "Personnel" },
+            },
+            {
+              path: "utilisateurs",
+              element: <UtilisateursPage />,
+              handle: { title: "Utilisateurs" },
+            },
             {
               path: "utilisateurs/:userId/permissions",
               element: <UserPermissionsPage />,
+              handle: { title: "Permissions utilisateur" },
             },
-            { path: "actions", element: <ActionsPage /> },
-            { path: "modeles", element: <ModelePermissionsPage /> },
-            { path: "historique/navigation", element: <AuditNavigationPage /> },
-            { path: "historique/operations", element: <AuditOperationPage /> },
+            {
+              path: "actions",
+              element: <ActionsPage />,
+              handle: { title: "Actions" },
+            },
+            {
+              path: "modeles",
+              element: <ModelePermissionsPage />,
+              handle: { title: "Modèles permissions" },
+            },
+            {
+              path: "historique/navigation",
+              element: <AuditNavigationPage />,
+              handle: { title: "Historique navigation" },
+            },
+            {
+              path: "historique/operations",
+              element: <AuditOperationPage />,
+              handle: { title: "Historique opérations" },
+            },
           ],
         },
       ],

@@ -35,7 +35,7 @@ export function WelcomeDialog() {
 
   if (!user) return null;
 
-  const fullName = user.username || "Utilisateur";
+  const fullName = user.displayName || "Utilisateur";
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -59,10 +59,10 @@ export function WelcomeDialog() {
               onClick={() => setOpen(false)}
             >
               {fullName}
-            </Link>{" "}
+            </Link>
             👋 !
           </DialogTitle>
-          <DialogDescription className="space-y-2 text-base text-gray-700">
+          <DialogDescription className="space-y-4 text-base text-gray-700">
             <p>Ravi de vous revoir !</p>
             <p>
               Pour bien démarrer, pensez à consulter le{" "}

@@ -18,13 +18,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../ui/alert-dialog";
+import { t } from "i18next";
 
 type ConfirmOptions = {
   title?: string;
   description?: string;
   confirmText?: string;
   cancelText?: string;
-  variant?: "default" | "destructive" | "info" | "password" | "form";
+  variant?: "default" | "destructive" | "info" | "password" | "form" | "brand";
   icon?: React.ReactNode;
   onConfirm?: (password?: string) => void | Promise<void>;
   onCancel?: () => void;
@@ -92,10 +93,10 @@ export function ConfirmationDialogProvider({
   };
 
   const {
-    title = "Êtes-vous sûr ?",
+    title = t("confirmation:etes-vous-sur"),
     description = "",
-    confirmText = "Confirmer",
-    cancelText = "Annuler",
+    confirmText = t("confirmation:confirmer"),
+    cancelText = t("confirmation:annuler"),
     icon,
     variant = "default",
   } = options;
@@ -117,7 +118,7 @@ export function ConfirmationDialogProvider({
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Entrez votre mot de passe"
+                  placeholder={t("confirmation:entrez-votre-mot-de-passe")}
                   className="mt-2"
                   autoComplete="off"
                 />
@@ -146,12 +147,14 @@ export function ConfirmationDialogProvider({
                   "bg-blue-600 hover:bg-blue-700 text-white",
                 variant === "password" &&
                   "bg-global-primary/90 hover:bg-global-primary text-white",
+                variant === "brand" &&
+                  "bg-brand-primary hover:bg-brand-primary text-white",
               )}
             >
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  En cours...
+                  {t("en-cours")}
                 </>
               ) : (
                 confirmText

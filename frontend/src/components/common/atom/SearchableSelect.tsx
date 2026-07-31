@@ -17,19 +17,20 @@ import { Button } from "@/components/ui/button";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { t } from "i18next";
 
 export function SearchableSelect({
   value,
   onChange,
   options = [],
-  placeholder = "-- Choisir --",
+  placeholder = t("choisir"),
   disabled,
 }: any) {
   const [open, setOpen] = useState(false);
   const hasTous = options.some((opt: any) => opt.value === "all");
   const allOptions = hasTous
     ? options
-    : [{ label: "Tous", value: "all" }, ...options];
+    : [{ label: t("tous"), value: "all" }, ...options];
 
   const selected = options.find((o: any) => o.value === value);
 
@@ -51,9 +52,9 @@ export function SearchableSelect({
 
       <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
         <Command>
-          <CommandInput placeholder="Recherche..." />
+          <CommandInput placeholder={t("recherche")} />
           <CommandList>
-            <CommandEmpty>Pas de resultats.</CommandEmpty>
+            <CommandEmpty>{t("pas-de-resultats")}</CommandEmpty>
 
             <CommandGroup>
               {allOptions.map((opt: any) => (

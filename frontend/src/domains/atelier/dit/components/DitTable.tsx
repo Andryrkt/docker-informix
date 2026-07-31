@@ -23,8 +23,10 @@ import { checkDitSubmission } from "../api/ditApi";
 import { Button } from "@/components/ui/button";
 import { DitTableSkeleton } from "./DitTableSkeleton";
 import { formatApprorpiateDate } from "@/lib/dateUtils";
+import { useTranslation } from "react-i18next";
 
 function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
+  const { t } = useTranslation(["common", "dit"]);
   const navigate = useNavigate();
 
   const confirm = useConfirm();
@@ -120,43 +122,43 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
               <TableHead className="  px-4 text-center">Statut</TableHead>
               <TableHead>N° DIT</TableHead>
               <TableHead className=" wrap-break-word whitespace-normal max-w-20 text-center font-bold ">
-                Réalisé par
+                {t("realise-par")}{" "}
               </TableHead>
               <TableHead className=" wrap-break-word whitespace-normal max-w-10 text-center">
-                Type document
+                {t("type-document")}{" "}
               </TableHead>
               <TableHead className=" wrap-break-word whitespace-normal max-w-20 text-center">
-                Niv. urgence
+                {t("niv-urgence")}{" "}
               </TableHead>
-              <TableHead>Catégorie</TableHead>
-              <TableHead>N° Série</TableHead>
-              <TableHead>N° Parc</TableHead>
+              <TableHead>{t("categorie")}</TableHead>
+              <TableHead>{t("n-serie")}</TableHead>
+              <TableHead>{t("n-parc")}</TableHead>
               <TableHead className=" wrap-break-word whitespace-normal max-w-20 text-center">
-                Date Demande
+                {t("date-demande")}
               </TableHead>
               <TableHead>Int / Ext</TableHead>
-              <TableHead>Emetteur</TableHead>
-              <TableHead>Débiteur</TableHead>
-              <TableHead>Objet</TableHead>
+              <TableHead>{t("emetteur")}</TableHead>
+              <TableHead>{t("debiteur")}</TableHead>
+              <TableHead>{t("objet")}</TableHead>
               <TableHead className=" wrap-break-word whitespace-normal max-w-20 text-start">
-                Section affectée
+                {t("section-affectee")}
               </TableHead>
               <TableHead className=" wrap-break-word whitespace-normal max-w-30 text-center">
-                N° devis
+                {t("n-devis")}{" "}
               </TableHead>
               <TableHead className=" wrap-break-word text-center max-w-20">
-                Statut Devis
+                {t("statut-devis")}{" "}
               </TableHead>
               <TableHead>N° OR</TableHead>
               <TableHead>Statut OR</TableHead>
               <TableHead className=" wrap-break-word  whitespace-normal text-center max-w-20 ">
-                Montant Total OR
+                {t("dit:montant-total-or")}{" "}
               </TableHead>
               <TableHead className=" wrap-break-word  whitespace-normal text-center w-10 ">
-                Date Soumission OR
+                {t("dit:date-soumission-or")}{" "}
               </TableHead>
               <TableHead className=" wrap-break-word  whitespace-normal text-center w-10">
-                Statut facture
+                {t("statut-facture")}
               </TableHead>
               <TableHead className=" wrap-break-word  whitespace-normal text-center w-10">
                 RI
@@ -165,7 +167,7 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
                 Nbr PJ
               </TableHead>
               <TableHead className=" wrap-break-word  whitespace-normal text-center w-10">
-                Utilisateur
+                {t("common:utilisateur")}{" "}
               </TableHead>
             </TableRow>
           </TableHeader>

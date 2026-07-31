@@ -24,6 +24,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DynamicSearchableSelect } from "../atom/DynamicSearchableSelect";
+import { t } from "i18next";
 
 export function FieldRenderer({ field }: any) {
   const isSelect = field.type === "select";
@@ -108,7 +109,7 @@ export function FieldRenderer({ field }: any) {
                 remaining <= 0 ? "text-destructive" : "text-muted-foreground",
               )}
             >
-              Il vous reste {Math.max(remaining, 0)} caractères.
+              {t("il-vous-reste")} {Math.max(remaining, 0)} {t("caracteres")}.
             </p>
           )}
         </div>

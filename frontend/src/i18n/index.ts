@@ -14,6 +14,10 @@ export const namespaces = [
   "filters",
   "messages",
   "ticket",
+  "dit",
+  "confirmation",
+  "devisNeg",
+  "or",
 ] as const;
 export type Namespace = (typeof namespaces)[number];
 

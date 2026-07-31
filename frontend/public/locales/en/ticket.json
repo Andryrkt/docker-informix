@@ -23,5 +23,6 @@
   "service-debiteur": "Debtor service",
   "service-emetteur": "Issuer service",
   "taille": "Size :",
-  "file-name-nest-pas-dun-type-autorise-pdf-image-office": "\"{0}\" is not of an allowed type (PDF, image, Office)."
+  "file-name-nest-pas-dun-type-autorise-pdf-image-office": "\"{0}\" is not of an allowed type (PDF, image, Office).",
+  "choisir-une-categorie": "-- Choose a category --"
 }

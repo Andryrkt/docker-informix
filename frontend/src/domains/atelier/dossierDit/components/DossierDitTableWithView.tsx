@@ -27,8 +27,11 @@ import {
 } from "../api/dossierDitapi";
 import { useQuery } from "@tanstack/react-query";
 import DossierDitItemsSkeletonTable from "./DossierDitItemsSkeletonTable";
+import { useTranslation } from "react-i18next";
 
 function DossierDitTableWithView() {
+  const { t } = useTranslation("common");
+
   const { currentPage, setPage, selectedFilters, setFilter, reset } =
     usePageSearchParams(1);
 
@@ -230,9 +233,9 @@ function DossierDitTableWithView() {
         {/* Titre du dossier sélectionné */}
         <div className="flex flex-col space-y-2 mx-auto">
           <h1 className="text-2xl font-bold tracking-tight">
-            Dossier :
+            {t("dossier")} :
             <span className="font-normal mx-2">
-              {selectedDit?.numeroDemandeIntervention ?? "Aucun sélectionné"}
+              {selectedDit?.numeroDemandeIntervention ?? t("aucun-selectionne")}
             </span>
           </h1>
           <div className="h-1 bg-brand-primary w-1/2"></div>
@@ -244,19 +247,19 @@ function DossierDitTableWithView() {
             <TableHeader className="bg-brand-dark [&_th]:text-white sticky top-0">
               <TableRow className="hover:bg-brand-dark border-b-0">
                 <TableHead className="text-center">Type</TableHead>
-                <TableHead>Nom Document</TableHead>
+                <TableHead>{t("nom-document")}</TableHead>
                 <TableHead className="wrap-break-word whitespace-normal max-w-20">
-                  N° de document
+                  {t("n-de-document")}
                 </TableHead>
                 <TableHead className="wrap-break-word whitespace-normal max-w-10">
-                  Date création
+                  {t("date-creation")}
                 </TableHead>
                 <TableHead className="wrap-break-word whitespace-normal max-w-20">
-                  Date mise à jour
+                  {t("date-mise-a-jour")}
                 </TableHead>
-                <TableHead>N° Version</TableHead>
-                <TableHead>Nb de pages</TableHead>
-                <TableHead>Taille</TableHead>
+                <TableHead>{t("numero-de-version")}</TableHead>
+                <TableHead>{t("nb-de-pages")}</TableHead>
+                <TableHead>{t("taille")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

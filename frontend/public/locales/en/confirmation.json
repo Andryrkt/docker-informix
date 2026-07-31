@@ -1,4 +1,8 @@
 {
   "annuler": "Cancel",
-  "oui-creer": "Yes, create"
+  "oui-creer": "Yes, create",
+  "confirmer": "Confirm",
+  "en-cours": "In progress...",
+  "entrez-votre-mot-de-passe": "Enter your password",
+  "etes-vous-sur": "Are you sure?"
 }

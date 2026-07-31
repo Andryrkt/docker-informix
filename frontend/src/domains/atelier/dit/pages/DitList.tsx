@@ -23,8 +23,10 @@ import { getStatutsFacture } from "@/domains/facture/factureApi";
 import { getStatutsOR } from "@/domains/or/statutOrApi";
 import { getCategories } from "../api/categorieApi";
 import { fetchDits } from "../api/ditApi";
+import { useTranslation } from "react-i18next";
 
 function DitList() {
+  const { t } = useTranslation();
   const {
     currentPage,
     setPage,
@@ -250,7 +252,7 @@ function DitList() {
             <div>
               <StatusBadgeGroup
                 items={statusCounts}
-                title="Répartition par statut :"
+                title={t("common:repartition-par-statut")}
                 value={selectedFilters.status}
                 onChange={(status) => {
                   setFilter("status", status);
@@ -270,13 +272,15 @@ function DitList() {
               )}
               label={
                 totalResults === 0
-                  ? "Aucune donnée à exporter"
-                  : "Exporter tout (filtré)"
+                  ? t("common:aucune-donnee-a-exporter")
+                  : t("common:exporter-tout-filtre")
               }
               disabled={totalResults === 0 || isLoading || isFetching}
             ></ExcelDownloadButton>
             <div className="flex items-center gap-4 font-bold ">
-              <span className="text-[0.7rem]">{totalResults} Résultats</span>
+              <span className="text-[0.7rem]">
+                {totalResults} {t("common:resultats")}
+              </span>
               <LimitSelector
                 currentLimit={currentLimit}
                 onLimitChange={setLimit}

@@ -1,15 +1,7 @@
 import { FieldRenderer } from "@/components/common/renderer/FieldRenderer";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import {
-  agenceAndServiceFields,
-  demandeFields,
-  infoClientFields,
-  interventionFields,
-  piecesJointFields,
-  reparationFields,
-  traitFields,
-} from "../schema/ditSchemaField";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm, useStore } from "@tanstack/react-form";
 import { formatErrorMessage } from "@/lib/utils";
@@ -26,6 +18,15 @@ import type { Materiel } from "@/domains/materiel/schema/materielSchema";
 import type { Client } from "@/domains/client/schema/clientSchema";
 import { useScrollToFirstError } from "@/hooks/useScrollToFirstError";
 import { useTranslation } from "react-i18next";
+import {
+  getAgenceAndServiceFields,
+  getDemandeFields,
+  getInfoClientFields,
+  getInterventionFields,
+  getPiecesJointFields,
+  getReparationFields,
+  getTraitFields,
+} from "../schema/ditSchemaField";
 
 type Props = {
   initialValues?: DitFormValues;
@@ -38,11 +39,11 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
 
   const [errors, setErrors] = useState<string[]>([]);
 
-  const debiteurFields = agenceAndServiceFields.filter((field) =>
+  const debiteurFields = getAgenceAndServiceFields().filter((field) =>
     ["agenceDebiteur", "serviceDebiteur"].includes(field.name),
   );
 
-  const emetteurFields = agenceAndServiceFields.filter((field) =>
+  const emetteurFields = getAgenceAndServiceFields().filter((field) =>
     ["agenceEmetteur", "serviceEmmetteur"].includes(field.name),
   );
 
@@ -123,10 +124,8 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
   const errorContainerRef = useRef<HTMLDivElement>(null);
   useScrollToFirstError({ form, formRef, errorContainerRef });
 
-  const agenceDebiteurValue = useStore(
-    form.store,
-    (state) =>
-      "agenceDebiteur" in state.values ? state.values.agenceDebiteur : undefined,
+  const agenceDebiteurValue = useStore(form.store, (state) =>
+    "agenceDebiteur" in state.values ? state.values.agenceDebiteur : undefined,
   );
   const interneExterneValue = useStore(
     form.store,
@@ -337,7 +336,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                 {/* Section Demande */}
                 <div className="border-none">
                   <div className="space-y-4 ">
-                    {demandeFields.map((config) => (
+                    {getDemandeFields().map((config) => (
                       <form.Field
                         key={config.name}
                         name={config.name as never}
@@ -377,7 +376,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                 {/* Section traits  */}
                 <div className="border-none">
                   <div className="gap-4 lg:flex space-y-4  ">
-                    {traitFields.map((config) => (
+                    {getTraitFields().map((config) => (
                       <form.Field
                         key={config.name}
                         name={config.name as never}
@@ -553,7 +552,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                       </div>
                       <div className="space-y-4 flex gap-4  ">
                         <div className="grid md:grid-cols-2 gap-4 w-full">
-                          {infoClientFields.map((config) => (
+                          {getInfoClientFields().map((config) => (
                             <form.Field
                               key={config.name}
                               name={config.name as never}
@@ -668,7 +667,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                       </div>
                       <div className="space-y-4 flex gap-4  ">
                         <div className="flex  gap-4 w-full">
-                          {interventionFields.map((config) => (
+                          {getInterventionFields().map((config) => (
                             <form.Field
                               key={config.name}
                               name={config.name as never}
@@ -720,7 +719,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                       </div>
                       <div className="space-y-4 flex gap-4  ">
                         <div className="flex gap-4 w-full">
-                          {reparationFields.map((config) => (
+                          {getReparationFields().map((config) => (
                             <form.Field
                               key={config.name}
                               name={config.name as never}
@@ -769,7 +768,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                       </div>
                       <div className="space-y-4 flex gap-4  ">
                         <div className="flex flex-col gap-4 w-full">
-                          {piecesJointFields.map((config) => (
+                          {getPiecesJointFields().map((config) => (
                             <form.Field
                               key={config.name}
                               name={config.name as never}

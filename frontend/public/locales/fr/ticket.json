@@ -23,5 +23,6 @@
   "reinitialiser": "Réinitialiser",
   "envoi-en-cours": "Envoi en cours...",
   "enregistrer": "Enregistrer",
-  "file-name-nest-pas-dun-type-autorise-pdf-image-office": "\"{0}\" n'est pas d'un type autorisé (PDF, image, Office)."
+  "file-name-nest-pas-dun-type-autorise-pdf-image-office": "\"{0}\" n'est pas d'un type autorisé (PDF, image, Office).",
+  "choisir-une-categorie": "-- Choisir une catégorie --"
 }

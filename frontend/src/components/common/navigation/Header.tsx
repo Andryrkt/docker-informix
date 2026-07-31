@@ -31,6 +31,7 @@ import {
   Info,
   Layers,
   LogOut,
+  LogOutIcon,
   ShieldUser,
   User2Icon,
   Users,
@@ -56,6 +57,8 @@ function Header({ logoSrc, userName }: HeaderProps) {
       description: t("logoutDescription"),
       confirmText: t("confirm"),
       cancelText: t("cancel"),
+      variant: "brand",
+      icon: <LogOutIcon></LogOutIcon>,
     });
     if (!confirmed) return;
     logout();
@@ -143,7 +146,7 @@ function Header({ logoSrc, userName }: HeaderProps) {
             <Button
               // onClick={() => setIsProfileOpen(!false)}
               className="flex items-center focus:outline gap-2 bg-transparent hover:bg-transparent text-neutral-200 hover:text-blue-500 focus:text-blue-500"
-              aria-label="User menu"
+              aria-label={t("user-menu")}
             >
               <Info />
               <span className="text-[0.65rem] lg:block hidden">
@@ -155,7 +158,7 @@ function Header({ logoSrc, userName }: HeaderProps) {
             <Button
               onClick={toggleLanguage}
               className=" flex items-center justify-center bg-transparent hover:bg-transparent text-neutral-200 hover:text-blue-500 focus:text-blue-500"
-              aria-label="Changer la langue"
+              aria-label={t("changer-la-langue")}
             >
               <span className=" uppercase  ">{i18n.language}</span>
             </Button>
@@ -169,7 +172,7 @@ function Header({ logoSrc, userName }: HeaderProps) {
               <DropdownMenuTrigger asChild>
                 <Button
                   className="flex items-center focus:outline gap-2 bg-transparent hover:bg-transparent text-brand-primary cursor-pointer shadow-none p-0 group"
-                  aria-label="User menu"
+                  aria-label={t("user-menu")}
                 >
                   <User2Icon className="h-5 w-5" />
                   <span className="text-[0.65rem]  truncate text-left font-medium lg:block hidden">
@@ -190,7 +193,7 @@ function Header({ logoSrc, userName }: HeaderProps) {
                   <Button
                     // onClick={() => setIsProfileOpen(!false)}
                     className="flex items-center focus:outline gap-2 bg-transparent hover:bg-transparent text-neutral-200"
-                    aria-label="User menu"
+                    aria-label={t("user-menu")}
                   >
                     <span className="text-[0.65rem]">
                       version : V20261606.258

@@ -2,5 +2,20 @@
   "duplication-de-la-demande-dintervention": "Duplication of the intervention request",
   "formulaire-demande-dintervention": "Request for intervention form",
   "intervention": "Intervention",
-  "reparation": "Repair"
+  "reparation": "Reparation",
+  "date-soumission-or": "OR Submission Date",
+  "montant-total-or": "Total Amount OR",
+  "avis-de-recouvrement": "Recovery notice",
+  "categorie-demande": "Category request",
+  "choisir-un-n-client": "Choose a customer number",
+  "choisir-un-nom-client": "Choose a customer name",
+  "client-sous-contrat": "Customer under contract",
+  "demande-de-devis": "Quote request",
+  "detail-de-la-demande": "Request details",
+  "e-mail-du-client-externe": "Customer email (*EXTERNAL)",
+  "livraison-partielle": "Partial Delivery",
+  "n-telephone-externe": "Telephone number (*EXTERNAL)",
+  "nom-du-client-externe": "Customer Name (*EXTERNAL)",
+  "numero-du-client-externe": "Customer number (*EXTERNAL)",
+  "objet-de-la-demande": "Purpose of request"
 }

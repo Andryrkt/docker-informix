@@ -46,6 +46,8 @@ const emptyForm: TikPayload = {
   serviceDebiteurId: undefined,
   dateFinSouhaitee: "",
   parcInformatique: "",
+  Field: undefined,
+  state: undefined
 };
 
 type FormErrors = Partial<
@@ -229,11 +231,13 @@ export default function TikCreationForm() {
                               "border-red-500 ring-1 ring-red-500",
                           )}
                         >
-                          <SelectValue placeholder="-- {t('choisir-une-categorie')} --" />
+                          <SelectValue
+                            placeholder={t("choisir-une-categorie")}
+                          />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="">
-                            -- {t("choisir-une-categorie")} --
+                            {t("choisir-une-categorie")}
                           </SelectItem>
                           {categories.map((c) => (
                             <SelectItem key={c.id} value={String(c.id)}>

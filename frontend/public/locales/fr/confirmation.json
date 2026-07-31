@@ -1,4 +1,8 @@
 {
   "annuler": "Annuler",
-  "oui-creer": "Oui, créer"
+  "oui-creer": "Oui, créer",
+  "en-cours": "En cours...",
+  "etes-vous-sur": "Êtes-vous sûr ?",
+  "confirmer": "Confirmer",
+  "entrez-votre-mot-de-passe": "Entrez votre mot de passe"
 }

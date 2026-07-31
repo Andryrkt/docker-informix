@@ -2,5 +2,20 @@
   "formulaire-demande-dintervention": "Formulaire Demande d'intervention",
   "duplication-de-la-demande-dintervention": "Duplication de la demande d'intervention",
   "intervention": "Intervention",
-  "reparation": "Reparation"
+  "reparation": "Réparation",
+  "date-soumission-or": "Date Soumission OR",
+  "montant-total-or": "Montant Total OR",
+  "objet-de-la-demande": "Objet de la demande",
+  "detail-de-la-demande": "Détail de la demande",
+  "categorie-demande": "Catégorie demande",
+  "demande-de-devis": "Demande de devis",
+  "livraison-partielle": "Livraison Partielle",
+  "avis-de-recouvrement": "Avis de recouvrement",
+  "numero-du-client-externe": "Numéro du client (*EXTERNE)",
+  "choisir-un-n-client": "Choisir un n° client",
+  "nom-du-client-externe": "Nom du client (*EXTERNE)",
+  "choisir-un-nom-client": "Choisir un nom client",
+  "n-telephone-externe": "N° téléphone (*EXTERNE)",
+  "e-mail-du-client-externe": "E-mail du client (*EXTERNE)",
+  "client-sous-contrat": "Client sous contrat"
 }

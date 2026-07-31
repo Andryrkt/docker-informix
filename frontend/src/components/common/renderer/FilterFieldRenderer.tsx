@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { getOptions } from "@/helper/helper";
 import { Switch } from "@/components/ui/switch";
+import { t } from "i18next";
 
 export function FilterFieldRenderer({ field }: any) {
   const isSelect = field.type === "select";
@@ -39,7 +40,7 @@ export function FilterFieldRenderer({ field }: any) {
     const options = getOptions(field, optionsQuery);
 
     if (optionsQuery?.isLoading) {
-      return <div className="text-xs text-gray-400">Chargement...</div>;
+      return <div className="text-xs text-gray-400">{t("chargement")}...</div>;
     }
 
     return (

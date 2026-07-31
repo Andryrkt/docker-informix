@@ -9,6 +9,9 @@ import { fetchCategoriesDemande, fetchTypesDocument } from "../api/ditApi";
 import type { FieldTrait, SelectOption } from "@/schema/traitFields";
 import type { Materiel } from "@/domains/materiel/schema/materielSchema";
 import type { Client } from "@/domains/client/schema/clientSchema";
+import i18next from "i18next";
+
+const t = (key: string) => i18next.t(key);
 
 const toSelectOptions = (
   items: { code: string; label: string }[],
@@ -19,141 +22,141 @@ export const interneExterneOptions: SelectOption[] = [
   { label: "EXTERNE", value: "EXTERNE" },
 ];
 
- const yesNoOptions: SelectOption[] = [
+const yesNoOptions: SelectOption[] = [
   { label: "Oui", value: "OUI" },
   { label: "Non", value: "NON" },
 ];
 
-export const demandeFields: FieldTrait[] = [
+export const getDemandeFields = (): FieldTrait[] => [
   {
     name: "objet",
     label: "Objet",
     type: "text",
-    placeholder: "Objet de la demande",
+    placeholder: t("dit:objet-de-la-demande"),
     validate: (value) => value.length <= 86,
   },
   {
     name: "details",
     label: "Détails",
     type: "textarea",
-    placeholder: "Détail de la demande",
+    placeholder: t("dit:detail-de-la-demande"),
     maxLength: 1800,
     newlinePenalty: 130,
   },
 ];
 
-export const traitFields: FieldTrait[] = [
+export const getTraitFields = (): FieldTrait[] => [
   {
     name: "typeDocument",
-    label: "Type document",
+    label: t("common:type-document"),
     type: "select",
     queryKey: "typeDocument",
     queryFn: () => fetchTypesDocument().then(toSelectOptions),
   },
   {
     name: "categorieDemande",
-    label: "Catégorie demande",
+    label: t("dit:categorie-demande"),
     type: "select",
     queryKey: "categorieDemande",
     queryFn: () => fetchCategoriesDemande().then(toSelectOptions),
   },
   {
     name: "interneExterne",
-    label: "Interne externe",
+    label: t("common:interne-externe"),
     type: "multiSelect",
     options: interneExterneOptions,
   },
   {
     name: "demandeDevis",
-    label: "Demande de devis",
+    label: t("dit:demande-de-devis"),
     type: "multiSelect",
     options: yesNoOptions,
   },
   {
     name: "livraisonPartielle",
-    label: "Livraison Partielle",
+    label: t("dit:livraison-partielle"),
     type: "multiSelect",
     options: yesNoOptions,
   },
   {
     name: "avisRecouvrement",
-    label: "Avis de recouvrement",
+    label: t("dit:avis-de-recouvrement"),
     type: "multiSelect",
     options: yesNoOptions,
   },
 ];
 
-export const agenceAndServiceFields: FieldTrait[] = [
+export const getAgenceAndServiceFields = (): FieldTrait[] => [
   {
     name: "agenceDebiteur",
-    label: "Agence débiteur",
+    label: t("agence-debiteur"),
     type: "select",
     queryKey: "agences",
     queryFn: async () => [],
   },
   {
     name: "serviceDebiteur",
-    label: "Service débiteur",
+    label: t("service-debiteur"),
     type: "select",
-    placeholder: "Sélectionner un service",
+    placeholder: t("selectionner-un-service"),
     queryKey: "services-debiteur",
     queryFn: async () => [],
   },
   {
     name: "agenceEmetteur",
-    label: "Agence émetteur",
+    label: t("agence-emetteur"),
     type: "text",
-    placeholder: "Agence emetteur",
+    placeholder: t("agence-emetteur"),
     readOnly: true,
   },
 
   {
     name: "serviceEmmetteur",
-    label: "Service émetteur",
+    label: t("service-emetteur"),
     type: "text",
-    placeholder: "Service emetteur",
+    placeholder: t("service-emetteur"),
     readOnly: true,
   },
 ];
-export const interventionFields: FieldTrait[] = [
+export const getInterventionFields = (): FieldTrait[] => [
   {
     name: "worNiveauUrgence",
-    label: "Niveau d'urgence",
+    label: t("niveau-durgence"),
     type: "select",
     queryKey: "worNiveauUrgence",
     queryFn: () => getNiveauUrgences(),
   },
   {
     name: "datePrevue",
-    label: "Date prévue travaux",
+    label: t("date-prevue-travaux"),
     type: "date",
   },
 ];
-export const reparationFields: FieldTrait[] = [
+export const getReparationFields = (): FieldTrait[] => [
   {
     name: "typeReparation",
-    label: "Type de reparation",
+    label: t("type-de-reparation"),
     type: "select",
     options: reparationTypesOptions,
   },
   {
     name: "reparationPar",
-    label: "Réparation réalisé par",
+    label: t("reparation-realise-par"),
     type: "select",
     options: reparationRealiseParOptions,
   },
 ];
-export const infoClientFields: FieldTrait[] = [
+export const getInfoClientFields = (): FieldTrait[] => [
   {
     name: "numClient",
-    label: "Numéro du client (*EXTERNE)",
+    label: t("dit:numero-du-client-externe"),
     type: "dynamicSelect",
     valueField: "numClient",
     labelFields: ["numClient", "nomClient"],
     labelSeparator: " - ",
     clearable: true,
     clearLabel: "Aucun",
-    placeholder: "Choisir un n° client",
+    placeholder: t("dit:choisir-un-n-client"),
     // 👇 Dropdown display
     renderOption: (item: Client) => `${item.numClient} - ${item.nomClient} `,
     // 👇 Selected display (only the ID)
@@ -161,14 +164,14 @@ export const infoClientFields: FieldTrait[] = [
   },
   {
     name: "nomClient",
-    label: "Nom du client (*EXTERNE)",
+    label: t("dit:nom-du-client-externe"),
     type: "dynamicSelect",
     valueField: "nomClient",
     labelFields: ["numClient", "nomClient"],
     labelSeparator: " - ",
     clearable: true,
     clearLabel: "Aucun",
-    placeholder: "Choisir un nom client",
+    placeholder: t("choisir-un-nom-client"),
     // 👇 Dropdown display
     renderOption: (item: Client) => `${item.numClient} - ${item.nomClient} `,
     // 👇 Selected display (only the ID)
@@ -176,30 +179,30 @@ export const infoClientFields: FieldTrait[] = [
   },
   {
     name: "telephoneClient",
-    label: "N° téléphone (*EXTERNE)",
+    label: t("dit:n-telephone-externe"),
     type: "text",
     validate: (value) => value.length <= 16,
   },
 
   {
     name: "emailClient",
-    label: "E-mail du client (*EXTERNE)",
+    label: t("dit:e-mail-du-client-externe"),
     type: "text",
   },
   {
     name: "clientSousContrat",
-    label: "Client sous contrat",
+    label: t("dit:client-sous-contrat"),
     type: "multiSelect",
     options: [
-      { label: "Oui", value: "OUI" },
-      { label: "Non", value: "NON" },
+      { label: t("oui"), value: "OUI" },
+      { label: t("non"), value: "NON" },
     ],
   },
 ];
-export const piecesJointFields: FieldTrait[] = [
+export const getPiecesJointFields = (): FieldTrait[] => [
   {
     name: "pieceJoint",
-    label: "Pièce jointe",
+    label: t("piece-jointe"),
     type: "file",
     multiple: false, // ✅ Added
     pattern: ".*", // ✅ Added (matches any file)
@@ -208,7 +211,7 @@ export const piecesJointFields: FieldTrait[] = [
   },
   {
     name: "pieceJoint1",
-    label: "Pièce jointe 1",
+    label: t("piece-jointe-1"),
     type: "file",
     multiple: false,
     pattern: ".*",
@@ -217,7 +220,7 @@ export const piecesJointFields: FieldTrait[] = [
   },
   {
     name: "pieceJoint2",
-    label: "Pièce jointe 2",
+    label: t("piece-jointe-2"),
     type: "file",
     multiple: false,
     pattern: ".*",
@@ -225,17 +228,16 @@ export const piecesJointFields: FieldTrait[] = [
     accept: "*/*",
   },
 ];
-export const infoMaterielFields: FieldTrait[] = [
+export const getInfoMaterielFields = (): FieldTrait[] => [
   {
     name: "idMateriel",
-    label: "Id materiel",
+    label: t("id-materiel"),
     type: "dynamicSelect",
     valueField: "idMateriel",
     labelFields: ["idMateriel", "numParc", "numSerie"],
     labelSeparator: " - ",
     clearable: true,
     clearLabel: "Aucun",
-    placeholder: "Choisir un matériel",
     // 👇 Dropdown display
     renderOption: (item: Materiel) =>
       `ID : ${item.idMateriel} - Parc : ${item.numParc} - S/N : ${item.numSerie}`,
@@ -244,7 +246,7 @@ export const infoMaterielFields: FieldTrait[] = [
   },
   {
     name: "numParc",
-    label: "Numéro de parc",
+    label: t("numero-de-parc"),
     type: "dynamicSelect",
     valueField: "numParc",
     labelFields: ["idMateriel", "numParc", "numSerie"],
@@ -260,7 +262,7 @@ export const infoMaterielFields: FieldTrait[] = [
   },
   {
     name: "numSerie",
-    label: "Numéro de série",
+    label: t("numero-de-serie"),
     type: "dynamicSelect",
     valueField: "numSerie",
     labelFields: ["idMateriel", "numParc", "numSerie"],

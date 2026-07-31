@@ -98,6 +98,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       await authApi.logout();
     } finally {
       localStorage.removeItem("active_company_id");
+      localStorage.removeItem("welcomeDismissed");
       setSelectedCompanyId(null);
       clearPersistedQueryCache().catch(() => {});
       await refetch();

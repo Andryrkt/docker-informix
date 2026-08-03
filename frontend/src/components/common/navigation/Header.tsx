@@ -46,8 +46,10 @@ type HeaderProps = {
 };
 
 function Header({ logoSrc, userName }: HeaderProps) {
-  const { loading, user, logout } = useAuth();
+  const { loading, user, logout, activeCompany } = useAuth();
+
   const baseUrl = import.meta.env.VITE_APP_BASE || "/";
+
   const confirm = useConfirm();
   const { t, i18n } = useTranslation("header");
 
@@ -184,8 +186,18 @@ function Header({ logoSrc, userName }: HeaderProps) {
 
               <DropdownMenuContent
                 align="end"
-                className="w-auto min-w-[12rem] mt-2 bg-brand-dark text-brand-primary"
+                className="w-full  mt-2 bg-brand-dark text-brand-primary"
               >
+                {user.companies.map((company) => (
+                  <DropdownMenuItem key={company.id} className="cursor-pointer">
+                    <span className="text-[0.65rem]">{company.name}</span>
+
+                    {activeCompany?.id === company.id && (
+                      <span className="ml-auto text-xs">✓</span>
+                    )}
+                  </DropdownMenuItem>
+                ))}
+
                 <DropdownMenuItem
                   asChild
                   className="lg:hidden block on bg-inherit"

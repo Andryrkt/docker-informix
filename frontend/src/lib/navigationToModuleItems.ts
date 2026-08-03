@@ -44,6 +44,7 @@ const moduleIconMap: Record<string, IconDefinition> = {
   Documentation: faBook,
   Magasin: faDolly,
   Atelier: faTools,
+  "Support Informatique": faComputer,
   IT: faComputer,
   // Ajoute ici d'autres modules si nécessaire
 };
@@ -151,23 +152,32 @@ function collectLeafItems(menu: MenuItem): MenuItem[] {
   }
   return leaves;
 }
+type NavigationMenu = NavigationData["modules"][number]["menu"][number];
 
+function mapSousMenu(menu: NavigationMenu): SousMenu {
+  return {
+    titreSousMenu: menu.nom,
+    icon: getItemIcon(menu.nom),
+    lien: menu.route ?? undefined,
+    sousMenu:
+      menu["sous-menu"]?.length > 0
+        ? menu["sous-menu"].map(mapSousMenu)
+        : undefined,
+  };
+}
 /**
  * Fonction principale : transforme les données de navigation en AppModule[]
  * prêt à remplacer le tableau statique `moduleItems`.
  */
 export function navigationToModuleItems(data: NavigationData): AppModule[] {
   const modules: AppModule[] = [];
-
   for (const apiModule of data.modules) {
     const moduleName = apiModule.nom;
     const moduleIcon = getModuleIcon(moduleName);
-    const description = getModuleDescription(moduleName);
 
     // Création du modal
     const modal: ModuleModal = {
       titre: moduleName,
-      description: description,
       icon: moduleIcon,
       Menu: [],
       sousMenu: [],
@@ -181,44 +191,14 @@ export function navigationToModuleItems(data: NavigationData): AppModule[] {
       const hasChildren = menu["sous-menu"] && menu["sous-menu"].length > 0;
 
       if (hasChildren) {
-        // Ce menu est une section avec sous-menus
-        const sectionIcon = getSectionIcon(menu.nom);
-        // Récupérer toutes les feuilles sous ce menu
-        const leaves = collectLeafItems(menu);
-        const sousMenuItems: SousMenu[] = [];
-        for (const leaf of leaves) {
-          if (leaf.route) {
-            sousMenuItems.push({
-              titreSousMenu: leaf.nom,
-              icon: getItemIcon(leaf.nom),
-              lien: leaf.route,
-            });
-          }
-        }
-        // Créer un objet Menu si on a des items
-        if (sousMenuItems.length > 0) {
-          const menuObj: Menu = {
-            titreMenu: menu.nom,
-            icon: sectionIcon,
-            sousMenu: sousMenuItems,
-          };
-          modal.Menu!.push(menuObj);
-        }
+        modal.Menu!.push({
+          titreMenu: menu.nom,
+          icon: getSectionIcon(menu.nom),
+          sousMenu: menu["sous-menu"].map(mapSousMenu),
+        });
       } else {
-        // Menu sans enfant : item direct
-        if (menu.route) {
-          modal.sousMenu!.push({
-            titreSousMenu: menu.nom,
-            icon: getItemIcon(menu.nom),
-            lien: menu.route,
-          });
-        }
+        modal.sousMenu!.push(mapSousMenu(menu));
       }
-    }
-
-    // Si le modal n'a ni Menu ni sousMenu, on ignore ce module
-    if (modal.Menu!.length === 0 && modal.sousMenu!.length === 0) {
-      continue;
     }
 
     // Créer l'objet AppModule

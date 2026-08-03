@@ -88,9 +88,21 @@ COPY --from=vendor /app/vendor ./vendor
 # maintenant que le code source (src/) est present.
 COPY --from=vendor /usr/bin/composer /usr/bin/composer
 
+
+
+# === Installation SQL Server Drivers & Extensions ===
+RUN apt-get update && apt-get install -y gnupg2 \
+    && curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg \
+    && echo "deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/debian/12/prod bookworm main" > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 \
+    && pecl install sqlsrv pdo_sqlsrv redis \
+    && docker-php-ext-enable sqlsrv pdo_sqlsrv redis
+
 RUN composer dump-autoload --no-dev --optimize --classmap-authoritative \
     && (php bin/console cache:warmup --env=prod --no-debug || true) \
     && chown -R www-data:www-data var \
     && chmod -R ug+rwX var
+
 
 EXPOSE 80

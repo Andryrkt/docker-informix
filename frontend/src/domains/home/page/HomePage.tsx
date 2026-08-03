@@ -12,7 +12,8 @@ import { navigationToModuleItems } from "@/lib/navigationToModuleItems";
 import LoaderSpinner from "@/components/common/LoaderSpinner";
 
 function HomePage() {
-  const { openDialog, VignetteDialogComponent } = useVignetteDialog();
+  const { openDialog, ModuleDialogComponent } = useVignetteDialog();
+  
   const { t } = useTranslation();
 
   const { data, loading, error } = useMenuNavigation();
@@ -62,7 +63,7 @@ function HomePage() {
               />
             );
           })}
-          <VignetteDialogComponent />
+          <ModuleDialogComponent />
         </div>
       </div>
     </>

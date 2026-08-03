@@ -34,6 +34,7 @@ export type SousMenu = {
   titreSousMenu: string;
   icon: IconDefinition;
   lien?: string;
+  sousMenu?: SousMenu[];
 };
 
 export type Menu = {

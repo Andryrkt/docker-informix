@@ -47,7 +47,7 @@ const emptyForm: TikPayload = {
   dateFinSouhaitee: "",
   parcInformatique: "",
   Field: undefined,
-  state: undefined
+  state: undefined,
 };
 
 type FormErrors = Partial<
@@ -56,7 +56,8 @@ type FormErrors = Partial<
     | "detailDemande"
     | "categorieId"
     | "agenceDebiteurId"
-    | "serviceDebiteurId",
+    | "serviceDebiteurId"
+    | "parcInformatique",
     string
   >
 >;
@@ -136,6 +137,8 @@ export default function TikCreationForm() {
       e.agenceDebiteurId = "L'agence débiteur est obligatoire.";
     if (!form.serviceDebiteurId)
       e.serviceDebiteurId = "Le service débiteur est obligatoire.";
+    if (!form.parcInformatique)
+      e.parcInformatique = "Le parc informatique est obligatoire.";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -265,7 +268,7 @@ export default function TikCreationForm() {
                       />
                     </Field>
 
-                    <Field>
+                    <Field data-invalid={!!errors.parcInformatique}>
                       <FieldLabel>{t("parc-informatique")}</FieldLabel>
                       <Input
                         value={form.parcInformatique ?? ""}
@@ -273,6 +276,11 @@ export default function TikCreationForm() {
                           set("parcInformatique", e.target.value)
                         }
                       />
+                      {errors.parcInformatique && (
+                        <FieldError
+                          errors={[{ message: errors.parcInformatique }]}
+                        />
+                      )}
                     </Field>
 
                     <Field>

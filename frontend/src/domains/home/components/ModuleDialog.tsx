@@ -1,4 +1,4 @@
-import {
+ import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import type { ModuleModal } from "../schema/moduleItems";
+import type { ModuleModal, SousMenu } from "../schema/moduleItems";
 
 export function useVignetteDialog() {
   const [open, setOpen] = useState(false);
@@ -19,7 +19,6 @@ export function useVignetteDialog() {
     setModuleModal(payload);
     setOpen(true);
   };
-
   const hasItems = modulModal?.Menu?.length;
 
   const ModuleDialogComponent = () => (
@@ -39,26 +38,9 @@ export function useVignetteDialog() {
         </DialogHeader>
 
         <div className="px-4">
-          {/* Top-level quick-access items (e.g. Documentation) */}
           {hasItems && (
-            <div className="flex w-full justify-between gap-2">
-              {modulModal?.sousMenu!.map((sousMenu, j) => {
-                return (
-                  <Link
-                    key={j}
-                    to={sousMenu.lien ?? "#"}
-                    className="flex  gap-2 px-3 py-3 text-brand-primary/75 hover:text-brand-primary"
-                  >
-                    {sousMenu.icon && (
-                      <FontAwesomeIcon
-                        icon={sousMenu.icon}
-                        className="size-4 "
-                      />
-                    )}
-                    {sousMenu.titreSousMenu}
-                  </Link>
-                );
-              })}
+            <div className="flex w-full flex-col">
+              {renderSousMenu(modulModal?.sousMenu ?? [])}
             </div>
           )}
 
@@ -86,23 +68,7 @@ export function useVignetteDialog() {
                   </div>
 
                   <div className="flex flex-col">
-                    {menu.sousMenu?.map((sousMenu, j) => {
-                      return (
-                        <Link
-                          key={j}
-                          to={sousMenu.lien ?? "#"}
-                          className="flex  gap-2 px-2 py-2 text-brand-primary/75 hover:text-brand-primary group hover:bg-brand-primary/10 rounded-md"
-                        >
-                          <FontAwesomeIcon
-                            icon={sousMenu.icon}
-                            className="size-3 transition-transform duration-300 group-hover:translate-x-2 text-zinc-500   "
-                          ></FontAwesomeIcon>
-                          <span className="transition-transform duration-300 group-hover:translate-x-2">
-                            {sousMenu.titreSousMenu}
-                          </span>
-                        </Link>
-                      );
-                    })}
+                    {renderSousMenu(menu.sousMenu ?? [])}
                   </div>
                 </div>
               );
@@ -113,5 +79,34 @@ export function useVignetteDialog() {
     </Dialog>
   );
 
-  return { openDialog, VignetteDialogComponent: ModuleDialogComponent };
+  const renderSousMenu = (items: SousMenu[]) => {
+    return items.map((item, index) => (
+      <div key={index} className="flex flex-col">
+        {item.lien ? (
+          <Link
+            to={item.lien}
+            className="flex gap-2 px-3 py-3 text-brand-primary/75 hover:text-brand-primary"
+          >
+            {item.icon && (
+              <FontAwesomeIcon icon={item.icon} className="size-4" />
+            )}
+            {item.titreSousMenu}
+          </Link>
+        ) : (
+          <div className="flex gap-2 px-3 py-3 font-medium">
+            {item.icon && (
+              <FontAwesomeIcon icon={item.icon} className="size-4" />
+            )}
+            {item.titreSousMenu}
+          </div>
+        )}
+
+        {item.sousMenu?.length >= 1 ? (
+          <div className=" pl-3">{renderSousMenu(item?.sousMenu)}</div>
+        ) : null}
+      </div>
+    ));
+  };
+
+  return { openDialog, ModuleDialogComponent };
 }

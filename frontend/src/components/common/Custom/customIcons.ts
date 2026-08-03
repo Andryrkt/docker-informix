@@ -5,6 +5,7 @@ import {
   faWarehouse,
   faTruckLoading,
   faQuestionCircle,
+  faIndustry,
 } from "@fortawesome/free-solid-svg-icons";
 
 /**
@@ -25,4 +26,5 @@ export const customIcons: Record<string, IconDefinition> = {
   "a-livrer": faTruckLoading,
   "demande-support-informatique": faQuestionCircle,
   "dit-list": faList,
+  "select-company": faIndustry,
 };

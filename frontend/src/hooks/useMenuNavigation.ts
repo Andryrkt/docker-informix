@@ -5,25 +5,13 @@ import type { NavigationData } from "@/domains/authentification/schema/navigatio
 import { useQuery } from "@tanstack/react-query";
 
 export const useMenuNavigation = () => {
-  // const { activeCompany } = useAuth();
-
-  // Test
-  const activeCompany: Company = {
-    id: 4,
-    name: "SOMECA",
-    code: "SMC",
-  };
-
+  const { activeCompany } = useAuth();
   const { data, isLoading, error, refetch } = useQuery<NavigationData>({
-    queryKey: ["navigation", activeCompany?.id],
-    queryFn: () => {
-      if (!activeCompany) {
-        throw new Error("Aucune société active");
-      }
-      return fetchNavigation(activeCompany.id);
-    },
-    enabled: !!activeCompany,
-    staleTime: 5 * 60 * 1000,
+    queryKey: ["navigation-api", activeCompany.id],
+    queryFn: () => fetchNavigation(activeCompany.id),
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
   });
 
   return {

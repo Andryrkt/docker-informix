@@ -40,9 +40,10 @@ class NavigationController extends AbstractController
     #[OA\Tag(name: 'Sécurité')]
     public function getNavigation(): JsonResponse
     {
+
         $user = $this->getUser();
         $company = $this->securityContext->getActiveCompany();
-        
+
         if (!$company) {
             return $this->json(['error' => 'Veuillez sélectionner une société.'], 400);
         }
@@ -76,6 +77,7 @@ class NavigationController extends AbstractController
 
         foreach ($modules as $module) {
             $mPerm = $permissionsMap['module'][$module->getId()] ?? null;
+            
             if (!$mPerm || !$mPerm->hasAction(AppAction::VIEW)) {
                 continue;
             }
@@ -91,7 +93,6 @@ class NavigationController extends AbstractController
                 'module' => $module,
                 'parent' => null
             ]);
-
             foreach ($menus as $menu) {
                 $menuPerm = $permissionsMap['menu'][$menu->getId()] ?? null;
                 if (!$menuPerm || !$menuPerm->hasAction(AppAction::VIEW)) {

@@ -2,14 +2,13 @@ import axiosInstance from "@/conf/axios";
 import type { NavigationData } from "../schema/navigationSchema";
 
 const useMock = import.meta.env.VITE_USE_MOCK === "true";
+
 export const fetchNavigation = async (
   companyId: number,
 ): Promise<NavigationData> => {
-  alert("Mget api ");
-
   if (useMock) {
     // Simulation d’un appel asynchrone
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 3000));
     console.log(`[MOCK] Navigation pour société ${companyId}`);
     return navigationMockData;
   }
@@ -18,6 +17,7 @@ export const fetchNavigation = async (
       "X-Active-Company-ID": String(companyId),
     },
   });
+
   return response.data;
 };
 
@@ -252,7 +252,7 @@ const navigationMockData: NavigationData = {
             {
               id: 401,
               nom: "Formulaire de demande de support",
-              route: "/it/demande-support-informatiqued",
+              route: "/it/demande-support-informatique",
               actions: ["view", "create"],
               scope: { scopeAll: true, agencyScopes: [] },
               "sous-menu": [],

@@ -18,6 +18,7 @@ export const namespaces = [
   "confirmation",
   "devisNeg",
   "or",
+  "error",
 ] as const;
 export type Namespace = (typeof namespaces)[number];
 

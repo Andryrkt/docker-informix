@@ -7,8 +7,7 @@ import Footer from "./components/Footer";
 import { useAuth } from "@/context/authContext";
 import { AppBreadcrumb } from "@/components/common/AppBreadcrumb";
 import { usePageTracker } from "@/hooks/usePageTracker";
-import { useVignette, VignetteProvider } from "@/context/VignetteContext";
-import { VignetteDialog } from "@/domains/home/components/VignetteDialog";
+import { VignetteProvider } from "@/context/VignetteContext";
 import { useMatches } from "react-router-dom";
 
 function AppLayouts() {
@@ -46,7 +45,6 @@ function AppLayouts() {
           {/* <Footer /> */}
         </div>
       </div>
-      <VignetteDialog />
     </VignetteProvider>
   );
 }

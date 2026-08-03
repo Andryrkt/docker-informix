@@ -2,17 +2,13 @@ import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-type VignetteCardProps = {
+type ModuleCardProps = {
   title: string;
   icon?: IconDefinition;
   onClick?: () => void;
 };
 
-export function VignetteCard({
-  title,
-  icon = faHome,
-  onClick,
-}: VignetteCardProps) {
+export function ModuleCard({ title, icon = faHome, onClick }: ModuleCardProps) {
   return (
     <div
       onClick={onClick}

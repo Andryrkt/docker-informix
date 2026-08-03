@@ -12,7 +12,12 @@ export const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   // so isLoading=false but user is not yet populated. Must wait before deciding.
   // profileError coupe l'attente : sans lui, un token expiré/invalide (401 permanent)
   // laisse (!user && hasToken) vrai pour toujours → spinner bloqué à chaque navigation.
-  if (isRestoring || loading || (!user && hasToken && !profileError)) return <LoaderSpinner />;
+  if (isRestoring || loading || (!user && hasToken && !profileError))
+    return (
+      <div className="flex flex-1 items-center justify-center min-h-screen ">
+        <LoaderSpinner></LoaderSpinner>
+      </div>
+    );
   if (!user) return <Navigate to="/login" replace />;
 
   return <>{children}</>;

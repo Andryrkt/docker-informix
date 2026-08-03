@@ -42,7 +42,7 @@ class NavigationController extends AbstractController
     {
         $user = $this->getUser();
         $company = $this->securityContext->getActiveCompany();
-
+        
         if (!$company) {
             return $this->json(['error' => 'Veuillez sélectionner une société.'], 400);
         }
@@ -73,7 +73,7 @@ class NavigationController extends AbstractController
         // 3. Construire les modules (anciennement vignettes)
         $modulesResult = [];
         $modules = $this->entityManager->getRepository(AppModule::class)->findAll();
-        
+
         foreach ($modules as $module) {
             $mPerm = $permissionsMap['module'][$module->getId()] ?? null;
             if (!$mPerm || !$mPerm->hasAction(AppAction::VIEW)) {

@@ -14,7 +14,7 @@ import {
   HoverCardTrigger,
 } from "../ui/hover-card";
 import { Button } from "../ui/button";
-import { vignetteItems } from "@/domains/home/schema/vignetteItems";
+import { moduleItems } from "@/domains/home/schema/moduleItems";
 import { cn, formatLabel } from "@/lib/utils";
 import { useVignette } from "@/context/VignetteContext";
 import { customLabels } from "./Custom/customLabels";
@@ -36,9 +36,9 @@ export function AppBreadcrumb() {
     return null;
   }
 
-  const vignetteIconMap = vignetteItems.reduce(
+  const vignetteIconMap = moduleItems.reduce(
     (acc, item) => {
-      acc[item.title.toLowerCase()] = item.icon;
+      acc[item.nomModule.toLowerCase()] = item.icon;
       return acc;
     },
     {} as Record<string, IconDefinition>,
@@ -49,23 +49,23 @@ export function AppBreadcrumb() {
     return customLabels[segment] ?? formatLabel(segment);
   };
   // Build a map from item labels to their icons (including nested)
-  const labelIconMap = vignetteItems.reduce(
+  const labelIconMap = moduleItems.reduce(
     (acc, card) => {
       // Top-level card title
-      acc[card.title] = card.icon;
+      acc[card.nomModule] = card.icon;
 
-      card.modal.sections?.forEach((section) => {
+      card.moduleModal.Menu?.forEach((section) => {
         // ✅ Add section title
-        acc[section.title] = section.icon;
+        acc[section.titreMenu] = section.icon;
 
-        section.items.forEach((item) => {
-          acc[item.label] = item.icon;
+        section.sousMenu.forEach((item) => {
+          acc[item.sousMenu] = item.icon;
         });
       });
 
       // Direct modal.items
-      card.modal.items?.forEach((item) => {
-        acc[item.label] = item.icon;
+      card.moduleModal.sousMenu?.forEach((item) => {
+        acc[item.sousMenu] = item.icon;
       });
 
       return acc;
@@ -124,14 +124,16 @@ export function AppBreadcrumb() {
                   <HoverCardContent
                     className={cn(
                       "w-fit py-2 ml-6 mt-2 bg-brand-dark  shadow-sm shadow-white/20",
-                      vignetteItems.length >= 6 ? " lg:h-72" : "h-fit",
+                      moduleItems.length >= 6 ? " lg:h-72" : "h-fit",
                     )}
                   >
                     <div className="flex flex-col flex-wrap gap-2 content-start items-start h-full">
-                      {vignetteItems.map((vignette) => (
+                      {moduleItems.map((vignette) => (
                         <Button
-                          key={vignette.title}
-                          onClick={() => openDialog(vignette.modal as any)}
+                          key={vignette.nomModule}
+                          onClick={() =>
+                            openDialog(vignette.moduleModal as any)
+                          }
                           variant="brand_secondary"
                           className="w-48 h-11 flex items-center justify-start gap-2 py-2 px-4 text-left text-zinc-500 font-semibold group "
                         >
@@ -140,7 +142,7 @@ export function AppBreadcrumb() {
                             className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:translate-x-2   "
                           />
                           <span className="text-white group-hover:text-black transition-transform duration-300 group-hover:translate-x-2">
-                            {vignette.title}
+                            {vignette.nomModule}
                           </span>
                         </Button>
                       ))}

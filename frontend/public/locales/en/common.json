@@ -87,5 +87,7 @@
   "taille": "Size",
   "tous": "All",
   "aucun-selectionne": "None selected",
-  "en-cours": "In progress..."
+  "en-cours": "In progress...",
+  "changer-la-langue": "Change language",
+  "header.changer-la-langue": "Change the language"
 }

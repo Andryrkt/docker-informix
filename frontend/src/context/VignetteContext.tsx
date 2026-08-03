@@ -5,7 +5,7 @@ import React, {
   useMemo,
   type ReactNode,
 } from "react";
-import type { ModalData } from "@/domains/home/components/VignetteModal"; // adjust path
+import type { ModalData } from "@/domains/home/components/ModuleDialog"; // adjust path
 
 interface VignetteContextValue {
   open: boolean;

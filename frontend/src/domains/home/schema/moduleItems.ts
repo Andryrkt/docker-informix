@@ -30,94 +30,104 @@ import {
   faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 
-export type VignetteItem = {
-  label: string;
+export type SousMenu = {
+  titreSousMenu: string;
   icon: IconDefinition;
-  link?: string;
+  lien?: string;
 };
 
-export type VignetteSection = {
-  title?: string;
+export type Menu = {
+  titreMenu?: string;
   icon?: IconDefinition;
-  items?: VignetteItem[];
+  sousMenu?: SousMenu[];
+  lien?: string;
 };
 
-export type VignetteModal = {
-  title?: string;
+export type ModuleModal = {
+  titre?: string;
   description?: string;
   icon?: IconDefinition;
-  sections?: VignetteSection[];
-  items?: VignetteItem[];
+
+  // Menu avec plusieur sous_menus
+  Menu?: Menu[];
+
+  // Ou Direct sous_menu donc sans menu
+  sousMenu?: SousMenu[];
 };
 
-export type VignetteCardData = {
-  title?: string;
+export type AppModule = {
+  id?: string;
+  nomModule?: string;
   icon?: IconDefinition;
-  modal?: VignetteModal;
+  moduleModal?: ModuleModal;
 };
 
-export const vignetteItems: VignetteCardData[] = [
+export const moduleItems: AppModule[] = [
   {
-    title: "Documentation",
+    nomModule: "Documentation",
     icon: faBook,
-    modal: {
-      title: "Documentation",
+    moduleModal: {
+      titre: "Documentation",
       icon: faBook,
-      sections: [
+      Menu: [
         {
-          title: "Contrat",
+          titreMenu: "Contrat",
           icon: faFile,
-          items: [
+          sousMenu: [
             {
-              label: "Nouveau contrat",
+              titreSousMenu: "Nouveau contrat",
               icon: faCirclePlus,
-              link: "/documentation/contrats/nouveau-contrat",
+              lien: "/documentation/contrats/nouveau-contrat",
             },
             {
-              label: "Consultation",
+              titreSousMenu: "Consultation",
               icon: faSearch,
-              link: "/documentation/contrats/liste",
+              lien: "/documentation/contrats/liste",
             },
           ],
         },
       ],
-      items: [
-        { label: "Annuaire", icon: faAddressBook, link: "/sso/annuaire" },
+      sousMenu: [
         {
-          label: "Planning analytique HFF",
-          icon: faList,
-          link: "/documentation/planning-analytique-HFF",
+          titreSousMenu: "Annuaire",
+          icon: faAddressBook,
+          lien: "/sso/annuaire",
         },
         {
-          label: "Document interne",
+          titreSousMenu: "Planning analytique HFF",
+          icon: faList,
+          lien: "/documentation/planning-analytique-HFF",
+        },
+        {
+          titreSousMenu: "Document interne",
           icon: faFolderTree,
-          link: "/documentation/documentation-interne",
+          lien: "/documentation/documentation-interne",
         },
       ],
     },
   },
   {
-    title: "Magasin",
+    nomModule: "Magasin",
     icon: faDolly,
-    modal: {
-      title: "Magasin",
+    moduleModal: {
+      titre: "Magasin",
       // description:
       //   "This is desctiption of Magasin that should give from backend",
       icon: faDolly,
-      sections: [
+      Menu: [
         {
-          title: "OR",
+          titreMenu: "OR",
           icon: faWarehouse,
-          items: [
+          sousMenu: [
             {
-              label: "Liste à traiter",
+              titreSousMenu: "Liste à traiter",
               icon: faListCheck,
-              link: "/magasin/ordre-reparation/a-traiter",
+              lien: "/magasin/ordre-reparation/a-traiter",
             },
             {
-              label: "Liste à livrer",
+              titreSousMenu: "Liste à livrer",
               icon: faTruckLoading,
-              link: "/magasin/ordre-reparation/a-livrer",
+              lien: "/magasin/ordre-reparation/a-livrer",
             },
           ],
         },
@@ -143,27 +153,27 @@ export const vignetteItems: VignetteCardData[] = [
         //   items: [{ label: "Nouvelle demande", icon: faCirclePlus }],
         // },
         {
-          title: "Dematerialisation",
+          titreMenu: "Dematerialisation",
           icon: faCloudUpload,
-          items: [
+          sousMenu: [
             {
-              label: "Devis",
-              link: "/magasin/dematerialisation/liste-devis-neg",
+              titreSousMenu: "Devis",
+              lien: "/magasin/dematerialisation/liste-devis-neg",
               icon: faList,
             },
             {
-              label: "Planning de commande Magasin",
+              titreSousMenu: "Planning de commande Magasin",
               icon: faCalendar,
-              link: "/magasin/dematerialisation/planning-commande-magasin",
+              lien: "/magasin/dematerialisation/planning-commande-magasin",
             },
           ],
         },
         {
-          items: [
+          sousMenu: [
             {
-              label: "Soumission commandes fournisseur",
+              titreSousMenu: "Soumission commandes fournisseur",
               icon: faList,
-              link: "/magasin/cmde-fournisseur",
+              lien: "/magasin/cmde-fournisseur",
             },
             // {
             //   label: "Liste des cmds non placées",
@@ -176,105 +186,105 @@ export const vignetteItems: VignetteCardData[] = [
     },
   },
   {
-    title: "Atelier",
+    nomModule: "Atelier",
     icon: faTools,
-    modal: {
-      title: "Atelier",
+    moduleModal: {
+      titre: "Atelier",
       description:
         "This is desctiption of Atelier that should give from backend",
       icon: faTools,
-      sections: [
+      Menu: [
         {
-          title: "Demande d'intervention",
+          titreMenu: "Demande d'intervention",
           icon: faBriefcase,
-          items: [
+          sousMenu: [
             {
-              label: "Nouvelle demande",
+              titreSousMenu: "Nouvelle demande",
               icon: faCirclePlus,
-              link: "/atelier/demande-intervention/new",
+              lien: "/atelier/demande-intervention/new",
             },
             {
-              label: "Consultation",
+              titreSousMenu: "Consultation",
               icon: faSearch,
-              link: "/atelier/demande-intervention/dit-list",
+              lien: "/atelier/demande-intervention/dit-list",
             },
             {
-              label: "Dossier DIT",
+              titreSousMenu: "Dossier DIT",
               icon: faFolder,
-              link: "/atelier/demande-intervention/dossier-list",
+              lien: "/atelier/demande-intervention/dossier-list",
             },
-            { label: "Matrice de responsabilité", icon: faTable },
+            { titreSousMenu: "Matrice de responsabilité", icon: faTable },
           ],
         },
 
         {
-          title: "PLANNING",
+          titreMenu: "PLANNING",
           icon: faCalendarDays,
-          items: [
+          sousMenu: [
             {
-              label: "Planning detailé",
+              titreSousMenu: "Planning detailé",
               icon: faCalendarDay,
-              link: "/atelier/demande-intervention/planning-detaille",
+              lien: "/atelier/demande-intervention/planning-detaille",
             },
             {
-              label: "Planning interne Atelier",
+              titreSousMenu: "Planning interne Atelier",
               icon: faListCheck,
-              link: "/atelier/demande-intervention/planning-interne-atelier",
+              lien: "/atelier/demande-intervention/planning-interne-atelier",
             },
             {
-              label: "Planning",
+              titreSousMenu: "Planning",
               icon: faCalendar,
-              link: "/atelier/demande-intervention/planning-list",
+              lien: "/atelier/demande-intervention/planning-list",
             },
           ],
         },
       ],
-      items: [
+      sousMenu: [
         {
-          label: "Glossaire OR",
+          titreSousMenu: "Glossaire OR",
           icon: faBook,
-          link: "/atelier/demande-intervention/glossaire-or",
+          lien: "/atelier/demande-intervention/glossaire-or",
         },
       ],
     },
   },
   {
-    title: "IT",
+    nomModule: "IT",
     icon: faComputer,
-    modal: {
-      title: "Support IT",
+    moduleModal: {
+      titre: "Support IT",
       description: "This is desctiption of IT that should give from backend",
       icon: faComputer,
-      sections: [
+      Menu: [
         {
-          title: "Demande support informatique",
+          titreMenu: "Demande support informatique",
           icon: faQuestionCircle,
-          items: [
+          sousMenu: [
             {
-              label: "Formulaire de demande de support",
+              titreSousMenu: "Formulaire de demande de support",
               icon: faHandsHelping,
-              link: "/it/demande-support-informatique",
+              lien: "/it/demande-support-informatique",
             },
           ],
         },
         {
-          title: "Tickets",
+          titreMenu: "Tickets",
           icon: faListCheck,
-          items: [
+          sousMenu: [
             {
-              label: "Suivi des tickets",
+              titreSousMenu: "Suivi des tickets",
               icon: faListCheck,
-              link: "/it/tickets",
+              lien: "/it/tickets",
             },
             {
-              label: "Diagramme de Gantt",
+              titreSousMenu: "Diagramme de Gantt",
               icon: faChartGantt,
-              link: "/it/tickets/gantt",
+              lien: "/it/tickets/gantt",
             },
             {
-              label: "Tableau de bord",
+              titreSousMenu: "Tableau de bord",
               icon: faDashboard,
-              link: "/it/tickets/dashboard",
+              lien: "/it/tickets/dashboard",
             },
           ],
         },

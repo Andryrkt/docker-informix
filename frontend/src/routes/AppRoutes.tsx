@@ -24,9 +24,7 @@ function AppRoutes() {
   const { user } = useAuth();
 
   const router = useMemo(() => {
-    if (isLoading || !modules) return null;
-
-    const allMenuRoutes = buildRoutesFromMenu(modules);
+    const allMenuRoutes = buildRoutesFromMenu(modules ?? []);
 
     const adminRoutes = allMenuRoutes.filter((r) =>
       r.path?.startsWith("/admin"),
@@ -120,14 +118,7 @@ function AppRoutes() {
     );
   }, [modules, isLoading, user]);
 
-  const [routerVersion, setRouterVersion] = useState(0);
-  useEffect(() => {
-    if (modules) setRouterVersion((v) => v + 1);
-  }, [modules]);
-
-  if (!router) return <div>Chargement…</div>;
-
-  return <RouterProvider router={router} key={routerVersion} />;
+  return <RouterProvider router={router} />;
 }
 
 export default AppRoutes;

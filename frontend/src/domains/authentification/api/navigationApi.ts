@@ -6,12 +6,12 @@ const useMock = import.meta.env.VITE_USE_MOCK === "true";
 export const fetchNavigation = async (
   companyId: number,
 ): Promise<NavigationData> => {
-  if (useMock) {
-    // Simulation d’un appel asynchrone
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    console.log(`[MOCK] Navigation pour société ${companyId}`);
-    return navigationMockData;
-  }
+  // if (!useMock) {
+  //   // Simulation d’un appel asynchrone
+  //   await new Promise((resolve) => setTimeout(resolve, 3000));
+  //   console.log(`[MOCK] Navigation pour société ${companyId}`);
+  //   return navigationMockData;
+  // }
   const response = await axiosInstance.get<NavigationData>("/navigation", {
     headers: {
       "X-Active-Company-ID": String(companyId),

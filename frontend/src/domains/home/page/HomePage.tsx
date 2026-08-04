@@ -10,15 +10,53 @@ import { WelcomeDialog } from "@/components/common/WelcomeDialog";
 import { useMenuNavigation } from "@/hooks/useMenuNavigation";
 import { navigationToModuleItems } from "@/lib/navigationToModuleItems";
 import LoaderSpinner from "@/components/common/LoaderSpinner";
+import { fetchNavigation } from "@/domains/authentification/api/navigationApi";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/context/authContext";
 
 function HomePage() {
   const { openDialog, ModuleDialogComponent } = useVignetteDialog();
-  
   const { t } = useTranslation();
+  const { activeCompany } = useAuth(); // get the currently selected company
 
-  const { data, loading, error } = useMenuNavigation();
+  const [modules, setModules] = useState<AppModule[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const modules = navigationToModuleItems(data);
+  useEffect(() => {
+    // Don't fetch if no company is selected yet
+    if (!activeCompany) {
+      setModules([]);
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+
+    const loadModules = async () => {
+      try {
+        const data = await fetchNavigation(activeCompany.id);
+        console.log("Data", data);
+        if (!cancelled) {
+          setModules(data ? navigationToModuleItems(data) : []);
+          setLoading(false);
+        }
+      } catch (err: any) {
+        if (!cancelled) {
+          setError(err.message || t("error:erreur"));
+          setLoading(false);
+        }
+      }
+    };
+
+    loadModules();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeCompany, t]); // re‑run when the company changes
 
   if (loading) {
     return (

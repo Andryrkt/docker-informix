@@ -6,12 +6,17 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useMenuNavigation = () => {
   const { activeCompany } = useAuth();
+  alert(JSON.stringify(activeCompany));
+
   const { data, isLoading, error, refetch } = useQuery<NavigationData>({
     queryKey: ["navigation-api", activeCompany.id],
     queryFn: () => fetchNavigation(activeCompany.id),
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
+    staleTime: 0,
+    gcTime: 0,
+    // refetchOnMount: true,
+    // refetchOnWindowFocus: true,
+    // refetchOnReconnect: true,
+    // retry: 1,
   });
 
   return {

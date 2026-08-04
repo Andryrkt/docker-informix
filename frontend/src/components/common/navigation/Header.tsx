@@ -105,12 +105,12 @@ function Header({ logoSrc, userName }: HeaderProps) {
     <nav className="w-full flex items-center justify-between px-4 lg:px-8 py-2 bg-brand-dark text-white sticky top-0 z-50">
       <div className="flex justify-between py-2 gap-2 w-full">
         <div className="flex items-center gap-4 ">
-          <a
-            href={baseUrl}
+          <Link
+            to={baseUrl}
             className="flex items-center justify-center py-2 gap-2 w-max"
           >
             <img src={logoSrc} alt="HFF-logo" className="h-10 object-contain" />
-          </a>
+          </Link>
           <VisualTimer />
         </div>
 

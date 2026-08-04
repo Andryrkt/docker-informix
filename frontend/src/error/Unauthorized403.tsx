@@ -1,12 +1,7 @@
-import { useNavigate, useRouteError } from "react-router";
+import { useNavigate } from "react-router";
 
-export default function ErrorPage() {
-  const error: any = useRouteError();
+export default function Unauthorized() {
   const navigate = useNavigate();
-
-  console.error(error);
-
-  const errorStatus = error?.status || 500;
 
   const handleBack = () => {
     navigate(-1);
@@ -14,18 +9,17 @@ export default function ErrorPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center text-center p-6 space-y-6 text-global-primary">
-      <h1 className="text-6xl font-bold text-global-secondary">
-        {errorStatus}
-      </h1>
+      <h1 className="text-6xl font-bold text-global-secondary">403</h1>
 
-      <h2 className="text-3xl font-bold text-global-secondary">Erreur</h2>
+      <h2 className="text-3xl font-bold text-global-secondary">Accès refusé</h2>
 
       <p className="text-lg">
-        Une erreur est survenue lors du chargement de la page.
+        Vous n'êtes pas autorisé à accéder à cette page.
       </p>
 
       <p className="text-sm text-gray-500">
-        {error?.statusText || error?.message || "Erreur inconnue."}
+        Vous ne disposez pas des permissions nécessaires pour consulter cette
+        ressource.
       </p>
 
       <div className="flex flex-col sm:flex-row gap-4 mt-6">

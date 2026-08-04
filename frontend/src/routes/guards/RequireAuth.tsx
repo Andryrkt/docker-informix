@@ -2,23 +2,32 @@ import LoaderSpinner from "@/components/common/LoaderSpinner";
 import { useAuth } from "@/context/authContext";
 import { useIsRestoring } from "@tanstack/react-query";
 import { Navigate } from "react-router";
+import Unauthorized401 from "@/error/Unauthorized401";
 
 export const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   const { user, loading, profileError } = useAuth();
+
   const isRestoring = useIsRestoring();
   const hasToken = !!localStorage.getItem("access_token");
 
-  // isRestoring: PersistQueryClientProvider is reading IndexedDB — queries are paused,
-  // so isLoading=false but user is not yet populated. Must wait before deciding.
-  // profileError coupe l'attente : sans lui, un token expiré/invalide (401 permanent)
-  // laisse (!user && hasToken) vrai pour toujours → spinner bloqué à chaque navigation.
-  if (isRestoring || loading || (!user && hasToken && !profileError))
+  // Waiting for auth restoration
+  if (isRestoring || loading || (!user && hasToken && !profileError)) {
     return (
-      <div className="flex flex-1 items-center justify-center min-h-screen ">
-        <LoaderSpinner></LoaderSpinner>
+      <div className="flex flex-1 items-center justify-center min-h-screen">
+        <LoaderSpinner />
       </div>
     );
-  if (!user) return <Navigate to="/login" replace />;
+  }
+
+  // Token exists but profile loading failed (401 from API)
+  if (!user && hasToken && profileError) {
+    return <Unauthorized401 />;
+  }
+
+  // No token / anonymous user
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
   return <>{children}</>;
 };

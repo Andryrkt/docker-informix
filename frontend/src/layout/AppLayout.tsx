@@ -10,6 +10,8 @@ import { usePageTracker } from "@/hooks/usePageTracker";
 import { VignetteProvider } from "@/context/VignetteContext";
 import { useMatches } from "react-router-dom";
 
+import { PermissionBar } from "@/components/common/PermissionBar";
+
 function AppLayouts() {
   const { user } = useAuth();
 
@@ -27,7 +29,6 @@ function AppLayouts() {
   return (
     <VignetteProvider>
       <div className="flex max-w-screen">
-        {/* {user && <AuthSideBar />} */}
         <div className="w-full  flex flex-col flex-1 sticky  top-0">
           {user && (
             <>
@@ -37,7 +38,8 @@ function AppLayouts() {
               </div>
             </>
           )}
-          <main className="grow flex flex-col justify-center items-center  ">
+          <main className="grow flex flex-col justify-center items-center relative  ">
+            <PermissionBar />
             <Outlet />
             {/* <ScrollRestoration /> */}
             <Toaster richColors />

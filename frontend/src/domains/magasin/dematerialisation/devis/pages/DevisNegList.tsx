@@ -18,6 +18,7 @@ import { getClientOptions } from "@/domains/client/api/clientApi";
 import { queryClient } from "@/lib/queryClient";
 import { LimitSelector } from "@/components/common/pagination/LimitSelector";
 import { useTranslation } from "react-i18next";
+import { useHasAction } from "@/hooks/useHasAction";
 
 function DevisNegList() {
   const { t } = useTranslation("common");
@@ -159,6 +160,8 @@ function DevisNegList() {
     return allData.data;
   }, [selectedFilters, queryClient]);
 
+  const canExportPdf = useHasAction("export");
+
   return (
     <div className="px-2 w-full  ">
       <div className=" w-full h-full space-y-4 overflow-x-auto">
@@ -187,11 +190,14 @@ function DevisNegList() {
             )}
             label={
               totalResults === 0
-                ? t('aucune-donnee-a-exporter')
-                : t('exporter-tout-filtre')
+                ? t("aucune-donnee-a-exporter")
+                : t("exporter-tout-filtre")
             }
-            disabled={totalResults === 0 || isLoading || isFetching}
+            disabled={
+              totalResults === 0 || isLoading || isFetching || !canExportPdf
+            }
           ></ExcelDownloadButton>
+
           <div className="flex items-center gap-4 font-bold ">
             <span className="text-[0.7rem]">
               {totalResults} {t("resultats")}

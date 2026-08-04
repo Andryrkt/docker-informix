@@ -13,6 +13,7 @@ import OrdreReparationATraiterTable from "../components/OrdreReparationATraiterT
 import { fetchOrdresReparationATraiter } from "../api/ordreReparationATraiterApi";
 import { ordreReparationATraiterFieldsFilters } from "../filter/ordreReparationATraiterFieldFilter";
 import { useTranslation } from "react-i18next";
+import { useHasAction } from "@/hooks/useHasAction";
 
 function OrdreReparationATraiterList() {
   const { t } = useTranslation("common");
@@ -56,6 +57,8 @@ function OrdreReparationATraiterList() {
     return allData.data;
   }, [selectedFilters, queryClient]);
 
+  const canExportPdf = useHasAction("export");
+
   return (
     <div className="px-2 w-full ">
       <div className=" w-full  space-y-4 pb-4 overflow-auto">
@@ -86,7 +89,9 @@ function OrdreReparationATraiterList() {
                   ? t("aucune-donnee-a-exporter")
                   : t("exporter-tout-filtre")
               }
-              disabled={totalResults === 0 || isLoading || isFetching}
+              disabled={
+                totalResults === 0 || isLoading || isFetching || !canExportPdf
+              }
             ></ExcelDownloadButton>
             <div className="flex items-center gap-4 font-bold ">
               <span className="text-[0.7rem]">

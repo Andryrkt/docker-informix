@@ -56,7 +56,7 @@ function HomePage() {
     return () => {
       cancelled = true;
     };
-  }, [activeCompany, t]); // re‑run when the company changes
+  }, [activeCompany]);
 
   if (loading) {
     return (

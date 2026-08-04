@@ -1,4 +1,4 @@
- import {
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -6,7 +6,7 @@
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { ModuleModal, SousMenu } from "../schema/moduleItems";
@@ -19,6 +19,11 @@ export function useVignetteDialog() {
     setModuleModal(payload);
     setOpen(true);
   };
+  const closeDialog = useCallback(() => {
+    setOpen(false);
+    setModuleModal(null);
+  }, []);
+
   const hasItems = modulModal?.Menu?.length;
 
   const ModuleDialogComponent = () => (
@@ -85,6 +90,7 @@ export function useVignetteDialog() {
         {item.lien ? (
           <Link
             to={item.lien}
+            onClick={closeDialog}
             className="flex gap-2 px-3 py-3 text-brand-primary/75 hover:text-brand-primary"
           >
             {item.icon && (
@@ -108,5 +114,5 @@ export function useVignetteDialog() {
     ));
   };
 
-  return { openDialog, ModuleDialogComponent };
+  return { openDialog, closeDialog, ModuleDialogComponent };
 }

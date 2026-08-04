@@ -27,4 +27,5 @@ export const customIcons: Record<string, IconDefinition> = {
   "demande-support-informatique": faQuestionCircle,
   "dit-list": faList,
   "select-company": faIndustry,
+  new: faCirclePlus,
 };

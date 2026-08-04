@@ -16,4 +16,5 @@ export const customLabels: Record<string, string> = {
   "a-livrer": "À livrer",
   "demande-support-informatique": "Demande de Support Informatique",
   "select-company": "Choisir une société",
+  new: "Nouvelle DIT",
 };

@@ -1,18 +1,12 @@
 import { ModuleCard } from "../components/ModuleCard";
-import {
-  moduleItems,
-  type AppModule,
-  type ModuleModal,
-} from "../schema/moduleItems";
+import { type AppModule, type ModuleModal } from "../schema/moduleItems";
 import { useVignetteDialog } from "../components/ModuleDialog";
 import { useTranslation } from "react-i18next";
 import { WelcomeDialog } from "@/components/common/WelcomeDialog";
 import { useMenuNavigation } from "@/hooks/useMenuNavigation";
 import { navigationToModuleItems } from "@/lib/navigationToModuleItems";
 import LoaderSpinner from "@/components/common/LoaderSpinner";
-import { fetchNavigation } from "@/domains/authentification/api/navigationApi";
-import { useEffect, useMemo, useState } from "react";
-import { useAuth } from "@/context/authContext";
+import { useMemo } from "react";
 
 function HomePage() {
   const { openDialog, ModuleDialogComponent } = useVignetteDialog();

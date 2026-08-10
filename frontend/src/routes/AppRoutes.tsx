@@ -18,11 +18,11 @@ import { buildRoutesFromMenu } from "./buildRoutesFromMenu";
 import HomePage from "@/domains/home/page/HomePage";
 import { useAuth } from "@/context/authContext";
 import { defaultsAdminChildren } from "./routeMap";
+import LoaderSpinner from "@/components/common/LoaderSpinner";
 
 function AppRoutes() {
   const { modules, isLoading } = useMenu();
   const { user } = useAuth();
-
   const router = useMemo(() => {
     const allMenuRoutes = buildRoutesFromMenu(modules ?? []);
 
@@ -116,7 +116,7 @@ function AppRoutes() {
         .flat()
         .filter(Boolean) as RouteObject[],
     );
-  }, [modules, isLoading, user]);
+  }, [modules, user]);
 
   return <RouterProvider router={router} />;
 }

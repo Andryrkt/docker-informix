@@ -11,6 +11,7 @@ import { clear as clearPersistedQueryCache } from "idb-keyval";
 
 import * as authApi from "@/domains/authentification/api/authApi";
 import { useProfile } from "@/domains/authentification/hook/useProfile";
+import { queryClient } from "@/lib/queryClient";
 
 export interface Company {
   id: number;
@@ -97,11 +98,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       await authApi.logout();
     } finally {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
       localStorage.removeItem("active_company_id");
       localStorage.removeItem("welcomeDismissed");
       setSelectedCompanyId(null);
       clearPersistedQueryCache().catch(() => {});
-      await refetch();
+      queryClient.clear();
     }
   };
 

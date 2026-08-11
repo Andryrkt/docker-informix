@@ -7,8 +7,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { DossierDit } from "../schema/dossierDitSchema";
-import { MoreVerticalIcon } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 import { formatFileSize } from "@/lib/utils";
 import { DocumentViewer } from "@/components/common/DocumentViewer";
 import { useState } from "react";
@@ -47,9 +45,7 @@ function DossierDitView({ dossierDit }: Props) {
   return (
     <div className=" mx-auto ">
       <div className="flex flex-col space-y-2   mx-auto">
-        <h1 className="text-2xl font-bold  tracking-tight py-2">
-          Dossier : {"XXXXXXXXX"}
-        </h1>
+        <h1 className="text-2xl font-bold  tracking-tight py-2">Dossier :</h1>
       </div>
 
       <div className="space-y-6  border-t-0 mx-auto gap-x-5 grid lg:grid-cols-2 ">

@@ -1,9 +1,6 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import CollapsibleFilterForm from "@/components/common/filter/CollapSibleFilterForm";
-import {
-  dossierDitMock,
-  dossierDitListItemMock,
-} from "../schema/dossierDitMock";
+
 import { dossierDitFieldFilter } from "../filter/DossierDitFieldfilter";
 import { usePageSearchParams } from "@/hooks/usePageSearchParams";
 import {
@@ -107,7 +104,7 @@ function DossierDitTableWithView() {
 
         {/* Tableau des DIT */}
         <div className="w-full  overflow-auto min-h-40">
-          {/* {isLoadingDossierDit || isFetchingDossierDitListItem ? (
+          {isLoadingDossierDit || isFetchingDossierDitListItem ? (
             <DossierDitItemsSkeletonTable />
           ) : (
             <Table>
@@ -174,60 +171,7 @@ function DossierDitTableWithView() {
                 )}
               </TableBody>
             </Table>
-          )} */}
-
-          <Table>
-            <TableHeader className="bg-brand-dark [&_th]:text-white sticky top-0">
-              <TableRow className="hover:bg-brand-dark border-b-0">
-                <TableHead className="wrap-break-word whitespace-normal max-w-20 text-center">
-                  Date Demande
-                </TableHead>
-                <TableHead>N° DIT</TableHead>
-                <TableHead className="wrap-break-word whitespace-normal max-w-20">
-                  ID mat
-                </TableHead>
-                <TableHead>N° Parc</TableHead>
-                <TableHead>N° Série</TableHead>
-                <TableHead className="wrap-break-word whitespace-normal max-w-10">
-                  Designation
-                </TableHead>
-                <TableHead>N° OR</TableHead>
-                <TableHead>Nbr de docs</TableHead>
-                <TableHead>Int / Ext</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {dossierDitListItemMock?.map((d, index) => (
-                <TableRow
-                  key={index}
-                  onClick={() => handleSelectDit(d)}
-                  className={cn(
-                    "cursor-pointer text-xs font-mono text-gray-600 hover:bg-muted/40 transition",
-                    selectedDit?.numeroDemandeIntervention ===
-                      d.numeroDemandeIntervention && "bg-brand-primary/40",
-                  )}
-                >
-                  <TableCell className="text-center py-4 px-4">
-                    {d.dateDemande}
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {d.numeroDemandeIntervention}
-                  </TableCell>
-                  <TableCell>{d.idMateriel ?? "-"}</TableCell>
-                  <TableCell>{d.numParc ?? "-"}</TableCell>
-                  <TableCell>{d.numSerie ?? "-"}</TableCell>
-                  <TableCell className="max-w-32 truncate">
-                    {d.designation ?? "-"}
-                  </TableCell>
-                  <TableCell>{d.numeroOr ?? "-"}</TableCell>
-                  <TableCell className="text-center">{d.nbrPj ?? 0}</TableCell>
-                  <TableCell className="text-center">
-                    {d.interneExterne ?? "-"}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          )}
         </div>
 
         {/* Titre du dossier sélectionné */}
@@ -263,7 +207,7 @@ function DossierDitTableWithView() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {/* {isLoadingDossierDit || isFetchingDossierDit ? (
+              {isLoadingDossierDit || isFetchingDossierDit ? (
                 <TableRow>
                   <TableCell colSpan={8} className="text-center py-10">
                     Chargement des documents...
@@ -310,34 +254,7 @@ function DossierDitTableWithView() {
                     Aucun dossier pour ce DIT
                   </TableCell>
                 </TableRow>
-              )} */}
-              {dossierDitMock.map((d, index) => (
-                <TableRow
-                  key={index}
-                  className="cursor-pointer text-xs font-mono text-gray-600 hover:bg-muted/40 transition"
-                >
-                  <TableCell className="py-4">
-                    <DocTypeBadge type={d.type} />
-                  </TableCell>
-                  <TableCell className="py-4 px-4 font-medium text-foreground wrap-break-word whitespace-normal">
-                    {d.nomDocument}
-                  </TableCell>
-                  <TableCell className="py-4 px-4">
-                    {d.numeroDocument}
-                  </TableCell>
-                  <TableCell className="py-4 px-4">{d.dateCreation}</TableCell>
-                  <TableCell className="py-4 px-4">{d.dateMiseAJour}</TableCell>
-                  <TableCell className="py-4 px-4 text-center">
-                    {d.numeroVersion}
-                  </TableCell>
-                  <TableCell className="py-4 px-4 text-center">
-                    {d.nombrePages}
-                  </TableCell>
-                  <TableCell className="py-4 px-4 font-medium">
-                    {formatFileSize(d.pieceJointe.taille)}
-                  </TableCell>
-                </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </div>

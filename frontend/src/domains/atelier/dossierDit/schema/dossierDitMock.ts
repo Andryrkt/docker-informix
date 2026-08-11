@@ -1,107 +1,73 @@
-import type { DossierDit, DossierDitListItem } from "./dossierDitSchema";
+import type {
+  DossierDit,
+  DossierDitListItem,
+  PieceJointe,
+} from "./dossierDitSchema";
 
-//  Mock DIT (à remplacer par votre vraie requête)
-export const dossierDitListItemMock: DossierDitListItem[] = [
-  {
-    dateDemande: "2026-07-01",
-    numeroDemandeIntervention: "DIT-0001",
-    idMateriel: "MAT-1001",
-    numParc: "PARC-2201",
-    numSerie: "SER-88421",
-    designation: "Maintenance moteur hydraulique",
-    numeroOr: "OR-7781",
-    nbrPj: 3,
-    interneExterne: "Interne",
-  },
-  {
-    dateDemande: "2026-07-01",
-    numeroDemandeIntervention: "DIT-0002",
-    idMateriel: "MAT-1002",
-    numParc: "PARC-2202",
-    numSerie: "SER-88422",
-    designation: "Maintenance moteur hydraulique 2",
-    numeroOr: "OR-7782",
-    nbrPj: 2,
-    interneExterne: "Interne",
-  },
-  {
-    dateDemande: "2026-07-01",
-    numeroDemandeIntervention: "DIT-0003",
-    idMateriel: "MAT-1003",
-    numParc: "PARC-2203",
-    numSerie: "SER-88423",
-    designation: "Maintenance moteur hydraulique 3",
-    numeroOr: "OR-7783",
-    nbrPj: 1,
-    interneExterne: "Interne",
-  },
-];
+const randomDate = (start: Date, end: Date) =>
+  new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()))
+    .toISOString()
+    .split("T")[0];
 
-export const dossierDitMock: DossierDit[] = [
+const mockPieces: PieceJointe[] = [
   {
     id: 1,
-    type: "pdf",
-    nomDocument: "Rapport_Intervention_ITV-001.pdf",
-    numeroDocument: "DIT-2026-0001",
-    dateCreation: "2026-07-01",
-    dateMiseAJour: "2026-07-03",
-    numeroVersion: "2",
-    nombrePages: 18,
-    pieceJointe: {
-      id: 1,
-      nom: "Rapport_Intervention.pdf",
-      taille: 845_312,
-      url: "/Ordre de réparation_ - Copie.pdf",
-    },
+    nom: "contrat.pdf",
+    taille: 204800,
+    type: "application/pdf",
+    url: "/uploads/contrat.pdf",
   },
   {
     id: 2,
-    type: "image",
-    nomDocument: "Constat_Fissures_Façade.jpg",
-    numeroDocument: "DIT-2026-0002",
-    dateCreation: "2026-07-01",
-    dateMiseAJour: "2026-07-03",
-    numeroVersion: "1",
-    nombrePages: 18,
-    pieceJointe: {
-      id: 1,
-      nom: "Constat_Fissures_Façade.jpg",
-      taille: 845_312,
-      url: "https://picsum.photos/id/20/1200/800.jpg",
-    },
+    nom: "facture.jpg",
+    taille: 512000,
+    type: "image/jpeg",
+    url: "/uploads/facture.jpg",
   },
   {
     id: 3,
-    type: "excel",
-    nomDocument: "Suivi_Budgetaire_DIT.xlsx",
-    numeroDocument: "DIT-2026-0003",
-    dateCreation: "2026-06-15",
-    dateMiseAJour: "2026-07-01",
-    numeroVersion: "4",
-    nombrePages: 0,
-    pieceJointe: {
-      id: 103,
-      nom: "Suivi_Budgetaire_DIT.xlsx",
-      taille: 145200, // ~145 KB
-      url: "/files/suivi_budgetaire.xlsx", // Déclenchera le mode téléchargement
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    },
-  },
-  {
-    id: 4,
-    type: "word",
-    nomDocument: "Cahier_des_Charges_Technique.docx",
-    numeroDocument: "DIT-2026-0004",
-    dateCreation: "2026-05-20",
-    dateMiseAJour: "2026-07-03",
-    numeroVersion: "1.2",
-    nombrePages: 34,
-    pieceJointe: {
-      id: 104,
-      nom: "Cahier_des_Charges_Technique.docx",
-      taille: 4120000, // ~4.1 MB
-      url: "/files/Exemple_word.docx", // Déclenchera le mode téléchargement
-      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    },
+    nom: "specs.docx",
+    taille: 153600,
+    type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    url: "/uploads/specs.docx",
   },
 ];
+
+// Generate many list items for pagination demo
+export const mockDossierDitList: DossierDitListItem[] = Array.from(
+  { length: 25 },
+  (_, i) => ({
+    dateDemande: randomDate(new Date(2024, 0, 1), new Date(2025, 0, 1)),
+    numeroDemandeIntervention: `DI-2025-${String(i + 1).padStart(3, "0")}`,
+    idMateriel: `MAT-${1000 + i}`,
+    numParc: `P-${String(i + 1).padStart(3, "0")}`,
+    numSerie: `SN-${Math.floor(Math.random() * 1000000)}`,
+    designation:
+      [
+        "Imprimante HP",
+        "Serveur Dell",
+        "PC Lenovo",
+        "Switch Cisco",
+        "Routeur Juniper",
+      ][i % 5] + (i % 3 === 0 ? " Pro" : ""),
+    numeroOr: i % 2 === 0 ? `OR-${1000 + i}` : null,
+    nbrPj: i % 3,
+    interneExterne: i % 3 === 0 ? "Interne" : i % 3 === 1 ? "Externe" : null,
+  }),
+);
+
+// Generate details for each possible ID (up to 25)
+export const mockDossierDitDetailsAll: DossierDit[] = Array.from(
+  { length: 30 },
+  (_, i) => ({
+    id: i + 1,
+    type: ["Demande", "Rapport", "Attestation", "Facture", "Devis"][i % 5],
+    nomDocument: `Document_${i + 1}`,
+    numeroDocument: `DOC-${String(i + 1).padStart(4, "0")}`,
+    dateCreation: randomDate(new Date(2024, 0, 1), new Date(2025, 0, 1)),
+    dateMiseAJour: randomDate(new Date(2024, 6, 1), new Date(2025, 6, 1)),
+    numeroVersion: `v${i + 1}.0`,
+    nombrePages: Math.floor(Math.random() * 20) + 1,
+    pieceJointe: mockPieces[i % mockPieces.length],
+  }),
+);

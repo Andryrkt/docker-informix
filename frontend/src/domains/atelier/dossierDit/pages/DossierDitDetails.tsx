@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 
 import DossierDitView from "../components/DossierDitView";
 import { fetchDossierDitDetails } from "../api/dossierDitapi";
-import { dossierDitMock } from "../schema/dossierDitMock";
 
 function DossierDitDetails() {
   const { id } = useParams<{ id: string }>();
@@ -47,8 +46,7 @@ function DossierDitDetails() {
   return (
     <div className="px-4 w-full min-h-screen">
       <div className="w-full h-full space-y-6 overflow-x-auto">
-        {/* <DossierDitView dossierDit={dossierDit} /> */}
-        <DossierDitView dossierDit={dossierDitMock} />
+        <DossierDitView dossierDit={dossierDit} />
       </div>
     </div>
   );

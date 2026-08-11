@@ -64,7 +64,11 @@ function AppRoutes() {
           {
             path: "/select-company",
             element: <SelectCompany />,
-            handle: { title: "Sélection de société" },
+            handle: {
+              title: "Sélection de société",
+              hideHeader: true,
+              hideBreadcrumb: true,
+            },
           },
         ],
       },

@@ -204,10 +204,10 @@ export const getPiecesJointFields = (): FieldTrait[] => [
     name: "pieceJoint",
     label: t("piece-jointe"),
     type: "file",
-    multiple: false, // ✅ Added
-    pattern: ".*", // ✅ Added (matches any file)
-    maxSize: 5 * 1024 * 1024, // ✅ Added (5 MB)
-    accept: "*/*", // ✅ Added (all file types)
+    multiple: false,
+    pattern: ".*",
+    maxSize: 5 * 1024 * 1024,
+    accept: "*/*",
   },
   {
     name: "pieceJoint1",

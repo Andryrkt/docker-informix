@@ -220,6 +220,7 @@ export function FieldRenderer({ field }: any) {
           }}
           disabled={field.disabled}
           readOnly={field.readOnly}
+          className=" cursor-pointer"
         />
       );
     // Dragaple FileZone

@@ -20,6 +20,16 @@ function AppLayouts() {
   const appName = import.meta.env.VITE_APP_NAME;
   const pageTitle = (matches[matches.length - 1]?.handle as any)?.title;
 
+  const currentRoute = matches[matches.length - 1];
+  const handle = currentRoute?.handle as {
+    title?: string;
+    hideHeader?: boolean;
+    hideBreadcrumb?: boolean;
+  };
+
+  const hideHeader = handle?.hideHeader ?? false;
+  const hideBreadcrumb = handle?.hideBreadcrumb ?? false;
+
   useEffect(() => {
     document.title = pageTitle ? `${appName} | ${pageTitle}` : appName;
   }, [pageTitle, appName]);
@@ -29,10 +39,14 @@ function AppLayouts() {
       <div className="w-full  flex flex-col flex-1 sticky  top-0">
         {user && (
           <>
-            <Header logoSrc={LogoHff} userName={user.displayName} />
-            <div className="py-2 px-8 my-2">
-              <AppBreadcrumb />
-            </div>
+            {!hideHeader && (
+              <Header logoSrc={LogoHff} userName={user.displayName} />
+            )}
+            {!hideBreadcrumb && (
+              <div className="py-2 px-8 my-2">
+                <AppBreadcrumb />
+              </div>
+            )}
           </>
         )}
         <main className="grow flex flex-col justify-center items-center relative  ">

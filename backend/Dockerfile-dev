@@ -50,6 +50,9 @@ RUN apt-get update && apt-get install -y gnupg2 \
     && pecl install sqlsrv pdo_sqlsrv \
     && docker-php-ext-enable sqlsrv pdo_sqlsrv
 
+# Install Redis extension
+RUN pecl install redis && docker-php-ext-enable redis
+
 # === Installation LDAP Extension ===
 RUN apt-get update && apt-get install -y libldap2-dev \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \

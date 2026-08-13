@@ -16,7 +16,7 @@ export interface dossierDitParams {
   limit?: number;
 }
 
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true";
+const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true" || true; // default to true for demo
 
 export const fetchDossierDitList = async (
   params: dossierDitParams = {},

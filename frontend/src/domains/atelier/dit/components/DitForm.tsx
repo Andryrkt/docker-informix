@@ -298,9 +298,9 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
   };
 
   return (
-    <div className=" mx-auto p-4 md:p-6">
-      <div className="flex flex-col space-y-2 max-w-6xl  mx-auto">
-        <h1 className="text-2xl font-bold text-white tracking-tight border text-center py-2 bg-brand-dark">
+    <div className=" mx-auto p-4 md:p-6 ">
+      <div className="flex flex-col space-y-2 max-w-7xl  mx-auto">
+        <h1 className="text-2xl font-bold text-white tracking-tight border text-center py-2 bg-brand-dark rounded-t-md">
           {mode === "create"
             ? t("dit:formulaire-demande-dintervention")
             : t("dit:duplication-de-la-demande-dintervention")}
@@ -330,7 +330,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
                 e.preventDefault();
                 form.handleSubmit();
               }}
-              className="space-y-6 border border-t-0 p-10 max-w-6xl mx-auto"
+              className="space-y-6 border border-t-0 p-10 max-w-7xl mx-auto rounded-b-md"
             >
               <div className="grid gap-6">
                 {/* Section Demande */}

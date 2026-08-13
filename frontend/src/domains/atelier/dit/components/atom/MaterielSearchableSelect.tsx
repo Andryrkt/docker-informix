@@ -34,7 +34,9 @@ export function MaterielSearchableSelect({
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [debouncedTerm, setDebouncedTerm] = useState("");
-  const [debounceTimer, setDebounceTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const [debounceTimer, setDebounceTimer] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null);
 
   const handleSearchChange = useCallback(
     (term: string) => {
@@ -52,7 +54,7 @@ export function MaterielSearchableSelect({
     queryKey: ["materiels-search", debouncedTerm],
     queryFn: () => searchMateriels(debouncedTerm),
     enabled: debouncedTerm.trim().length >= 2,
-    staleTime: 1000 * 30,
+    staleTime: 1000 * 60,
   });
 
   return (
@@ -65,7 +67,9 @@ export function MaterielSearchableSelect({
           disabled={disabled}
         >
           <span className="truncate text-left flex-1 text-sm">
-            {value ? `ID : ${value}` : (
+            {value ? (
+              `ID : ${value}`
+            ) : (
               <span className="text-muted-foreground">{placeholder}</span>
             )}
           </span>
@@ -105,9 +109,11 @@ export function MaterielSearchableSelect({
               </div>
             )}
 
-            {!isFetching && debouncedTerm.trim().length >= 2 && results.length === 0 && (
-              <CommandEmpty>Aucun matériel trouvé.</CommandEmpty>
-            )}
+            {!isFetching &&
+              debouncedTerm.trim().length >= 2 &&
+              results.length === 0 && (
+                <CommandEmpty>Aucun matériel trouvé.</CommandEmpty>
+              )}
 
             {!isFetching && results.length > 0 && (
               <CommandGroup>
@@ -124,10 +130,13 @@ export function MaterielSearchableSelect({
                   >
                     <div className="flex flex-col">
                       <span className="font-medium">
-                        ID : {item.idMateriel} — Parc : {item.numParc ?? "—"} — S/N : {item.numSerie ?? "—"}
+                        ID : {item.idMateriel} — Parc : {item.numParc ?? "—"} —
+                        S/N : {item.numSerie ?? "—"}
                       </span>
                       <span className="text-xs text-muted-foreground">
-                        {[item.constructeur, item.designation, item.modele].filter(Boolean).join(" · ")}
+                        {[item.constructeur, item.designation, item.modele]
+                          .filter(Boolean)
+                          .join(" · ")}
                       </span>
                     </div>
                   </CommandItem>

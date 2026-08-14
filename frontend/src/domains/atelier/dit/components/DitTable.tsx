@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { DitTableSkeleton } from "./DitTableSkeleton";
 import { formatApprorpiateDate } from "@/lib/dateUtils";
 import { useTranslation } from "react-i18next";
+import DetailDialog from "./DetailDialog";
 
 function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
   const { t } = useTranslation(["common", "dit"]);
@@ -107,6 +108,11 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
       toast.error("Erreur lors de la vérification du DIT");
     },
   });
+
+  // Dialog states
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [detailType, setDetailType] = useState<"or" | "ri" | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   if (loading) return <DitTableSkeleton></DitTableSkeleton>;
 
@@ -274,10 +280,14 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
                   <TableCell className="underline ">
                     <Button
                       variant="link"
-                      className={cn(
-                        " text-[0.6rem] underline  p-0.5 h-fit ",
-                        // bg-green-600 hover:bg-green-700 text-white
-                      )}
+                      className="text-[0.6rem] underline p-0.5 h-fit"
+                      onClick={() => {
+                        if (d.numeroOr) {
+                          setDetailType("or");
+                          setSelectedId(d.numeroOr);
+                          setDetailDialogOpen(true);
+                        }
+                      }}
                     >
                       {d.numeroOr}
                     </Button>
@@ -302,7 +312,17 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
                     </Button>
                   </TableCell>
                   <TableCell>
-                    <Button variant="link" className="text-blue-600  ">
+                    <Button
+                      variant="link"
+                      className="text-blue-600"
+                      onClick={() => {
+                        if (d.ri) {
+                          setDetailType("ri");
+                          setSelectedId(d.ri);
+                          setDetailDialogOpen(true);
+                        }
+                      }}
+                    >
                       {d.ri}
                     </Button>
                   </TableCell>
@@ -349,6 +369,12 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
           });
         }}
         isLoading={checkDocumentMutation.isPending}
+      />
+      <DetailDialog
+        open={detailDialogOpen}
+        onOpenChange={setDetailDialogOpen}
+        type={detailType}
+        id={selectedId}
       />
     </>
   );

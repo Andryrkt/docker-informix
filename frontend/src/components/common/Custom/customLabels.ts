@@ -18,4 +18,5 @@ export const customLabels: Record<string, string> = {
   "select-company": "Choisir une société",
   new: "Nouvelle DIT",
   duplication: "Duplication DIT",
+  "verification-prix": "Vérification prix Magasin",
 };

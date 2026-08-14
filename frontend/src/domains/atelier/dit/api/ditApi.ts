@@ -209,3 +209,12 @@ export const downloadDitPdf = async (numero: string): Promise<Blob> => {
   );
   return data;
 };
+
+export const fetchORDetail = async (id: string) => {
+  const { data } = await axiosInstance.get(`/commande-or/${id}`);
+  return data;
+};
+export const fetchRIDetail = async (id: string) => {
+  const { data } = await axiosInstance.get(`/soumission-ri/${id}`);
+  return data;
+};

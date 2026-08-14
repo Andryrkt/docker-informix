@@ -18,7 +18,7 @@ interface DitListResponse extends PaginatedResponse<Dit> {
   statusCounts?: StatusCount[];
 }
 
-export async function fetchDits(
+export async function getDits(
   params: ditParams = {},
   page = 1,
   limit: number = 20,
@@ -40,7 +40,7 @@ export async function fetchDits(
   return response.data;
 }
 
-export async function fetchDitDetails(id: number | string): Promise<Dit> {
+export async function getDitDetails(id: number | string): Promise<Dit> {
   const response = await axiosInstance.get<Dit>(
     `/demande-intervention/details/${id}`,
   );
@@ -71,17 +71,23 @@ export interface DitLookupOption {
   label: string;
 }
 
-export async function fetchTypesDocument(): Promise<DitLookupOption[]> {
+export async function getTypesDocuments(): Promise<DitLookupOption[]> {
   const { data } = await axiosInstance.get<DitLookupOption[]>(
     "/dit/types-document",
   );
   return data;
 }
 
-export async function fetchCategoriesDemande(): Promise<DitLookupOption[]> {
+export async function getCategoriesDemande(): Promise<DitLookupOption[]> {
   const { data } = await axiosInstance.get<DitLookupOption[]>(
     "/dit/categories-demande",
   );
+  return data;
+}
+
+export async function getStatutsOR(): Promise<DitLookupOption[]> {
+  const { data } =
+    await axiosInstance.get<DitLookupOption[]>("/dit/statuts-or");
   return data;
 }
 

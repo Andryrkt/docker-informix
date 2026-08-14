@@ -4,7 +4,7 @@ import type { DitFormValues } from "../schema/ditSchema";
 import { useQuery } from "@tanstack/react-query";
 import { useConfirm } from "@/components/common/ConfirmDialog";
 import { toast } from "sonner";
-import { fetchDitDetails, duplicateDit } from "../api/ditApi";
+import { getDitDetails, duplicateDit } from "../api/ditApi";
 
 function DitDuplication() {
   const { numeroDemandeIntervention } = useParams();
@@ -17,7 +17,7 @@ function DitDuplication() {
     error,
   } = useQuery({
     queryKey: ["dit-details", numeroDemandeIntervention],
-    queryFn: () => fetchDitDetails(numeroDemandeIntervention!),
+    queryFn: () => getDitDetails(numeroDemandeIntervention!),
     enabled: !!numeroDemandeIntervention,
     select: (dit): DitFormValues => ({
       objet: dit.objet ?? "Copie demande intervention",

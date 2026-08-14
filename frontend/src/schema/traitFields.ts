@@ -8,6 +8,11 @@ export type SelectOption = {
   label: string;
   value: string | number | boolean;
 };
+
+export const toSelectOptions = (
+  items: { code: string; label: string }[],
+): SelectOption[] => items.map((i) => ({ label: i.label, value: i.code }));
+
 export type TableChoiceRow = {
   value: string;
   [key: string]: string | number;

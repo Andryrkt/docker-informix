@@ -17,10 +17,10 @@ const mapSectionToOption = (section: Section): SectionOption => ({
 });
 
 export const getSections = async (url: string): Promise<SectionOption[]> => {
-  if (USE_MOCK) {
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    return sectionsMock.map(mapSectionToOption);
-  }
+  // if (USE_MOCK) {
+  //   await new Promise((resolve) => setTimeout(resolve, 200));
+  //   return sectionsMock.map(mapSectionToOption);
+  // }
 
   const { data } = await axiosInstance.get<Section[]>(url);
 

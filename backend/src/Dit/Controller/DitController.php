@@ -137,6 +137,7 @@ class DitController extends AbstractController
             return $this->json(['error' => $e->getMessage()], $e->getStatusCode());
         }
 
+
         [$agenceEmetteur, $serviceEmetteur, $codeSociete] = $this->resolveDefaultAgenceService($user);
         if (!$agenceEmetteur || !$serviceEmetteur) {
             return $this->json(['error' => 'Agence/service émetteur introuvables pour cet utilisateur — vérifier sa fiche Personnel.'], Response::HTTP_CONFLICT);

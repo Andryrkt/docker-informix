@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import DitView from "../components/DitView";
 import { searchMateriels } from "@/domains/materiel/api/materielApi";
-import { fetchDitDetails } from "../api/ditApi";
+import { getDitDetails } from "../api/ditApi";
 
 function DitDetails() {
   const { numeroDemandeIntervention } = useParams();
@@ -13,7 +13,7 @@ function DitDetails() {
     error,
   } = useQuery({
     queryKey: ["dit-details", numeroDemandeIntervention],
-    queryFn: () => fetchDitDetails(numeroDemandeIntervention!),
+    queryFn: () => getDitDetails(numeroDemandeIntervention!),
     enabled: !!numeroDemandeIntervention,
   });
 

@@ -119,4 +119,92 @@ class DitRepository extends ServiceEntityRepository
             $qb->andWhere('d.dateDemande <= :dateFin')->setParameter('dateFin', $v);
         }
     }
+
+
+    /**
+     * Récupération de tous les statuts OR existant
+     * @return string[]
+     */
+    public function findStatutOr(): array
+    {
+        $result = $this->createQueryBuilder('d')
+            ->select('DISTINCT d.statutOr AS statutOr')
+            ->where('d.statutOr IS NOT NULL')
+            ->orderBy('d.statutOr', 'ASC')
+            ->getQuery()
+            ->getScalarResult();
+
+        return array_column($result, 'statutOr');
+    }
+
+    /**
+     * Récupération de toutes les sections affectées existantes.
+     *
+     * @return string[]
+     */
+    public function findSectionAffectee(): array
+    {
+        return $this->findDistinctField('sectionAffectee');
+    }
+
+    /**
+     * Récupération de toutes les sections support 1 existantes.
+     *
+     * @return string[]
+     */
+    public function findSectionSupport1(): array
+    {
+        return $this->findDistinctField('sectionSupport1');
+    }
+
+    /**
+     * Récupération de toutes les sections support 2 existantes.
+     *
+     * @return string[]
+     */
+    public function findSectionSupport2(): array
+    {
+        return $this->findDistinctField('sectionSupport2');
+    }
+
+    /**
+     * Récupération de toutes les sections support 3 existantes.
+     *
+     * @return string[]
+     */
+    public function findSectionSupport3(): array
+    {
+        return $this->findDistinctField('sectionSupport3');
+    }
+
+    /**
+     * Récupère les valeurs distinctes d'un champ.
+     *
+     * @return string[]
+     */
+    private function findDistinctField(string $field): array
+    {
+        $allowedFields = [
+            'sectionAffectee',
+            'sectionSupport1',
+            'sectionSupport2',
+            'sectionSupport3',
+        ];
+
+        if (!in_array($field, $allowedFields, true)) {
+            throw new \InvalidArgumentException(
+                sprintf('Champ non autorisé : %s', $field)
+            );
+        }
+
+        $result = $this->createQueryBuilder('d')
+            ->select(sprintf('DISTINCT d.%s AS value', $field))
+            ->where(sprintf('d.%s IS NOT NULL', $field))
+            ->andWhere(sprintf("d.%s <> ''", $field))
+            ->orderBy(sprintf('d.%s', $field), 'ASC')
+            ->getQuery()
+            ->getScalarResult();
+
+        return array_column($result, 'value');
+    }
 }

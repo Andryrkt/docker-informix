@@ -20,10 +20,15 @@ import { getAteliers } from "../../atelierApi";
 import { getNiveauUrgences } from "@/domains/niveauUrgence/niveauUrgenceApi";
 import { getSections } from "@/domains/section/sectionApi";
 import { getStatutsFacture } from "@/domains/facture/factureApi";
-import { getStatutsOR } from "@/domains/or/statutOrApi";
 import { getCategories } from "../api/categorieApi";
-import { fetchDits } from "../api/ditApi";
+import {
+  getCategoriesDemande,
+  getDits,
+  getStatutsOR,
+  getTypesDocuments,
+} from "../api/ditApi";
 import { useTranslation } from "react-i18next";
+import { toSelectOptions } from "@/schema/traitFields";
 
 function DitList() {
   const { t } = useTranslation();
@@ -49,7 +54,7 @@ function DitList() {
       currentPage,
       currentLimit,
     ],
-    queryFn: () => fetchDits(selectedFilters, currentPage, currentLimit),
+    queryFn: () => getDits(selectedFilters, currentPage, currentLimit),
     placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -86,8 +91,7 @@ function DitList() {
         ) {
           return {
             ...field,
-
-            queryFn: async () =>
+            queryFn: () =>
               agenceServices.map((a) => ({
                 label: `${a.code} - ${a.label}`,
                 value: a.value,
@@ -119,7 +123,7 @@ function DitList() {
               : "",
             selectAll: false,
             dependsOn: ["agence_emetteur"],
-            queryFn: async () => {
+            queryFn: () => {
               if (!selectedAgenceEmetteur) return [];
               return getServicesForAgent(selectedAgenceEmetteur);
             },
@@ -143,49 +147,49 @@ function DitList() {
         if (field.name === "section_affectee") {
           return {
             ...field,
-            queryFn: async () => getSections("/dit/sectionAffectee"),
+            queryFn: () => getSections("/dit/sections-affectees"),
           };
         }
         if (field.name === "section_support1") {
           return {
             ...field,
-            queryKey: "section_support1",
-            queryFn: async () => getSections("/dit/sectionAffectee"),
+            queryFn: () => getSections("/dit/sections-support-1"),
           };
         }
         if (field.name === "section_support2") {
           return {
             ...field,
-            queryKey: "section_support2",
-            queryFn: async () => getSections("/dit/sectionAffectee"),
+            queryFn: async () => getSections("/dit/sections-support-2"),
           };
         }
         if (field.name === "section_support3") {
           return {
             ...field,
-            queryKey: "section_support3",
-            queryFn: async () => getSections("/dit/sectionAffectee"),
+            queryFn: async () => getSections("/dit/sections-support-3"),
           };
         }
         if (field.name === "statut_facture") {
           return {
             ...field,
-            queryKey: "statut_facture",
             queryFn: getStatutsFacture,
           };
         }
         if (field.name === "statut_or") {
           return {
             ...field,
-            queryKey: "statut_or",
-            queryFn: getStatutsOR,
+            queryFn: () => getStatutsOR().then(toSelectOptions),
           };
         }
         if (field.name === "categorie_demande") {
           return {
             ...field,
-            queryKey: "categorie_demande",
-            queryFn: getCategories,
+            queryFn: () => getCategoriesDemande().then(toSelectOptions),
+          };
+        }
+        if (field.name === "type_document") {
+          return {
+            ...field,
+            queryFn: () => getTypesDocuments().then(toSelectOptions),
           };
         }
 
@@ -218,7 +222,7 @@ function DitList() {
   const fetchAllDitsForExport = useCallback(async () => {
     const allData = await queryClient.fetchQuery({
       queryKey: ["dit-export", JSON.stringify(selectedFilters), totalResults],
-      queryFn: () => fetchDits(selectedFilters, 1, totalResults),
+      queryFn: () => getDits(selectedFilters, 1, totalResults),
     });
     return allData.data;
   }, [selectedFilters, queryClient]);

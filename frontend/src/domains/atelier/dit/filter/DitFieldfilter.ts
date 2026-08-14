@@ -141,7 +141,7 @@ export const ditFieldFilters: FilterField[][] = [
       name: "agence_debiteur",
       label: "Agence débiteur",
       type: "select",
-      queryKey: "agences_debiteur",
+      queryKey: "agences",
     },
     {
       name: "service_debiteur",

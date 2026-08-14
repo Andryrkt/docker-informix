@@ -5,7 +5,7 @@ import {
   reparationRealiseParOptions,
 } from "@/domains/reparation/api";
 import { getServicesDebiteur } from "@/domains/service/api";
-import { fetchCategoriesDemande, fetchTypesDocument } from "../api/ditApi";
+import { getCategoriesDemande, getTypesDocuments } from "../api/ditApi";
 import type { FieldTrait, SelectOption } from "@/schema/traitFields";
 import type { Materiel } from "@/domains/materiel/schema/materielSchema";
 import type { Client } from "@/domains/client/schema/clientSchema";
@@ -51,14 +51,14 @@ export const getTraitFields = (): FieldTrait[] => [
     label: t("common:type-document"),
     type: "select",
     queryKey: "typeDocument",
-    queryFn: () => fetchTypesDocument().then(toSelectOptions),
+    queryFn: () => getTypesDocuments().then(toSelectOptions),
   },
   {
     name: "categorieDemande",
     label: t("dit:categorie-demande"),
     type: "select",
     queryKey: "categorieDemande",
-    queryFn: () => fetchCategoriesDemande().then(toSelectOptions),
+    queryFn: () => getCategoriesDemande().then(toSelectOptions),
   },
   {
     name: "interneExterne",

@@ -4,6 +4,7 @@ namespace App\Dit\Controller;
 
 use App\Dit\Repository\CategorieAteAppRepository;
 use App\Dit\Repository\ClientRepository;
+use App\Dit\Repository\DitRepository;
 use App\Dit\Repository\MaterielRepository;
 use App\Dit\Repository\WorNiveauUrgenceRepository;
 use App\Dit\Repository\WorTypeDocumentRepository;
@@ -25,6 +26,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class DitLookupController extends AbstractController
 {
     public function __construct(
+        private readonly DitRepository $ditRepository,
         private readonly WorTypeDocumentRepository $typeDocumentRepo,
         private readonly WorNiveauUrgenceRepository $niveauUrgenceRepo,
         private readonly CategorieAteAppRepository $categorieRepo,
@@ -126,7 +128,7 @@ class DitLookupController extends AbstractController
 
         return $this->json(array_map(fn($m) => self::sanitizeUtf8([
             'idMateriel'  => $m['mmat_nummat'],
-            'constructeur'=> $m['mmat_marqmat'],
+            'constructeur' => $m['mmat_marqmat'],
             'designation' => $m['mmat_desi'],
             'modele'      => $m['mmat_typmat'],
             'numParc'     => $m['mmat_recalph'],  // mmat_recalph = N° parc affiché
@@ -149,6 +151,117 @@ class DitLookupController extends AbstractController
             'emailClient' => null,
         ]), $this->clientRepo->search($search)));
     }
+    #[Route('/statuts-or', methods: ['GET'])]
+    public function statutsOr(): JsonResponse
+    {
+        $statuts = $this->ditRepository->findStatutOr();
+        return $this->json(array_map(
+            fn($statut) => [
+                'code' => self::toUtf8($statut),
+                'label' => self::toUtf8($statut),
+            ],
+            $statuts
+        ));
+    }
+    #[Route('/sections-affectees', methods: ['GET'])]
+    public function sectionsAffectees(): JsonResponse
+    {
+
+        $sections = $this->cleanSections(
+            $this->ditRepository->findSectionAffectee()
+        );
+
+        return $this->json(array_map(
+            fn($section) => [
+                'id' => self::toUtf8($section),
+                'nom_section' => self::toUtf8($section),
+            ],
+            $sections
+        ));
+    }
+
+    #[Route('/sections-support-1', methods: ['GET'])]
+    public function sectionsSupport1(): JsonResponse
+    {
+        $sections = $this->cleanSections(
+            $this->ditRepository->findSectionSupport1()
+        );
+
+        return $this->json(array_map(
+            fn($section) => [
+                'id' => self::toUtf8($section),
+                'nom_section' => self::toUtf8($section),
+            ],
+            $sections
+        ));
+    }
+
+    #[Route('/sections-support-2', methods: ['GET'])]
+    public function sectionsSupport2(): JsonResponse
+    {
+        $sections = $this->cleanSections(
+            $this->ditRepository->findSectionSupport2()
+        );
+
+        return $this->json(array_map(
+            fn($section) => [
+                'id' => self::toUtf8($section),
+                'nom_section' => self::toUtf8($section),
+            ],
+            $sections
+        ));
+    }
+
+    #[Route('/sections-support-3', methods: ['GET'])]
+    public function sectionsSupport3(): JsonResponse
+    {
+        $sections = $this->cleanSections(
+            $this->ditRepository->findSectionSupport3()
+        );
+
+        return $this->json(array_map(
+            fn($section) => [
+                'id' => self::toUtf8($section),
+                'nom_section' => self::toUtf8($section),
+            ],
+            $sections
+        ));
+    }
+
+
+    /**
+     * Nettoyage des noms de sections.
+     *
+     * Supprime les intitulés de fonction, les valeurs vides
+     * et les doublons.
+     *
+     * @param string[] $sections
+     *
+     * @return string[]
+     */
+    private function cleanSections(array $sections): array
+    {
+        $groupes = [
+            'Chef section',
+            'Chef de section',
+            'Responsable section',
+            "Chef d'équipe",
+        ];
+
+        $sections = array_map(
+            fn(string $section) => trim(str_replace($groupes, '',  self::toUtf8($section))),
+            $sections
+        );
+
+        // Supprime les valeurs vides + doublons
+        return array_values(array_unique(
+            array_filter(
+                $sections,
+                fn(string $section) => $section !== ''
+            )
+        ));
+    }
+
 
     /**
      * Certaines lignes de lookup Informix legacy (categorie_ate_app,

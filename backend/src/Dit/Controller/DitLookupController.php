@@ -41,7 +41,7 @@ class DitLookupController extends AbstractController
     public function typesDocument(): JsonResponse
     {
         return $this->json(array_map(fn($t) => [
-            'code' => $t->getCodeDocument(),
+            'code' => self::toUtf8($t->getDescription()),
             'label' => self::toUtf8($t->getDescription()),
         ], $this->typeDocumentRepo->findAllOrdered()));
     }

@@ -307,7 +307,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
         </h1>
       </div>
 
-      {errors.length > 0 && (
+      {/* {errors.length > 0 && (
         <div
           ref={errorContainerRef}
           id="dit-general-errors"
@@ -317,7 +317,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
             <p key={index}>{String(err)}</p>
           ))}
         </div>
-      )}
+      )} */}
 
       <form.Subscribe selector={(state) => state.values.interneExterne}>
         {(interneExterneValue) => {

@@ -126,7 +126,9 @@ export const createDit = async (
   return data;
 };
 
-export const duplicateDit = async (payload: DitFormValues): Promise<Dit> => {
+export const duplicateDit = async (
+  payload: DitFormValues,
+): Promise<ApiResponse<Dit>> => {
   const formData = new FormData();
 
   // champs simples
@@ -158,6 +160,7 @@ export const duplicateDit = async (payload: DitFormValues): Promise<Dit> => {
 
   return data;
 };
+
 export interface CheckDitPayload {
   document: string;
   numeroDemandeIntervention?: string;

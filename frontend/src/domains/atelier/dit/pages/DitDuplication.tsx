@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useConfirm } from "@/components/common/ConfirmDialog";
 import { toast } from "sonner";
 import { getDitDetails, duplicateDit } from "../api/ditApi";
+import Swal from "sweetalert2";
 
 function DitDuplication() {
   const { numeroDemandeIntervention } = useParams();
@@ -20,21 +21,22 @@ function DitDuplication() {
     queryFn: () => getDitDetails(numeroDemandeIntervention!),
     enabled: !!numeroDemandeIntervention,
     select: (dit): DitFormValues => ({
-      objet: dit.objet ?? "Copie demande intervention",
-      details: dit.details ?? "Duplication de la demande existante",
-      typeDocument: dit.typeDocument ?? "TYPE_1",
+      objet: dit.objet,
+      details: dit.details,
+      typeDocument: dit.typeDocument,
       interneExterne: dit.interneExterne === "INTERNE" ? "INTERNE" : "EXTERNE",
-      demandeDevis: dit.demandeDevis ?? "NON",
-      livraisonPartielle: dit.livraisonPartielle ?? "NON",
-      avisRecouvrement: dit.avisRecouvrement ?? "NON",
+      demandeDevis: dit.demandeDevis,
+      livraisonPartielle: dit.livraisonPartielle,
+      avisRecouvrement: dit.avisRecouvrement,
 
-      agenceDebiteur: dit.agenceDebiteur ?? "",
-      serviceDebiteur: dit.serviceDebiteur ?? "",
-      agenceEmetteur: dit.agenceEmetteur ?? "",
-      serviceEmmetteur: dit.serviceEmmetteur ?? "",
+      agenceDebiteur: dit.agenceDebiteur,
+      serviceDebiteur: dit.serviceDebiteur,
 
-      worNiveauUrgence: dit.worNiveauUrgence ?? "NORMAL",
-      datePrevue: dit.datePrevue ?? "",
+      agenceEmetteur: dit.agenceEmetteur,
+      serviceEmmetteur: dit.serviceEmmetteur,
+
+      worNiveauUrgence: dit.worNiveauUrgence,
+      datePrevue: dit.datePrevue,
 
       typeReparation: dit.typeReparation ?? "",
       reparationPar: dit.reparationPar ?? "",
@@ -61,17 +63,37 @@ function DitDuplication() {
     const confirmed = await confirm({
       title: "Dupliquer la demande?",
       description: "Cette action est définitive.",
-      confirmText: "dupliquer",
+      confirmText: "Dupliquer",
       cancelText: "Annuler",
       variant: "info",
       // icon: < className="w-5 h-5 text-red-500" />,
     });
-    if (!confirmed) {
-      return;
+    if (!confirmed) return;
+
+    try {
+      const response = await duplicateDit(values);
+      await Swal.fire({
+        title: "Succès !",
+        text: response.message || "DIT créée avec succès !",
+        icon: "success",
+        confirmButtonColor: "#22c55e",
+        confirmButtonText: "OK",
+        timer: 3000,
+        timerProgressBar: true,
+      });
+
+      // Optionnel : Rediriger ici après la fermeture de SweetAlert
+      navigate("/atelier/demande-intervention/dit-list");
+    } catch (error) {
+      Swal.close(); // Fermer le loader
+      await Swal.fire({
+        title: "Erreur",
+        text: error.message || "Une erreur est survenue lors de la création.",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+        confirmButtonText: "OK",
+      });
     }
-    const dit = await duplicateDit(values);
-    toast.success(`DIT ${dit.numeroDemandeIntervention} créée.`);
-    navigate("/atelier/demande-intervention/dit-list");
   };
 
   if (isPending) {

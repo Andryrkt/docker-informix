@@ -6,6 +6,7 @@ import {
   faTruckLoading,
   faQuestionCircle,
   faIndustry,
+  faClone,
 } from "@fortawesome/free-solid-svg-icons";
 
 /**
@@ -28,4 +29,5 @@ export const customIcons: Record<string, IconDefinition> = {
   "dit-list": faList,
   "select-company": faIndustry,
   new: faCirclePlus,
+  duplication: faClone,
 };

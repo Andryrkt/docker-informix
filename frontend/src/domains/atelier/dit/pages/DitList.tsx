@@ -56,7 +56,7 @@ function DitList() {
   });
 
   const { data: agenceServices = [], isLoading: isLoadingAgences } = useQuery({
-    queryKey: ["dit-agences-and-services"],
+    queryKey: ["filter-options", "agences"],
     queryFn: getAgencesWithServices,
     staleTime: 50 * 60 * 1000,
     gcTime: 50 * 60 * 1000,
@@ -89,7 +89,7 @@ function DitList() {
 
             queryFn: async () =>
               agenceServices.map((a) => ({
-                label: `${a.value} - ${a.label}`,
+                label: `${a.code} - ${a.label}`,
                 value: a.value,
               })),
           };

@@ -70,7 +70,7 @@ class DitController extends AbstractController
         return $this->json([
             'data' => array_map(fn(Dit $d) => $this->payloadFactory->serialize($d), $dits),
             'current_page' => $page,
-            'totalPages' => (int) ceil($total / $limit),
+            'total_pages' => (int) ceil($total / $limit),
             'resultat' => $total,
         ]);
     }

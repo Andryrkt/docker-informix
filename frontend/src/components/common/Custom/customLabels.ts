@@ -19,4 +19,5 @@ export const customLabels: Record<string, string> = {
   new: "Nouvelle DIT",
   duplication: "Duplication DIT",
   "verification-prix": "Vérification prix Magasin",
+  it: "Support Informatique",
 };

@@ -42,5 +42,5 @@ export interface DossierDitListItem {
 
   interneExterne: "Interne" | "Externe" | null;
 
-  // dossierDit: DossierDit[];
+  dossierDit: DossierDit[];
 }

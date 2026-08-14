@@ -71,3 +71,23 @@ export const mockDossierDitDetailsAll: DossierDit[] = Array.from(
     pieceJointe: mockPieces[i % mockPieces.length],
   }),
 );
+
+export const mockDossierDitListComplete: DossierDitListItem[] =
+  mockDossierDitList.map((item, index) => {
+    // Decide how many details to attach (e.g., 1 to 3)
+    const detailCount = (index % 3) + 1;
+    // Pick consecutive details from mockDossierDitDetailsAll (wrap around)
+    const startIdx = (index * 2) % mockDossierDitDetailsAll.length;
+    const dossierDit = Array.from({ length: detailCount }, (_, i) => {
+      const detail =
+        mockDossierDitDetailsAll[
+          (startIdx + i) % mockDossierDitDetailsAll.length
+        ];
+      return { ...detail }; // ensure immutability if needed
+    });
+
+    return {
+      ...item,
+      dossierDit,
+    };
+  });

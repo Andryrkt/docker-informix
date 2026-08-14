@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import CollapsibleFilterForm from "@/components/common/filter/CollapSibleFilterForm";
 
 import { dossierDitFieldFilter } from "../filter/DossierDitFieldfilter";
@@ -18,10 +18,7 @@ import type {
   DossierDit,
   DossierDitListItem,
 } from "../schema/dossierDitSchema";
-import {
-  fetchDossierDitDetails,
-  fetchDossierDitList,
-} from "../api/dossierDitapi";
+import { fetchDossierDitList } from "../api/dossierDitapi";
 import { useQuery } from "@tanstack/react-query";
 import DossierDitItemsSkeletonTable from "./DossierDitItemsSkeletonTable";
 import { useTranslation } from "react-i18next";
@@ -34,7 +31,7 @@ function DossierDitTableWithView() {
 
   const {
     data: dossierDitListItem,
-    isLoading: isLoagingDossierDitListItem,
+    isLoading: isLoadingDossierDitListItem,
     isFetching: isFetchingDossierDitListItem,
   } = useQuery({
     queryKey: ["dossier-dit-list", selectedFilters, currentPage],
@@ -53,38 +50,40 @@ function DossierDitTableWithView() {
     null,
   );
 
-  const {
-    data: dossierDitResponse,
-    isLoading: isLoadingDossierDit,
-    isFetching: isFetchingDossierDit,
-  } = useQuery({
-    queryKey: ["dossier-dit-details", selectedDit?.numeroDemandeIntervention],
-
-    queryFn: () =>
-      fetchDossierDitDetails(selectedDit?.numeroDemandeIntervention),
-    staleTime: 0 * 60 * 1000,
-    gcTime: 0 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
-
-  const filteredDossiers: DossierDit[] = dossierDitResponse?.data ?? [];
+  const filteredDossiers: DossierDit[] = selectedDit?.dossierDit ?? [];
 
   const handleSelectDit = (dit: DossierDitListItem) => {
     setSelectedDit(dit);
   };
+  const [viewerFiles, setViewerFiles] = useState<File[]>([]);
 
-  const viewerFiles = useMemo(async () => {
-    const files = filteredDossiers.map(async (document) => {
-      const response = await fetch(document.pieceJointe.url!);
+  useEffect(() => {
+    const fetchFiles = async () => {
+      if (filteredDossiers.length === 0) {
+        setViewerFiles([]);
+        return;
+      }
 
-      const blob = await response.blob();
+      try {
+        const filePromises = filteredDossiers.map(async (document) => {
+          const url = document.pieceJointe.url;
+          if (!url) return null;
+          const response = await fetch(url);
+          const blob = await response.blob();
+          return new File([blob], document.pieceJointe.nom, {
+            type: document.pieceJointe.type,
+          });
+        });
+        const files = await Promise.all(filePromises);
+        // Filtrer les null (cas où url manquante)
+        setViewerFiles(files.filter((f): f is File => f !== null));
+      } catch (error) {
+        console.error("Erreur lors du chargement des fichiers", error);
+        setViewerFiles([]);
+      }
+    };
 
-      return new File([blob], document.pieceJointe.nom, {
-        type: document.pieceJointe.type,
-      });
-    });
-    return Promise.all(files);
+    fetchFiles();
   }, [filteredDossiers]);
 
   return (
@@ -104,7 +103,7 @@ function DossierDitTableWithView() {
 
         {/* Tableau des DIT */}
         <div className="w-full  overflow-auto min-h-40">
-          {isLoadingDossierDit || isFetchingDossierDitListItem ? (
+          {isLoadingDossierDitListItem || isFetchingDossierDitListItem ? (
             <DossierDitItemsSkeletonTable />
           ) : (
             <Table>
@@ -207,7 +206,7 @@ function DossierDitTableWithView() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoadingDossierDit || isFetchingDossierDit ? (
+              {isLoadingDossierDitListItem || isFetchingDossierDitListItem ? (
                 <TableRow>
                   <TableCell colSpan={8} className="text-center py-10">
                     Chargement des documents...

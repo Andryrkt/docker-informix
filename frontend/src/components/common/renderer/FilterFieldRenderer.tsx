@@ -23,6 +23,7 @@ export function FilterFieldRenderer({ field }: any) {
         inputMode={field.type === "number" ? "numeric" : undefined}
         pattern={field.pattern}
         placeholder={field.placeholder}
+        disabled={field.disabled}
         value={field.value ?? ""}
         onChange={(e) => {
           const value = e.target.value;
@@ -49,6 +50,7 @@ export function FilterFieldRenderer({ field }: any) {
         onChange={field.onChange}
         options={options ?? []}
         placeholder={field.placeholder}
+        disabled={field.disabled}
       />
     );
   }
@@ -63,6 +65,7 @@ export function FilterFieldRenderer({ field }: any) {
         <div className="grid grid-cols-2 gap-2">
           <Input
             type="date"
+            disabled={field.disabled}
             value={value.from}
             onChange={(e) =>
               field.onChange({
@@ -74,6 +77,7 @@ export function FilterFieldRenderer({ field }: any) {
 
           <Input
             type="date"
+            disabled={field.disabled}
             value={value.to}
             onChange={(e) =>
               field.onChange({
@@ -90,6 +94,7 @@ export function FilterFieldRenderer({ field }: any) {
     return (
       <Input
         type="date"
+        disabled={field.disabled}
         value={field.value ?? ""}
         onChange={(e) => field.onChange(e.target.value)}
       />
@@ -117,6 +122,7 @@ export function FilterFieldRenderer({ field }: any) {
           return (
             <div key={opt.value} className="flex items-center gap-2">
               <Checkbox
+                disabled={field.disabled}
                 checked={checked}
                 onCheckedChange={(checked) => {
                   field.onChange(
@@ -145,6 +151,7 @@ export function FilterFieldRenderer({ field }: any) {
       <RadioGroup
         value={field.value}
         onValueChange={field.onChange}
+        disabled={field.disabled}
         className={
           field.direction === "horizontal"
             ? "flex gap-4"

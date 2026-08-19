@@ -97,11 +97,11 @@ export default function CollapsibleFilterForm({
     Record<string, FilterOption[]>
   >({});
 
-  // Build reverse dependency map – only for multichoice fields with dependsOn
+  // Build reverse dependency map – for any field with dependsOn
   const reverseDeps = useMemo(() => {
     const map: Record<string, string[]> = {};
     fields.flat().forEach((field) => {
-      if (field.type === "multichoice" && field.dependsOn) {
+      if (field.dependsOn) {
         field.dependsOn.forEach((dep) => {
           if (!map[dep]) map[dep] = [];
           map[dep].push(field.name);
@@ -118,6 +118,7 @@ export default function CollapsibleFilterForm({
       const fetchPromises = allFields
         .filter(
           (field) =>
+            !(field as any).options &&
             (field as any).queryFn &&
             typeof (field as any).queryFn === "function",
         )
@@ -198,14 +199,10 @@ export default function CollapsibleFilterForm({
               {row.map((field) => (
                 <form.Field key={field.name} name={field.name as any}>
                   {(f) => {
-                    // Get options from fetched or static source
+                    // Get options from static/memoized field.options or fetched source
                     const baseOptions =
+                      (field as any).options ||
                       fieldOptions[field.name] ||
-                      (field.type === "multichoice" ||
-                      field.type === "select" ||
-                      field.type === "radio"
-                        ? (field as any).options
-                        : []) ||
                       [];
 
                     const hasTous = baseOptions.some(
@@ -276,18 +273,48 @@ export default function CollapsibleFilterForm({
                         currentValue.includes(opt.value),
                       );
 
-                    // Build field with merged options
+                    // Check if any required dependency in dependsOn is missing
+                    const isDependencyMissing = field.dependsOn?.some(
+                      (depName) => {
+                        const values = form.state.values as Record<string, any>;
+                        const depVal = values ? values[depName] : undefined;
+                        if (Array.isArray(depVal)) return depVal.length === 0;
+                        return (
+                          depVal === undefined ||
+                          depVal === null ||
+                          depVal === "" ||
+                          depVal === "all"
+                        );
+                      },
+                    );
+
+                    const isDisabled = Boolean(
+                      field.disabled || isDependencyMissing,
+                    );
+
+                    // Build field with merged options and disabled status
                     const fieldWithOptions = {
                       ...field,
                       options,
                       value: currentValue,
+                      disabled: isDisabled,
                       placeholder: (field as any).placeholder,
                       onChange: (value: any) => {
                         f.handleChange(value);
                         onFieldChange?.(field.name, value);
                         const dependents = reverseDeps[field.name] || [];
                         dependents.forEach((depName) => {
-                          form.setFieldValue(depName, []);
+                          const values = form.state.values as Record<
+                            string,
+                            any
+                          >;
+                          const currentDepVal = values
+                            ? values[depName]
+                            : undefined;
+                          const resetVal = Array.isArray(currentDepVal)
+                            ? []
+                            : "";
+                          (form as any).setFieldValue(depName, resetVal);
                         });
                       },
                     };
@@ -306,6 +333,7 @@ export default function CollapsibleFilterForm({
                             <div className="flex items-center gap-2 mb-1">
                               <Checkbox
                                 id={`select-all-${field.name}`}
+                                disabled={isDisabled}
                                 checked={allSelected}
                                 onCheckedChange={(checked) => {
                                   const newValue = checked
@@ -317,7 +345,7 @@ export default function CollapsibleFilterForm({
                                   const dependents =
                                     reverseDeps[field.name] || [];
                                   dependents.forEach((depName) => {
-                                    form.setFieldValue(depName, []);
+                                    (form as any).setFieldValue(depName, []);
                                   });
                                 }}
                               />

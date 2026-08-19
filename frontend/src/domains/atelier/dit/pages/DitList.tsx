@@ -82,68 +82,75 @@ function DitList() {
     string | null
   >(null);
 
+  const agenceOptions = useMemo(() => {
+    return agenceServices.map((a) => ({
+      label: `${a.code} - ${a.label}`,
+      value: a.value,
+    }));
+  }, [agenceServices]);
+
+  const serviceEmetteurOptions = useMemo(() => {
+    if (!selectedAgenceEmetteur) return [];
+    return getServicesForAgent(selectedAgenceEmetteur);
+  }, [selectedAgenceEmetteur, agenceServices]);
+
+  const serviceDebiteurOptions = useMemo(() => {
+    if (!selectedAgenceDebiteur) return [];
+    return getServicesForAgent(selectedAgenceDebiteur);
+  }, [selectedAgenceDebiteur, agenceServices]);
+
   const dynamicFields = useMemo(() => {
     return ditFieldFilters.map((column) =>
       column.map((field) => {
-        if (
-          field.name === "agence_emetteur" ||
-          field.name === "agence_debiteur"
-        ) {
+        // -------- AGENCE ÉMETTEUR --------
+        if (field.name === "agence_emetteur") {
           return {
             ...field,
-            queryFn: () =>
-              agenceServices.map((a) => ({
-                label: `${a.code} - ${a.label}`,
-                value: a.value,
-              })),
+            options: agenceOptions,
           };
         }
 
+        // -------- AGENCE DÉBITEUR --------
+        if (field.name === "agence_debiteur") {
+          return {
+            ...field,
+            options: agenceOptions,
+          };
+        }
+
+        // -------- SERVICE DÉBITEUR (depends on agence_debiteur) --------
         if (field.name === "service_debiteur") {
           return {
             ...field,
             placeholder: !selectedAgenceDebiteur
-              ? "Sélectionnez d'abord un agent débiteur"
+              ? "Sélectionnez d'abord une agence débitrice"
               : "",
             selectAll: true,
-            dependsOn: ["agence_debiteur"], // ✅ clears services when agent changes
-            queryKey: `service_debiteur_${selectedAgenceDebiteur || "none"}`,
-            queryFn: async () => {
-              if (!selectedAgenceDebiteur) return [];
-              return getServicesForAgent(selectedAgenceDebiteur);
-            },
+            dependsOn: ["agence_debiteur"],
+            options: serviceDebiteurOptions,
           };
         }
 
+        // -------- SERVICE ÉMETTEUR (depends on agence_emetteur) --------
         if (field.name === "service_emetteur") {
           return {
             ...field,
             placeholder: !selectedAgenceEmetteur
-              ? "Sélectionnez d'abord un agence débiteur"
+              ? "Sélectionnez d'abord une agence émettrice"
               : "",
             selectAll: false,
             dependsOn: ["agence_emetteur"],
-            queryFn: () => {
-              if (!selectedAgenceEmetteur) return [];
-              return getServicesForAgent(selectedAgenceEmetteur);
-            },
+            options: serviceEmetteurOptions,
           };
         }
 
+        // -------- OTHER STATIC API FIELDS (no dependencies) --------
         if (field.name === "realise_par") {
-          return {
-            ...field,
-            queryFn: getAteliers,
-          };
+          return { ...field, queryFn: getAteliers };
         }
-
         if (field.name === "niveau_urgence") {
-          return {
-            ...field,
-            queryFn: getNiveauUrgences,
-          };
+          return { ...field, queryFn: getNiveauUrgences };
         }
-
         if (field.name === "section_affectee") {
           return {
             ...field,
@@ -159,20 +166,17 @@ function DitList() {
         if (field.name === "section_support2") {
           return {
             ...field,
-            queryFn: async () => getSections("/dit/sections-support-2"),
+            queryFn: () => getSections("/dit/sections-support-2"),
           };
         }
         if (field.name === "section_support3") {
           return {
             ...field,
-            queryFn: async () => getSections("/dit/sections-support-3"),
+            queryFn: () => getSections("/dit/sections-support-3"),
           };
         }
         if (field.name === "statut_facture") {
-          return {
-            ...field,
-            queryFn: getStatutsFacture,
-          };
+          return { ...field, queryFn: getStatutsFacture };
         }
         if (field.name === "statut_or") {
           return {
@@ -192,11 +196,14 @@ function DitList() {
             queryFn: () => getTypesDocuments().then(toSelectOptions),
           };
         }
+        if (field.name === "statut") {
+          return { ...field, queryFn: async () => [] };
+        }
 
         return field;
       }),
     );
-  }, [selectedAgenceDebiteur, selectedAgenceEmetteur]);
+  }, [selectedAgenceDebiteur, selectedAgenceEmetteur, agenceServices]);
 
   const handleSearch = (values: Record<string, any>) => {
     if (values.agence_debiteur !== undefined) {

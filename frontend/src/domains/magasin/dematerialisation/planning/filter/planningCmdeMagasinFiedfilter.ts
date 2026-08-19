@@ -8,7 +8,6 @@ export const planningCmdeMagasinFieldsFilter: FilterField[][] = [
       type: "select",
       placeholder: "-- Choisir une agence --",
       queryKey: "agences",
-      queryFn: async () => [],
     },
   ],
   [

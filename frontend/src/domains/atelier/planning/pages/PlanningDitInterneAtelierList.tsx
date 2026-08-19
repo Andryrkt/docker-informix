@@ -58,6 +58,8 @@ function PlanningDitInterneAtelierList() {
       value: a.value,
     }));
   }, [agenceServices]);
+
+  
   const getServicesForAgent = (agentValue: string) => {
     const agent = agenceServices.find((a) => a.value === agentValue);
     return agent ? agent.services : [];

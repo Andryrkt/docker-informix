@@ -30,13 +30,19 @@ function PlanningMagasinList() {
   });
 
   const { data: agenceServices = [], isLoading: isLoadingAgences } = useQuery({
-    queryKey: ["dit-agences-and-services"],
+    queryKey: ["filter-options", "agences"],
     queryFn: getAgencesWithServices,
     staleTime: 50 * 60 * 1000,
     gcTime: 50 * 60 * 1000,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
+  const agenceOptions = useMemo(() => {
+    return agenceServices.map((a) => ({
+      label: `${a.code} - ${a.label}`,
+      value: a.value,
+    }));
+  }, [agenceServices]);
 
   const getServicesForAgent = (agentValue: string) => {
     const agent = agenceServices.find((a) => a.value === agentValue);
@@ -46,31 +52,31 @@ function PlanningMagasinList() {
   const [selectedAgent, setSelectedAgent] = useState<string | null>(
     selectedFilters.agent_debiteur || null,
   );
-  // ---- Keep state in sync when URL changes (e.g., after search or reset) ----
-  useEffect(() => {
-    setSelectedAgent(selectedFilters.agent_debiteur || null);
-  }, [selectedFilters.agent_debiteur]);
-
-  const all = { label: "Tous", value: "all" };
+  const serviceDebiteurOptions = useMemo(() => {
+    if (!selectedAgent) return [];
+    return getServicesForAgent(selectedAgent);
+  }, [selectedAgent, agenceServices]);
 
   const dynamicFields = useMemo(() => {
     return planningCmdeMagasinFieldsFilter.map((column) =>
       column.map((field) => {
+        // -------- AGENCE  --------
         if (field.name === "agence") {
           return {
             ...field,
-            queryFn: async () => {
-              return [all, ...agenceServices];
-            },
+            options: agenceOptions,
           };
         }
+        // -------- SERVICE  (depends on agence) --------
         if (field.name === "services") {
           return {
             ...field,
-            placeholder: !selectedAgent ? "Sélectionnez d'abord un agent" : "",
+            placeholder: !selectedAgent
+              ? "Sélectionnez d'abord une agence"
+              : "",
             selectAll: true,
-            dependsOn: ["agence"], // ✅ clears services when agent changes
-            options: selectedAgent ? getServicesForAgent(selectedAgent) : [],
+            dependsOn: ["agence"],
+            options: serviceDebiteurOptions,
           };
         }
         return field;
@@ -79,14 +85,18 @@ function PlanningMagasinList() {
   }, [selectedAgent]);
 
   const handleSearch = (values: Record<string, any>) => {
-    console.log("Search values ", values);
-    setFilters(values);
+    if (values.agence !== undefined) {
+      setSelectedAgent(values.agence || null);
+    }
+    Object.entries(values).forEach(([key, value]) => {
+      setFilter(key, String(value ?? ""));
+    });
   };
 
   const handleReset = () => {
+    setSelectedAgent(null);
     reset();
   };
-
   const items = planningCmdeMagasin?.data ?? [];
 
   return (

@@ -157,8 +157,8 @@ function OrdreReparationATraiterList() {
     selectedAgenceDebiteur,
     agenceOptions,
     serviceDebiteurOptions,
-    // Ajoutez ici les autres dépendances (constructeurOptions, etc.)
   ]);
+  
   const handleSearch = (values: Record<string, any>) => {
     if (values.agence_debiteur !== undefined) {
       setSelectedAgenceDebiteur(values.agence_debiteur || null);

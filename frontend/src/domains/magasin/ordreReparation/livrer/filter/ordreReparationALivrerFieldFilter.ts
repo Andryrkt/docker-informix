@@ -10,7 +10,6 @@ export const ordreReparationALivrerFieldsFilters: FilterField[][] = [
       type: "select",
       placeholder: "-- Choisir une agence --",
       queryKey: "agences_emetteur",
-      queryFn: async () => [],
     },
   ],
   [
@@ -20,7 +19,6 @@ export const ordreReparationALivrerFieldsFilters: FilterField[][] = [
       type: "select",
       placeholder: "-- Choisir une agence --",
       queryKey: "agences_debiteur",
-      queryFn: async () => [],
     },
     {
       name: "service_debiteur",
@@ -28,14 +26,12 @@ export const ordreReparationALivrerFieldsFilters: FilterField[][] = [
       type: "select",
       placeholder: "-- Choisir un service --",
       queryKey: "services_debiteur",
-      queryFn: async () => [],
     },
     {
       name: "niveau_urgence",
       label: "Niveau d'urgence",
       type: "select",
       placeholder: "-- Choisir un niveau --",
-      options: [],
     },
   ],
 

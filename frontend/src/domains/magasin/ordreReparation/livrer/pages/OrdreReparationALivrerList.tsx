@@ -9,8 +9,13 @@ import { buildExcelFilename } from "@/lib/utils";
 import { fetchOrdresReparationALivrer } from "../api/ordreReparationALivrerApi";
 import { LimitSelector } from "@/components/common/pagination/LimitSelector";
 import { queryClient } from "@/lib/queryClient";
-import { useCallback } from "react";
-import { ordreReparationALivrerFieldsFilters } from "../filter/OrdreReparationALivrerFieldFilter";
+import { useCallback, useMemo, useState } from "react";
+import { ordreReparationALivrerFieldsFilters } from "../filter/ordreReparationALivrerFieldFilter";
+import { getAgencesWithServices } from "@/domains/agenceService/agenceServiceApi";
+import { getNiveauUrgences } from "@/domains/niveauUrgence/niveauUrgenceApi";
+import { getConstructeurs } from "../api/constructeurApi";
+import { getPieces } from "../api/piecesApi";
+import { ordreReparationATraiterFieldsFilters } from "../filter/ordreReparationATraiterFieldFilter";
 
 function OrdreReparationALivrerList() {
   const {
@@ -18,6 +23,7 @@ function OrdreReparationALivrerList() {
     setPage,
     selectedFilters,
     setFilter,
+    setFilters,
     reset,
     currentLimit,
     setLimit,
@@ -53,19 +59,121 @@ function OrdreReparationALivrerList() {
     return allData.data;
   }, [selectedFilters, queryClient]);
 
+  const { data: agenceServices = [], isLoading: isLoadingAgences } = useQuery({
+    queryKey: ["filter-options", "agences"],
+    queryFn: getAgencesWithServices,
+    staleTime: 50 * 60 * 1000,
+    gcTime: 50 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  const getServicesForAgent = (agentValue: string) => {
+    const agent = agenceServices.find((a) => a.value === agentValue);
+    return agent ? agent.services : [];
+  };
+
+  const [selectedAgenceDebiteur, setSelectedAgenceDebiteur] = useState<
+    string | null
+  >(null);
+
+  const agenceOptions = useMemo(() => {
+    return agenceServices.map((a) => ({
+      label: `${a.code} - ${a.label}`,
+      value: a.value,
+    }));
+  }, [agenceServices]);
+
+  const serviceDebiteurOptions = useMemo(() => {
+    if (!selectedAgenceDebiteur) return [];
+    return getServicesForAgent(selectedAgenceDebiteur);
+  }, [selectedAgenceDebiteur, agenceServices]);
+
+  const dynamicFields = useMemo(() => {
+    return ordreReparationATraiterFieldsFilters.map((row) =>
+      row.map((field) => {
+        // -------- AGENCE ÉMETTEUR --------
+        if (field.name === "agence_emetteur") {
+          return {
+            ...field,
+            options: agenceOptions,
+          };
+        }
+
+        // -------- AGENCE DÉBITEUR --------
+        if (field.name === "agence_debiteur") {
+          return {
+            ...field,
+            options: agenceOptions,
+          };
+        }
+
+        // -------- SERVICE DÉBITEUR (dépend de agence_debiteur) --------
+        if (field.name === "service_debiteur") {
+          return {
+            ...field,
+            placeholder: !selectedAgenceDebiteur
+              ? "Sélectionnez d'abord une agence débitrice"
+              : "",
+            selectAll: true,
+            dependsOn: ["agence_debiteur"],
+            options: serviceDebiteurOptions,
+          };
+        }
+
+        // -------- CONSTRUCTEUR --------
+        if (field.name === "constructeur") {
+          return {
+            ...field,
+            queryFn: getConstructeurs,
+          };
+        }
+
+        // -------- NIVEAU D'URGENCE --------
+        if (field.name === "niveau_urgence") {
+          return {
+            ...field,
+            queryFn: getNiveauUrgences,
+          };
+        }
+
+        // -------- PIÈCE --------
+        if (field.name === "piece") {
+          return {
+            ...field,
+            queryFn: getPieces,
+          };
+        }
+
+        return field;
+      }),
+    );
+  }, [selectedAgenceDebiteur, agenceOptions, serviceDebiteurOptions]);
+
+  const handleSearch = (values: Record<string, any>) => {
+    if (values.agence_debiteur !== undefined) {
+      setSelectedAgenceDebiteur(values.agence_debiteur || null);
+    }
+    setFilters(values);
+  };
+
+  const handleReset = () => {
+    setSelectedAgenceDebiteur(null);
+
+    reset();
+  };
   return (
     <div className="px-2 w-full ">
       <div className=" w-full  space-y-4 pb-4 overflow-auto">
         <div className="sticky top-0 space-y-6 ">
           <CollapsibleFilterForm
-            fields={ordreReparationALivrerFieldsFilters}
-            onSearch={(values) => {
-              Object.entries(values).forEach(([key, value]) => {
-                setFilter(key, String(value ?? ""));
-              });
-            }}
-            onReset={() => {
-              reset();
+            fields={dynamicFields}
+            onSearch={handleSearch}
+            onReset={handleReset}
+            onFieldChange={(name, value) => {
+              if (name === "agence_debiteur") {
+                setSelectedAgenceDebiteur(value || null);
+              }
             }}
           />
 

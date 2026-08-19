@@ -1,6 +1,6 @@
 import axiosInstance from "@/conf/axios";
 
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true" || true; // default to true for demo
+const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true"; // default to true for demo
 export interface AgenceTravaux {
   id: number;
   name: string;

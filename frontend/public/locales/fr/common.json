@@ -1,6 +1,7 @@
 {
   "resultats": "Résultats",
-  "selectionnez-dabord-un-agence-debiteur": "Sélectionnez d'abord un agence débiteur",
+  "selectionnez-dabord-un-agence-emetteur": "Sélectionnez d'abord un agence emmetteur",
+  "selectionnez-dabord-un-agence-debiteur": "Sélectionnez d'abord un agence debitteur",
   "aucune-donnee-a-exporter": "Aucune donnée à exporter",
   "exporter-tout-filtre": "Exporter tout (filtré)",
   "lignes": "Lignes",

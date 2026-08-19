@@ -59,11 +59,13 @@ export const devisFieldfilter: FilterField[][] = [
       name: "agence_emetteur",
       label: "Agence émetteur",
       type: "select",
+      queryKey: "agences",
     },
     {
       name: "service_emetteur",
       label: "Service émetteur",
       type: "select",
+      queryKey: "services_emetteur",
     },
   ],
   [

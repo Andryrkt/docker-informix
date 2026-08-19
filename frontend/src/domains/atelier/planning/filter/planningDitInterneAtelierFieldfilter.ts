@@ -8,14 +8,12 @@ export const planningDitInterneAtelierFieldfilter: FilterField[][] = [
       label: "Agent travaux",
       type: "select",
       queryKey: "agent-travaux",
-      queryFn: async () => [],
     },
     {
-      name: "agent_debiteur",
-      label: "Agent débiteur",
+      name: "agence_debiteur",
+      label: "Agence débiteur",
       type: "select",
-      queryKey: "agent-debiteur",
-      queryFn: async () => [],
+      queryKey: "agences",
     },
   ],
 
@@ -30,7 +28,6 @@ export const planningDitInterneAtelierFieldfilter: FilterField[][] = [
       name: "service_debiteur",
       label: "Service debiteur",
       type: "multichoice",
-      options: [],
     },
   ],
 
@@ -61,7 +58,6 @@ export const planningDitInterneAtelierFieldfilter: FilterField[][] = [
       label: "Ressource",
       type: "select",
       queryKey: "ressource",
-      queryFn: async () => [],
     },
   ],
 
@@ -72,7 +68,6 @@ export const planningDitInterneAtelierFieldfilter: FilterField[][] = [
       label: "Section affectée",
       type: "select",
       queryKey: "section_affectee",
-      queryFn: async () => [],
     },
   ],
 ];

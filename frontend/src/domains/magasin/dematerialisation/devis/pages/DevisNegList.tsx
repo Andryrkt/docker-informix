@@ -47,7 +47,7 @@ function DevisNegList() {
   });
 
   const { data: agenceServices = [], isLoading: isLoadingAgences } = useQuery({
-    queryKey: ["dit-agences-and-services"],
+    queryKey: ["filter-options", "agences"],
     queryFn: getAgencesWithServices,
     staleTime: 50 * 60 * 1000,
     gcTime: 50 * 60 * 1000,
@@ -64,9 +64,17 @@ function DevisNegList() {
     string | null
   >(null);
 
-  const [selectedAgenceDebiteur, setSelectedAgenceDebiteur] = useState<
-    string | null
-  >(null);
+  const agenceOptions = useMemo(() => {
+    return agenceServices.map((a) => ({
+      label: `${a.code} - ${a.label}`,
+      value: a.value,
+    }));
+  }, [agenceServices]);
+
+  const serviceEmetteurOptions = useMemo(() => {
+    if (!selectedAgenceEmetteur) return [];
+    return getServicesForAgent(selectedAgenceEmetteur);
+  }, [selectedAgenceEmetteur, agenceServices]);
 
   const dynamicFields = useMemo(() => {
     return devisFieldfilter.map((column) =>
@@ -74,12 +82,7 @@ function DevisNegList() {
         if (field.name === "agence_emetteur") {
           return {
             ...field,
-
-            queryFn: async () =>
-              agenceServices.map((a) => ({
-                label: `${a.value} - ${a.label}`,
-                value: a.value,
-              })),
+            options: agenceOptions,
           };
         }
 
@@ -87,14 +90,11 @@ function DevisNegList() {
           return {
             ...field,
             placeholder: !selectedAgenceEmetteur
-              ? t("selectionnez-dabord-un-agence-debiteur")
+              ? t("selectionnez-dabord-un-agence-emetteur")
               : "",
             selectAll: false,
             dependsOn: ["agence_emetteur"],
-            queryFn: async () => {
-              if (!selectedAgenceEmetteur) return [];
-              return getServicesForAgent(selectedAgenceEmetteur);
-            },
+            options: serviceEmetteurOptions,
           };
         }
 
@@ -130,12 +130,9 @@ function DevisNegList() {
         return field;
       }),
     );
-  }, [selectedAgenceDebiteur, selectedAgenceEmetteur]);
+  }, [selectedAgenceEmetteur]);
 
   const handleSearch = (values: Record<string, any>) => {
-    if (values.agence_debiteur !== undefined) {
-      setSelectedAgenceDebiteur(values.agence_debiteur || null);
-    }
     if (values.agence_emetteur !== undefined) {
       setSelectedAgenceEmetteur(values.agence_emetteur || null);
     }
@@ -143,7 +140,6 @@ function DevisNegList() {
   };
 
   const handleReset = () => {
-    setSelectedAgenceDebiteur(null);
     setSelectedAgenceEmetteur(null);
     reset();
   };
@@ -170,9 +166,6 @@ function DevisNegList() {
           onSearch={handleSearch}
           onReset={handleReset}
           onFieldChange={(name, value) => {
-            if (name === "agence_debiteur") {
-              setSelectedAgenceDebiteur(value || null);
-            }
             if (name === "agence_emetteur") {
               setSelectedAgenceEmetteur(value || null);
             }

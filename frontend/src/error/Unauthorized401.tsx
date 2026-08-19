@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
 
 export default function Unauthorized401() {
@@ -24,12 +25,9 @@ export default function Unauthorized401() {
       </p>
 
       <div className="flex flex-col sm:flex-row gap-4 mt-6">
-        <button
-          onClick={handleLogin}
-          className="px-4 py-2 bg-global-secondary text-white hover:bg-opacity-90 transition"
-        >
-          Se connecter
-        </button>
+        <Button variant="brand" onClick={handleLogin}>
+          Se Connecter
+        </Button>
       </div>
     </div>
   );

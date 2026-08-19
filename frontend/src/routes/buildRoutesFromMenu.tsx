@@ -64,27 +64,39 @@ function hasView(item: MenuItem): boolean {
  *
  * selon les actions présentes dans item.actions.
  */
+function findInternalConfigs(itemRoute: string) {
+  if (internalRouteMap[itemRoute]) {
+    return { parentKey: itemRoute, configs: internalRouteMap[itemRoute] };
+  }
+  for (const key of Object.keys(internalRouteMap)) {
+    if (itemRoute === key || itemRoute.startsWith(key + "/") || key.startsWith(itemRoute)) {
+      return { parentKey: key, configs: internalRouteMap[key] };
+    }
+  }
+  return null;
+}
+
 function buildInternalRoutes(
   parentRoute: string,
   item: MenuItem,
+  processedPaths: Set<string>,
 ): RouteObject[] {
-  const configs = internalRouteMap[parentRoute] ?? [];
+  const match = findInternalConfigs(parentRoute);
+  if (!match) return [];
 
+  const { parentKey, configs } = match;
   const routes: RouteObject[] = [];
 
   for (const config of configs) {
-    /**
-     * Si la route interne demande une action,
-     * on vérifie que le menu l'autorise.
-     */
-    if (config.action) {
-      if (!hasAction(item, config.action)) {
-        continue;
-      }
+    if (config.action && !hasAction(item, config.action)) {
+      continue;
     }
 
+    const fullPath = config.path ? `${parentKey}/${config.path}` : parentKey;
+    processedPaths.add(fullPath);
+
     routes.push({
-      path: config.path,
+      ...(config.index ? { index: true } : { path: config.path }),
       element: <config.component />,
 
       ...(config.loader
@@ -97,18 +109,7 @@ function buildInternalRoutes(
         title: config.title,
         actions: item.actions,
         scope: item.scope,
-
-        /**
-         * Cette route ne vient pas du menu.
-         * Elle ne doit donc pas être utilisée
-         * pour construire le menu/breadcrumb de navigation.
-         */
         hideFromMenu: true,
-
-        /**
-         * Permet de savoir de quel menu/module
-         * provient cette route.
-         */
         parentRoute,
       },
     });
@@ -121,41 +122,24 @@ function buildInternalRoutes(
  * MAIN ROUTE
  * ======================================================= */
 
-/**
- * Construit une route React Router à partir
- * d'un MenuItem.
- */
-function processMenuItem(item: MenuItem): RouteObject[] {
+function processMenuItem(
+  item: MenuItem,
+  processedPaths: Set<string>,
+): RouteObject[] {
   const routes: RouteObject[] = [];
-
-  /* =======================================================
-   * ROUTE PRINCIPALE
-   * ===================================================== */
 
   if (item.route && hasView(item)) {
     const config: RouteConfig = routeMap[item.route];
 
     if (config) {
       const Component = config.component;
-
-      /**
-       * Routes internes du module.
-       *
-       * Elles sont ajoutées comme children
-       * lorsqu'elles sont définies dans internalRouteMap.
-       */
-      const internalRoutes = buildInternalRoutes(item.route, item);
+      const internalRoutes = buildInternalRoutes(item.route, item, processedPaths);
+      processedPaths.add(item.route);
 
       routes.push({
         path: item.route,
-
         element: <Component />,
-
-        ...(config.loader
-          ? {
-              loader: config.loader,
-            }
-          : {}),
+        ...(config.loader ? { loader: config.loader } : {}),
 
         handle: {
           title: item.nom,
@@ -163,10 +147,6 @@ function processMenuItem(item: MenuItem): RouteObject[] {
           scope: item.scope,
         },
 
-        /**
-         * On ajoute les routes internes
-         * comme enfants uniquement s'il y en a.
-         */
         ...(internalRoutes.length > 0
           ? {
               children: internalRoutes,
@@ -178,13 +158,9 @@ function processMenuItem(item: MenuItem): RouteObject[] {
     }
   }
 
-  /* =======================================================
-   * SOUS-MENU
-   * ===================================================== */
-
   if (item["sous-menu"]?.length) {
     for (const child of item["sous-menu"]) {
-      routes.push(...processMenuItem(child));
+      routes.push(...processMenuItem(child, processedPaths));
     }
   }
 
@@ -195,31 +171,27 @@ function processMenuItem(item: MenuItem): RouteObject[] {
  * PUBLIC API
  * ======================================================= */
 
-/**
- * Recursively converts a list of MODULES
- * into React Router route objects.
- *
- * Structure :
- *
- * modules
- *   └── menu
- *        └── sous-menu
- *
- * Le backend reste responsable du menu
- * et des actions disponibles.
- *
- * Le frontend ajoute les routes internes
- * qui ne doivent pas apparaître dans le menu.
- */
 export function buildRoutesFromMenu(modules: ModuleNode[]): RouteObject[] {
   const routes: RouteObject[] = [];
+  const processedPaths = new Set<string>();
 
+  // 1️⃣ Add routes from backend menu
   for (const module of modules) {
-    /**
-     * Chaque module contient un tableau de menu.
-     */
     for (const item of module.menu) {
-      routes.push(...processMenuItem(item));
+      routes.push(...processMenuItem(item, processedPaths));
+    }
+  }
+
+  // 2️⃣ Fallback: Register any routeMap entries not generated by menu
+  for (const [routePath, routeConfig] of Object.entries(routeMap)) {
+    if (!processedPaths.has(routePath)) {
+      const Component = routeConfig.component;
+      routes.push({
+        path: routePath,
+        element: <Component />,
+        ...(routeConfig.loader ? { loader: routeConfig.loader } : {}),
+      });
+      processedPaths.add(routePath);
     }
   }
 

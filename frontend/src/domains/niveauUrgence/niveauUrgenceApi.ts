@@ -17,7 +17,6 @@ const niveauxUrgenceMock: { code: string; label: string }[] = [
   { code: "P2", label: "P2" },
   { code: "P3", label: "P3" },
   { code: "P4", label: "P4" },
-  { code: "P5", label: "P5" },
 ];
 
 export const getNiveauUrgences = async (): Promise<SelectOption[]> => {

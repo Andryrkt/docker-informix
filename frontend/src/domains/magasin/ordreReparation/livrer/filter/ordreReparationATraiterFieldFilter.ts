@@ -8,8 +8,7 @@ export const ordreReparationATraiterFieldsFilters: FilterField[][] = [
       label: "Agence Emetteur",
       type: "select",
       placeholder: "-- Choisir une agence --",
-      queryKey: "agences_emetteur",
-      queryFn: async () => [],
+      queryKey: "agences",
     },
   ],
   [
@@ -18,8 +17,7 @@ export const ordreReparationATraiterFieldsFilters: FilterField[][] = [
       label: "Agence débiteur",
       type: "select",
       placeholder: "-- Choisir une agence --",
-      queryKey: "agences_debiteur",
-      queryFn: async () => [],
+      queryKey: "agences",
     },
     {
       name: "service_debiteur",
@@ -27,7 +25,6 @@ export const ordreReparationATraiterFieldsFilters: FilterField[][] = [
       type: "select",
       placeholder: "-- Choisir un service --",
       queryKey: "services_debiteur",
-      queryFn: async () => [],
     },
   ],
   [
@@ -36,14 +33,12 @@ export const ordreReparationATraiterFieldsFilters: FilterField[][] = [
       label: "Constructeur",
       type: "select",
       placeholder: "-- Choisir un constructeur --",
-      options: [],
     },
     {
       name: "niveau_urgence",
       label: "Niveau d'urgence",
       type: "select",
       placeholder: "-- Choisir un niveau --",
-      options: [],
     },
   ],
 
@@ -82,7 +77,6 @@ export const ordreReparationATraiterFieldsFilters: FilterField[][] = [
       type: "select",
       placeholder: "-- Choisir une pièce --",
       queryKey: "pieces",
-      queryFn: async () => [],
     },
     {
       name: "date_creation_debut",

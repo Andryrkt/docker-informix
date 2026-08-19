@@ -278,7 +278,11 @@ function AppRoutes() {
    * ========================================================
    */
   if (isMenuLoading || !router) {
-    return <LoaderSpinner />;
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center">
+        <LoaderSpinner />
+      </div>
+    );
   }
 
   /**

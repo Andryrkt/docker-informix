@@ -50,7 +50,10 @@ function DossierDitTableWithView() {
     null,
   );
 
-  const filteredDossiers: DossierDit[] = selectedDit?.dossierDit ?? [];
+  const filteredDossiers: DossierDit[] = useMemo(
+    () => selectedDit?.dossierDit ?? [],
+    [selectedDit],
+  );
 
   const handleSelectDit = (dit: DossierDitListItem) => {
     setSelectedDit(dit);

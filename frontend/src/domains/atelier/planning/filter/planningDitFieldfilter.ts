@@ -8,14 +8,12 @@ export const planningDitFieldfilter: FilterField[][] = [
       label: "Agent travaux",
       type: "select",
       queryKey: "agent-travaux",
-      queryFn: async () => [],
     },
     {
-      name: "agent_debiteur",
-      label: "Agent débiteur",
+      name: "agence_debiteur",
+      label: "Agence débiteur",
       type: "select",
-      queryKey: "agent-debiteur",
-      queryFn: async () => [],
+      queryKey: "agences",
     },
     {
       name: "interne_externe",
@@ -33,16 +31,14 @@ export const planningDitFieldfilter: FilterField[][] = [
   [
     {
       name: "service_debiteur",
-      label: "Service debiteur",
+      label: "Service debiteurs",
       type: "multichoice",
-      options: [],
     },
     {
       name: "section_affectee",
       label: "Section affectée",
       type: "select",
       queryKey: "section_affectee",
-      queryFn: async () => [],
     },
   ],
 
@@ -52,15 +48,13 @@ export const planningDitFieldfilter: FilterField[][] = [
       name: "niveau_urgence",
       label: "Niveau d'urgence",
       type: "select",
-      queryKey: "niveau_urgence",
-      queryFn: async () => [],
+      queryKey: "worNiveauUrgence",
     },
     {
       name: "type_ligne",
       label: "Type de ligne",
       type: "select",
       queryKey: "type_ligne",
-      queryFn: async () => [],
     },
     {
       name: "id_materiel",
@@ -81,7 +75,6 @@ export const planningDitFieldfilter: FilterField[][] = [
       label: "Facturation",
       type: "select",
       queryKey: "facturation",
-      queryFn: async () => [],
     },
     {
       name: "numero_or",
@@ -94,7 +87,6 @@ export const planningDitFieldfilter: FilterField[][] = [
       label: "Type de document",
       type: "select",
       queryKey: "type_document",
-      queryFn: async () => [],
     },
     {
       name: "dit_avec_back_order",
@@ -146,7 +138,6 @@ export const planningDitFieldfilter: FilterField[][] = [
       label: "Réalisé par",
       type: "select",
       queryKey: "realise_par",
-      queryFn: async () => [],
     },
   ],
 

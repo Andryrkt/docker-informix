@@ -7,6 +7,10 @@ import { planningDitFieldfilter } from "../filter/planningDitFieldfilter";
 import PlanningDitTable from "../components/PlanningDitTable";
 import { getMockPlanningDits } from "../schema/mock/planningDitMock";
 import { useMemo, useState } from "react";
+import { getAgencesWithServices } from "@/domains/agenceService/agenceServiceApi";
+import { getNiveauUrgences } from "@/domains/niveauUrgence/niveauUrgenceApi";
+import { getSections } from "@/domains/section/sectionApi";
+import { getAteliers } from "../../atelierApi";
 
 function PlanningDitList() {
   const { currentPage, setPage, selectedFilters, setFilter, reset } =
@@ -28,63 +32,78 @@ function PlanningDitList() {
   const items = planningDit?.data ?? [];
   const lastPage = planningDit?.totalPages ?? 1;
 
-  const agents = [
-    {
-      label: "Agent 1",
-      value: "1",
-      services: [
-        { label: "Service A", value: "A" },
-        { label: "Service B", value: "B" },
-      ],
-    },
-    {
-      label: "Agent 2",
-      value: "2",
-      services: [{ label: "Service C", value: "C" }],
-    },
-  ];
+  const { data: agenceServices = [], isLoading: isLoadingAgences } = useQuery({
+    queryKey: ["filter-options", "agences"],
+    queryFn: getAgencesWithServices,
+    staleTime: 50 * 60 * 1000,
+    gcTime: 50 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  const agenceOptions = useMemo(() => {
+    return agenceServices.map((a) => ({
+      label: `${a.code} - ${a.label}`,
+      value: a.value,
+    }));
+  }, [agenceServices]);
 
   const getServicesForAgent = (agentValue: string) => {
-    const agent = agents.find((a) => a.value === agentValue);
+    const agent = agenceServices.find((a) => a.value === agentValue);
     return agent ? agent.services : [];
   };
 
-  const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
+  const [selectedAgenceDebiteur, setSelectedAgenceDebiteur] = useState<
+    string | null
+  >(null);
+
+  const serviceDebiteurOptions = useMemo(() => {
+    if (!selectedAgenceDebiteur) return [];
+    return getServicesForAgent(selectedAgenceDebiteur);
+  }, [selectedAgenceDebiteur, agenceServices]);
 
   const dynamicFields = useMemo(() => {
     return planningDitFieldfilter.map((column) =>
       column.map((field) => {
-        if (field.name === "agent_debiteur") {
+        // -------- AGENCE DÉBITEUR --------
+        if (field.name === "agence_debiteur") {
           return {
             ...field,
-
-            queryFn: async () =>
-              agents.map((a) => ({ label: a.label, value: a.value })),
+            options: agenceOptions,
           };
         }
+        // -------- SERVICE DÉBITEUR (depends on agence_debiteur) --------
         if (field.name === "service_debiteur") {
           return {
             ...field,
-            placeholder: !selectedAgent
-              ? "Sélectionnez d'abord un agent débiteur"
+            placeholder: !selectedAgenceDebiteur
+              ? "Sélectionnez d'abord une agence débitrice"
               : "",
             selectAll: true,
-            dependsOn: ["agent_debiteur"], // ✅ clears services when agent changes
-            queryKey: `service_debiteur_${selectedAgent || "none"}`,
-            queryFn: async () => {
-              if (!selectedAgent) return [];
-              return getServicesForAgent(selectedAgent);
-            },
+            dependsOn: ["agence_debiteur"],
+            options: serviceDebiteurOptions,
+          };
+        }
+        if (field.name === "realise_par") {
+          return { ...field, queryFn: getAteliers };
+        }
+        if (field.name === "niveau_urgence") {
+          return { ...field, queryFn: getNiveauUrgences };
+        }
+        if (field.name === "section_affectee") {
+          return {
+            ...field,
+            queryFn: () => getSections("/dit/sections-affectees"),
           };
         }
         return field;
       }),
     );
-  }, [selectedAgent]);
+  }, [selectedAgenceDebiteur]);
 
   const handleSearch = (values: Record<string, any>) => {
-    if (values.agent_debiteur !== undefined) {
-      setSelectedAgent(values.agent_debiteur || null);
+    if (values.agence_debiteur !== undefined) {
+      setSelectedAgenceDebiteur(values.agence_debiteur || null);
     }
     Object.entries(values).forEach(([key, value]) => {
       setFilter(key, String(value ?? ""));
@@ -92,7 +111,7 @@ function PlanningDitList() {
   };
 
   const handleReset = () => {
-    setSelectedAgent(null);
+    setSelectedAgenceDebiteur(null);
     reset();
   };
 
@@ -104,8 +123,8 @@ function PlanningDitList() {
           onSearch={handleSearch}
           onReset={handleReset}
           onFieldChange={(name, value) => {
-            if (name === "agent_debiteur") {
-              setSelectedAgent(value || null);
+            if (name === "agence_debiteur") {
+              setSelectedAgenceDebiteur(value || null);
             }
           }}
         ></CollapsibleFilterForm>

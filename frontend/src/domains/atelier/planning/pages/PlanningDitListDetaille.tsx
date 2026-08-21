@@ -31,7 +31,7 @@ function PlanningDitListDetaille() {
     refetchOnReconnect: false,
   });
   const { data: agenceServices = [], isLoading: isLoadingAgences } = useQuery({
-    queryKey: ["dit-agences-and-services"],
+    queryKey: ["filter-options", "agences"],
     queryFn: getAgencesWithServices,
     staleTime: 50 * 60 * 1000,
     gcTime: 50 * 60 * 1000,
@@ -39,56 +39,65 @@ function PlanningDitListDetaille() {
     refetchOnReconnect: false,
   });
 
+  const agenceOptions = useMemo(() => {
+    return agenceServices.map((a) => ({
+      label: `${a.code} - ${a.label}`,
+      value: a.value,
+    }));
+  }, [agenceServices]);
+
   const getServicesForAgent = (agentValue: string) => {
     const agent = agenceServices.find((a) => a.value === agentValue);
     return agent ? agent.services : [];
   };
 
-  // ---- State for the currently selected agent (sync with URL) ----
-  const [selectedAgent, setSelectedAgent] = useState<string | null>(
-    selectedFilters.agent_debiteur || null,
-  );
+  const [selectedAgenceDebiteur, setSelectedAgenceDebiteur] = useState<
+    string | null
+  >(null);
 
-  // ---- Keep state in sync when URL changes (e.g., after search or reset) ----
-  useEffect(() => {
-    setSelectedAgent(selectedFilters.agent_debiteur || null);
-  }, [selectedFilters.agent_debiteur]);
-
-  const all = { label: "Tous", value: "all" };
+  const serviceDebiteurOptions = useMemo(() => {
+    if (!selectedAgenceDebiteur) return [];
+    return getServicesForAgent(selectedAgenceDebiteur);
+  }, [selectedAgenceDebiteur, agenceServices]);
 
   const dynamicFields = useMemo(() => {
     return planningDitFieldfilter.map((column) =>
       column.map((field) => {
-        if (field.name === "agent_debiteur") {
+        // -------- AGENCE DÉBITEUR --------
+        if (field.name === "agence_debiteur") {
           return {
             ...field,
-            queryFn: async () => {
-              return [all, ...agenceServices];
-            },
+            options: agenceOptions,
           };
         }
+        // -------- SERVICE DÉBITEUR (depends on agence_debiteur) --------
         if (field.name === "service_debiteur") {
           return {
             ...field,
-            placeholder: !selectedAgent
-              ? "Sélectionnez d'abord un agent débiteur"
+            placeholder: !selectedAgenceDebiteur
+              ? "Sélectionnez d'abord une agence débitrice"
               : "",
             selectAll: true,
-            dependsOn: ["agent_debiteur"], // ✅ clears services when agent changes
-            options: selectedAgent ? getServicesForAgent(selectedAgent) : [],
+            dependsOn: ["agence_debiteur"],
+            options: serviceDebiteurOptions,
           };
         }
         return field;
       }),
     );
-  }, [selectedAgent]);
+  }, [selectedAgenceDebiteur]);
 
   const handleSearch = (values: Record<string, any>) => {
-    console.log("Search values ", values);
-    setFilters(values);
+    if (values.agence_debiteur !== undefined) {
+      setSelectedAgenceDebiteur(values.agence_debiteur || null);
+    }
+    Object.entries(values).forEach(([key, value]) => {
+      setFilter(key, String(value ?? ""));
+    });
   };
 
   const handleReset = () => {
+    setSelectedAgenceDebiteur(null);
     reset();
   };
 
@@ -104,7 +113,7 @@ function PlanningDitListDetaille() {
           onReset={handleReset}
           onFieldChange={(name, value) => {
             if (name === "agent_debiteur") {
-              setSelectedAgent(value || null);
+              setSelectedAgenceDebiteur(value || null);
             }
           }}
         ></CollapsibleFilterForm>

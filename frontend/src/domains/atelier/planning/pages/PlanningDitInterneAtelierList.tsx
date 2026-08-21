@@ -33,6 +33,7 @@ function PlanningDitInterneAtelierList() {
   });
 
   const items = planningDitInterneAtelier?.data ?? [];
+
   const { data: agenceTravaux = [], isLoading: isLoadingAgencesTravaux } =
     useQuery({
       queryKey: ["agences-travaux"],
@@ -59,7 +60,6 @@ function PlanningDitInterneAtelierList() {
     }));
   }, [agenceServices]);
 
-  
   const getServicesForAgent = (agentValue: string) => {
     const agent = agenceServices.find((a) => a.value === agentValue);
     return agent ? agent.services : [];

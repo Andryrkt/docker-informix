@@ -95,6 +95,8 @@ export function FilterFieldRenderer({ field }: any) {
       <Input
         type="date"
         disabled={field.disabled}
+        min={field.min}
+        max={field.max}
         value={field.value ?? ""}
         onChange={(e) => field.onChange(e.target.value)}
       />

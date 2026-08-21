@@ -166,6 +166,8 @@ export function FieldRenderer({ field }: any) {
         <Input
           type="date"
           value={field.value ?? ""}
+          min={field.min}
+          max={field.max}
           onChange={(e) => field.onChange(e.target.value)}
           disabled={field.disabled}
           readOnly={field.readOnly}
@@ -183,6 +185,8 @@ export function FieldRenderer({ field }: any) {
           <Input
             type="date"
             value={value.from}
+            min={field.min}
+            max={field.max}
             onChange={(e) =>
               field.onChange({
                 ...value,
@@ -196,6 +200,8 @@ export function FieldRenderer({ field }: any) {
           <Input
             type="date"
             value={value.to}
+            min={field.min}
+            max={field.max}
             onChange={(e) =>
               field.onChange({
                 ...value,

@@ -27,9 +27,13 @@ export type FilterField = BaseFilterField &
       }
     | {
         type: "date-range";
+        min?: string;
+        max?: string;
       }
     | {
         type: "date";
+        min?: string;
+        max?: string;
       }
     | {
         type: "multichoice";

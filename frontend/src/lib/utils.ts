@@ -82,6 +82,9 @@ export const formatLabel = (segment: string) => {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
 };
+export function format(value: any, formatter?: (v: any) => string): string {
+  return value == null ? "-" : formatter ? formatter(value) : String(value);
+}
 
 // File viewer utils
 const urlCache = new WeakMap<File, string>();

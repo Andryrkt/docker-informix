@@ -30,6 +30,7 @@ import { useVignetteDialog } from "@/domains/home/components/ModuleDialog";
 import { useMenuNavigation } from "@/hooks/useMenuNavigation";
 import { useMemo } from "react";
 import { navigationToModuleItems } from "@/lib/navigationToModuleItems";
+import type { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 export function AppBreadcrumb() {
   const { pathname } = useLocation();
@@ -49,7 +50,9 @@ export function AppBreadcrumb() {
 
   const vignetteIconMap = moduleItems.reduce(
     (acc, item) => {
-      acc[item.nomModule.toLowerCase()] = item.icon;
+      if (item.nomModule && item.icon) {
+        acc[item.nomModule.toLowerCase()] = item.icon as IconDefinition;
+      }
       return acc;
     },
     {} as Record<string, IconDefinition>,
@@ -63,21 +66,33 @@ export function AppBreadcrumb() {
   const labelIconMap = moduleItems.reduce(
     (acc, card) => {
       // Top-level card title
-      acc[card.nomModule] = card.icon;
+      if (card.nomModule && card.icon) {
+        acc[card.nomModule] = card.icon as IconDefinition;
+      }
 
-      card.moduleModal.Menu?.forEach((section) => {
+      card.moduleModal?.Menu?.forEach((section) => {
         // ✅ Add section title
-        acc[section.titreMenu] = section.icon;
+        if (section.titreMenu && section.icon) {
+          acc[section.titreMenu] = section.icon as IconDefinition;
+        }
 
-        section.sousMenu.forEach((item) => {
-          acc[item.sousMenu] = item.icon;
-        });
+        if (Array.isArray(section.sousMenu)) {
+          section.sousMenu.forEach((item) => {
+            if (typeof item.sousMenu === "string" && item.icon) {
+              acc[item.sousMenu] = item.icon as IconDefinition;
+            }
+          });
+        }
       });
 
       // Direct modal.items
-      card.moduleModal.sousMenu?.forEach((item) => {
-        acc[item.sousMenu] = item.icon;
-      });
+      if (Array.isArray(card.moduleModal?.sousMenu)) {
+        card.moduleModal.sousMenu.forEach((item) => {
+          if (typeof item.sousMenu === "string" && item.icon) {
+            acc[item.sousMenu] = item.icon as IconDefinition;
+          }
+        });
+      }
 
       return acc;
     },
@@ -150,7 +165,7 @@ export function AppBreadcrumb() {
                             className="w-48 h-11 flex items-center justify-start gap-2 py-2 px-4 text-left text-zinc-500 font-semibold group "
                           >
                             <FontAwesomeIcon
-                              icon={module.icon}
+                              icon={module.icon as IconProp}
                               className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:translate-x-2   "
                             />
                             <span className="text-white group-hover:text-black transition-transform duration-300 group-hover:translate-x-2">

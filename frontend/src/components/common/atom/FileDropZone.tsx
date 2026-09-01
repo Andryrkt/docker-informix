@@ -292,7 +292,7 @@ export function FileDropzone({ field }: any) {
         ? [field.value]
         : [];
     const removedFile = current[index];
-    const updated = current.filter((_, i) => i !== index);
+    const updated = current.filter((_: any, i: number) => i !== index);
     field.onChange(updated);
 
     if (removedFile) {

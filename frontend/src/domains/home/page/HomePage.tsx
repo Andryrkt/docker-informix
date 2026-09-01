@@ -54,7 +54,7 @@ function HomePage() {
             return (
               <ModuleCard
                 key={module.nomModule}
-                title={module.nomModule}
+                title={module.nomModule ?? ""}
                 icon={module.icon}
                 onClick={() => openDialog(module.moduleModal as ModuleModal)}
               />

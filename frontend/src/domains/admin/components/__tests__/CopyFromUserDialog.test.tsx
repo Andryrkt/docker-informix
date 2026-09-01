@@ -13,8 +13,8 @@ const defaultProps = {
   currentUserId: 1, // correspond à l'utilisateur "lanto" dans les mocks
 };
 
-function renderDialog(props: Partial<typeof defaultProps> = {}) {
-  return renderWithProviders(<CopyFromUserDialog {...defaultProps} {...props} />);
+function renderDialog(props: Record<string, any> = {}) {
+  return renderWithProviders(<CopyFromUserDialog {...defaultProps} {...(props as any)} />);
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────

@@ -219,7 +219,7 @@ function OrdreReparationATraiterList() {
             <div className="">
               <SimpleNextPreviousPagination
                 currentPage={currentPage}
-                lastPage={lastPage}
+                lastPage={lastPage ?? 1}
                 onPageChange={setPage}
               />
             </div>
@@ -235,7 +235,7 @@ function OrdreReparationATraiterList() {
           <div className="m-auto">
             <GlobalPagination
               currentPage={currentPage}
-              lastPage={lastPage}
+              lastPage={lastPage ?? 1}
               onPageChange={setPage}
             />
           </div>

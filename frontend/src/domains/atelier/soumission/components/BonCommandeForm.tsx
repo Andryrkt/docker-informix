@@ -37,7 +37,7 @@ function BonCommandeForm({ mutation }: Props) {
       pieceJointe: [] as File[],
     },
     validators: {
-      onSubmit: bonCommandeSchema,
+      onSubmit: bonCommandeSchema as any,
     },
 
     onSubmit: async ({ value }) => {

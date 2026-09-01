@@ -297,7 +297,7 @@ function DitTable({ dit, loading }: { dit: Dit[]; loading: boolean }) {
                     {d.statutOr}
                   </TableCell>
 
-                  <TableCell>{formatMontant(d.montantOr, "Ar")}</TableCell>
+                  <TableCell>{formatMontant(d.montantOr ?? 0, "Ar")}</TableCell>
 
                   <TableCell>
                     {formatApprorpiateDate(d.dateSoumissionOr)}

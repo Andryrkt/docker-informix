@@ -138,7 +138,7 @@ describe("TikPayload", () => {
       agenceDebiteurId: undefined,
       serviceDebiteurId: undefined,
       dateFinSouhaitee: "2026-07-10",
-    };
+    } as any;
 
     expect(payload.categorieId).toBeUndefined();
     expect(payload.fichiers).toBeUndefined();

@@ -157,10 +157,8 @@ export const getInfoClientFields = (): FieldTrait[] => [
     clearable: true,
     clearLabel: "Aucun",
     placeholder: t("dit:choisir-un-n-client"),
-    // 👇 Dropdown display
-    renderOption: (item: Client) => `${item.numClient} - ${item.nomClient} `,
-    // 👇 Selected display (only the ID)
-    renderSelected: (item: Client) => item.numClient,
+    renderOption: (item: any) => `${item.numClient} - ${item.nomClient} `,
+    renderSelected: (item: any) => item.numClient,
   },
   {
     name: "nomClient",
@@ -173,9 +171,9 @@ export const getInfoClientFields = (): FieldTrait[] => [
     clearLabel: "Aucun",
     placeholder: t("choisir-un-nom-client"),
     // 👇 Dropdown display
-    renderOption: (item: Client) => `${item.numClient} - ${item.nomClient} `,
+    renderOption: (item: any) => `${item.numClient} - ${item.nomClient} `,
     // 👇 Selected display (only the ID)
-    renderSelected: (item: Client) => item.nomClient,
+    renderSelected: (item: any) => item.nomClient,
   },
   {
     name: "telephoneClient",
@@ -239,10 +237,10 @@ export const getInfoMaterielFields = (): FieldTrait[] => [
     clearable: true,
     clearLabel: "Aucun",
     // 👇 Dropdown display
-    renderOption: (item: Materiel) =>
+    renderOption: (item: any) =>
       `ID : ${item.idMateriel} - Parc : ${item.numParc} - S/N : ${item.numSerie}`,
     // 👇 Selected display (only the ID)
-    renderSelected: (item: Materiel) => item.idMateriel,
+    renderSelected: (item: any) => item.idMateriel,
   },
   {
     name: "numParc",
@@ -255,10 +253,10 @@ export const getInfoMaterielFields = (): FieldTrait[] => [
     clearLabel: "Aucun",
     // placeholder: "Choisir un n° parc",
     // 👇 Dropdown display
-    renderOption: (item: Materiel) =>
+    renderOption: (item: any) =>
       `ID : ${item.idMateriel} - Parc : ${item.numParc} - S/N : ${item.numSerie}`,
     // 👇 Selected display (only the ID)
-    renderSelected: (item: Materiel) => item.numParc,
+    renderSelected: (item: any) => item.numParc,
   },
   {
     name: "numSerie",
@@ -271,9 +269,9 @@ export const getInfoMaterielFields = (): FieldTrait[] => [
     clearLabel: "Aucun",
     // placeholder: "Choisir un n° serie",
     // 👇 Dropdown display
-    renderOption: (item: Materiel) =>
+    renderOption: (item: any) =>
       `ID : ${item.idMateriel} - Parc : ${item.numParc} - S/N : ${item.numSerie}`,
     // 👇 Selected display (only the ID)
-    renderSelected: (item: Materiel) => item.numSerie,
+    renderSelected: (item: any) => item.numSerie,
   },
 ];

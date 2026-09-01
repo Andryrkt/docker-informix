@@ -77,7 +77,7 @@ function DitForm({ initialValues, onSubmitDit, mode = "create" }: Props) {
       serviceEmmetteur: "",
 
       // Intervention
-      worNiveauUrgence: initialValues?.worNiveauUrgence || "P2",
+      worNiveauUrgence: (initialValues as any)?.worNiveauUrgence || "P2",
       datePrevue: "",
 
       // Réparation

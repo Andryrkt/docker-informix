@@ -217,7 +217,7 @@ function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
                   <TableCell
                     className={cn(
                       "font-mono  text-center",
-                      getStatutRelanceClass(d.statutRelance1),
+                      getStatutRelanceClass(d.statutRelance1 ?? undefined),
                     )}
                   >
                     {displayValue(d.statutRelance1)}
@@ -225,7 +225,7 @@ function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
                   <TableCell
                     className={cn(
                       "font-mono  text-center",
-                      getStatutRelanceClass(d.statutRelance2),
+                      getStatutRelanceClass(d.statutRelance2 ?? undefined),
                     )}
                   >
                     {displayValue(d.statutRelance2)}
@@ -233,7 +233,7 @@ function DevisTable({ devis, loading }: { devis: Devis[]; loading: boolean }) {
                   <TableCell
                     className={cn(
                       "font-mono  text-center",
-                      getStatutRelanceClass(d.statutRelance3),
+                      getStatutRelanceClass(d.statutRelance3 ?? undefined),
                     )}
                   >
                     {displayValue(d.statutRelance3)}

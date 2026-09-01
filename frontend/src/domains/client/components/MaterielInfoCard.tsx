@@ -1,4 +1,4 @@
-import type { Materiel } from "../schema/clientSchema";
+import type { Materiel } from "@/domains/materiel/schema/materielSchema";
 
 type MaterielInfoCardProps = {
   materiel?: Materiel | null;

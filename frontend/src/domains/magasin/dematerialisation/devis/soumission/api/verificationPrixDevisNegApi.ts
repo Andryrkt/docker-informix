@@ -1,7 +1,7 @@
 import type { ApiResponse } from "@/conf/api/Response";
 import axiosInstance from "@/conf/axios";
 import { appendFiles } from "@/lib/utils";
-import type { VerificationPrixDevisPayload } from "../schema/VerificationPrixDevisSchema";
+import type { VerificationPrixDevisPayload } from "../schema/verificationPrixDevisSchema";
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true";
 

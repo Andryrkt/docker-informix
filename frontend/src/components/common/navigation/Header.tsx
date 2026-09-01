@@ -188,7 +188,7 @@ function Header({ logoSrc, userName }: HeaderProps) {
                 align="end"
                 className="w-full  mt-2 bg-brand-dark text-brand-primary"
               >
-                {user.companies.map((company) => (
+                {user?.companies?.map((company) => (
                   <DropdownMenuItem key={company.id} className="cursor-pointer">
                     <span className="text-[0.65rem]">{company.name}</span>
 

@@ -168,7 +168,7 @@ export const checkDevisSubmission = async (
             message: "Mock: submission allowed",
             data: null,
           },
-          status: 200,
+          message: "Mock: submission allowed",
           success: true,
         });
       }, 500);

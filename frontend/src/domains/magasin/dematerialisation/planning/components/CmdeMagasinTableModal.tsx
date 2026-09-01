@@ -32,7 +32,7 @@ interface CmdeMagasinModalProps {
   onOpenChange: (open: boolean) => void;
   clientName: string;
   month: string;
-  entry: ValeurMensuelleEntry;
+  entry?: ValeurMensuelleEntry | null;
 }
 
 export function CmdeMagasinTableModal({

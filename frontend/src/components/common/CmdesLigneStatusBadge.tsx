@@ -5,7 +5,7 @@ import { CMDE_MAGASIN_STATUS_CONFIG, cn } from "@/lib/utils";
 interface Props {
   title?: string;
   value?: StatutLigne;
-  onChange: (value: StatutLigne) => void;
+  onChange?: (value?: StatutLigne) => void;
   readOnly?: boolean;
 }
 

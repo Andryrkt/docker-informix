@@ -32,7 +32,7 @@ function OrdreReparationForm({ mutation }: Props) {
       pieceJointe4: [],
     },
     validators: {
-      onSubmit: ordreReparationSchema,
+      onSubmit: ordreReparationSchema as any,
     },
 
     onSubmit: async ({ value }) => {

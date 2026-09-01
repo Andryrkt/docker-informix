@@ -23,12 +23,11 @@ function RapportInterventionForm({ mutation }: Props) {
   const form = useForm({
     defaultValues: {
       numeroDit: params.numeroDemandeIntervention ?? "",
-      numeroDevis: params.numeroDevis ?? "123",
-      interventions: [],
+      interventions: [] as any[],
       pieceJointe: [] as File[],
     },
     validators: {
-      onSubmit: rapportInterventionSchema,
+      onSubmit: rapportInterventionSchema as any,
     },
 
     onSubmit: async ({ value }) => {
@@ -96,9 +95,10 @@ function RapportInterventionForm({ mutation }: Props) {
                   children={(field) => {
                     const isInvalid =
                       field.state.meta.isTouched && !field.state.meta.isValid;
-                    const selectedLength = Array.isArray(field.state.value)
-                      ? field.state.value.length
-                      : field.state.value
+                    const val = field.state.value as any;
+                    const selectedLength = Array.isArray(val)
+                      ? val.length
+                      : val
                         ? 1
                         : 0;
                     return (

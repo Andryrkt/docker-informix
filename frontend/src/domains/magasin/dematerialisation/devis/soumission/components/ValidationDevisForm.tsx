@@ -4,11 +4,10 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { FieldRenderer } from "@/components/common/renderer/FieldRenderer";
 import { Button } from "@/components/ui/button";
 import { Loader2, Save } from "lucide-react";
-import { DocumentViewer } from "@/components/common/DocumentViewer";
-import { useParams } from "react-router-dom";
+import { devisField } from "../schema/devisField";
+import { validationDevisSchema } from "../schema/validationDevisSchema";
 import type { UseMutationResult } from "@tanstack/react-query";
-import { devisField, verificationPrixDevisFields } from "../schema/devisField";
-import { validationDevisSchema } from "../schema/ValidationDevisSchema";
+import { useParams } from "react-router-dom";
 
 type Props = {
   mutation: UseMutationResult<any, any, any>;
@@ -18,11 +17,15 @@ function ValidationDevisForm({ mutation }: Props) {
 
   const form = useForm({
     defaultValues: {
-      numeroDevis: params.numeroDevis,
-      pieceJointe: [] as File[],
+      numeroDevis: params.numeroDevis ?? "",
+      validationPm: false,
+      tacheValidateur: [] as string[],
+      pieceJointeDevis: undefined as any,
+      pieceJointeExcel: undefined as any,
+      pieceJointes: undefined as any,
     },
     validators: {
-      onSubmit: validationDevisSchema,
+      onSubmit: validationDevisSchema as any,
     },
 
     onSubmit: async ({ value }) => {

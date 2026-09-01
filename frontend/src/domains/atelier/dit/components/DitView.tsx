@@ -266,7 +266,7 @@ function DitView({ dit, bilanFinancier, materiel }: Props) {
               {pieceJointeFields.map((field) => (
                 <div key={field.label}>
                   <div className="flex flex-col gap-1 ">
-                    {field.value?.length ? (
+                    {Array.isArray(field.value) && field.value.length ? (
                       field.value.map((file: any, index: number) => (
                         <a
                           key={index}

@@ -1,9 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useStore } from "@tanstack/react-form";
-import type { FormApi } from "@tanstack/react-form";
 
 interface UseScrollToFirstErrorOptions {
-  form: FormApi<any, any>;
+  form: { store: any };
   formRef: React.RefObject<HTMLFormElement | null>;
   /** Ref vers le conteneur des erreurs globales (message en haut du formulaire) */
   errorContainerRef?: React.RefObject<HTMLElement | null>;
@@ -14,7 +13,7 @@ export function useScrollToFirstError({
   formRef,
   errorContainerRef,
 }: UseScrollToFirstErrorOptions) {
-  const attempts = useStore(form.store, (state) => state.submissionAttempts);
+  const attempts = useStore(form.store, (state: any) => state.submissionAttempts);
 
   useEffect(() => {
     const formElement = formRef.current;

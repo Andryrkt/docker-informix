@@ -7,7 +7,7 @@ import { Loader2, Save } from "lucide-react";
 import { DocumentViewer } from "@/components/common/DocumentViewer";
 import { useParams } from "react-router-dom";
 import type { UseMutationResult } from "@tanstack/react-query";
-import { verificationPrixDevisSchema } from "../schema/VerificationPrixDevisSchema";
+import { verificationPrixDevisSchema } from "../schema/verificationPrixDevisSchema";
 import {
   devisField,
   pieceJointesVerificationPrixDevixFields,
@@ -33,7 +33,7 @@ function VerificationPrixDevisForm({ mutation }: Props) {
       validationPm: false,
     },
     validators: {
-      onSubmit: verificationPrixDevisSchema,
+      onSubmit: verificationPrixDevisSchema as any,
     },
 
     onSubmit: async ({ value }) => {

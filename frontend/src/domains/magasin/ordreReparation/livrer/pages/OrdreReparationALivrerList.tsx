@@ -205,7 +205,7 @@ function OrdreReparationALivrerList() {
             <div className="">
               <SimpleNextPreviousPagination
                 currentPage={currentPage}
-                lastPage={lastPage}
+                lastPage={lastPage ?? 1}
                 onPageChange={setPage}
               />
             </div>
@@ -221,7 +221,7 @@ function OrdreReparationALivrerList() {
           <div className="m-auto">
             <GlobalPagination
               currentPage={currentPage}
-              lastPage={lastPage}
+              lastPage={lastPage ?? 1}
               onPageChange={setPage}
             />
           </div>

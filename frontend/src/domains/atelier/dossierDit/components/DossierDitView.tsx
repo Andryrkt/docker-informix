@@ -122,7 +122,7 @@ function DossierDitView({ dossierDit }: Props) {
           </Table>
         </div>
         <div>
-          <DocumentViewer files={[activeFile]} />
+          <DocumentViewer files={activeFile ? [activeFile] : []} />
         </div>
       </div>
     </div>

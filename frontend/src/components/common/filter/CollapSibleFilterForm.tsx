@@ -206,13 +206,13 @@ export default function CollapsibleFilterForm({
                       [];
 
                     const hasTous = baseOptions.some(
-                      (opt) => opt.value === "all",
+                      (opt: any) => opt.value === "all",
                     );
                     const options = hasTous ? baseOptions : [...baseOptions];
 
                     // Exclude "all" for "Select all" logic
                     const nonTousOptions = options.filter(
-                      (opt) => opt.value !== "all",
+                      (opt: any) => opt.value !== "all",
                     );
 
                     let currentValue: any = f.state.value;
@@ -269,7 +269,7 @@ export default function CollapsibleFilterForm({
                     const allSelected =
                       nonTousOptions.length > 0 &&
                       Array.isArray(currentValue) &&
-                      nonTousOptions.every((opt) =>
+                      nonTousOptions.every((opt: any) =>
                         currentValue.includes(opt.value),
                       );
 
@@ -337,7 +337,7 @@ export default function CollapsibleFilterForm({
                                 checked={allSelected}
                                 onCheckedChange={(checked) => {
                                   const newValue = checked
-                                    ? options.map((opt) => opt.value)
+                                    ? options.map((opt: any) => opt.value)
                                     : [];
                                   f.handleChange(newValue);
                                   onFieldChange?.(field.name, newValue);

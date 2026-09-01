@@ -59,8 +59,8 @@ function BonCommandeDevisForm({ mutation, initialLines = [] }: Props) {
       lignes: LineItem[];
     },
     validators: {
-      onChange: BonCommandeDevisSchema,
-      onSubmit: BonCommandeDevisSchema,
+      onChange: BonCommandeDevisSchema as any,
+      onSubmit: BonCommandeDevisSchema as any,
     },
 
     onSubmit: async ({ value }) => {

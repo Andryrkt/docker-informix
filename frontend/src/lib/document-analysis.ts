@@ -916,7 +916,7 @@ async function renderPdfPageToCanvas(
       "CANVAS_UNAVAILABLE",
       "Contexte Canvas 2D indisponible.",
     );
-  await page.render({ canvasContext: ctx, viewport }).promise;
+  await page.render({ canvas, canvasContext: ctx, viewport } as any).promise;
   page.cleanup();
   return canvas;
 }
@@ -1077,10 +1077,11 @@ async function processPdfFile(
 
   // Nettoyage du document PDF
   try {
-    if (typeof pdf.destroy === "function") {
-      await pdf.destroy();
-    } else if (typeof pdf.cleanup === "function") {
-      pdf.cleanup();
+    const pdfObj = pdf as any;
+    if (typeof pdfObj.destroy === "function") {
+      await pdfObj.destroy();
+    } else if (typeof pdfObj.cleanup === "function") {
+      pdfObj.cleanup();
     }
   } catch (_) {
     // Ignorer

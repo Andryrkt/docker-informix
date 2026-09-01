@@ -32,7 +32,7 @@ function ListeRi({ data }: { data: any }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.map((item, index) => (
+        {data.map((item: any, index: number) => (
           <TableRow key={index}>
             <TableCell>{item.numeroRi || item.numeroRI || "-"}</TableCell>
             <TableCell>

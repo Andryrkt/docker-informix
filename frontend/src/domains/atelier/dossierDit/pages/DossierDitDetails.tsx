@@ -7,12 +7,7 @@ import { fetchDossierDitDetails } from "../api/dossierDitapi";
 function DossierDitDetails() {
   const { id } = useParams<{ id: string }>();
 
-  const {
-    data: dossierDit,
-    isPending,
-    isError,
-    error,
-  } = useQuery({
+  const { data: dossierDit } = useQuery({
     queryKey: ["dossier-dit", id],
     queryFn: () => fetchDossierDitDetails(id!),
     enabled: !!id,
@@ -46,7 +41,7 @@ function DossierDitDetails() {
   return (
     <div className="px-4 w-full min-h-screen">
       <div className="w-full h-full space-y-6 overflow-x-auto">
-        <DossierDitView dossierDit={dossierDit} />
+        <DossierDitView dossierDit={dossierDit ?? []} />
       </div>
     </div>
   );

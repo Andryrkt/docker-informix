@@ -12,8 +12,8 @@ const defaultProps = {
   onConfirm: vi.fn(),
 };
 
-function renderDialog(props: Partial<typeof defaultProps> = {}) {
-  return renderWithProviders(<ApplyTemplateDialog {...defaultProps} {...props} />);
+function renderDialog(props: Record<string, any> = {}) {
+  return renderWithProviders(<ApplyTemplateDialog {...defaultProps} {...(props as any)} />);
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────

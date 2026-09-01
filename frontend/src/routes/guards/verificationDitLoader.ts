@@ -1,9 +1,9 @@
 import { checkDitSubmission } from "@/domains/atelier/dit/api/ditApi";
-import { redirect } from "react-router-dom";
+import { redirect, type LoaderFunctionArgs } from "react-router-dom";
 import { toast } from "sonner";
 
 export const verificationDitLoader = (documentType: string) => {
-  return async ({ params }) => {
+  return async ({ params }: LoaderFunctionArgs) => {
     const res = await checkDitSubmission({
       document: documentType,
       numeroDemandeIntervention: params.numeroDemandeIntervention!,

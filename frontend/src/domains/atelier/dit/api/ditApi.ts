@@ -183,7 +183,7 @@ export interface CheckDitResponse {
 // };
 
 export const checkDitSubmission = async (
-  payload: CheckDitPayload,
+  _payload: CheckDitPayload,
 ): Promise<ApiResponse<CheckDitResponse>> => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -193,7 +193,7 @@ export const checkDitSubmission = async (
           message: "Mock: submission allowed",
           data: null,
         },
-        status: 200,
+        message: "Mock: submission allowed",
         success: true,
       });
     }, 500);

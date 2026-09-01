@@ -123,7 +123,7 @@ export default function SocietesPage() {
         <Field data-invalid={!!errors.code}>
           <FieldLabel>Code</FieldLabel>
           <Input value={form.code} onChange={(e) => setForm((f) => ({ ...f, code: e.target.value.toUpperCase() }))} placeholder="ex: HFF" maxLength={20} />
-          {errors.code && <FieldError errors={[errors.code]} />}
+          {errors.code && <FieldError errors={[{ message: errors.code }]} />}
         </Field>
       </AdminCrudDialog>
     </div>

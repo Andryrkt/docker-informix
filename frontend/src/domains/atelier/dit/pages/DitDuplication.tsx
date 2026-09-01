@@ -25,9 +25,9 @@ function DitDuplication() {
       details: dit.details,
       typeDocument: dit.typeDocument,
       interneExterne: dit.interneExterne === "INTERNE" ? "INTERNE" : "EXTERNE",
-      demandeDevis: dit.demandeDevis,
-      livraisonPartielle: dit.livraisonPartielle,
-      avisRecouvrement: dit.avisRecouvrement,
+      demandeDevis: dit.demandeDevis ?? "NON",
+      livraisonPartielle: dit.livraisonPartielle ?? "NON",
+      avisRecouvrement: dit.avisRecouvrement ?? "NON",
 
       agenceDebiteur: dit.agenceDebiteur,
       serviceDebiteur: dit.serviceDebiteur,
@@ -36,7 +36,7 @@ function DitDuplication() {
       serviceEmmetteur: dit.serviceEmmetteur,
 
       worNiveauUrgence: dit.worNiveauUrgence,
-      datePrevue: dit.datePrevue,
+      datePrevue: dit.datePrevue ?? "",
 
       typeReparation: dit.typeReparation ?? "",
       reparationPar: dit.reparationPar ?? "",

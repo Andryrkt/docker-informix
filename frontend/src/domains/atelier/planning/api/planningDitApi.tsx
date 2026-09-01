@@ -1,5 +1,6 @@
 import type { PaginatedResponse } from "@/conf/api/Response";
 import type { ditParams } from "../../dit/api/ditApi";
+import type { Dit } from "../../dit/schema/ditSchema";
 import axiosInstance from "@/conf/axios";
 
 export async function fetchPlanningDits(

@@ -10,6 +10,7 @@ import { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { ModuleModal, SousMenu } from "../schema/moduleItems";
+import type { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 export function useVignetteDialog() {
   const [open, setOpen] = useState(false);
@@ -64,7 +65,7 @@ export function useVignetteDialog() {
                 <div key={i} className="flex flex-col gap-3 py-2">
                   <div className="flex flex-col gap-1">
                     <div className="flex text-lg font-semibold text-zinc-500  uppercase gap-2">
-                      <FontAwesomeIcon icon={menu.icon} className="size-3 " />
+                      <FontAwesomeIcon icon={menu.icon as IconProp} className="size-3 " />
                       {menu.titreMenu}
                     </div>
                     {menu.titreMenu && (
@@ -94,21 +95,21 @@ export function useVignetteDialog() {
             className="flex gap-2 px-3 py-3 text-brand-primary/75 hover:text-brand-primary"
           >
             {item.icon && (
-              <FontAwesomeIcon icon={item.icon} className="size-4" />
+              <FontAwesomeIcon icon={item.icon as IconProp} className="size-4" />
             )}
             {item.titreSousMenu}
           </Link>
         ) : (
           <div className="flex gap-2 px-3 py-3 font-medium">
             {item.icon && (
-              <FontAwesomeIcon icon={item.icon} className="size-4" />
+              <FontAwesomeIcon icon={item.icon as IconProp} className="size-4" />
             )}
             {item.titreSousMenu}
           </div>
         )}
 
-        {item.sousMenu?.length >= 1 ? (
-          <div className=" pl-3">{renderSousMenu(item?.sousMenu)}</div>
+        {Array.isArray(item.sousMenu) && item.sousMenu.length >= 1 ? (
+          <div className=" pl-3">{renderSousMenu(item.sousMenu)}</div>
         ) : null}
       </div>
     ));

@@ -8,7 +8,7 @@ import {
 import { SelectSeparator } from "@/components/ui/select";
 import { useForm } from "@tanstack/react-form";
 import { Button } from "@/components/ui/button";
-import { Field, FieldLabel } from "@/components/ui/field";
+import { Field } from "@/components/ui/field";
 import {
   FieldReadOnly,
   FieldRenderer,
@@ -38,7 +38,7 @@ function DialogRelanceDevisForm({
 }: Props) {
   const form = useForm({
     defaultValues: {
-      numeroDevis: numeroDevis,
+      numeroDevis: numeroDevis ?? "",
       dateRelance: "",
     } satisfies FormValues,
 

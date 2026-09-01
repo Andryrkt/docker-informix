@@ -19,8 +19,8 @@ export interface Devis {
   soumisPar: string | null;
   DEVISE: string;
   CONSTRUCTEUR: string;
-  numeroPo?: string;
-  urlPo?: string;
+  numeroPo?: string | null;
+  urlPo?: string | null;
 }
 
 export type LineItem = {

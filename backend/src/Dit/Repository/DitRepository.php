@@ -207,4 +207,19 @@ class DitRepository extends ServiceEntityRepository
 
         return array_column($result, 'value');
     }
+    /**
+     * Récupération de tous les statuts Facture existant
+     * @return string[]
+     */
+    public function findStatutFacture(): array
+    {
+        $result = $this->createQueryBuilder('d')
+            ->select('DISTINCT d.etat_facturation AS etat_facturation')
+            ->where('d.etat_facturation IS NOT NULL')
+            ->orderBy('d.etat_facturation', 'ASC')
+            ->getQuery()
+            ->getScalarResult();
+
+        return array_column($result, 'etat_facturation');
+    }
 }

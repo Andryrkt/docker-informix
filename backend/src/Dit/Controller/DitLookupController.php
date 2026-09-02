@@ -228,6 +228,19 @@ class DitLookupController extends AbstractController
         ));
     }
 
+    #[Route('/statuts-facture', methods: ['GET'])]
+    public function statutsFacture(): JsonResponse
+    {
+        $statuts = $this->ditRepository->findStatutFacture();
+        return $this->json(array_map(
+            fn($statut) => [
+                'code' => self::toUtf8($statut),
+                'label' => self::toUtf8($statut),
+            ],
+            $statuts
+        ));
+    }
+
 
     /**
      * Nettoyage des noms de sections.

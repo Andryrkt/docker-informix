@@ -6,10 +6,32 @@ const VisualTimer = () => {
   const totalTime = Number(import.meta.env.VITE_TIMER_SESSION) || 900;
   const [timeLeft, setTimeLeft] = useState(totalTime);
   const logoutRef = useRef(logout);
-  useEffect(() => { logoutRef.current = logout; }, [logout]);
+  const channelRef = useRef<BroadcastChannel | null>(null);
 
+  useEffect(() => {
+    logoutRef.current = logout;
+  }, [logout]);
+
+  // Initialize BroadcastChannel & Listen for Tab Sync Events
+  useEffect(() => {
+    const channel = new BroadcastChannel("session_timer_channel");
+    channelRef.current = channel;
+
+    channel.onmessage = (event) => {
+      if (event.data?.type === "RESET_TIMER") {
+        setTimeLeft(totalTime);
+      }
+    };
+
+    return () => {
+      channel.close();
+    };
+  }, [totalTime]);
+
+  // Reset local state and broadcast reset event to other tabs
   const resetTimer = useCallback(() => {
     setTimeLeft(totalTime);
+    channelRef.current?.postMessage({ type: "RESET_TIMER" });
   }, [totalTime]);
 
   useEffect(() => {

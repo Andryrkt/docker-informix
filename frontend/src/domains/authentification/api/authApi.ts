@@ -1,5 +1,4 @@
 import axiosInstance from "@/conf/axios";
-import { toast } from "sonner";
 import type { LoginCredentials } from "../schema/loginSchema";
 
 export interface LoginResponse {

@@ -7,6 +7,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 export async function formatErrorMessage(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   error: any,
   fallback = "Une erreur est survenue.",
 ) {
@@ -16,7 +17,13 @@ export async function formatErrorMessage(
       const json = JSON.parse(text);
       return json.message || fallback;
     }
-    return error?.response?.data?.message || error?.message || fallback;
+    return (
+      error?.data?.error ||
+      error?.data?.message ||
+      error?.response?.data?.message ||
+      error?.message ||
+      fallback
+    );
   } catch {
     return fallback;
   }

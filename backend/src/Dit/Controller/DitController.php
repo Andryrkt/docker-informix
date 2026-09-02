@@ -2,28 +2,29 @@
 
 namespace App\Dit\Controller;
 
+use App\Audit\Entity\AuditOperation;
 use App\Dit\Entity\Irium\Dit;
 use App\Dit\Repository\DitRepository;
-use App\Audit\Entity\AuditOperation;
 use App\Dit\Service\DitFactory;
 use App\Dit\Service\DitFilterResolver;
 use App\Dit\Service\DitPayloadFactory;
+use App\Dit\Service\DitPdfGenerator;
+use App\Dit\Service\DitPdfMerger;
 use App\Dit\Service\DitRequestValidator;
 use App\Security\Entity\User;
 use App\Security\Repository\PersonnelRepository;
 use App\Shared\Service\FileUploadService;
 use App\Shared\Service\NumeroGeneratorService;
-use App\Dit\Service\DitPdfGenerator;
-use App\Dit\Service\DitPdfMerger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * DIT (Demande d'Intervention) — portage "CRUD de base" du module
@@ -56,23 +57,36 @@ class DitController extends AbstractController
         private readonly DitFactory $ditFactory,
         private readonly DitPayloadFactory $payloadFactory,
         private readonly FileUploadService $fileUploadService,
+        private readonly CacheInterface $ditListCache,
     ) {}
 
     #[Route('/api/demande-intervention/liste', methods: ['GET'])]
-    public function liste(Request $request): JsonResponse
+    public function liste(Request $request, CacheInterface $ditListCache): JsonResponse
     {
         $page = max(1, (int) $request->query->get('page', 1));
         $limit = max(1, (int) $request->query->get('limit', self::DEFAULT_LIMIT));
         $filters = $this->filterResolver->resolve($request);
+        // Build a unique cache key
+        $cacheKey = sprintf(
+            'dit_list_%d_%d_%s',
+            $page,
+            $limit,
+            md5(serialize($filters))
+        );
 
-        [$dits, $total] = $this->ditRepo->findPaginated($page, $limit, $filters);
+        // Retrieve from cache or compute
+        $responseData = $ditListCache->get($cacheKey, function () use ($page, $limit, $filters) {
+            [$dits, $total] = $this->ditRepo->findPaginated($page, $limit, $filters);
 
-        return $this->json([
-            'data' => array_map(fn(Dit $d) => $this->payloadFactory->serialize($d), $dits),
-            'current_page' => $page,
-            'total_pages' => (int) ceil($total / $limit),
-            'resultat' => $total,
-        ]);
+            return [
+                'data' => array_map(fn(Dit $d) => $this->payloadFactory->serialize($d), $dits),
+                'current_page' => $page,
+                'total_pages' => (int) ceil($total / $limit),
+                'resultat' => $total,
+            ];
+        });
+
+        return $this->json($responseData);
     }
 
     /**
@@ -162,7 +176,7 @@ class DitController extends AbstractController
             $uploadDir = $this->fileUploadService->uploadDir('dit', $numero);
             $pdfName = $numero . '_' . $agServ . '.pdf';
             $pdfPath = $uploadDir . '/' . $pdfName;
-            
+
             // Enregistrer la page de garde
             file_put_contents($pdfPath, $pdfContent);
 

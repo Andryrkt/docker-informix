@@ -67,7 +67,7 @@ function AppRoutes() {
      */
     const allMenuRoutes = buildRoutesFromMenu(modules ?? []);
 
-    console.log("[AppRoutes] Routes générées :", allMenuRoutes);
+    // console.log("[AppRoutes] Routes générées :", allMenuRoutes);
 
     /**
      * ======================================================

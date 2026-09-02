@@ -14,5 +14,6 @@ COPY . .
 
 EXPOSE 5173
 
-# Démarrer directement sans npm install
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+# Forcer Vite à vider et recréer son cache d'optimisation au démarrage
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--force"]
+

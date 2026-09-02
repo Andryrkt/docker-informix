@@ -9,3 +9,5 @@ frontend/node_modules
 .vscode/settings.json
 .vscode/settings.json
 .env.prod
+.vscode/settings.json
+docker/php-informix-mssql/lib/*

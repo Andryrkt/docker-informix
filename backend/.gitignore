@@ -1,4 +1,4 @@
-
+pdo_informix
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php

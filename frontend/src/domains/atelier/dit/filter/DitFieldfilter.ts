@@ -100,7 +100,7 @@ export const ditFieldFilters: FilterField[][] = [
       // queryFn in component
     },
     {
-      name: "section_support1",
+      name: "Dit",
       label: "Section support1",
       type: "select",
       queryKey: "section_support1",

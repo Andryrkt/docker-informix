@@ -92,12 +92,12 @@ function DitList() {
   const serviceEmetteurOptions = useMemo(() => {
     if (!selectedAgenceEmetteur) return [];
     return getServicesForAgent(selectedAgenceEmetteur);
-  }, [selectedAgenceEmetteur, agenceServices]);
+  }, [selectedAgenceEmetteur, getServicesForAgent]);
 
   const serviceDebiteurOptions = useMemo(() => {
     if (!selectedAgenceDebiteur) return [];
     return getServicesForAgent(selectedAgenceDebiteur);
-  }, [selectedAgenceDebiteur, agenceServices]);
+  }, [selectedAgenceDebiteur, getServicesForAgent]);
 
   const dynamicFields = useMemo(() => {
     return ditFieldFilters.map((column) =>
@@ -203,7 +203,13 @@ function DitList() {
         return field;
       }),
     );
-  }, [selectedAgenceDebiteur, selectedAgenceEmetteur, agenceServices]);
+  }, [
+    agenceOptions,
+    selectedAgenceDebiteur,
+    serviceDebiteurOptions,
+    selectedAgenceEmetteur,
+    serviceEmetteurOptions,
+  ]);
 
   const handleSearch = (values: Record<string, any>) => {
     if (values.agence_debiteur !== undefined) {

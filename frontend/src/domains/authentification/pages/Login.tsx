@@ -38,7 +38,7 @@ function Login() {
       try {
         await login(value);
         navigate("/");
-      } catch (error: any) {
+      } catch (error: unknown) {
         const message = await formatErrorMessage(error, t("loginError"));
         setErrors([message]);
       }
